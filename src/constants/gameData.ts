@@ -1,0 +1,286 @@
+import { GameState, ModuleDef, SkinId } from '@/types/game';
+
+export const BASE_RATE = 0.15;
+export const SEED = 918273;
+export const PRESTIGE_UNLOCK_ECHOES = 5;
+export const SEED_DIVIDER = 1000000;
+export const OFFLINE_CAP_HOURS = [24, 48, 72];
+export const BUY_QTY_OPTIONS = [1, 5, 10, 50, 100];
+
+export const ROOT_UPGRADE_MILESTONE_MULT = 2.0;
+export const ROOT_UPGRADE_NORMAL_MULT = 1.3;
+export const ROOT_UPGRADE_DISCOUNT = 0.55;
+
+export const ECHO_REQUIRE_OWNED = 100;
+export const ECHO_BASE_SECONDS = 200;
+export const ECHO_COST_MULT = 4;
+export const ECHO_REQUIRE_UPGRADE_LEVEL = 5;
+
+export const EVENT_DURATION_MAX_LEVEL = 4;
+export const LUCKY_DURATION_BASE = 7;
+export const LUCKY_DURATION_MAX = 60;
+export const LUCKY_DURATION_MAX_LEVEL = LUCKY_DURATION_MAX - LUCKY_DURATION_BASE; // 53 levels
+export const LUCKY_CHANCE_BASE = 0.007;
+export const LUCKY_CHANCE_STEP = 0.007;
+export const LUCKY_CHANCE_MAX_LEVEL = 9;
+export const LUCKY_CHANCE_MAX = 0.07;
+
+export const PASSIVE_RATE_COST = 100;
+export const AUTO_ROOT_COST = 50;
+export const AUTO_ROOT_SMART_COST = 180;
+export const AUTO_ROOT_ALL_COST = 500;
+export const AURA_ROOTS_COST = 100;
+export const SKIN_COST = 100;
+export const AUTO_RESET_COST = 10000;
+export const AUTO_RESET_MIN_SEEDS = 3;
+export const AUTO_EVENT_COST = 1000;
+export const SAVE_SLOT_COUNT = 5;
+
+export const MODULE_DEFS: ModuleDef[] = [
+  { id: 'fine',   name: 'รากฝอย',            desc: 'รากเล็กจิ๋วที่แทรกดินหาความชื้น', baseCost: 10,           costMult: 1.15, rate: 0.6,       color: '#eadfc7' },
+  { id: 'nodule', name: 'ปมราก',             desc: 'กักเก็บสารอาหารไว้ใช้ต่อเนื่อง',   baseCost: 80,           costMult: 1.17, rate: 4,         color: '#e0a94a' },
+  { id: 'myco',   name: 'เชื้อราไมคอร์ไรซา', desc: 'ทำงานร่วมกับรากเพื่อดูดซึมสารอาหารเพิ่ม', baseCost: 600,      costMult: 1.19, rate: 22,        color: '#8fd17a' },
+  { id: 'core',   name: 'แก่นราก',           desc: 'แกนรากลึกที่สูบสารอาหารมหาศาลจากใต้ดิน', baseCost: 5000,     costMult: 1.22, rate: 120,       color: '#d1673f' },
+  { id: 'vine',   name: 'เถารากยักษ์',       desc: 'เถารากที่ชอนไชไปทั่วชั้นดินลึก',   baseCost: 45000,        costMult: 1.24, rate: 720,       color: '#5fa8d1' },
+  { id: 'bionode',name: 'ปมพลังงานชีวภาพ',   desc: 'แปลงสารอินทรีย์เป็นพลังงานเข้มข้น', baseCost: 400000,       costMult: 1.26, rate: 4800,      color: '#c77dd1' },
+  { id: 'eternal',name: 'รากอมตะ',           desc: 'รากโบราณที่ไม่เคยหยุดเติบโต',      baseCost: 3600000,      costMult: 1.28, rate: 32000,     color: '#f2d24a' },
+  { id: 'nexus',  name: 'แก่นโลกใต้ดิน',     desc: 'เชื่อมต่อกับแหล่งพลังงานใจกลางโลก', baseCost: 32000000,     costMult: 1.30, rate: 210000,    color: '#ff6b6b' },
+  { id: 'crystal',name: 'ใยรากคริสตัล',      desc: 'โครงสร้างรากที่ตกผลึกดูดพลังงานสูง', baseCost: 290000000,    costMult: 1.32, rate: 1400000,   color: '#8ad6e0' },
+  { id: 'heart',  name: 'หัวใจราก',          desc: 'ศูนย์กลางที่สูบฉีดพลังงานทั่วเครือข่ายราก', baseCost: 2600000000, costMult: 1.34, rate: 9200000,   color: '#ff9ecf' },
+  { id: 'seed',   name: 'เมล็ดพันธุ์อนันต์', desc: 'เมล็ดที่งอกซ้ำได้ไม่รู้จบ',        baseCost: 23000000000,  costMult: 1.36, rate: 60000000,  color: '#c8e06a' },
+  { id: 'throne', name: 'บัลลังก์ราก',       desc: 'จุดสูงสุดของเครือข่ายรากทั้งหมด',   baseCost: 210000000000, costMult: 1.38, rate: 400000000, color: '#e0c168' },
+];
+
+export const MODULE_COLOR_MAP: Record<string, string> = Object.fromEntries(
+  MODULE_DEFS.map(m => [m.id, m.color])
+);
+
+export const SKIN_DEFS: Array<{ id: SkinId; name: string; always?: boolean }> = [
+  { id: 'none', name: 'ปกติ (ไม่มีสกิน)', always: true },
+  { id: 'rainbow', name: '🌈 รุ้ง/ทอง' },
+  { id: 'sameorigin', name: '🌿 รากเดียวกัน' },
+  { id: 'grayscale', name: '⚫ ขาวดำ' },
+  { id: 'gradient', name: '🍃 ไล่เข้ม-อ่อน' }
+];
+
+export const SKIN_CYCLE_ORDER: SkinId[] = ['none', 'rainbow', 'sameorigin', 'grayscale', 'gradient'];
+
+export function createFreshState(): GameState {
+  const s: GameState = {
+    nutrients: 0,
+    owned: {},
+    totalOwned: 0,
+    rootUpgrades: {},
+    echoes: {},
+    buyQty: 1,
+    lockGapBackfilled: false,
+    totalPlayTimeSeconds: 0,
+    runPlayTimeSeconds: 0,
+    runEarned: 0,
+    eternalSeeds: 0,
+    prestige: {
+      starterLevel: 0,
+      autoRoot: false,
+      autoRootEnabled: true,
+      autoRootSmart: false,
+      autoRootAll: false,
+      goldenLevel: 0,
+      auraRoots: false,
+      skinSameOrigin: false,
+      skinGrayscale: false,
+      skinGradient: false,
+      activeSkin: 'none',
+      autoReset: false,
+      autoResetEnabled: true,
+      offlineCapLevel: 0,
+      eventBonusLevel: 0,
+      eventDurationLevel: 0,
+      autoEvent: false,
+      autoEventEnabled: true,
+      luckyMagnitudeLevel: 0,
+      luckyDurationLevel: 0,
+      luckyChanceLevel: 0,
+      passiveRateLevel: 0
+    }
+  };
+  MODULE_DEFS.forEach(m => { s.owned[m.id] = 0; });
+  return s;
+}
+
+// Cost calculations
+export function costFor(def: ModuleDef, ownedCount: number): number {
+  return Math.ceil(def.baseCost * Math.pow(def.costMult, ownedCount));
+}
+
+export function bulkCostFor(def: ModuleDef, ownedCount: number, qty: number): number {
+  const m = def.costMult;
+  const first = def.baseCost * Math.pow(m, ownedCount);
+  const total = Math.abs(m - 1) < 1e-9 ? first * qty : first * (Math.pow(m, qty) - 1) / (m - 1);
+  return Math.ceil(total);
+}
+
+// Root Upgrades
+export function rootUpgradeRequireOwned(level: number): number {
+  return Math.round(10 * Math.pow(1.55, level - 1));
+}
+
+export function rootUpgradeIsMilestone(level: number): boolean {
+  return level % 5 === 0;
+}
+
+export function rootUpgradeLevelMult(level: number): number {
+  return rootUpgradeIsMilestone(level) ? ROOT_UPGRADE_MILESTONE_MULT : ROOT_UPGRADE_NORMAL_MULT;
+}
+
+export function rootUpgradeEquivUnits(level: number): number {
+  const req = rootUpgradeRequireOwned(level);
+  const benefitFraction = rootUpgradeLevelMult(level) - 1;
+  return Math.max(1, Math.round(req * benefitFraction * ROOT_UPGRADE_DISCOUNT));
+}
+
+export function rootUpgradeCost(def: ModuleDef, level: number): number {
+  return bulkCostFor(def, rootUpgradeRequireOwned(level), rootUpgradeEquivUnits(level));
+}
+
+export function rootUpgradeMultiplier(state: GameState, moduleId: string): number {
+  const level = state.rootUpgrades[moduleId] || 0;
+  let mult = 1;
+  for (let i = 1; i <= level; i++) mult *= rootUpgradeLevelMult(i);
+  return mult;
+}
+
+// Echoes
+export function totalEchoCount(state: GameState): number {
+  let s = 0;
+  MODULE_DEFS.forEach(d => { s += (state.echoes[d.id] || 0); });
+  return s;
+}
+
+export function globalEchoMultiplier(state: GameState): number {
+  return 1 + totalEchoCount(state) * 0.01;
+}
+
+export function echoUnlockedFor(state: GameState, moduleId: string): boolean {
+  return (state.owned[moduleId] || 0) >= ECHO_REQUIRE_OWNED
+    && (state.rootUpgrades[moduleId] || 0) >= ECHO_REQUIRE_UPGRADE_LEVEL;
+}
+
+export function prestigeRateMultiplier(state: GameState): number {
+  return 1 + (state.prestige.passiveRateLevel || 0) * 0.01;
+}
+
+export function effectiveRate(state: GameState, def: ModuleDef): number {
+  return def.rate * rootUpgradeMultiplier(state, def.id) * globalEchoMultiplier(state) * prestigeRateMultiplier(state);
+}
+
+export function baseTotalRate(state: GameState): number {
+  let r = BASE_RATE * globalEchoMultiplier(state) * prestigeRateMultiplier(state);
+  MODULE_DEFS.forEach(m => {
+    r += (state.owned[m.id] || 0) * effectiveRate(state, m);
+  });
+  return r;
+}
+
+export function echoCost(state: GameState, def: ModuleDef, currentTotalRate: number): number {
+  const n = state.echoes[def.id] || 0;
+  const cost = ECHO_BASE_SECONDS * currentTotalRate * Math.pow(ECHO_COST_MULT, n);
+  return Math.ceil(Math.max(cost, 1));
+}
+
+// Prestige helpers
+export function prestigeUnlocked(state: GameState): boolean {
+  return totalEchoCount(state) >= PRESTIGE_UNLOCK_ECHOES || (state.owned['throne'] || 0) >= 1;
+}
+
+export function calcPrestigeSeeds(state: GameState): number {
+  const base = Math.floor(Math.cbrt(state.runEarned / SEED_DIVIDER));
+  const bonus = 1 + (state.prestige.goldenLevel || 0) * 0.05;
+  return Math.max(0, Math.floor(base * bonus));
+}
+
+export function starterCultureCost(state: GameState): number {
+  return Math.ceil(15 * Math.pow(1.5, state.prestige.starterLevel || 0));
+}
+
+export function goldenSeedCost(state: GameState): number {
+  return Math.ceil(20 * Math.pow(1.6, state.prestige.goldenLevel || 0));
+}
+
+export function offlineCapMaxed(state: GameState): boolean {
+  return (state.prestige.offlineCapLevel || 0) >= OFFLINE_CAP_HOURS.length - 1;
+}
+
+export function offlineCapCost(state: GameState): number {
+  return state.prestige.offlineCapLevel === 0 ? 80 : 220;
+}
+
+export function eventBonusCost(state: GameState): number {
+  return Math.ceil(25 * Math.pow(1.55, state.prestige.eventBonusLevel || 0));
+}
+
+export function eventDurationCost(state: GameState): number {
+  return Math.ceil(20 * Math.pow(1.5, state.prestige.eventDurationLevel || 0));
+}
+
+export function eventBonusMult(state: GameState): number {
+  return 1 + (state.prestige.eventBonusLevel || 0) * 0.2;
+}
+
+export function eventDurationMaxed(state: GameState): boolean {
+  return (state.prestige.eventDurationLevel || 0) >= EVENT_DURATION_MAX_LEVEL;
+}
+
+export function eventDurationMult(state: GameState): number {
+  return 1 + (state.prestige.eventDurationLevel || 0) * 0.15;
+}
+
+export function luckyMagnitudeCost(state: GameState): number {
+  return 3000 * ((state.prestige.luckyMagnitudeLevel || 0) + 1);
+}
+
+export function luckyDurationCost(state: GameState): number {
+  const level = state.prestige.luckyDurationLevel || 0;
+  return Math.ceil(100 * Math.pow(1.12, level));
+}
+
+export function luckyMagnitudeExtra(state: GameState): number {
+  return 1 + (state.prestige.luckyMagnitudeLevel || 0);
+}
+
+export function luckyDurationMaxed(state: GameState): boolean {
+  return (state.prestige.luckyDurationLevel || 0) >= LUCKY_DURATION_MAX_LEVEL;
+}
+
+export function luckyDurationSeconds(state: GameState): number {
+  return Math.min(LUCKY_DURATION_MAX, LUCKY_DURATION_BASE + (state.prestige.luckyDurationLevel || 0));
+}
+
+export function luckyDurationExtra(state: GameState): number {
+  return luckyDurationSeconds(state);
+}
+
+export function luckyChanceMaxed(state: GameState): boolean {
+  return (state.prestige.luckyChanceLevel || 0) >= LUCKY_CHANCE_MAX_LEVEL;
+}
+
+export function luckyChancePct(state: GameState): number {
+  return Math.min(LUCKY_CHANCE_MAX, LUCKY_CHANCE_BASE + (state.prestige.luckyChanceLevel || 0) * LUCKY_CHANCE_STEP);
+}
+
+export function luckyChanceCost(state: GameState): number {
+  return 500 * ((state.prestige.luckyChanceLevel || 0) + 1);
+}
+
+export function currentOfflineCapSeconds(state: GameState): number {
+  return OFFLINE_CAP_HOURS[state.prestige.offlineCapLevel || 0] * 3600;
+}
+
+export function stageName(totalOwned: number): string {
+  if (totalOwned < 5) return 'ระยะเมล็ด';
+  if (totalOwned < 15) return 'รากงอกแรก';
+  if (totalOwned < 35) return 'เครือข่ายราก';
+  if (totalOwned < 70) return 'รากแผ่กว้าง';
+  if (totalOwned < 150) return 'ป่าใต้ดิน';
+  if (totalOwned < 400) return 'เขาวงกตราก';
+  return 'อาณาจักรใต้พิภพ';
+}

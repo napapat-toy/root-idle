@@ -1,69 +1,174 @@
-import Image from "next/image";
+'use client';
+
+import React, { useState } from 'react';
+import { useGameEngine } from '@/hooks/useGameEngine';
+import { Header } from '@/components/Header';
+import { TopActions } from '@/components/TopActions';
+import { StageCanvas } from '@/components/StageCanvas';
+import { ShopPanel } from '@/components/ShopPanel';
+import { OfflineModal } from '@/components/modals/OfflineModal';
+import { PrestigeModal } from '@/components/modals/PrestigeModal';
+import { OptionsModal } from '@/components/modals/OptionsModal';
 
 export default function Home() {
+  const {
+    state,
+    totalRate,
+    activeBuff,
+    activeLuckyBuff,
+    activeEvents,
+    floatingTexts,
+    offlineModal,
+    branches,
+    maxY,
+    buyModule,
+    buyRootUpgrade,
+    buyEcho,
+    setBuyQty,
+    claimEvent,
+    claimOffline,
+    doPrestige,
+    doHardReset,
+    toggleSkin,
+    setSkin,
+    buyStarterCulture,
+    buyGoldenSeed,
+    buyPassiveRate,
+    buyAutoRoot,
+    buyAutoRootSmart,
+    buyAutoRootAll,
+    setAutoRootMode,
+    cycleAutoRootMode,
+    buyAutoEvent,
+    toggleAutoEvent,
+    buyAutoReset,
+    toggleAutoReset,
+    toggleAutoRoot,
+    buyEventBonus,
+    buyEventDuration,
+    buyLuckyChance,
+    buyLuckyMagnitude,
+    buyLuckyDuration,
+    buyOfflineCapUpgrade,
+    buyAuraRoots,
+    buySkin,
+    importSaveCode,
+    exportSaveCode,
+    saveSlotAction,
+    loadSlotAction,
+    deleteSlotAction,
+  } = useGameEngine();
+
+  const [prestigeModalOpen, setPrestigeModalOpen] = useState(false);
+  const [optionsModalOpen, setOptionsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="app" style={{ opacity: 0 }}>
+        {/* Mount placeholder */}
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="app">
+      <Header
+        nutrients={state.nutrients}
+        totalRate={totalRate}
+        eternalSeeds={state.eternalSeeds}
+      />
+
+      <TopActions
+        state={state}
+        onOpenPrestige={() => setPrestigeModalOpen(true)}
+        onToggleSkin={toggleSkin}
+        onOpenOptions={() => setOptionsModalOpen(true)}
+        onToggleAutoRoot={toggleAutoRoot}
+        onCycleAutoRootMode={cycleAutoRootMode}
+        onToggleAutoEvent={toggleAutoEvent}
+        onToggleAutoReset={toggleAutoReset}
+      />
+
+      <StageCanvas
+        totalOwned={state.totalOwned}
+        branches={branches}
+        maxY={maxY}
+        activeSkin={state.prestige.activeSkin}
+        activeBuff={activeBuff}
+        activeLuckyBuff={activeLuckyBuff}
+        activeEvents={activeEvents}
+        floatingTexts={floatingTexts}
+        onClaimEvent={claimEvent}
+      />
+
+      <ShopPanel
+        state={state}
+        totalRate={totalRate}
+        onBuyModule={buyModule}
+        onBuyRootUpgrade={buyRootUpgrade}
+        onBuyEcho={buyEcho}
+        onSetBuyQty={setBuyQty}
+      />
+
+      {/* Offline progress modal */}
+      {offlineModal && (
+        <OfflineModal
+          gain={offlineModal.gain}
+          dt={offlineModal.dt}
+          onClaim={claimOffline}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      )}
+
+      {/* Prestige modal */}
+      <PrestigeModal
+        isOpen={prestigeModalOpen}
+        state={state}
+        onClose={() => setPrestigeModalOpen(false)}
+        onConfirmPrestige={doPrestige}
+        onBuyStarterCulture={buyStarterCulture}
+        onBuyGoldenSeed={buyGoldenSeed}
+        onBuyPassiveRate={buyPassiveRate}
+        onBuyAutoRoot={buyAutoRoot}
+        onToggleAutoRoot={toggleAutoRoot}
+        onSetAutoRootMode={setAutoRootMode}
+        onBuyAutoRootSmart={buyAutoRootSmart}
+        onBuyAutoRootAll={buyAutoRootAll}
+        onBuyAutoEvent={buyAutoEvent}
+        onToggleAutoEvent={toggleAutoEvent}
+        onBuyAutoReset={buyAutoReset}
+        onToggleAutoReset={toggleAutoReset}
+        onBuyEventBonus={buyEventBonus}
+        onBuyEventDuration={buyEventDuration}
+        onBuyLuckyChance={buyLuckyChance}
+        onBuyLuckyMagnitude={buyLuckyMagnitude}
+        onBuyLuckyDuration={buyLuckyDuration}
+        onBuyOfflineCapUpgrade={buyOfflineCapUpgrade}
+        onBuyAuraRoots={buyAuraRoots}
+        onBuySkin={buySkin}
+      />
+
+      {/* Options & Settings modal */}
+      <OptionsModal
+        isOpen={optionsModalOpen}
+        state={state}
+        onClose={() => setOptionsModalOpen(false)}
+        onSelectSkin={setSkin}
+        onExport={exportSaveCode}
+        onImport={importSaveCode}
+        onSaveSlot={saveSlotAction}
+        onLoadSlot={loadSlotAction}
+        onDeleteSlot={deleteSlotAction}
+        onHardReset={doHardReset}
+        onToggleAutoRoot={toggleAutoRoot}
+        onSetAutoRootMode={setAutoRootMode}
+        onToggleAutoEvent={toggleAutoEvent}
+        onToggleAutoReset={toggleAutoReset}
+      />
     </div>
   );
 }
