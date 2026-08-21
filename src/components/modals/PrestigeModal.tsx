@@ -116,17 +116,18 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
     badge: string,
     desc: string,
     costText: string,
-    onClick: () => void,
-    disabled: boolean,
+    onClick?: () => void,
+    disabled = false,
     owned = false,
-    toggledOff = false
+    toggledOff = false,
+    isActive = false
   ) => {
     return (
       <div
-        onClick={!disabled && !owned ? onClick : undefined}
+        onClick={!disabled && onClick ? onClick : undefined}
         className={`prestige-item ${owned ? 'owned' : ''} ${disabled ? 'disabled' : ''} ${
           toggledOff ? 'toggled-off' : ''
-        }`}
+        } ${isActive ? 'is-active' : ''}`}
       >
         <div className="p-top">
           <span>{title}</span>
@@ -144,13 +145,13 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
   return (
     <>
-      <div className="offline-backdrop">
-        <div className="modal-wrapper">
+      <div className="offline-backdrop" onClick={onClose}>
+        <div className="modal-wrapper prestige-modal-wrapper" onClick={e => e.stopPropagation()}>
           <button className="modal-close-x" onClick={onClose} aria-label="ปิด">
             &times;
           </button>
 
-          <div className="offline-modal generic-modal">
+          <div className="offline-modal generic-modal prestige-modal-content">
             <div className="icon">🌌</div>
             <h2>การหว่านใหม่ (Prestige)</h2>
             <div className="away-time">
@@ -232,8 +233,9 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                     '—',
                     onSetAutoRootMode ? () => onSetAutoRootMode('basic') : onToggleAutoRoot,
                     false,
-                    false,
-                    !enabled
+                    true, // owned = true (dark/muted)
+                    !enabled,
+                    isCurrent
                   );
                 }
                 return renderItem(
@@ -260,8 +262,9 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                       '—',
                       () => onSetAutoRootMode('smart'),
                       false,
-                      false,
-                      !enabled
+                      true, // owned = true (dark/muted)
+                      !enabled,
+                      isCurrent
                     );
                   }
                   return renderItem(
@@ -288,8 +291,9 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                       '—',
                       () => onSetAutoRootMode('all'),
                       false,
-                      false,
-                      !enabled
+                      true, // owned = true (dark/muted)
+                      !enabled,
+                      isCurrent
                     );
                   }
                   return renderItem(
@@ -313,7 +317,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                     '—',
                     onToggleAutoEvent,
                     false,
-                    false,
+                    true, // owned = true (dark/muted)
                     !enabled
                   );
                 }
@@ -338,7 +342,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                     '—',
                     onToggleAutoReset,
                     false,
-                    false,
+                    true, // owned = true (dark/muted)
                     !enabled
                   );
                 }

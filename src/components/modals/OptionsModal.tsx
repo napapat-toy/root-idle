@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { AutoRootMode, GameState, SaveSlotMeta, SkinId } from '@/types/game';
 import { SAVE_SLOT_COUNT, SKIN_DEFS } from '@/constants/gameData';
-import { getSlotMeta } from '@/lib/storage';
+import { decodeSave, getSlotMeta } from '@/lib/storage';
 import { fmtInt } from '@/lib/formatters';
 import { getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
 import { ConfirmModal } from './ConfirmModal';
@@ -103,22 +103,32 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   };
 
   const handleImportSubmit = () => {
-    if (!importCode.trim()) {
+    const raw = importCode.trim();
+    if (!raw) {
       setImportError('กรุณาวางโค้ดเซฟ');
       return;
     }
+
+    try {
+      decodeSave(raw);
+      setImportError('');
+    } catch {
+      setImportError('โค้ดไม่ถูกต้องหรือเสียหาย ลองตรวจสอบอีกครั้ง');
+      return;
+    }
+
     setConfirmState({
       isOpen: true,
-      title: 'ยืนยันการทำรายการ',
-      message: 'การนำเข้าจะเขียนทับ progress ปัจจุบันทั้งหมด ยืนยันไหม?',
+      title: 'ยืนยันการนำเข้าเซฟ',
+      message: 'การนำเข้าจะเขียนทับ progress ปัจจุบันทั้งหมด ยืนยันที่จะนำเข้าหรือไม่?',
       action: () => {
         try {
-          onImport(importCode.trim());
+          onImport(raw);
           setSubModal('none');
           setConfirmState(prev => ({ ...prev, isOpen: false }));
           onClose();
         } catch {
-          setImportError('โค้ดไม่ถูกต้องหรือเสียหาย ลองตรวจสอบอีกครั้ง');
+          setImportError('เกิดข้อผิดพลาดในการโหลดเซฟ');
         }
       },
     });
@@ -197,13 +207,13 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
 
   return (
     <>
-      <div className="offline-backdrop">
-        <div className="modal-wrapper">
+      <div className="offline-backdrop" onClick={onClose}>
+        <div className="modal-wrapper options-modal-wrapper" onClick={e => e.stopPropagation()}>
           <button className="modal-close-x" onClick={onClose} aria-label="ปิด">
             &times;
           </button>
 
-          <div className="offline-modal generic-modal">
+          <div className="offline-modal generic-modal options-modal-content">
             {subModal === 'none' && (
               <>
                 <div className="icon">⚙️</div>

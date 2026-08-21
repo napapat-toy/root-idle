@@ -10,6 +10,8 @@ interface TopActionsProps {
   onOpenPrestige: () => void;
   onToggleSkin: () => void;
   onOpenOptions: () => void;
+  onOpenAchievements?: () => void;
+  onOpenStats?: () => void;
   onToggleAutoRoot?: () => void;
   onCycleAutoRootMode?: () => void;
   onToggleAutoEvent?: () => void;
@@ -21,6 +23,8 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onOpenPrestige,
   onToggleSkin,
   onOpenOptions,
+  onOpenAchievements,
+  onOpenStats,
   onToggleAutoRoot,
   onCycleAutoRootMode,
   onToggleAutoEvent,
@@ -54,6 +58,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   };
 
   const handleAutoRootClick = onCycleAutoRootMode || onToggleAutoRoot;
+  const unlockedAchCount = state.achievements?.length || 0;
 
   return (
     <div className="top-actions-row">
@@ -119,6 +124,29 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
       </div>
 
       <div className="utility-btn-group">
+        {onOpenStats && (
+          <button
+            className="achievement-toggle-btn"
+            onClick={onOpenStats}
+            title="สถิติ & บันทึกการเติบโตของฉัน"
+          >
+            📊
+          </button>
+        )}
+
+        {onOpenAchievements && (
+          <button
+            className="achievement-toggle-btn"
+            onClick={onOpenAchievements}
+            title={`เหรียญความสำเร็จ: ปลดล็อกแล้ว ${unlockedAchCount} อัน (+${unlockedAchCount}% เรต)`}
+          >
+            🏆
+            {unlockedAchCount > 0 && (
+              <span className="achievement-badge-pill">{unlockedAchCount}</span>
+            )}
+          </button>
+        )}
+
         {ownedSkinsCount > 1 && (
           <button
             className={`skin-toggle-btn ${state.prestige.activeSkin !== 'none' ? 'on' : ''}`}

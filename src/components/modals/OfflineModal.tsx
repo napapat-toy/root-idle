@@ -12,12 +12,14 @@ interface OfflineModalProps {
 export const OfflineModal: React.FC<OfflineModalProps> = ({ gain, dt, onClaim }) => {
   return (
     <div className="offline-backdrop">
-      <div className="offline-modal">
-        <div className="icon">🌿</div>
-        <h2>ยินดีต้อนรับกลับ</h2>
-        <div className="away-time">คุณหายไป {formatDuration(dt)}</div>
-        <div className="gain">+{fmt(gain)} สารอาหาร</div>
-        <button onClick={onClaim}>เก็บผลผลิต</button>
+      <div className="modal-wrapper offline-modal-wrapper">
+        <div className="offline-modal">
+          <div className="icon">🌿</div>
+          <h2>ยินดีต้อนรับกลับ</h2>
+          <div className="away-time">คุณหายไป {formatDuration(dt)}</div>
+          <div className="gain">+{fmt(gain)} สารอาหาร</div>
+          <button onClick={onClaim}>เก็บผลผลิต</button>
+        </div>
       </div>
     </div>
   );

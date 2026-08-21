@@ -11,6 +11,8 @@ import {
   SaveSlotMeta,
   SkinId,
 } from '@/types/game';
+import { AchievementDef } from '@/types/achievements';
+import { ACHIEVEMENTS } from '@/constants/achievementsData';
 import {
   AURA_ROOTS_COST,
   AUTO_EVENT_COST,
@@ -127,6 +129,11 @@ export function useGameEngine() {
       ...prev,
       nutrients: prev.nutrients + offlineModal.gain,
       runEarned: prev.runEarned + offlineModal.gain,
+      stats: {
+        ...prev.stats,
+        maxOfflineTimeSeconds: Math.max(prev.stats?.maxOfflineTimeSeconds || 0, offlineModal.dt),
+        totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + offlineModal.gain,
+      },
     }));
     setOfflineModal(null);
   }, [offlineModal]);
@@ -212,6 +219,11 @@ export function useGameEngine() {
       totalOwned: starterBonus,
       rootUpgrades: {},
       buyQty: 1,
+      stats: {
+        ...prev.stats,
+        prestigeCount: (prev.stats?.prestigeCount || 0) + 1,
+        totalSeedsEarnedLifetime: (prev.stats?.totalSeedsEarnedLifetime || 0) + gained,
+      },
     }));
 
     return gained;
@@ -261,6 +273,7 @@ export function useGameEngine() {
     const bonusMult = eventBonusMult(cur);
     const durationMult = eventDurationMult(cur);
     const rate = totalRate();
+    const wasLucky = !!(activeLuckyBuffRef.current && Date.now() < activeLuckyBuffRef.current.expiresAt);
 
     setActiveEvents(prev => prev.filter(e => e.id !== ev.id));
 
@@ -271,18 +284,39 @@ export function useGameEngine() {
         ...prev,
         nutrients: prev.nutrients + amount,
         runEarned: prev.runEarned + amount,
+        stats: {
+          ...prev.stats,
+          totalEventsClaimed: (prev.stats?.totalEventsClaimed || 0) + 1,
+          superJackpotClaimed: prev.stats?.superJackpotClaimed || wasLucky,
+          totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + amount,
+        },
       }));
       showFloatingText(ev.left + 26, ev.top + 20, '+' + fmt(amount), '#e0a94a');
     } else if (ev.type === 'lucky') {
       const mult = (1 + (777 - 1) * bonusMult) * luckyMagnitudeExtra(cur);
       const seconds = luckyDurationSeconds(cur);
       setActiveLuckyBuff({ multiplier: mult, expiresAt: Date.now() + seconds * 1000 });
+      setState(prev => ({
+        ...prev,
+        stats: {
+          ...prev.stats,
+          totalEventsClaimed: (prev.stats?.totalEventsClaimed || 0) + 1,
+          luckyJackpotCount: (prev.stats?.luckyJackpotCount || 0) + 1,
+        },
+      }));
       showFloatingText(ev.left + 26, ev.top + 20, `🍀 โชคดี! ×${fmtInt(mult)}`, '#ffd76a');
     } else {
       const baseMult = 2 + Math.random() * 2;
       const mult = 1 + (baseMult - 1) * bonusMult;
       const seconds = (20 + Math.random() * 40) * durationMult;
       setActiveBuff({ multiplier: mult, expiresAt: Date.now() + seconds * 1000 });
+      setState(prev => ({
+        ...prev,
+        stats: {
+          ...prev.stats,
+          totalEventsClaimed: (prev.stats?.totalEventsClaimed || 0) + 1,
+        },
+      }));
       showFloatingText(ev.left + 26, ev.top + 20, `×${mult.toFixed(1)} เรท!`, '#b7e08a');
     }
   }, [showFloatingText, totalRate]);
@@ -589,6 +623,10 @@ export function useGameEngine() {
         runEarned: prev.runEarned + gain,
         totalPlayTimeSeconds: prev.totalPlayTimeSeconds + dt,
         runPlayTimeSeconds: prev.runPlayTimeSeconds + dt,
+        stats: {
+          ...prev.stats,
+          totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
+        },
       }));
 
       // Check expired buffs
@@ -641,11 +679,15 @@ export function useGameEngine() {
   }, [doPrestige, showFloatingText]);
 
   // Random event scheduler (105-155s interval)
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
+  const eventTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const activeEventExpireRef = useRef<NodeJS.Timeout | null>(null);
+  const autoEventClaimRef = useRef<NodeJS.Timeout | null>(null);
 
-    const spawnEvent = () => {
-      if (activeEvents.length > 0) return;
+  const scheduleNextEvent = useCallback(() => {
+    if (eventTimerRef.current) clearTimeout(eventTimerRef.current);
+
+    const delay = 105000 + Math.random() * 50000; // 105–155s
+    eventTimerRef.current = setTimeout(() => {
       const cur = stateRef.current;
       const r = Math.random();
       const luckyPct = luckyChancePct(cur);
@@ -663,26 +705,62 @@ export function useGameEngine() {
 
       // Auto-event prestige perk
       if (cur.prestige.autoEvent && cur.prestige.autoEventEnabled) {
-        setTimeout(() => {
+        autoEventClaimRef.current = setTimeout(() => {
           claimEvent(newEv);
         }, 1200 + Math.random() * 1500);
       }
 
-      // Expire after 12s
-      setTimeout(() => {
+      // Expire after 12s if not clicked
+      activeEventExpireRef.current = setTimeout(() => {
         setActiveEvents(prev => prev.filter(e => e.id !== id));
-        scheduleNext();
+        scheduleNextEvent();
       }, 12000);
-    };
+    }, delay);
+  }, [claimEvent]);
 
-    const scheduleNext = () => {
-      const delay = 105000 + Math.random() * 50000;
-      timer = setTimeout(spawnEvent, delay);
-    };
+  // Achievement Toast Queue
+  const [achievementToastQueue, setAchievementToastQueue] = useState<AchievementDef[]>([]);
 
-    scheduleNext();
-    return () => clearTimeout(timer);
-  }, [claimEvent, activeEvents.length]);
+  const dismissAchievementToast = useCallback((id: string) => {
+    setAchievementToastQueue(prev => prev.filter(a => a.id !== id));
+  }, []);
+
+  // Periodic Achievement Check (every 1s)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const cur = stateRef.current;
+      const rate = totalRate();
+      const currentUnlocked = new Set(cur.achievements || []);
+      const newUnlocked: AchievementDef[] = [];
+
+      ACHIEVEMENTS.forEach(ach => {
+        if (!currentUnlocked.has(ach.id)) {
+          if (ach.check(cur, rate)) {
+            newUnlocked.push(ach);
+            currentUnlocked.add(ach.id);
+          }
+        }
+      });
+
+      if (newUnlocked.length > 0) {
+        setState(prev => ({
+          ...prev,
+          achievements: Array.from(currentUnlocked),
+        }));
+
+        setAchievementToastQueue(prev => [...prev, ...newUnlocked]);
+
+        // Auto dismiss toast after 4.5s
+        newUnlocked.forEach(ach => {
+          setTimeout(() => {
+            dismissAchievementToast(ach.id);
+          }, 4500);
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [totalRate, dismissAchievementToast]);
 
   return {
     state,
@@ -694,6 +772,8 @@ export function useGameEngine() {
     offlineModal,
     branches,
     maxY,
+    achievementToastQueue,
+    dismissAchievementToast,
     // Methods
     buyModule,
     buyRootUpgrade,

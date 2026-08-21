@@ -23,37 +23,68 @@ export function angleOf(b: Branch): number {
   return Math.atan2(b.y2 - b.y1, b.x2 - b.x1);
 }
 
-// Pseudo-random number generator for deterministic tree generation
-function createPrng(seed: number = 1337) {
-  let s = seed;
+// 32-bit PRNG (Mulberry32) for high-quality deterministic pseudo-random numbers
+function mulberry32(seed: number = 1337) {
+  let s = seed | 0;
   return () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
 
+interface InternalBranch extends Branch {
+  childSides?: number[];
+}
+
 export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY: number } {
-  const rng = createPrng(42);
-  const branches: Branch[] = [];
-  let maxY = 38;
+  const rng = mulberry32(1337);
+  const branches: InternalBranch[] = [];
+  const CX = 250;
+  const CY = 14;
+  let maxY = CY + 38;
 
   // Trunk (depth 0)
   branches.push({
-    x1: 250,
-    y1: 0,
-    x2: 250,
-    y2: 38,
+    x1: CX,
+    y1: CY,
+    x2: CX,
+    y2: CY + 38,
     depth: 0,
     width: 7.2,
     children: 0,
     moduleId: 'trunk',
     parentIndex: null,
+    childSides: [],
   });
 
   for (let bIndex = 0; bIndex < log.length; bIndex++) {
     const moduleId = log[bIndex];
 
-    const weights = branches.map(b => 1 / (1 + b.children * 1.6));
+    const leftCount = branches.filter(b => b.x2 < CX - 4).length;
+    const rightCount = branches.filter(b => b.x2 > CX + 4).length;
+    const leftBoost = (rightCount + 4) / (leftCount + 4);
+    const rightBoost = (leftCount + 4) / (rightCount + 4);
+
+    // Binary fractal tree preference: prioritize tips that haven't forked yet (0 or 1 child)
+    const weights = branches.map(b => {
+      let w = 1.0;
+      if (b.depth === 0) {
+        w = b.children < 4 ? 6.0 : 0.2;
+      } else if (b.children === 0) {
+        w = 4.5;
+      } else if (b.children === 1) {
+        w = 3.0;
+      } else {
+        w = 0.2 / (1 + b.children * 2);
+      }
+
+      if (b.x2 < CX - 4) w *= Math.min(Math.max(leftBoost, 0.5), 2.0);
+      else if (b.x2 > CX + 4) w *= Math.min(Math.max(rightBoost, 0.5), 2.0);
+      return w;
+    });
+
     const totalWeight = weights.reduce((a, b) => a + b, 0);
     let r = rng() * totalWeight;
     let idx = 0;
@@ -72,9 +103,40 @@ export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY:
 
     const depth = parent.depth + 1;
     const baseAngle = angleOf(parent);
-    const spread = 0.55 + Math.min(depth * 0.05, 0.5);
-    const newAngle = baseAngle + (rng() - 0.5) * spread;
-    const len = Math.max(9, 46 - depth * 3.1) * (0.75 + rng() * 0.5);
+
+    let newAngle: number;
+    if (parent.depth === 0) {
+      // Primary root lines fan out across the 4 main cardinal sectors
+      const primaryAngles = [
+        Math.PI / 2 - 0.52, // Left main root
+        Math.PI / 2 + 0.52, // Right main root
+        Math.PI / 2 - 0.20, // Center-left root
+        Math.PI / 2 + 0.20, // Center-right root
+      ];
+      newAngle = primaryAngles[(parent.children - 1) % primaryAngles.length] + (rng() - 0.5) * 0.1;
+    } else {
+      // Binary bifurcation (forking outward left & right)
+      if (!parent.childSides) parent.childSides = [];
+      let side: number;
+      if (parent.childSides.length === 0) {
+        side = parent.x2 < CX ? (rng() < 0.65 ? -1 : 1) : (rng() < 0.65 ? 1 : -1);
+      } else {
+        side = -parent.childSides[0];
+      }
+      parent.childSides.push(side);
+
+      const forkAngle = 0.35 + Math.min(depth * 0.015, 0.18) + (rng() - 0.5) * 0.1;
+      newAngle = baseAngle + side * forkAngle;
+
+      // Soft boundary guidance when branches approach edges
+      if (parent.x2 < 45 && Math.cos(newAngle) < 0) {
+        newAngle = Math.PI / 2 + Math.abs(Math.cos(newAngle)) * 0.4;
+      } else if (parent.x2 > 455 && Math.cos(newAngle) > 0) {
+        newAngle = Math.PI / 2 - Math.abs(Math.cos(newAngle)) * 0.4;
+      }
+    }
+
+    const len = Math.max(9, 44 - depth * 2.6) * (0.8 + rng() * 0.4);
     const width = Math.max(0.9, 6.2 - depth * 0.45);
 
     let nx = parent.x2 + Math.cos(newAngle) * len;
@@ -93,6 +155,7 @@ export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY:
       children: 0,
       moduleId,
       parentIndex: idx,
+      childSides: [],
     });
     if (ny > maxY) maxY = ny;
   }

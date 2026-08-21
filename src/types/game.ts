@@ -39,6 +39,16 @@ export interface PrestigeState {
   passiveRateLevel: number;
 }
 
+export interface GameStats {
+  prestigeCount: number;
+  totalEventsClaimed: number;
+  luckyJackpotCount: number;
+  maxOfflineTimeSeconds: number;
+  superJackpotClaimed: boolean;
+  totalSeedsEarnedLifetime: number;
+  totalNutrientsEarnedLifetime?: number;
+}
+
 export interface GameState {
   nutrients: number;
   owned: Record<string, number>;
@@ -52,6 +62,8 @@ export interface GameState {
   runEarned: number;
   eternalSeeds: number;
   prestige: PrestigeState;
+  achievements: string[];
+  stats: GameStats;
 }
 
 export interface Branch {
@@ -107,4 +119,6 @@ export interface SavePayload {
   pt?: number;
   rpt?: number;
   rle?: Array<[number, number]>;
+  ach?: string[];
+  st?: Partial<GameStats>;
 }

@@ -9,6 +9,9 @@ import { ShopPanel } from '@/components/ShopPanel';
 import { OfflineModal } from '@/components/modals/OfflineModal';
 import { PrestigeModal } from '@/components/modals/PrestigeModal';
 import { OptionsModal } from '@/components/modals/OptionsModal';
+import { AchievementsModal } from '@/components/modals/AchievementsModal';
+import { StatsModal } from '@/components/modals/StatsModal';
+import { AchievementToast } from '@/components/AchievementToast';
 
 export default function Home() {
   const {
@@ -21,6 +24,8 @@ export default function Home() {
     offlineModal,
     branches,
     maxY,
+    achievementToastQueue,
+    dismissAchievementToast,
     buyModule,
     buyRootUpgrade,
     buyEcho,
@@ -61,6 +66,8 @@ export default function Home() {
 
   const [prestigeModalOpen, setPrestigeModalOpen] = useState(false);
   const [optionsModalOpen, setOptionsModalOpen] = useState(false);
+  const [achievementsModalOpen, setAchievementsModalOpen] = useState(false);
+  const [statsModalOpen, setStatsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   React.useEffect(() => {
@@ -88,6 +95,8 @@ export default function Home() {
         onOpenPrestige={() => setPrestigeModalOpen(true)}
         onToggleSkin={toggleSkin}
         onOpenOptions={() => setOptionsModalOpen(true)}
+        onOpenAchievements={() => setAchievementsModalOpen(true)}
+        onOpenStats={() => setStatsModalOpen(true)}
         onToggleAutoRoot={toggleAutoRoot}
         onCycleAutoRootMode={cycleAutoRootMode}
         onToggleAutoEvent={toggleAutoEvent}
@@ -152,6 +161,20 @@ export default function Home() {
         onBuySkin={buySkin}
       />
 
+      {/* Achievements modal */}
+      <AchievementsModal
+        isOpen={achievementsModalOpen}
+        state={state}
+        onClose={() => setAchievementsModalOpen(false)}
+      />
+
+      {/* Stats Dashboard modal */}
+      <StatsModal
+        isOpen={statsModalOpen}
+        state={state}
+        onClose={() => setStatsModalOpen(false)}
+      />
+
       {/* Options & Settings modal */}
       <OptionsModal
         isOpen={optionsModalOpen}
@@ -168,6 +191,12 @@ export default function Home() {
         onSetAutoRootMode={setAutoRootMode}
         onToggleAutoEvent={toggleAutoEvent}
         onToggleAutoReset={toggleAutoReset}
+      />
+
+      {/* Achievement Toast Notifications */}
+      <AchievementToast
+        queue={achievementToastQueue}
+        onDismiss={dismissAchievementToast}
       />
     </div>
   );

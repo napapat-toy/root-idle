@@ -5,7 +5,7 @@ export const SEED = 918273;
 export const PRESTIGE_UNLOCK_ECHOES = 5;
 export const SEED_DIVIDER = 1000000;
 export const OFFLINE_CAP_HOURS = [24, 48, 72];
-export const BUY_QTY_OPTIONS = [1, 5, 10, 50, 100];
+export const BUY_QTY_OPTIONS = [1, 5, 25];
 
 export const ROOT_UPGRADE_MILESTONE_MULT = 2.0;
 export const ROOT_UPGRADE_NORMAL_MULT = 1.3;
@@ -101,6 +101,16 @@ export function createFreshState(): GameState {
       luckyDurationLevel: 0,
       luckyChanceLevel: 0,
       passiveRateLevel: 0
+    },
+    achievements: [],
+    stats: {
+      prestigeCount: 0,
+      totalEventsClaimed: 0,
+      luckyJackpotCount: 0,
+      maxOfflineTimeSeconds: 0,
+      superJackpotClaimed: false,
+      totalSeedsEarnedLifetime: 0,
+      totalNutrientsEarnedLifetime: 0,
     }
   };
   MODULE_DEFS.forEach(m => { s.owned[m.id] = 0; });
@@ -169,12 +179,23 @@ export function prestigeRateMultiplier(state: GameState): number {
   return 1 + (state.prestige.passiveRateLevel || 0) * 0.01;
 }
 
+export function achievementRateMultiplier(state: GameState): number {
+  return 1 + (state.achievements?.length || 0) * 0.01;
+}
+
 export function effectiveRate(state: GameState, def: ModuleDef): number {
-  return def.rate * rootUpgradeMultiplier(state, def.id) * globalEchoMultiplier(state) * prestigeRateMultiplier(state);
+  return (
+    def.rate *
+    rootUpgradeMultiplier(state, def.id) *
+    globalEchoMultiplier(state) *
+    prestigeRateMultiplier(state) *
+    achievementRateMultiplier(state)
+  );
 }
 
 export function baseTotalRate(state: GameState): number {
-  let r = BASE_RATE * globalEchoMultiplier(state) * prestigeRateMultiplier(state);
+  const achMult = achievementRateMultiplier(state);
+  let r = BASE_RATE * globalEchoMultiplier(state) * prestigeRateMultiplier(state) * achMult;
   MODULE_DEFS.forEach(m => {
     r += (state.owned[m.id] || 0) * effectiveRate(state, m);
   });

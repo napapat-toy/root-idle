@@ -17,6 +17,15 @@ export function encodeSave(state: GameState): string {
     p: state.prestige,
     pt: state.totalPlayTimeSeconds,
     rpt: state.runPlayTimeSeconds,
+    ach: state.achievements || [],
+    st: state.stats || {
+      prestigeCount: 0,
+      totalEventsClaimed: 0,
+      luckyJackpotCount: 0,
+      maxOfflineTimeSeconds: 0,
+      superJackpotClaimed: false,
+      totalSeedsEarnedLifetime: 0,
+    },
   };
   try {
     return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
@@ -25,15 +34,52 @@ export function encodeSave(state: GameState): string {
   }
 }
 
-export function decodeSave(code: string): SavePayload {
-  let jsonString = '';
-  try {
-    jsonString = decodeURIComponent(escape(atob(code.trim())));
-  } catch {
-    jsonString = atob(code.trim());
+export function decodeSave(rawCode: string): SavePayload {
+  let code = rawCode.trim();
+  if ((code.startsWith('"') && code.endsWith('"')) || (code.startsWith("'") && code.endsWith("'"))) {
+    code = code.slice(1, -1).trim();
   }
+
+  let jsonString = '';
+
+  // 1. Direct JSON string support
+  if (code.startsWith('{') && code.endsWith('}')) {
+    jsonString = code;
+  } else {
+    // 2. Base64 decoded string
+    try {
+      jsonString = decodeURIComponent(escape(atob(code)));
+    } catch {
+      try {
+        jsonString = atob(code);
+      } catch {
+        throw new Error('invalid save encoding');
+      }
+    }
+  }
+
   const payload = JSON.parse(jsonString);
   if (!payload || typeof payload !== 'object') throw new Error('invalid save code');
+
+  // Support direct GameState raw export format
+  if ('nutrients' in payload && !('n' in payload)) {
+    return {
+      v: 5,
+      n: payload.nutrients,
+      o: payload.owned || {},
+      t: payload.totalOwned || 0,
+      ru: payload.rootUpgrades || {},
+      e: payload.echoes || {},
+      q: payload.buyQty || 1,
+      re: payload.runEarned || payload.nutrients || 0,
+      es: payload.eternalSeeds || 0,
+      p: payload.prestige || {},
+      pt: payload.totalPlayTimeSeconds || 0,
+      rpt: payload.runPlayTimeSeconds || 0,
+      ach: payload.achievements || [],
+      st: payload.stats || {},
+    };
+  }
 
   // backward compatibility with legacy v1 format
   if (!payload.o && Array.isArray(payload.rle)) {
@@ -44,7 +90,7 @@ export function decodeSave(code: string): SavePayload {
     });
     payload.o = owned;
   }
-  if (!payload.o) throw new Error('invalid save code');
+  if (!payload.o && payload.n === undefined) throw new Error('invalid save code');
   return payload;
 }
 
@@ -112,9 +158,23 @@ export function payloadToState(payload: SavePayload): GameState {
       },
       payload.p || {}
     ),
+    achievements: Array.isArray(payload.ach) ? payload.ach : [],
+    stats: Object.assign(
+      {
+        prestigeCount: 0,
+        totalEventsClaimed: 0,
+        luckyJackpotCount: 0,
+        maxOfflineTimeSeconds: 0,
+        superJackpotClaimed: false,
+        totalSeedsEarnedLifetime: 0,
+        totalNutrientsEarnedLifetime: payload.st?.totalNutrientsEarnedLifetime ?? (payload.re || 0),
+      },
+      payload.st || {}
+    ),
   };
 
-  if (state.prestige.activeSkin === 'none' && state.prestige.auraRoots && (state.prestige as any).auraRootsEnabled) {
+  const prestigeRecord = state.prestige as unknown as Record<string, unknown>;
+  if (state.prestige.activeSkin === 'none' && state.prestige.auraRoots && Boolean(prestigeRecord.auraRootsEnabled)) {
     state.prestige.activeSkin = 'rainbow';
   }
 
@@ -138,6 +198,8 @@ export function saveToLocalStorage(state: GameState): void {
       totalPlayTimeSeconds: state.totalPlayTimeSeconds,
       runPlayTimeSeconds: state.runPlayTimeSeconds,
       buyQty: state.buyQty,
+      achievements: state.achievements || [],
+      stats: state.stats,
       lastTs: Date.now(),
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -165,6 +227,8 @@ export function loadFromLocalStorage(): { state: GameState; lastTs?: number } | 
       p: data.prestige,
       pt: data.totalPlayTimeSeconds,
       rpt: data.runPlayTimeSeconds,
+      ach: data.achievements,
+      st: data.stats,
     });
     state.lockGapBackfilled = data.lockGapBackfilled || false;
     return { state, lastTs: data.lastTs };
