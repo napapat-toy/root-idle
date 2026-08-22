@@ -8,6 +8,7 @@ import {
   FloatingTextItem,
   GameEventItem,
   GameState,
+  Language,
   SaveSlotMeta,
   SkinId,
 } from '@/types/game';
@@ -291,8 +292,10 @@ export function useGameEngine() {
           totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + amount,
         },
       }));
+      const isEn = cur.lang === 'en';
       showFloatingText(ev.left + 26, ev.top + 20, '+' + fmt(amount), '#e0a94a');
     } else if (ev.type === 'lucky') {
+      const isEn = cur.lang === 'en';
       const mult = (1 + (777 - 1) * bonusMult) * luckyMagnitudeExtra(cur);
       const seconds = luckyDurationSeconds(cur);
       setActiveLuckyBuff({ multiplier: mult, expiresAt: Date.now() + seconds * 1000 });
@@ -304,8 +307,14 @@ export function useGameEngine() {
           luckyJackpotCount: (prev.stats?.luckyJackpotCount || 0) + 1,
         },
       }));
-      showFloatingText(ev.left + 26, ev.top + 20, `🍀 โชคดี! ×${fmtInt(mult)}`, '#ffd76a');
+      showFloatingText(
+        ev.left + 26,
+        ev.top + 20,
+        isEn ? `🍀 Lucky! ×${fmtInt(mult)}` : `🍀 โชคดี! ×${fmtInt(mult)}`,
+        '#ffd76a'
+      );
     } else {
+      const isEn = cur.lang === 'en';
       const baseMult = 2 + Math.random() * 2;
       const mult = 1 + (baseMult - 1) * bonusMult;
       const seconds = (20 + Math.random() * 40) * durationMult;
@@ -317,7 +326,12 @@ export function useGameEngine() {
           totalEventsClaimed: (prev.stats?.totalEventsClaimed || 0) + 1,
         },
       }));
-      showFloatingText(ev.left + 26, ev.top + 20, `×${mult.toFixed(1)} เรท!`, '#b7e08a');
+      showFloatingText(
+        ev.left + 26,
+        ev.top + 20,
+        isEn ? `×${mult.toFixed(1)} Surge!` : `×${mult.toFixed(1)} เรท!`,
+        '#b7e08a'
+      );
     }
   }, [showFloatingText, totalRate]);
 
@@ -579,6 +593,23 @@ export function useGameEngine() {
     deleteSlot(slotNum);
   }, []);
 
+  const setLanguage = useCallback((lang: Language) => {
+    setState(prev => {
+      const next = { ...prev, lang };
+      saveToLocalStorage(next);
+      return next;
+    });
+  }, []);
+
+  const toggleLanguage = useCallback(() => {
+    setState(prev => {
+      const nextLang: Language = prev.lang === 'en' ? 'th' : 'en';
+      const next = { ...prev, lang: nextLang };
+      saveToLocalStorage(next);
+      return next;
+    });
+  }, []);
+
   // INITIAL LOAD & OFFLINE PROGRESS
   useEffect(() => {
     const loaded = loadFromLocalStorage();
@@ -670,9 +701,14 @@ export function useGameEngine() {
       if (!cur.prestige.autoReset || !cur.prestige.autoResetEnabled) return;
       if (!prestigeUnlocked(cur)) return;
       if (calcPrestigeSeeds(cur) < AUTO_RESET_MIN_SEEDS) return;
-
+      const isEn = cur.lang === 'en';
       const gained = doPrestige();
-      showFloatingText(250, 60, `🌌 หว่านใหม่อัตโนมัติ +${fmtInt(gained)}`, '#b78cf0');
+      showFloatingText(
+        250,
+        60,
+        isEn ? `🌌 Auto Re-sow +${fmtInt(gained)}` : `🌌 หว่านใหม่อัตโนมัติ +${fmtInt(gained)}`,
+        '#b78cf0'
+      );
     }, 20000);
 
     return () => clearInterval(interval);
@@ -718,6 +754,15 @@ export function useGameEngine() {
     }, delay);
   }, [claimEvent]);
 
+  useEffect(() => {
+    scheduleNextEvent();
+    return () => {
+      if (eventTimerRef.current) clearTimeout(eventTimerRef.current);
+      if (activeEventExpireRef.current) clearTimeout(activeEventExpireRef.current);
+      if (autoEventClaimRef.current) clearTimeout(autoEventClaimRef.current);
+    };
+  }, [scheduleNextEvent]);
+
   // Achievement Toast Queue
   const [achievementToastQueue, setAchievementToastQueue] = useState<AchievementDef[]>([]);
 
@@ -725,36 +770,34 @@ export function useGameEngine() {
     setAchievementToastQueue(prev => prev.filter(a => a.id !== id));
   }, []);
 
-  // Periodic Achievement Check (every 1s)
+  // Achievement Check Loop (every 1s)
   useEffect(() => {
     const interval = setInterval(() => {
       const cur = stateRef.current;
       const rate = totalRate();
-      const currentUnlocked = new Set(cur.achievements || []);
-      const newUnlocked: AchievementDef[] = [];
+      const currentAch = new Set(cur.achievements || []);
+      const newUnlocked: string[] = [];
 
-      ACHIEVEMENTS.forEach(ach => {
-        if (!currentUnlocked.has(ach.id)) {
-          if (ach.check(cur, rate)) {
-            newUnlocked.push(ach);
-            currentUnlocked.add(ach.id);
-          }
+      ACHIEVEMENTS.forEach((ach: AchievementDef) => {
+        if (!currentAch.has(ach.id) && ach.check(cur, rate)) {
+          newUnlocked.push(ach.id);
         }
       });
 
       if (newUnlocked.length > 0) {
-        setState(prev => ({
-          ...prev,
-          achievements: Array.from(currentUnlocked),
-        }));
+        setState(prev => {
+          const updatedAch = [...(prev.achievements || []), ...newUnlocked];
+          const nextState = { ...prev, achievements: updatedAch };
+          saveToLocalStorage(nextState);
+          return nextState;
+        });
 
-        setAchievementToastQueue(prev => [...prev, ...newUnlocked]);
-
-        // Auto dismiss toast after 4.5s
-        newUnlocked.forEach(ach => {
-          setTimeout(() => {
-            dismissAchievementToast(ach.id);
-          }, 4500);
+        // Trigger toast notifications for newly unlocked achievements
+        newUnlocked.forEach(id => {
+          const def = ACHIEVEMENTS.find(a => a.id === id);
+          if (def) {
+            setAchievementToastQueue(prev => [...prev, def]);
+          }
         });
       }
     }, 1000);
@@ -764,6 +807,7 @@ export function useGameEngine() {
 
   return {
     state,
+    lang: state.lang || 'th',
     totalRate: totalRate(),
     activeBuff,
     activeLuckyBuff,
@@ -774,6 +818,9 @@ export function useGameEngine() {
     maxY,
     achievementToastQueue,
     dismissAchievementToast,
+    // Language methods
+    setLanguage,
+    toggleLanguage,
     // Methods
     buyModule,
     buyRootUpgrade,

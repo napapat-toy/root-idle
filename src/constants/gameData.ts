@@ -1,4 +1,4 @@
-import { GameState, ModuleDef, SkinId } from '@/types/game';
+import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
@@ -37,18 +37,26 @@ export const AUTO_EVENT_COST = 1000;
 export const SAVE_SLOT_COUNT = 5;
 
 export const MODULE_DEFS: ModuleDef[] = [
-  { id: 'fine',   name: 'รากฝอย',            desc: 'รากเล็กจิ๋วที่แทรกดินหาความชื้น', baseCost: 10,           costMult: 1.15, rate: 0.6,       color: '#eadfc7' },
-  { id: 'nodule', name: 'ปมราก',             desc: 'กักเก็บสารอาหารไว้ใช้ต่อเนื่อง',   baseCost: 80,           costMult: 1.17, rate: 4,         color: '#e0a94a' },
-  { id: 'myco',   name: 'เชื้อราไมคอร์ไรซา', desc: 'ทำงานร่วมกับรากเพื่อดูดซึมสารอาหารเพิ่ม', baseCost: 600,      costMult: 1.19, rate: 22,        color: '#8fd17a' },
-  { id: 'core',   name: 'แก่นราก',           desc: 'แกนรากลึกที่สูบสารอาหารมหาศาลจากใต้ดิน', baseCost: 5000,     costMult: 1.22, rate: 120,       color: '#d1673f' },
-  { id: 'vine',   name: 'เถารากยักษ์',       desc: 'เถารากที่ชอนไชไปทั่วชั้นดินลึก',   baseCost: 45000,        costMult: 1.24, rate: 720,       color: '#5fa8d1' },
-  { id: 'bionode',name: 'ปมพลังงานชีวภาพ',   desc: 'แปลงสารอินทรีย์เป็นพลังงานเข้มข้น', baseCost: 400000,       costMult: 1.26, rate: 4800,      color: '#c77dd1' },
-  { id: 'eternal',name: 'รากอมตะ',           desc: 'รากโบราณที่ไม่เคยหยุดเติบโต',      baseCost: 3600000,      costMult: 1.28, rate: 32000,     color: '#f2d24a' },
-  { id: 'nexus',  name: 'แก่นโลกใต้ดิน',     desc: 'เชื่อมต่อกับแหล่งพลังงานใจกลางโลก', baseCost: 32000000,     costMult: 1.30, rate: 210000,    color: '#ff6b6b' },
-  { id: 'crystal',name: 'ใยรากคริสตัล',      desc: 'โครงสร้างรากที่ตกผลึกดูดพลังงานสูง', baseCost: 290000000,    costMult: 1.32, rate: 1400000,   color: '#8ad6e0' },
-  { id: 'heart',  name: 'หัวใจราก',          desc: 'ศูนย์กลางที่สูบฉีดพลังงานทั่วเครือข่ายราก', baseCost: 2600000000, costMult: 1.34, rate: 9200000,   color: '#ff9ecf' },
-  { id: 'seed',   name: 'เมล็ดพันธุ์อนันต์', desc: 'เมล็ดที่งอกซ้ำได้ไม่รู้จบ',        baseCost: 23000000000,  costMult: 1.36, rate: 60000000,  color: '#c8e06a' },
-  { id: 'throne', name: 'บัลลังก์ราก',       desc: 'จุดสูงสุดของเครือข่ายรากทั้งหมด',   baseCost: 210000000000, costMult: 1.38, rate: 400000000, color: '#e0c168' },
+  { id: 'fine',        name: 'รากฝอย',                  desc: 'รากเล็กจิ๋วที่แทรกดินหาความชื้น',             baseCost: 10,              costMult: 1.15, rate: 0.6,          color: '#eadfc7' },
+  { id: 'nodule',      name: 'ปมราก',                   desc: 'กักเก็บสารอาหารไว้ใช้ต่อเนื่อง',               baseCost: 80,              costMult: 1.17, rate: 4,            color: '#e0a94a' },
+  { id: 'myco',        name: 'เชื้อราไมคอร์ไรซา',       desc: 'ทำงานร่วมกับรากเพื่อดูดซึมสารอาหารเพิ่ม',     baseCost: 600,             costMult: 1.19, rate: 22,           color: '#8fd17a' },
+  { id: 'core',        name: 'แก่นราก',                 desc: 'แกนรากลึกที่สูบสารอาหารมหาศาลจากใต้ดิน',       baseCost: 5000,            costMult: 1.22, rate: 120,          color: '#d1673f' },
+  { id: 'vine',        name: 'เถารากยักษ์',             desc: 'เถารากที่ชอนไชไปทั่วชั้นดินลึก',             baseCost: 45000,           costMult: 1.24, rate: 720,          color: '#5fa8d1' },
+  { id: 'bionode',     name: 'ปมพลังงานชีวภาพ',         desc: 'แปลงสารอินทรีย์เป็นพลังงานเข้มข้น',           baseCost: 400000,          costMult: 1.26, rate: 4800,         color: '#c77dd1' },
+  { id: 'eternal',     name: 'รากอมตะ',                 desc: 'รากโบราณที่ไม่เคยหยุดเติบโต',                baseCost: 3600000,         costMult: 1.28, rate: 32000,        color: '#f2d24a' },
+  { id: 'nexus',       name: 'แก่นโลกใต้ดิน',           desc: 'เชื่อมต่อกับแหล่งพลังงานใจกลางโลก',           baseCost: 32000000,        costMult: 1.30, rate: 210000,       color: '#ff6b6b' },
+  { id: 'crystal',     name: 'ใยรากคริสตัล',            desc: 'โครงสร้างรากที่ตกผลึกดูดพลังงานสูง',           baseCost: 290000000,       costMult: 1.32, rate: 1400000,      color: '#8ad6e0' },
+  { id: 'heart',       name: 'หัวใจราก',                desc: 'ศูนย์กลางที่สูบฉีดพลังงานทั่วเครือข่ายราก',   baseCost: 2600000000,      costMult: 1.34, rate: 9200000,      color: '#ff9ecf' },
+  { id: 'seed',        name: 'เมล็ดพันธุ์อนันต์',       desc: 'เมล็ดที่งอกซ้ำได้ไม่รู้จบ',                  baseCost: 23000000000,     costMult: 1.36, rate: 60000000,     color: '#c8e06a' },
+  { id: 'throne',      name: 'บัลลังก์ราก',             desc: 'จุดสูงสุดของเครือข่ายรากพิภพ',                baseCost: 210000000000,    costMult: 1.38, rate: 400000000,    color: '#e0c168' },
+  { id: 'magma',       name: 'รากแก่นแมกมา',            desc: 'ชอนไชชั้นหินหลอมเหลวดูดซับความร้อนใต้พิภพ',   baseCost: 2000000000000,   costMult: 1.40, rate: 2800000000,   color: '#ff5722' },
+  { id: 'aether',      name: 'รากไอธาตุบรรพกาล',        desc: 'สัมผัสกระแสพลังงานบรรพกาลใต้แผ่นเปลือกโลก',   baseCost: 22000000000000,  costMult: 1.42, rate: 21000000000,  color: '#a855f7' },
+  { id: 'void',        name: 'รากห้วงสุญญะ',            desc: 'หยั่งลึกลงสู่รอยแยกมิติความว่างเปล่า',        baseCost: 260000000000000, costMult: 1.44, rate: 160000000000, color: '#6366f1' },
+  { id: 'astral',      name: 'รากธารดวงดาวใต้พิภพ',     desc: 'เชื่อมโยงสนามแม่เหล็กโลกกับละอองดวงดาว',     baseCost: 3200000000000000, costMult: 1.46, rate: 1300000000000, color: '#38bdf8' },
+  { id: 'chronos',     name: 'รากกาลเวลาบรรจบ',          desc: 'รากที่เติบโตข้ามมิติเวลาดูดซับพลังงานทุกยุค', baseCost: 42000000000000000, costMult: 1.48, rate: 11000000000000, color: '#facc15' },
+  { id: 'singularity', name: 'รากเอกภาวะมวลเข้มข้น',    desc: 'จุดศูนย์กลางแรงดึงดูดดูดซับสารอาหารทุกอะตอม', baseCost: 580000000000000000, costMult: 1.50, rate: 95000000000000, color: '#ec4899' },
+  { id: 'genesis',     name: 'รากกำเนิดปฐมกาล',          desc: 'รากต้นกำเนิดแห่งสิ่งมีชีวิตทั้งมวลใต้พิภพ',   baseCost: 8500000000000000000, costMult: 1.52, rate: 880000000000000, color: '#34d399' },
+  { id: 'yggdrasil',   name: 'รากต้นไม้โลก',            desc: 'เสาค้ำจุนใต้พิภพ เชื่อมต่อมิติที่ไม่มีที่สิ้นสุด...', baseCost: 130000000000000000000, costMult: 1.54, rate: 8500000000000000, color: '#fbbf24' },
 ];
 
 export const MODULE_COLOR_MAP: Record<string, string> = Object.fromEntries(
@@ -111,7 +119,8 @@ export function createFreshState(): GameState {
       superJackpotClaimed: false,
       totalSeedsEarnedLifetime: 0,
       totalNutrientsEarnedLifetime: 0,
-    }
+    },
+    lang: 'th',
   };
   MODULE_DEFS.forEach(m => { s.owned[m.id] = 0; });
   return s;
@@ -296,12 +305,16 @@ export function currentOfflineCapSeconds(state: GameState): number {
   return OFFLINE_CAP_HOURS[state.prestige.offlineCapLevel || 0] * 3600;
 }
 
-export function stageName(totalOwned: number): string {
-  if (totalOwned < 5) return 'ระยะเมล็ด';
-  if (totalOwned < 15) return 'รากงอกแรก';
-  if (totalOwned < 35) return 'เครือข่ายราก';
-  if (totalOwned < 70) return 'รากแผ่กว้าง';
-  if (totalOwned < 150) return 'ป่าใต้ดิน';
-  if (totalOwned < 400) return 'เขาวงกตราก';
-  return 'อาณาจักรใต้พิภพ';
+export function stageName(totalOwned: number, lang: Language = 'th'): string {
+  const isEn = lang === 'en';
+  if (totalOwned < 5) return isEn ? 'Seedling Phase' : 'ระยะเมล็ด';
+  if (totalOwned < 15) return isEn ? 'First Sprouts' : 'รากงอกแรก';
+  if (totalOwned < 35) return isEn ? 'Root Network' : 'เครือข่ายราก';
+  if (totalOwned < 70) return isEn ? 'Expansive Roots' : 'รากแผ่กว้าง';
+  if (totalOwned < 150) return isEn ? 'Underground Forest' : 'ป่าใต้ดิน';
+  if (totalOwned < 400) return isEn ? 'Root Labyrinth' : 'เขาวงกตราก';
+  if (totalOwned < 1000) return isEn ? 'Subterranean Realm' : 'อาณาจักรใต้พิภพ';
+  if (totalOwned < 2500) return isEn ? 'Primordial Energy Plane' : 'มิติพลังงานบรรพกาล';
+  if (totalOwned < 5000) return isEn ? 'Subterranean Singularity' : 'แก่นเอกภาวะใต้โลก';
+  return isEn ? 'Eternal Yggdrasil Canopy' : 'รากพฤกษาอนันต์กาล';
 }

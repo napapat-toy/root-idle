@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AutoRootMode, GameState, SaveSlotMeta, SkinId } from '@/types/game';
+import { AutoRootMode, GameState, Language, SaveSlotMeta, SkinId } from '@/types/game';
 import { SAVE_SLOT_COUNT, SKIN_DEFS } from '@/constants/gameData';
 import { decodeSave, getSlotMeta } from '@/lib/storage';
 import { fmtInt } from '@/lib/formatters';
 import { getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
 import { ConfirmModal } from './ConfirmModal';
+import { SKIN_NAMES, t } from '@/lib/i18n';
 
 interface OptionsModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ interface OptionsModalProps {
   onLoadSlot: (slot: number) => void;
   onDeleteSlot: (slot: number) => void;
   onHardReset: () => void;
+  onSetLanguage?: (lang: Language) => void;
   onToggleAutoRoot?: () => void;
   onSetAutoRootMode?: (mode: AutoRootMode) => void;
   onToggleAutoEvent?: () => void;
@@ -36,6 +38,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   onLoadSlot,
   onDeleteSlot,
   onHardReset,
+  onSetLanguage,
   onToggleAutoRoot,
   onSetAutoRootMode,
   onToggleAutoEvent,
@@ -47,6 +50,10 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const [importCode, setImportCode] = useState('');
   const [importError, setImportError] = useState('');
   const [slotsMeta, setSlotsMeta] = useState<Record<number, SaveSlotMeta | null>>({});
+
+  const lang: Language = state.lang || 'th';
+  const isEn = lang === 'en';
+  const tr = t(lang);
 
   const [confirmState, setConfirmState] = useState<{
     isOpen: boolean;
@@ -105,7 +112,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const handleImportSubmit = () => {
     const raw = importCode.trim();
     if (!raw) {
-      setImportError('กรุณาวางโค้ดเซฟ');
+      setImportError(isEn ? 'Please paste your save code' : 'กรุณาวางโค้ดเซฟ');
       return;
     }
 
@@ -113,14 +120,16 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
       decodeSave(raw);
       setImportError('');
     } catch {
-      setImportError('โค้ดไม่ถูกต้องหรือเสียหาย ลองตรวจสอบอีกครั้ง');
+      setImportError(isEn ? 'Invalid or corrupted save code. Please recheck.' : 'โค้ดไม่ถูกต้องหรือเสียหาย ลองตรวจสอบอีกครั้ง');
       return;
     }
 
     setConfirmState({
       isOpen: true,
-      title: 'ยืนยันการนำเข้าเซฟ',
-      message: 'การนำเข้าจะเขียนทับ progress ปัจจุบันทั้งหมด ยืนยันที่จะนำเข้าหรือไม่?',
+      title: isEn ? 'Confirm Import Save' : 'ยืนยันการนำเข้าเซฟ',
+      message: isEn
+        ? 'Importing will overwrite your current progress entirely. Continue?'
+        : 'การนำเข้าจะเขียนทับ progress ปัจจุบันทั้งหมด ยืนยันที่จะนำเข้าหรือไม่?',
       action: () => {
         try {
           onImport(raw);
@@ -128,7 +137,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
           setConfirmState(prev => ({ ...prev, isOpen: false }));
           onClose();
         } catch {
-          setImportError('เกิดข้อผิดพลาดในการโหลดเซฟ');
+          setImportError(isEn ? 'Failed to parse save code' : 'เกิดข้อผิดพลาดในการโหลดเซฟ');
         }
       },
     });
@@ -145,8 +154,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
     if (existing) {
       setConfirmState({
         isOpen: true,
-        title: 'ยืนยันการทำรายการ',
-        message: `ช่อง ${slot} มีเซฟอยู่แล้ว บันทึกทับเลยไหม?`,
+        title: isEn ? 'Confirm Overwrite Slot' : 'ยืนยันการทำรายการ',
+        message: isEn ? `Slot ${slot} already contains saved data. Overwrite it?` : `ช่อง ${slot} มีเซฟอยู่แล้ว บันทึกทับเลยไหม?`,
         action: doSave,
       });
     } else {
@@ -157,8 +166,10 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const handleLoadSlot = (slot: number) => {
     setConfirmState({
       isOpen: true,
-      title: 'ยืนยันการทำรายการ',
-      message: `โหลดช่อง ${slot} จะเขียนทับ progress ปัจจุบันทั้งหมด ยืนยันไหม?`,
+      title: isEn ? 'Confirm Load Slot' : 'ยืนยันการทำรายการ',
+      message: isEn
+        ? `Loading Slot ${slot} will overwrite current progress. Proceed?`
+        : `โหลดช่อง ${slot} จะเขียนทับ progress ปัจจุบันทั้งหมด ยืนยันไหม?`,
       action: () => {
         onLoadSlot(slot);
         setConfirmState(prev => ({ ...prev, isOpen: false }));
@@ -170,8 +181,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const handleDeleteSlot = (slot: number) => {
     setConfirmState({
       isOpen: true,
-      title: 'ยืนยันการทำรายการ',
-      message: `ลบเซฟช่อง ${slot} ใช่ไหม? กู้คืนไม่ได้`,
+      title: isEn ? 'Confirm Delete Slot' : 'ยืนยันการทำรายการ',
+      message: isEn ? `Delete Save Slot ${slot}? This cannot be undone.` : `ลบเซฟช่อง ${slot} ใช่ไหม? กู้คืนไม่ได้`,
       action: () => {
         onDeleteSlot(slot);
         refreshSlots();
@@ -183,14 +194,15 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const handleHardResetClick = () => {
     setConfirmState({
       isOpen: true,
-      title: 'ยืนยันการทำรายการ',
-      message:
-        '⚠️ การกระทำนี้จะลบทุกอย่างอย่างถาวร รวมถึงเมล็ดนิรันดร์และของที่ซื้อในร้าน Prestige ทั้งหมด ไม่สามารถย้อนกลับได้ ยืนยันจะเริ่มใหม่จาก 0 ใช่ไหม?',
+      title: isEn ? 'Danger: Hard Reset' : 'ยืนยันการทำรายการ',
+      message: isEn
+        ? '⚠️ This will permanently delete ALL progress including Eternal Seeds and Prestige upgrades. Proceed?'
+        : '⚠️ การกระทำนี้จะลบทุกอย่างอย่างถาวร รวมถึงเมล็ดนิรันดร์และของที่ซื้อในร้าน Prestige ทั้งหมด ไม่สามารถย้อนกลับได้ ยืนยันจะเริ่มใหม่จาก 0 ใช่ไหม?',
       action: () => {
         setConfirmState({
           isOpen: true,
-          title: 'ยืนยันการทำรายการ',
-          message: 'ยืนยันอีกครั้ง — กดแล้วกู้คืนไม่ได้เลย แน่ใจจริงๆ นะ?',
+          title: isEn ? 'Final Confirmation' : 'ยืนยันการทำรายการ',
+          message: isEn ? 'Final warning: Absolutely irreversible. Are you 100% sure?' : 'ยืนยันอีกครั้ง — กดแล้วกู้คืนไม่ได้เลย แน่ใจจริงๆ นะ?',
           action: () => {
             onHardReset();
             setConfirmState(prev => ({ ...prev, isOpen: false }));
@@ -209,7 +221,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
     <>
       <div className="offline-backdrop" onClick={onClose}>
         <div className="modal-wrapper options-modal-wrapper" onClick={e => e.stopPropagation()}>
-          <button className="modal-close-x" onClick={onClose} aria-label="ปิด">
+          <button className="modal-close-x" onClick={onClose} aria-label={tr.close}>
             &times;
           </button>
 
@@ -217,13 +229,52 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
             {subModal === 'none' && (
               <>
                 <div className="icon">⚙️</div>
-                <h2>ตัวเลือก</h2>
+                <h2>{tr.optionsTitle}</h2>
+
+                {/* Language Selection */}
+                {onSetLanguage && (
+                  <>
+                    <div className="panel-title" style={{ margin: '12px 0 8px', textAlign: 'left' }}>
+                      {tr.langSelectorTitle}
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+                      <button
+                        onClick={() => onSetLanguage('th')}
+                        style={{
+                          flex: 1,
+                          padding: '8px',
+                          borderRadius: '8px',
+                          background: lang === 'th' ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
+                          color: lang === 'th' ? '#12190d' : 'var(--root-cream)',
+                          borderColor: lang === 'th' ? 'var(--accent-glow)' : 'var(--line-soil)',
+                          fontWeight: lang === 'th' ? 700 : 500,
+                        }}
+                      >
+                        🇹🇭 ภาษาไทย (TH)
+                      </button>
+                      <button
+                        onClick={() => onSetLanguage('en')}
+                        style={{
+                          flex: 1,
+                          padding: '8px',
+                          borderRadius: '8px',
+                          background: lang === 'en' ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
+                          color: lang === 'en' ? '#12190d' : 'var(--root-cream)',
+                          borderColor: lang === 'en' ? 'var(--accent-glow)' : 'var(--line-soil)',
+                          fontWeight: lang === 'en' ? 700 : 500,
+                        }}
+                      >
+                        🇬🇧 English (EN)
+                      </button>
+                    </div>
+                  </>
+                )}
 
                 {/* Automation Toggles */}
                 {hasAnyAuto && (
                   <>
                     <div className="panel-title" style={{ margin: '12px 0 8px', textAlign: 'left' }}>
-                      สวิตช์ระบบออโต้ (เปิด/ปิด)
+                      {tr.automationTogglesTitle}
                     </div>
                     <div style={{ textAlign: 'left' }}>
                       {state.prestige.autoRoot && (
@@ -233,28 +284,28 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                             style={{ cursor: 'pointer' }}
                             onClick={onToggleAutoRoot}
                           >
-                            <span>🤖 ออโต้ซื้อราก</span>
-                            <span>{state.prestige.autoRootEnabled ? '🟢 เปิดอยู่' : '⚪ ปิดอยู่'}</span>
+                            <span>🤖 {isEn ? 'Auto Root Buyer' : 'ออโต้ซื้อราก'}</span>
+                            <span>{state.prestige.autoRootEnabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}</span>
                           </div>
                           <div className="p-desc" style={{ marginBottom: '8px' }}>
                             {state.prestige.autoRootEnabled
-                              ? 'กำลังทำงานอัตโนมัติ (คลิกข้อความด้านบนเพื่อเปิด/ปิด)'
-                              : 'ปิดอยู่ (คลิกข้อความด้านบนเพื่อเปิดทำงาน)'}
+                              ? (isEn ? 'Running autonomously (Click header to toggle)' : 'กำลังทำงานอัตโนมัติ (คลิกข้อความด้านบนเพื่อเปิด/ปิด)')
+                              : (isEn ? 'Disabled (Click header to enable)' : 'ปิดอยู่ (คลิกข้อความด้านบนเพื่อเปิดทำงาน)')}
                           </div>
 
                           {/* Mode Selector */}
                           {availableAutoModes.length > 1 && onSetAutoRootMode && (
                             <div>
                               <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', marginBottom: '4px' }}>
-                                เลือกระดับการทำงาน:
+                                {isEn ? 'Select Intelligence Tier:' : 'เลือกระดับการทำงาน:'}
                               </div>
                               <div style={{ display: 'flex', gap: '4px' }}>
                                 {availableAutoModes.map(m => {
                                   const isActive = activeAutoMode === m && state.prestige.autoRootEnabled;
                                   const titles: Record<AutoRootMode, string> = {
-                                    basic: 'ถูกที่สุด',
-                                    smart: 'อัจฉริยะ',
-                                    all: 'ทุกอย่าง',
+                                    basic: tr.autoCheapest,
+                                    smart: tr.autoSmart,
+                                    all: tr.autoAll,
                                   };
                                   return (
                                     <button
@@ -289,13 +340,13 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                           className={`prestige-item ${!state.prestige.autoEventEnabled ? 'toggled-off' : ''}`}
                         >
                           <div className="p-top">
-                            <span>🎯 ออโต้อีเว้น</span>
-                            <span>{state.prestige.autoEventEnabled ? '🟢 เปิดอยู่' : '⚪ ปิดอยู่'}</span>
+                            <span>🎯 {isEn ? 'Auto Event Clicker' : 'ออโต้อีเว้น'}</span>
+                            <span>{state.prestige.autoEventEnabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}</span>
                           </div>
                           <div className="p-desc">
                             {state.prestige.autoEventEnabled
-                              ? 'กำลังกดเก็บอีเว้นให้อัตโนมัติ (คลิกเพื่อปิดชั่วคราว)'
-                              : 'ปิดอยู่ (คลิกเพื่อเปิดทำงาน)'}
+                              ? (isEn ? 'Collecting floating events (Click to toggle)' : 'กำลังกดเก็บอีเว้นให้อัตโนมัติ (คลิกเพื่อปิดชั่วคราว)')
+                              : (isEn ? 'Disabled (Click to enable)' : 'ปิดอยู่ (คลิกเพื่อเปิดทำงาน)')}
                           </div>
                         </div>
                       )}
@@ -306,13 +357,13 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                           className={`prestige-item ${!state.prestige.autoResetEnabled ? 'toggled-off' : ''}`}
                         >
                           <div className="p-top">
-                            <span>🔁 ออโต้หว่านใหม่</span>
-                            <span>{state.prestige.autoResetEnabled ? '🟢 เปิดอยู่' : '⚪ ปิดอยู่'}</span>
+                            <span>🔁 {isEn ? 'Auto Re-sow (Prestige)' : 'ออโต้หว่านใหม่'}</span>
+                            <span>{state.prestige.autoResetEnabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}</span>
                           </div>
                           <div className="p-desc">
                             {state.prestige.autoResetEnabled
-                              ? 'กำลังหว่านใหม่อัตโนมัติเมื่อคุ้ม (คลิกเพื่อปิดชั่วคราว)'
-                              : 'ปิดอยู่ (คลิกเพื่อเปิดทำงาน)'}
+                              ? (isEn ? 'Re-sowing automatically when profitable' : 'กำลังหว่านใหม่อัตโนมัติเมื่อคุ้ม (คลิกเพื่อปิดชั่วคราว)')
+                              : (isEn ? 'Disabled (Click to enable)' : 'ปิดอยู่ (คลิกเพื่อเปิดทำงาน)')}
                           </div>
                         </div>
                       )}
@@ -322,12 +373,13 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
 
                 {/* Skins */}
                 <div className="panel-title" style={{ margin: '16px 0 8px', textAlign: 'left' }}>
-                  สกิน
+                  {tr.skinPickerTitle}
                 </div>
                 <div style={{ textAlign: 'left' }}>
                   {SKIN_DEFS.map(sd => {
                     const owned = isSkinOwned(sd.id);
                     const active = state.prestige.activeSkin === sd.id;
+                    const localizedSkinName = SKIN_NAMES[sd.id]?.[lang] || sd.name;
 
                     return (
                       <div
@@ -338,8 +390,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                         }`}
                       >
                         <div className="p-top">
-                          <span>{sd.name}</span>
-                          <span>{active ? '✓ ใช้อยู่' : owned ? '' : '🔒 ยังไม่ปลดล็อก'}</span>
+                          <span>{localizedSkinName}</span>
+                          <span>{active ? (isEn ? '✓ Equipped' : '✓ ใช้อยู่') : owned ? '' : (isEn ? '🔒 Locked' : '🔒 ยังไม่ปลดล็อก')}</span>
                         </div>
                       </div>
                     );
@@ -348,10 +400,10 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
 
                 {/* Export / Import */}
                 <div className="panel-title" style={{ margin: '16px 0 8px', textAlign: 'left' }}>
-                  Export / Import
+                  {tr.exportImportTitle}
                 </div>
                 <div className="modal-actions" style={{ marginBottom: '14px' }}>
-                  <button onClick={handleExportClick}>📤 Export โค้ดเซฟ</button>
+                  <button onClick={handleExportClick}>📤 {isEn ? 'Export Save Code' : 'Export โค้ดเซฟ'}</button>
                   <button
                     onClick={() => {
                       setImportCode('');
@@ -359,44 +411,47 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                       setSubModal('import');
                     }}
                   >
-                    📥 Import โค้ดเซฟ
+                    📥 {isEn ? 'Import Save Code' : 'Import โค้ดเซฟ'}
                   </button>
                 </div>
 
                 {/* Save Slots */}
                 <div className="panel-title" style={{ margin: '16px 0 8px', textAlign: 'left' }}>
-                  Save Slot (ในเครื่องนี้)
+                  {tr.saveSlotsTitle}
                 </div>
                 <div style={{ textAlign: 'left' }}>
                   {Array.from({ length: SAVE_SLOT_COUNT }, (_, i) => i + 1).map(slot => {
                     const meta = slotsMeta[slot];
                     const summary = meta
-                      ? `บันทึกเมื่อ ${new Date(meta.savedAt).toLocaleString('th-TH', {
-                          dateStyle: 'short',
-                          timeStyle: 'short',
-                        })} · ${meta.totalOwned || 0} ต้น (รวมทุกชนิด) · ${fmtInt(
-                          meta.seeds || 0
-                        )} เมล็ด`
-                      : 'ว่าง';
+                      ? isEn
+                        ? `Saved on ${new Date(meta.savedAt).toLocaleString('en-US', {
+                            dateStyle: 'short',
+                            timeStyle: 'short',
+                          })} · ${meta.totalOwned || 0} roots · ${fmtInt(meta.seeds || 0)} seeds`
+                        : `บันทึกเมื่อ ${new Date(meta.savedAt).toLocaleString('th-TH', {
+                            dateStyle: 'short',
+                            timeStyle: 'short',
+                          })} · ${meta.totalOwned || 0} ต้น (รวมทุกชนิด) · ${fmtInt(meta.seeds || 0)} เมล็ด`
+                      : tr.emptySlot;
 
                     return (
                       <div key={slot} className="prestige-item slot-item">
                         <div className="p-top">
-                          <span>ช่อง {slot}</span>
+                          <span>{isEn ? `Slot ${slot}` : `ช่อง ${slot}`}</span>
                         </div>
                         <div className="p-desc">{summary}</div>
                         <div className="modal-actions">
-                          <button onClick={() => handleSaveSlot(slot)}>บันทึก</button>
+                          <button onClick={() => handleSaveSlot(slot)}>{tr.save}</button>
                           {meta && (
                             <>
                               <button className="secondary" onClick={() => handleLoadSlot(slot)}>
-                                โหลด
+                                {tr.load}
                               </button>
                               <button
                                 className="secondary danger-inline"
                                 onClick={() => handleDeleteSlot(slot)}
                               >
-                                ลบ
+                                {tr.delete}
                               </button>
                             </>
                           )}
@@ -411,10 +466,10 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                   className="panel-title"
                   style={{ margin: '18px 0 8px', textAlign: 'left', color: '#e08a8a' }}
                 >
-                  โซนอันตราย
+                  {tr.dangerZoneTitle}
                 </div>
                 <button className="danger-btn" onClick={handleHardResetClick}>
-                  🗑️ ล้างข้อมูล / เริ่มใหม่จาก 0 ทั้งหมด
+                  {tr.hardResetBtn}
                 </button>
               </>
             )}
@@ -423,10 +478,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
             {subModal === 'export' && (
               <>
                 <div className="icon">💾</div>
-                <h2>โค้ดเซฟของคุณ</h2>
-                <div className="away-time">
-                  คัดลอกเก็บไว้ แล้วนำไปวางตอน Import บนเครื่องอื่น — ข้อมูลครบทุกอย่าง ไม่มีอะไรหาย
-                </div>
+                <h2>{tr.exportTitle}</h2>
+                <div className="away-time">{tr.exportDesc}</div>
                 <textarea
                   readOnly
                   value={exportCode}
@@ -434,10 +487,10 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 />
                 <div className="modal-actions">
                   <button onClick={handleCopy}>
-                    {copySuccess ? 'คัดลอกแล้ว ✓' : 'คัดลอก'}
+                    {copySuccess ? tr.copied : tr.copy}
                   </button>
                   <button className="secondary" onClick={() => setSubModal('none')}>
-                    ปิด
+                    {tr.close}
                   </button>
                 </div>
               </>
@@ -447,20 +500,18 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
             {subModal === 'import' && (
               <>
                 <div className="icon">📥</div>
-                <h2>นำเข้าโค้ดเซฟ</h2>
-                <div className="away-time">
-                  วางโค้ดที่คัดลอกมาจากเครื่องเดิม การนำเข้าจะเขียนทับ progress ปัจจุบัน
-                </div>
+                <h2>{tr.importTitle}</h2>
+                <div className="away-time">{tr.importDesc}</div>
                 <textarea
                   value={importCode}
                   onChange={e => setImportCode(e.target.value)}
-                  placeholder="วางโค้ดตรงนี้"
+                  placeholder={tr.importPlaceholder}
                 />
                 {importError && <div className="import-error">{importError}</div>}
                 <div className="modal-actions">
-                  <button onClick={handleImportSubmit}>นำเข้า</button>
+                  <button onClick={handleImportSubmit}>{tr.importBtn}</button>
                   <button className="secondary" onClick={() => setSubModal('none')}>
-                    ยกเลิก
+                    {tr.cancel}
                   </button>
                 </div>
               </>
@@ -473,6 +524,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
         isOpen={confirmState.isOpen}
         title={confirmState.title}
         message={confirmState.message}
+        confirmText={tr.confirm}
+        cancelText={tr.cancel}
         onConfirm={confirmState.action}
         onCancel={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
       />

@@ -16,6 +16,7 @@ import { AchievementToast } from '@/components/AchievementToast';
 export default function Home() {
   const {
     state,
+    lang,
     totalRate,
     activeBuff,
     activeLuckyBuff,
@@ -26,6 +27,8 @@ export default function Home() {
     maxY,
     achievementToastQueue,
     dismissAchievementToast,
+    setLanguage,
+    toggleLanguage,
     buyModule,
     buyRootUpgrade,
     buyEcho,
@@ -88,47 +91,55 @@ export default function Home() {
         nutrients={state.nutrients}
         totalRate={totalRate}
         eternalSeeds={state.eternalSeeds}
+        lang={lang}
       />
 
-      <TopActions
-        state={state}
-        onOpenPrestige={() => setPrestigeModalOpen(true)}
-        onToggleSkin={toggleSkin}
-        onOpenOptions={() => setOptionsModalOpen(true)}
-        onOpenAchievements={() => setAchievementsModalOpen(true)}
-        onOpenStats={() => setStatsModalOpen(true)}
-        onToggleAutoRoot={toggleAutoRoot}
-        onCycleAutoRootMode={cycleAutoRootMode}
-        onToggleAutoEvent={toggleAutoEvent}
-        onToggleAutoReset={toggleAutoReset}
-      />
+      <div className="canvas-column">
+        <TopActions
+          state={state}
+          onOpenPrestige={() => setPrestigeModalOpen(true)}
+          onToggleSkin={toggleSkin}
+          onOpenOptions={() => setOptionsModalOpen(true)}
+          onOpenAchievements={() => setAchievementsModalOpen(true)}
+          onOpenStats={() => setStatsModalOpen(true)}
+          onToggleLanguage={toggleLanguage}
+          onToggleAutoRoot={toggleAutoRoot}
+          onCycleAutoRootMode={cycleAutoRootMode}
+          onToggleAutoEvent={toggleAutoEvent}
+          onToggleAutoReset={toggleAutoReset}
+        />
 
-      <StageCanvas
-        totalOwned={state.totalOwned}
-        branches={branches}
-        maxY={maxY}
-        activeSkin={state.prestige.activeSkin}
-        activeBuff={activeBuff}
-        activeLuckyBuff={activeLuckyBuff}
-        activeEvents={activeEvents}
-        floatingTexts={floatingTexts}
-        onClaimEvent={claimEvent}
-      />
+        <StageCanvas
+          totalOwned={state.totalOwned}
+          branches={branches}
+          maxY={maxY}
+          activeSkin={state.prestige.activeSkin}
+          activeBuff={activeBuff}
+          activeLuckyBuff={activeLuckyBuff}
+          activeEvents={activeEvents}
+          floatingTexts={floatingTexts}
+          lang={lang}
+          onClaimEvent={claimEvent}
+        />
+      </div>
 
-      <ShopPanel
-        state={state}
-        totalRate={totalRate}
-        onBuyModule={buyModule}
-        onBuyRootUpgrade={buyRootUpgrade}
-        onBuyEcho={buyEcho}
-        onSetBuyQty={setBuyQty}
-      />
+      <div className="shop-column">
+        <ShopPanel
+          state={state}
+          totalRate={totalRate}
+          onBuyModule={buyModule}
+          onBuyRootUpgrade={buyRootUpgrade}
+          onBuyEcho={buyEcho}
+          onSetBuyQty={setBuyQty}
+        />
+      </div>
 
       {/* Offline progress modal */}
       {offlineModal && (
         <OfflineModal
           gain={offlineModal.gain}
           dt={offlineModal.dt}
+          lang={lang}
           onClaim={claimOffline}
         />
       )}
@@ -187,6 +198,7 @@ export default function Home() {
         onLoadSlot={loadSlotAction}
         onDeleteSlot={deleteSlotAction}
         onHardReset={doHardReset}
+        onSetLanguage={setLanguage}
         onToggleAutoRoot={toggleAutoRoot}
         onSetAutoRootMode={setAutoRootMode}
         onToggleAutoEvent={toggleAutoEvent}
@@ -196,6 +208,7 @@ export default function Home() {
       {/* Achievement Toast Notifications */}
       <AchievementToast
         queue={achievementToastQueue}
+        lang={lang}
         onDismiss={dismissAchievementToast}
       />
     </div>

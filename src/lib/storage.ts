@@ -18,6 +18,7 @@ export function encodeSave(state: GameState): string {
     pt: state.totalPlayTimeSeconds,
     rpt: state.runPlayTimeSeconds,
     ach: state.achievements || [],
+    lang: state.lang || 'th',
     st: state.stats || {
       prestigeCount: 0,
       totalEventsClaimed: 0,
@@ -171,6 +172,7 @@ export function payloadToState(payload: SavePayload): GameState {
       },
       payload.st || {}
     ),
+    lang: payload.lang === 'en' ? 'en' : 'th',
   };
 
   const prestigeRecord = state.prestige as unknown as Record<string, unknown>;
@@ -200,6 +202,7 @@ export function saveToLocalStorage(state: GameState): void {
       buyQty: state.buyQty,
       achievements: state.achievements || [],
       stats: state.stats,
+      lang: state.lang || 'th',
       lastTs: Date.now(),
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -229,6 +232,7 @@ export function loadFromLocalStorage(): { state: GameState; lastTs?: number } | 
       rpt: data.runPlayTimeSeconds,
       ach: data.achievements,
       st: data.stats,
+      lang: data.lang,
     });
     state.lockGapBackfilled = data.lockGapBackfilled || false;
     return { state, lastTs: data.lastTs };

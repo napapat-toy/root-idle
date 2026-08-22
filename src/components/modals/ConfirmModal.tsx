@@ -6,6 +6,8 @@ interface ConfirmModalProps {
   isOpen: boolean;
   title?: string;
   message: string;
+  confirmText?: string;
+  cancelText?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -14,6 +16,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
   title = 'ยืนยันการทำรายการ',
   message,
+  confirmText = 'ยืนยัน',
+  cancelText = 'ยกเลิก',
   onConfirm,
   onCancel,
 }) => {
@@ -29,9 +33,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             {message}
           </div>
           <div className="modal-actions">
-            <button onClick={onConfirm}>ยืนยัน</button>
+            <button onClick={onConfirm}>{confirmText}</button>
             <button className="secondary" onClick={onCancel}>
-              ยกเลิก
+              {cancelText}
             </button>
           </div>
         </div>

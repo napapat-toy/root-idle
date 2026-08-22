@@ -1,27 +1,16 @@
 'use client';
 
 import React from 'react';
-import { GameState } from '@/types/game';
+import { GameState, Language } from '@/types/game';
 import { stageName } from '@/constants/gameData';
-import { fmt } from '@/lib/formatters';
+import { fmt, formatDuration } from '@/lib/formatters';
 import { ACHIEVEMENTS } from '@/constants/achievementsData';
+import { t } from '@/lib/i18n';
 
 interface StatsModalProps {
   isOpen: boolean;
   state: GameState;
   onClose: () => void;
-}
-
-function formatDuration(totalSeconds: number): string {
-  const sec = Math.floor(totalSeconds || 0);
-  if (sec < 60) return `${sec} วินาที`;
-  const m = Math.floor(sec / 60) % 60;
-  const h = Math.floor(sec / 3600) % 24;
-  const d = Math.floor(sec / 86400);
-
-  if (d > 0) return `${d} วัน ${h} ชม. ${m} นาที`;
-  if (h > 0) return `${h} ชม. ${m} นาที`;
-  return `${m} นาที ${sec % 60} วินาที`;
 }
 
 export const StatsModal: React.FC<StatsModalProps> = React.memo(({
@@ -30,6 +19,10 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
   onClose,
 }) => {
   if (!isOpen) return null;
+
+  const lang: Language = state.lang || 'th';
+  const isEn = lang === 'en';
+  const tr = t(lang);
 
   const totalAchievements = ACHIEVEMENTS.length;
   const unlockedAchievements = state.achievements?.length || 0;
@@ -51,110 +44,112 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
   return (
     <div className="offline-backdrop" onClick={onClose}>
       <div className="modal-wrapper stats-modal-wrapper" onClick={e => e.stopPropagation()}>
-        <button className="modal-close-x" onClick={onClose} aria-label="ปิด">
+        <button className="modal-close-x" onClick={onClose} aria-label={tr.close}>
           &times;
         </button>
 
         <div className="offline-modal generic-modal stats-modal-content">
           <div className="icon">📊</div>
-          <h2>สถิติ & บันทึกการเติบโต</h2>
+          <h2>{tr.statsTitle}</h2>
           <div className="away-time" style={{ marginBottom: '14px' }}>
-            ภาพรวมการเดินทางและความก้าวหน้าของรากไม้ของคุณ
+            {isEn
+              ? 'Complete overview of your botanical journey, yield milestones, and records'
+              : 'ภาพรวมการเดินทางและความก้าวหน้าของรากไม้ของคุณ'}
           </div>
 
           <div className="stats-dashboard-grid">
-            {/* 1. เวลา & การเดินทาง */}
+            {/* 1. Time & Journey */}
             <div className="stats-card">
               <div className="stats-card-header">
                 <span className="stats-card-icon">⏱️</span>
-                <span className="stats-card-title">เวลา & การเดินทาง</span>
+                <span className="stats-card-title">{tr.cardTimeTitle}</span>
               </div>
               <div className="stats-card-rows">
                 <div className="stats-row">
-                  <span className="stats-label">เวลาเล่นสะสมทั้งหมด:</span>
-                  <span className="stats-value">{formatDuration(state.totalPlayTimeSeconds)}</span>
+                  <span className="stats-label">{tr.statTotalPlayTime}:</span>
+                  <span className="stats-value">{formatDuration(state.totalPlayTimeSeconds, lang)}</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">เวลาในรอบปัจจุบัน:</span>
-                  <span className="stats-value">{formatDuration(state.runPlayTimeSeconds)}</span>
+                  <span className="stats-label">{tr.statRunPlayTime}:</span>
+                  <span className="stats-value">{formatDuration(state.runPlayTimeSeconds, lang)}</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">ระยะการเติบโต:</span>
-                  <span className="stats-value highlight">{stageName(state.totalOwned)}</span>
+                  <span className="stats-label">{tr.statGrowthStage}:</span>
+                  <span className="stats-value highlight">{stageName(state.totalOwned, lang)}</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">เวลาพักผ่อนออฟไลน์สูงสุด:</span>
-                  <span className="stats-value">{formatDuration(stats.maxOfflineTimeSeconds)}</span>
+                  <span className="stats-label">{tr.statMaxOffline}:</span>
+                  <span className="stats-value">{formatDuration(stats.maxOfflineTimeSeconds, lang)}</span>
                 </div>
               </div>
             </div>
 
-            {/* 2. ผลผลิต & สารอาหาร */}
+            {/* 2. Nutrients & Production */}
             <div className="stats-card">
               <div className="stats-card-header">
                 <span className="stats-card-icon">💧</span>
-                <span className="stats-card-title">ผลผลิต & สารอาหาร</span>
+                <span className="stats-card-title">{tr.cardNutrientsTitle}</span>
               </div>
               <div className="stats-card-rows">
                 <div className="stats-row">
-                  <span className="stats-label">สารอาหารปัจจุบัน:</span>
+                  <span className="stats-label">{tr.statCurNutrients}:</span>
                   <span className="stats-value highlight">{fmt(state.nutrients)}</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">ผลิตได้ในรอบนี้:</span>
+                  <span className="stats-label">{tr.statRunEarned}:</span>
                   <span className="stats-value">{fmt(state.runEarned)}</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">สารอาหารสะสมตลอดกาล:</span>
+                  <span className="stats-label">{tr.statLifetimeNutrients}:</span>
                   <span className="stats-value golden">{fmt(lifetimeNutrients)}</span>
                 </div>
               </div>
             </div>
 
-            {/* 3. การหว่านใหม่ Prestige */}
+            {/* 3. Prestige & Eternity */}
             <div className="stats-card">
               <div className="stats-card-header">
                 <span className="stats-card-icon">🌌</span>
-                <span className="stats-card-title">การหว่านใหม่ (Prestige)</span>
+                <span className="stats-card-title">{tr.cardPrestigeTitle}</span>
               </div>
               <div className="stats-card-rows">
                 <div className="stats-row">
-                  <span className="stats-label">จำนวนครั้งที่หว่านใหม่:</span>
-                  <span className="stats-value purple">{stats.prestigeCount} ครั้ง</span>
+                  <span className="stats-label">{tr.statPrestigeCount}:</span>
+                  <span className="stats-value purple">{stats.prestigeCount} {isEn ? 'times' : 'ครั้ง'}</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">เมล็ดนิรันดร์ปัจจุบัน:</span>
-                  <span className="stats-value purple">{fmt(state.eternalSeeds)} เมล็ด</span>
+                  <span className="stats-label">{tr.statCurSeeds}:</span>
+                  <span className="stats-value purple">{fmt(state.eternalSeeds)}</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">เมล็ดนิรันดร์สะสมตลอดกาล:</span>
-                  <span className="stats-value golden">{fmt(lifetimeSeeds)} เมล็ด</span>
+                  <span className="stats-label">{tr.statLifetimeSeeds}:</span>
+                  <span className="stats-value golden">{fmt(lifetimeSeeds)}</span>
                 </div>
               </div>
             </div>
 
-            {/* 4. ราก & ความสำเร็จ */}
+            {/* 4. Roots & Achievements */}
             <div className="stats-card">
               <div className="stats-card-header">
                 <span className="stats-card-icon">🌿</span>
-                <span className="stats-card-title">ราก & ความสำเร็จ</span>
+                <span className="stats-card-title">{tr.cardRootsTitle}</span>
               </div>
               <div className="stats-card-rows">
                 <div className="stats-row">
-                  <span className="stats-label">จำนวนรากเสริมในรอบนี้:</span>
-                  <span className="stats-value">{state.totalOwned} ท่อน</span>
+                  <span className="stats-label">{tr.statTotalRoots}:</span>
+                  <span className="stats-value">{state.totalOwned} {isEn ? 'units' : 'ต้น'}</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">เหรียญความสำเร็จ:</span>
+                  <span className="stats-label">{tr.statAchievementsCount}:</span>
                   <span className="stats-value green">{unlockedAchievements} / {totalAchievements} ({achPercent}%)</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">อีเวนต์ที่เก็บได้ทั้งหมด:</span>
-                  <span className="stats-value">{stats.totalEventsClaimed} ครั้ง</span>
+                  <span className="stats-label">{tr.statEventsClaimed}:</span>
+                  <span className="stats-value">{stats.totalEventsClaimed} {isEn ? 'times' : 'ครั้ง'}</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">แจ็กพอตโชคดี (🍀 ×777):</span>
-                  <span className="stats-value golden">{stats.luckyJackpotCount} ครั้ง</span>
+                  <span className="stats-label">{tr.statLuckyCount}:</span>
+                  <span className="stats-value golden">{stats.luckyJackpotCount} {isEn ? 'times' : 'ครั้ง'}</span>
                 </div>
               </div>
             </div>

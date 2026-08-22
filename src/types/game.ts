@@ -49,6 +49,8 @@ export interface GameStats {
   totalNutrientsEarnedLifetime?: number;
 }
 
+export type Language = 'th' | 'en';
+
 export interface GameState {
   nutrients: number;
   owned: Record<string, number>;
@@ -64,6 +66,7 @@ export interface GameState {
   prestige: PrestigeState;
   achievements: string[];
   stats: GameStats;
+  lang?: Language;
 }
 
 export interface Branch {
@@ -121,4 +124,5 @@ export interface SavePayload {
   rle?: Array<[number, number]>;
   ach?: string[];
   st?: Partial<GameStats>;
+  lang?: Language;
 }

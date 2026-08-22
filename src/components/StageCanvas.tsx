@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { ActiveBuff, Branch, FloatingTextItem, GameEventItem, SkinId } from '@/types/game';
+import { ActiveBuff, Branch, FloatingTextItem, GameEventItem, Language, SkinId } from '@/types/game';
 import { getBranchColor } from '@/lib/treeGenerator';
 import { stageName } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
@@ -15,6 +15,7 @@ interface StageCanvasProps {
   activeLuckyBuff: ActiveBuff | null;
   activeEvents: GameEventItem[];
   floatingTexts: FloatingTextItem[];
+  lang?: Language;
   onClaimEvent: (event: GameEventItem) => void;
 }
 
@@ -81,19 +82,21 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
   activeLuckyBuff,
   activeEvents,
   floatingTexts,
+  lang = 'th',
   onClaimEvent,
 }) => {
   const targetH = Math.max(480, maxY + 60);
+  const isEn = lang === 'en';
 
   const buffBadges: string[] = [];
   const now = Date.now();
   if (activeBuff && now < activeBuff.expiresAt) {
     const remain = Math.ceil((activeBuff.expiresAt - now) / 1000);
-    buffBadges.push(`⚡ ×${activeBuff.multiplier.toFixed(2)} ${remain}วิ`);
+    buffBadges.push(`⚡ ×${activeBuff.multiplier.toFixed(2)} ${remain}${isEn ? 's' : 'วิ'}`);
   }
   if (activeLuckyBuff && now < activeLuckyBuff.expiresAt) {
     const remain = Math.ceil((activeLuckyBuff.expiresAt - now) / 1000);
-    buffBadges.push(`🍀 ×${fmtInt(activeLuckyBuff.multiplier)} ${remain}วิ`);
+    buffBadges.push(`🍀 ×${fmtInt(activeLuckyBuff.multiplier)} ${remain}${isEn ? 's' : 'วิ'}`);
   }
 
   return (
@@ -101,7 +104,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       {/* Sticky topbar */}
       <div className="stage-topbar">
         <div className="stage-label" id="stageLabel">
-          {stageName(totalOwned)}
+          {stageName(totalOwned, lang)}
         </div>
         {buffBadges.length > 0 && (
           <div className="buff-badge" id="buffDisplay">
