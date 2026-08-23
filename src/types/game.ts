@@ -28,6 +28,7 @@ export interface PrestigeState {
   activeSkin: SkinId;
   autoReset: boolean;
   autoResetEnabled: boolean;
+  autoResetThreshold: number;
   offlineCapLevel: number;
   eventBonusLevel: number;
   eventDurationLevel: number;

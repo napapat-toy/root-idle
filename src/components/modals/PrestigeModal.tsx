@@ -53,6 +53,7 @@ interface PrestigeModalProps {
   onToggleAutoEvent: () => void;
   onBuyAutoReset: () => void;
   onToggleAutoReset: () => void;
+  onOpenAutoResetConfig?: () => void;
   onBuyEventBonus: () => void;
   onBuyEventDuration: () => void;
   onBuyLuckyChance: () => void;
@@ -80,6 +81,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   onToggleAutoEvent,
   onBuyAutoReset,
   onToggleAutoReset,
+  onOpenAutoResetConfig,
   onBuyEventBonus,
   onBuyEventDuration,
   onBuyLuckyChance,
@@ -358,28 +360,57 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               {(() => {
                 const autoResetOwned = state.prestige.autoReset;
                 const enabled = state.prestige.autoResetEnabled;
+                const target = state.prestige.autoResetThreshold || 1000;
                 if (autoResetOwned) {
-                  return renderItem(
-                    isEn ? '🔁 Auto Re-sow (Prestige)' : '🔁 ออโต้หว่านใหม่',
-                    enabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่'),
-                    isEn
-                      ? `Automatically prestiges as soon as yields reach ≥${AUTO_RESET_MIN_SEEDS} seeds — Click to toggle ON/OFF`
-                      : `หว่านใหม่อัตโนมัติทันทีที่คุ้ม (ได้อย่างน้อย ${AUTO_RESET_MIN_SEEDS} เมล็ด) — กดเพื่อเปิด/ปิดชั่วคราว`,
-                    '—',
-                    onToggleAutoReset,
-                    false,
-                    true,
-                    !enabled
+                  return (
+                    <div className={`prestige-item owned ${!enabled ? 'toggled-off' : ''}`}>
+                      <div className="p-top">
+                        <span>🔁 {isEn ? 'Auto Re-sow (Prestige)' : 'ออโต้หว่านใหม่'}</span>
+                        <span style={{ color: enabled ? 'var(--prestige-accent)' : 'var(--root-cream-dim)' }}>
+                          {enabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}
+                        </span>
+                      </div>
+                      <div className="p-desc">
+                        {isEn
+                          ? `Automatically re-sows whenever yields reach ≥${fmtInt(target)} Eternal Seeds.`
+                          : `หว่านใหม่อัตโนมัติทันทีที่สะสมได้ครบตามเป้าหมาย (≥${fmtInt(target)} เมล็ด)`}
+                      </div>
+                      <div className="auto-cfg-actions">
+                        <button
+                          type="button"
+                          className="auto-cfg-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (onOpenAutoResetConfig) onOpenAutoResetConfig();
+                          }}
+                        >
+                          ⚙️ {isEn ? `Edit Target (≥${fmtInt(target)})` : `ตั้งค่าเป้าหมาย (≥${fmtInt(target)} เมล็ด)`}
+                        </button>
+                        <button
+                          type="button"
+                          className={`auto-cfg-btn ${enabled ? 'toggle-on' : 'toggle-off'}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleAutoReset();
+                          }}
+                        >
+                          {enabled ? (isEn ? 'Turn OFF' : 'ปิดการทำงาน') : (isEn ? 'Turn ON' : 'เปิดการทำงาน')}
+                        </button>
+                      </div>
+                    </div>
                   );
                 }
                 return renderItem(
                   isEn ? '🔁 Auto Re-sow (Prestige)' : '🔁 ออโต้หว่านใหม่',
                   '',
                   isEn
-                    ? `Prestige automation: Automatically re-sows whenever yields reach ≥${AUTO_RESET_MIN_SEEDS} Eternal Seeds`
-                    : `ปลายทางของสายออโต้ — หว่านใหม่ให้อัตโนมัติทันทีที่คุ้ม (ได้อย่างน้อย ${AUTO_RESET_MIN_SEEDS} เมล็ด) ไม่ต้องมาคอยกดเองอีกต่อไป`,
+                    ? `Prestige automation: Automatically re-sows whenever yields reach your custom seed target`
+                    : `ปลายทางของสายออโต้ — หว่านใหม่ให้อัตโนมัติทันทีที่สะสมครบตามเป้าหมายที่คุณกำหนด ไม่ต้องมาคอยกดเองอีกต่อไป`,
                   `${AUTO_RESET_COST} 🌌`,
-                  onBuyAutoReset,
+                  () => {
+                    onBuyAutoReset();
+                    if (onOpenAutoResetConfig) onOpenAutoResetConfig();
+                  },
                   seeds < AUTO_RESET_COST
                 );
               })()}

@@ -11,6 +11,7 @@ import { PrestigeModal } from '@/components/modals/PrestigeModal';
 import { OptionsModal } from '@/components/modals/OptionsModal';
 import { AchievementsModal } from '@/components/modals/AchievementsModal';
 import { StatsModal } from '@/components/modals/StatsModal';
+import { AutoResetConfigModal } from '@/components/modals/AutoResetConfigModal';
 import { AchievementToast } from '@/components/AchievementToast';
 
 export default function Home() {
@@ -51,6 +52,7 @@ export default function Home() {
     toggleAutoEvent,
     buyAutoReset,
     toggleAutoReset,
+    setAutoResetThreshold,
     toggleAutoRoot,
     buyEventBonus,
     buyEventDuration,
@@ -71,6 +73,7 @@ export default function Home() {
   const [optionsModalOpen, setOptionsModalOpen] = useState(false);
   const [achievementsModalOpen, setAchievementsModalOpen] = useState(false);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
+  const [autoResetModalOpen, setAutoResetModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   React.useEffect(() => {
@@ -98,15 +101,9 @@ export default function Home() {
         <TopActions
           state={state}
           onOpenPrestige={() => setPrestigeModalOpen(true)}
-          onToggleSkin={toggleSkin}
           onOpenOptions={() => setOptionsModalOpen(true)}
           onOpenAchievements={() => setAchievementsModalOpen(true)}
           onOpenStats={() => setStatsModalOpen(true)}
-          onToggleLanguage={toggleLanguage}
-          onToggleAutoRoot={toggleAutoRoot}
-          onCycleAutoRootMode={cycleAutoRootMode}
-          onToggleAutoEvent={toggleAutoEvent}
-          onToggleAutoReset={toggleAutoReset}
         />
 
         <StageCanvas
@@ -162,6 +159,7 @@ export default function Home() {
         onToggleAutoEvent={toggleAutoEvent}
         onBuyAutoReset={buyAutoReset}
         onToggleAutoReset={toggleAutoReset}
+        onOpenAutoResetConfig={() => setAutoResetModalOpen(true)}
         onBuyEventBonus={buyEventBonus}
         onBuyEventDuration={buyEventDuration}
         onBuyLuckyChance={buyLuckyChance}
@@ -203,7 +201,21 @@ export default function Home() {
         onSetAutoRootMode={setAutoRootMode}
         onToggleAutoEvent={toggleAutoEvent}
         onToggleAutoReset={toggleAutoReset}
+        onOpenAutoResetConfig={() => setAutoResetModalOpen(true)}
       />
+
+      {/* Auto Reset Config Modal */}
+      {autoResetModalOpen && (
+        <AutoResetConfigModal
+          currentThreshold={state.prestige.autoResetThreshold || 0}
+          lang={lang}
+          onConfirm={(val) => {
+            setAutoResetThreshold(val);
+            setAutoResetModalOpen(false);
+          }}
+          onClose={() => setAutoResetModalOpen(false)}
+        />
+      )}
 
       {/* Achievement Toast Notifications */}
       <AchievementToast

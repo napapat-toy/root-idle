@@ -25,6 +25,7 @@ interface OptionsModalProps {
   onSetAutoRootMode?: (mode: AutoRootMode) => void;
   onToggleAutoEvent?: () => void;
   onToggleAutoReset?: () => void;
+  onOpenAutoResetConfig?: () => void;
 }
 
 export const OptionsModal: React.FC<OptionsModalProps> = ({
@@ -43,6 +44,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   onSetAutoRootMode,
   onToggleAutoEvent,
   onToggleAutoReset,
+  onOpenAutoResetConfig,
 }) => {
   const [subModal, setSubModal] = useState<'none' | 'export' | 'import'>('none');
   const [exportCode, setExportCode] = useState('');
@@ -351,19 +353,38 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                         </div>
                       )}
 
-                      {state.prestige.autoReset && onToggleAutoReset && (
-                        <div
-                          onClick={onToggleAutoReset}
-                          className={`prestige-item ${!state.prestige.autoResetEnabled ? 'toggled-off' : ''}`}
-                        >
+                      {state.prestige.autoReset && (
+                        <div className={`prestige-item ${!state.prestige.autoResetEnabled ? 'toggled-off' : ''}`}>
                           <div className="p-top">
                             <span>🔁 {isEn ? 'Auto Re-sow (Prestige)' : 'ออโต้หว่านใหม่'}</span>
-                            <span>{state.prestige.autoResetEnabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}</span>
+                            <span style={{ color: state.prestige.autoResetEnabled ? 'var(--prestige-accent)' : 'var(--root-cream-dim)' }}>
+                              {state.prestige.autoResetEnabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}
+                            </span>
                           </div>
                           <div className="p-desc">
                             {state.prestige.autoResetEnabled
-                              ? (isEn ? 'Re-sowing automatically when profitable' : 'กำลังหว่านใหม่อัตโนมัติเมื่อคุ้ม (คลิกเพื่อปิดชั่วคราว)')
-                              : (isEn ? 'Disabled (Click to enable)' : 'ปิดอยู่ (คลิกเพื่อเปิดทำงาน)')}
+                              ? (isEn
+                                ? `Triggers automatically when reaching ≥${fmtInt(state.prestige.autoResetThreshold || 1000)} Eternal Seeds.`
+                                : `หว่านใหม่อัตโนมัติทันทีที่สะสมได้ครบตามเป้าหมาย (≥${fmtInt(state.prestige.autoResetThreshold || 1000)} เมล็ด)`)
+                              : (isEn ? 'Disabled' : 'ปิดอยู่')}
+                          </div>
+                          <div className="auto-cfg-actions">
+                            <button
+                              type="button"
+                              className="auto-cfg-btn"
+                              onClick={() => {
+                                if (onOpenAutoResetConfig) onOpenAutoResetConfig();
+                              }}
+                            >
+                              ⚙️ {isEn ? `Edit Target (≥${fmtInt(state.prestige.autoResetThreshold || 1000)})` : `ตั้งค่าเป้าหมาย (≥${fmtInt(state.prestige.autoResetThreshold || 1000)} เมล็ด)`}
+                            </button>
+                            <button
+                              type="button"
+                              className={`auto-cfg-btn ${state.prestige.autoResetEnabled ? 'toggle-on' : 'toggle-off'}`}
+                              onClick={onToggleAutoReset}
+                            >
+                              {state.prestige.autoResetEnabled ? (isEn ? 'Turn OFF' : 'ปิดการทำงาน') : (isEn ? 'Turn ON' : 'เปิดการทำงาน')}
+                            </button>
                           </div>
                         </div>
                       )}

@@ -42,17 +42,19 @@ export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY:
   const rng = mulberry32(1337);
   const branches: InternalBranch[] = [];
   const CX = 250;
-  const CY = 14;
-  let maxY = CY + 38;
+  const TRUNK_H = 48;
+  const trunkWidth = Math.min(26, Math.max(10, 10 + Math.sqrt(log.length) * 0.5));
+  const halfW = trunkWidth / 2;
+  let maxY = TRUNK_H;
 
-  // Trunk (depth 0)
+  // Clean, solid Trunk at top submerged into soil
   branches.push({
     x1: CX,
-    y1: CY,
+    y1: 0,
     x2: CX,
-    y2: CY + 38,
+    y2: TRUNK_H,
     depth: 0,
-    width: 7.2,
+    width: trunkWidth,
     children: 0,
     moduleId: 'trunk',
     parentIndex: null,
@@ -71,7 +73,7 @@ export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY:
     const weights = branches.map(b => {
       let w = 1.0;
       if (b.depth === 0) {
-        w = b.children < 4 ? 6.0 : 0.2;
+        w = b.children < 5 ? 7.0 : 0.2;
       } else if (b.children === 0) {
         w = 4.5;
       } else if (b.children === 1) {
@@ -104,16 +106,23 @@ export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY:
     const depth = parent.depth + 1;
     const baseAngle = angleOf(parent);
 
+    let startX = parent.x2;
+    let startY = parent.y2;
     let newAngle: number;
+
     if (parent.depth === 0) {
-      // Primary root lines fan out across the 4 main cardinal sectors
-      const primaryAngles = [
-        Math.PI / 2 - 0.52, // Left main root
-        Math.PI / 2 + 0.52, // Right main root
-        Math.PI / 2 - 0.20, // Center-left root
-        Math.PI / 2 + 0.20, // Center-right root
+      // Primary root lines originate from high up inside the trunk so they fan out broadly across the bottom
+      const primaryConfigs = [
+        { offsetRatio: -0.65, angle: Math.PI / 2 - 0.54 }, // Left outer root
+        { offsetRatio: 0.65,  angle: Math.PI / 2 + 0.54 }, // Right outer root
+        { offsetRatio: -0.28, angle: Math.PI / 2 - 0.22 }, // Left inner root
+        { offsetRatio: 0.28,  angle: Math.PI / 2 + 0.22 }, // Right inner root
+        { offsetRatio: 0,     angle: Math.PI / 2 },        // Center taproot
       ];
-      newAngle = primaryAngles[(parent.children - 1) % primaryAngles.length] + (rng() - 0.5) * 0.1;
+      const cfg = primaryConfigs[(parent.children - 1) % primaryConfigs.length];
+      startX = CX + cfg.offsetRatio * (halfW * 0.75);
+      startY = 18; // Starts high inside the submerged trunk (y=18 vs bottom y=48)
+      newAngle = cfg.angle + (rng() - 0.5) * 0.08;
     } else {
       // Binary bifurcation (forking outward left & right)
       if (!parent.childSides) parent.childSides = [];
@@ -125,8 +134,12 @@ export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY:
       }
       parent.childSides.push(side);
 
-      const forkAngle = 0.35 + Math.min(depth * 0.015, 0.18) + (rng() - 0.5) * 0.1;
+      const forkAngle = 0.32 + Math.min(depth * 0.012, 0.14) + (rng() - 0.5) * 0.08;
       newAngle = baseAngle + side * forkAngle;
+
+      // Natural downward pull towards depth
+      const downwardBias = Math.min(0.28, 0.08 + depth * 0.018);
+      newAngle = newAngle * (1 - downwardBias) + (Math.PI / 2) * downwardBias;
 
       // Soft boundary guidance when branches approach edges
       if (parent.x2 < 45 && Math.cos(newAngle) < 0) {
@@ -136,18 +149,18 @@ export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY:
       }
     }
 
-    const len = Math.max(9, 44 - depth * 2.6) * (0.8 + rng() * 0.4);
-    const width = Math.max(0.9, 6.2 - depth * 0.45);
+    const len = Math.max(12, 48 - depth * 2.2) * (0.85 + rng() * 0.35);
+    const width = Math.max(0.9, 6.2 - depth * 0.42);
 
-    let nx = parent.x2 + Math.cos(newAngle) * len;
-    let ny = parent.y2 + Math.sin(newAngle) * len;
+    let nx = startX + Math.cos(newAngle) * len;
+    let ny = startY + Math.sin(newAngle) * len;
 
     nx = Math.max(20, Math.min(480, nx));
     ny = Math.max(18, ny);
 
     branches.push({
-      x1: parent.x2,
-      y1: parent.y2,
+      x1: startX,
+      y1: startY,
       x2: nx,
       y2: ny,
       depth,
@@ -177,30 +190,43 @@ export function findLineageRoot(branches: Branch[], i: number, targetDepth: numb
 
 export function getBranchColor(branches: Branch[], b: Branch, i: number, skin: SkinId): string {
   if (i === 0) {
-    // trunk
-    if (skin === 'rainbow') return '#f2d24a';
+    // Trunk base color
+    if (skin === 'rainbow') return '#dcd4c0';
     if (skin === 'grayscale') return '#d8d8d8';
-    if (skin === 'gradient') return '#e8dcc8';
+    if (skin === 'gradient') return '#ffd76a';
     if (skin === 'sameorigin') return '#e8dcc8';
-    return '#c9b48a';
+    return '#523820'; // Default rich dark wood
   }
+
+  // 1. Default (none): Rich natural wood gradient (dark wood -> warm amber -> golden wood tips)
+  if (skin === 'none') {
+    const light = 26 + Math.min(b.depth, 14) * 3.8;
+    return `hsl(28, 44%, ${light}%)`;
+  }
+
+  // 2. rainbow (renamed to "แยกตามชนิดราก / Module Spectrum"): uses MODULE_COLOR_MAP
   if (skin === 'rainbow') {
-    return `hsl(${(i * 47) % 360}, 75%, 68%)`;
+    return (b.moduleId && MODULE_COLOR_MAP[b.moduleId]) || '#eadfc7';
   }
+
+  // 3. grayscale: Monochrome slate
   if (skin === 'grayscale') {
-    const light = 22 + Math.min(b.depth, 12) * 5;
+    const light = 25 + Math.min(b.depth, 12) * 5;
     return `hsl(0, 0%, ${light}%)`;
   }
+
+  // 4. gradient: Chromatic Rainbow Spectrum
   if (skin === 'gradient') {
-    const light = 20 + Math.min(b.depth, 14) * 4.5;
-    return `hsl(95, 32%, ${light}%)`;
+    return `hsl(${(i * 47) % 360}, 75%, 68%)`;
   }
+
+  // 5. sameorigin: Group by major fork at depth 2 with golden-ratio hue spacing
   if (skin === 'sameorigin') {
-    // Group by major fork at depth 2 with golden-ratio hue spacing
     const rootIdx = findLineageRoot(branches, i, 2);
     const hue = (rootIdx * 137.5 + 30) % 360;
     const light = 50 + Math.min(b.depth, 10) * 2.5;
     return `hsl(${hue}, 68%, ${light}%)`;
   }
-  return (b.moduleId && MODULE_COLOR_MAP[b.moduleId]) || '#eadfc7';
+
+  return '#eadfc7';
 }

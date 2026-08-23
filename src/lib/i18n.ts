@@ -131,11 +131,11 @@ export const CATEGORY_NAMES: Record<AchievementCategory, Record<Language, string
 };
 
 export const SKIN_NAMES: Record<SkinId, Record<Language, string>> = {
-  none: { th: 'ปกติ (ไม่มีสกิน)', en: 'Default' },
-  rainbow: { th: '🌈 รุ้ง/ทอง', en: '🌈 Rainbow / Gold' },
-  sameorigin: { th: '🌿 รากเดียวกัน', en: '🌿 Same Origin' },
-  grayscale: { th: '⚫ ขาวดำ', en: '⚫ Grayscale' },
-  gradient: { th: '🍃 ไล่เข้ม-อ่อน', en: '🍃 Earth Gradient' },
+  none: { th: '🪵 ไม้ธรรมชาติ (ไล่เข้ม-อ่อน)', en: '🪵 Natural Wood (Gradient)' },
+  rainbow: { th: '🌱 แยกตามชนิดราก (Module Spectrum)', en: '🌱 Root Species (Module Spectrum)' },
+  sameorigin: { th: '🌿 แยกตามแขนงต้นกำเนิด', en: '🌿 Lineage Ancestry' },
+  grayscale: { th: '⚫ ขาวดำโมโนโครม', en: '⚫ Monochrome Slate' },
+  gradient: { th: '🌈 สายรุ้งนีออนเรืองแสง', en: '🌈 Chromatic Rainbow' },
 };
 
 export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, LocalizedAchievement>> = {
@@ -432,6 +432,17 @@ export const UI_TEXTS = {
     copied: 'คัดลอกแล้ว ✓',
     importBtn: 'นำเข้า',
     exportBtn: 'ส่งออก',
+
+    // Auto Reset Config Modal
+    autoResetModalTitle: 'ตั้งค่าเป้าหมายหว่านใหม่อัตโนมัติ',
+    autoResetModalDesc: 'กรุณากรอกจำนวน "เมล็ดนิรันดร์" ที่ต้องการให้ระบบหว่านใหม่อัตโนมัติ (เช่น พิมพ์ 1000 หรือ 10000)',
+    autoResetInputPlaceholder: 'เช่น 1000',
+    autoResetMinHint: '⚠️ ต้องกำหนดอย่างน้อย 10 เมล็ดขึ้นไป',
+    autoResetLivePreview: '✨ ระบบจะหว่านใหม่อัตโนมัติเมื่อสะสมได้ครบ:',
+    autoResetLivePreviewUnit: 'เมล็ด',
+    autoResetConfirmBtn: 'ยืนยันและเปิดใช้งาน',
+    autoResetSaveBtn: 'บันทึกการตั้งค่า',
+    autoResetCurrentTarget: 'เป้าหมายปัจจุบัน: {target} เมล็ด',
     
     // Offline Modal
     welcomeBack: 'ยินดีต้อนรับกลับ',
@@ -546,6 +557,17 @@ export const UI_TEXTS = {
     copied: 'Copied ✓',
     importBtn: 'Import',
     exportBtn: 'Export',
+
+    // Auto Reset Config Modal
+    autoResetModalTitle: 'Configure Auto-Reset Target',
+    autoResetModalDesc: 'Enter the number of "Eternal Seeds" required before triggering automatic re-sow (e.g. type 1000 or 10000)',
+    autoResetInputPlaceholder: 'e.g. 1000',
+    autoResetMinHint: '⚠️ Must be set to at least 10 seeds',
+    autoResetLivePreview: '✨ Auto-reset will trigger upon reaching:',
+    autoResetLivePreviewUnit: 'seeds',
+    autoResetConfirmBtn: 'Confirm & Enable',
+    autoResetSaveBtn: 'Save Settings',
+    autoResetCurrentTarget: 'Current Target: {target} seeds',
     
     // Offline Modal
     welcomeBack: 'Welcome Back',

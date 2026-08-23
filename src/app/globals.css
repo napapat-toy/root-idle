@@ -59,11 +59,63 @@ body {
    ========================================================================== */
 
 .app {
-  @apply w-full max-w-[1240px] grid grid-cols-1 md:grid-cols-[1fr_390px] lg:grid-cols-[1fr_420px] gap-5 p-4 sm:p-6;
-  padding-top: max(22px, env(safe-area-inset-top));
-  padding-bottom: max(22px, env(safe-area-inset-bottom));
-  padding-left: max(22px, env(safe-area-inset-left));
-  padding-right: max(22px, env(safe-area-inset-right));
+  @apply w-full max-w-[1240px] grid grid-cols-1 md:grid-cols-[1fr_390px] lg:grid-cols-[1fr_420px] gap-4 p-4 sm:p-5;
+  padding-top: max(16px, env(safe-area-inset-top));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  padding-left: max(18px, env(safe-area-inset-left));
+  padding-right: max(18px, env(safe-area-inset-right));
+}
+
+@media (min-width: 761px) {
+  html, body {
+    height: 100vh;
+    overflow: hidden;
+  }
+  body {
+    height: 100vh;
+    overflow: hidden;
+  }
+  .app {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    grid-template-rows: auto 1fr;
+  }
+  .canvas-column {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .shop-column {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .panel {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  #shopList {
+    flex: 1;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+  }
+  .stage {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+  }
 }
 
 .canvas-column {
@@ -89,7 +141,7 @@ body {
    ========================================================================== */
 
 header {
-  @apply col-span-full flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-4 border-b border-[#3a2a1c] pb-3.5 mb-1;
+  @apply col-span-full flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-3 border-b border-[#3a2a1c] pb-2.5 mb-0;
 }
 
 .header-title-box {
@@ -162,47 +214,20 @@ h1 span {
   @apply opacity-50 border-[#3a2a1c]! text-[#a99a80]!;
 }
 
-.lang-toggle-btn {
-  @apply inline-flex items-center justify-center gap-1 bg-[#2a1c12] border border-[#3a2a1c] text-[#eadfc7] text-[11.5px] font-bold h-[30px] px-2 rounded-[15px] cursor-pointer shrink-0 transition-all duration-150 font-sans;
+.utility-icon-btn {
+  @apply relative inline-flex items-center justify-center w-[32px] h-[32px] rounded-[8px] bg-[#2a1c12] border border-[#3a2a1c] text-[#eadfc7] text-sm cursor-pointer shrink-0 transition-all duration-150 select-none;
 }
 
-.lang-toggle-btn:hover {
-  @apply border-[#7ea35c] text-[#b7e08a] -translate-y-px;
+.utility-icon-btn:hover {
+  @apply border-[#8a68b8] bg-[rgba(65,45,25,0.85)] text-[#eadfc7] shadow-[0_0_10px_rgba(183,140,240,0.25)] -translate-y-px;
 }
 
-.skin-toggle-btn {
-  @apply inline-flex items-center justify-center w-[30px] h-[30px] rounded-full bg-[#2a1c12] border border-[#e0a94a] text-[#e0a94a] text-sm cursor-pointer shrink-0 transition-all duration-150;
+.utility-icon-btn:active {
+  @apply scale-95;
 }
 
-.skin-toggle-btn.on {
-  border-color: transparent;
-  background: conic-gradient(from 180deg, #ff6b6b, #ffd76a, #8fd17a, #6ab7ff, #b78cf0, #ff6b6b);
-  color: #1c1526;
-  box-shadow: 0 0 10px rgba(255, 215, 106, 0.5);
-}
-
-.skin-toggle-btn:hover {
-  @apply brightness-115 scale-105;
-}
-
-.achievement-toggle-btn {
-  @apply relative inline-flex items-center justify-center h-[30px] px-2.5 rounded-lg bg-[#2a1c12] border border-[#3a2a1c] text-[#eadfc7] text-[13px] cursor-pointer shrink-0 transition-all duration-150;
-}
-
-.achievement-toggle-btn:hover {
-  @apply border-[#ffd76a] bg-[rgba(65,45,25,0.8)] shadow-[0_0_10px_rgba(255,215,106,0.25)] -translate-y-px;
-}
-
-.achievement-badge-pill {
-  @apply absolute -top-1.5 -right-1.5 bg-[#ffd76a] text-[#1a120c] text-[9px] font-bold px-1 py-0.5 rounded-[10px] leading-none shadow-[0_0_6px_rgba(255,215,106,0.6)];
-}
-
-.save-btn-mini {
-  @apply inline-flex items-center justify-center w-[30px] h-[30px] rounded-full bg-[#2a1c12] border border-[#3a2a1c] text-[#a99a80] text-sm cursor-pointer shrink-0 transition-all duration-150;
-}
-
-.save-btn-mini:hover {
-  @apply border-[#7ea35c] text-[#eadfc7] -translate-y-px;
+.utility-badge-pill {
+  @apply absolute -top-1.5 -right-1.5 bg-[#ffd76a] text-[#1a120c] text-[9.5px] font-bold px-1.5 py-0.5 rounded-full leading-none shadow-[0_0_6px_rgba(255,215,106,0.6)];
 }
 
 @media (max-width: 480px) {
@@ -221,9 +246,16 @@ h1 span {
    ========================================================================== */
 
 .stage {
-  background: var(--bg-panel);
+  background: linear-gradient(180deg, #2c1c12 0%, #1e130a 25%, #120a05 60%, #040201 100%);
   border: 1px solid var(--line-soil);
-  @apply rounded-[14px] relative overflow-y-auto overflow-x-hidden h-[480px] lg:h-[510px] max-h-[72vh];
+  box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.65);
+  @apply rounded-[14px] relative overflow-hidden flex-1 min-h-[460px] lg:min-h-[520px] h-full;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.stage::-webkit-scrollbar {
+  display: none;
 }
 
 .stage::before {
@@ -250,7 +282,7 @@ h1 span {
 }
 
 svg#rootCanvas {
-  @apply w-full block;
+  @apply w-full h-full block;
 }
 
 .branch {
@@ -300,22 +332,27 @@ svg#rootCanvas {
 
 @media (max-width: 760px) {
   .stage {
-    height: 380px !important;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    -webkit-overflow-scrolling: touch;
+    height: 400px !important;
+    min-height: 400px !important;
+    overflow: hidden !important;
+    scrollbar-width: none !important;
   }
   .stage::-webkit-scrollbar {
-    display: none;
+    display: none !important;
   }
   .top-actions-row {
-    @apply flex flex-col gap-2 w-full;
+    @apply flex items-center justify-between gap-2 w-full flex-nowrap;
   }
   .top-actions-left {
-    @apply flex items-center justify-start gap-1.5 flex-wrap w-full;
+    @apply flex items-center gap-1.5 flex-shrink-0;
   }
   .utility-btn-group {
-    @apply flex items-center justify-between gap-1.5 w-full ml-0 pt-1.5 border-t border-[#3a2a1c]/60;
+    @apply flex items-center justify-end gap-1.5 w-auto ml-auto;
+  }
+  #shopList {
+    overflow: visible !important;
+    max-height: none !important;
+    padding-right: 0 !important;
   }
 }
 
@@ -338,7 +375,7 @@ svg#rootCanvas {
 
 @media (min-width: 761px) {
   #shopList {
-    @apply max-h-[530px] lg:max-h-[570px] overflow-y-auto overflow-x-hidden pr-2;
+    @apply flex-1 min-h-0 h-full overflow-y-auto overflow-x-hidden pr-2;
   }
   #shopList::-webkit-scrollbar { width: 7px; }
   #shopList::-webkit-scrollbar-track { background: transparent; }
@@ -727,6 +764,106 @@ svg#rootCanvas {
 
 .slot-item .modal-actions button {
   @apply px-3.5 py-1.5 text-xs;
+}
+
+/* ==========================================================================
+   AUTO RESET CONFIG MODAL STYLES
+   ========================================================================== */
+
+.auto-reset-config-modal {
+  @apply max-w-[420px] p-5 text-center flex flex-col gap-2;
+}
+
+.modal-icon-badge {
+  @apply text-3xl mb-1 select-none leading-none;
+}
+
+.modal-desc {
+  @apply text-xs text-[#a99a80] leading-relaxed;
+}
+
+.auto-reset-presets {
+  @apply flex flex-wrap justify-center gap-1.5 my-2;
+}
+
+.preset-chip {
+  @apply bg-[#20160f] border border-[#3a2a1c] text-[#eadfc7] text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full cursor-pointer transition-all duration-150;
+}
+
+.preset-chip:hover {
+  @apply border-[#b78cf0] text-[#b78cf0] -translate-y-0.5;
+}
+
+.preset-chip.active {
+  @apply bg-[#8a68b8] border-[#8a68b8] text-[#1c1526] font-bold shadow-[0_0_10px_rgba(183,140,240,0.4)];
+}
+
+.auto-reset-form {
+  @apply flex flex-col gap-3 mt-1;
+}
+
+.auto-reset-input-box {
+  @apply flex flex-col gap-1 text-left;
+}
+
+.input-label {
+  @apply text-[11px] font-semibold text-[#a99a80] uppercase tracking-[0.5px];
+}
+
+.auto-reset-input {
+  @apply w-full bg-[#1a120c] border border-[#3a2a1c] text-[#eadfc7] rounded-lg px-3 py-2.5 font-mono text-base font-bold transition-all duration-150 outline-none text-center;
+}
+
+.auto-reset-input:focus {
+  @apply border-[#b78cf0] shadow-[0_0_12px_rgba(183,140,240,0.25)];
+}
+
+.auto-reset-preview-box {
+  @apply bg-[#1a120c] border border-[#3a2a1c] rounded-lg p-2.5 flex flex-col gap-0.5 text-center transition-all duration-150;
+}
+
+.preview-label {
+  @apply text-[11px] text-[#a99a80];
+}
+
+.preview-value {
+  @apply text-xs text-[#b78cf0] font-mono;
+}
+
+.preview-value b {
+  @apply text-sm text-[#eadfc7];
+}
+
+.auto-reset-error-hint {
+  @apply text-xs text-[#e08a8a] bg-[rgba(224,138,138,0.1)] border border-[rgba(224,138,138,0.3)] rounded-lg py-1.5 px-2.5 text-center font-mono;
+}
+
+.auto-cfg-actions {
+  @apply flex flex-wrap gap-2 mt-2 pt-2 border-t border-[rgba(183,140,240,0.12)];
+}
+
+.auto-cfg-btn {
+  @apply bg-[rgba(138,104,184,0.15)] border border-[rgba(183,140,240,0.3)] text-[#b78cf0] rounded-md px-2.5 py-1 text-[11px] font-sans font-medium cursor-pointer transition-all duration-150 flex items-center gap-1;
+}
+
+.auto-cfg-btn:hover {
+  @apply bg-[rgba(183,140,240,0.25)] border-[#b78cf0] text-[#eadfc7] -translate-y-px;
+}
+
+.auto-cfg-btn.toggle-on {
+  @apply bg-[rgba(126,163,92,0.15)] border-[rgba(126,163,92,0.4)] text-[#9ecc72];
+}
+
+.auto-cfg-btn.toggle-on:hover {
+  @apply bg-[rgba(126,163,92,0.25)] border-[#9ecc72] text-[#e0ffd0];
+}
+
+.auto-cfg-btn.toggle-off {
+  @apply bg-[rgba(255,255,255,0.04)] border-[#3a2a1c] text-[#a99a80];
+}
+
+.auto-cfg-btn.toggle-off:hover {
+  @apply bg-[rgba(255,255,255,0.08)] border-[#5a422e] text-[#eadfc7];
 }
 
 /* ==========================================================================

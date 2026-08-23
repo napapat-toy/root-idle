@@ -210,11 +210,14 @@ export function useGameEngine() {
       freshOwned['fine'] = starterBonus;
     }
 
+    // Ensure at least 10 initial nutrients if auto-root is active so the first root is bought without delay
+    const initialNutrients = cur.prestige.autoRoot ? 10 : 0;
+
     setState(prev => ({
       ...prev,
       eternalSeeds: prev.eternalSeeds + gained,
-      nutrients: 0,
-      runEarned: 0,
+      nutrients: initialNutrients,
+      runEarned: initialNutrients,
       runPlayTimeSeconds: 0,
       owned: freshOwned,
       totalOwned: starterBonus,
@@ -464,13 +467,24 @@ export function useGameEngine() {
     }));
   }, []);
 
+  const setAutoResetThreshold = useCallback((threshold: number) => {
+    setState(prev => ({
+      ...prev,
+      prestige: {
+        ...prev.prestige,
+        autoResetThreshold: Math.max(10, threshold),
+        autoResetEnabled: true,
+      },
+    }));
+  }, []);
+
   const buyAutoReset = useCallback(() => {
     const cur = stateRef.current;
     if (cur.prestige.autoReset || cur.eternalSeeds < AUTO_RESET_COST) return;
     setState(prev => ({
       ...prev,
       eternalSeeds: prev.eternalSeeds - AUTO_RESET_COST,
-      prestige: { ...prev.prestige, autoReset: true },
+      prestige: { ...prev.prestige, autoReset: true, autoResetEnabled: false },
     }));
   }, []);
 
@@ -684,23 +698,23 @@ export function useGameEngine() {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-root perk (every 2s)
-  // Auto-root perk with 1-2 min lookahead (every 2s)
+  // Auto-root perk (fast responsive loop every 500ms)
   useEffect(() => {
     const interval = setInterval(() => {
       evaluateAutoBuy(stateRef.current, totalRate(), setState);
-    }, 2000);
+    }, 500);
 
     return () => clearInterval(interval);
   }, [totalRate]);
 
-  // Auto-reset perk (every 20s)
+  // Auto-reset perk (checks every 2.5s for snappy triggers)
   useEffect(() => {
     const interval = setInterval(() => {
       const cur = stateRef.current;
       if (!cur.prestige.autoReset || !cur.prestige.autoResetEnabled) return;
       if (!prestigeUnlocked(cur)) return;
-      if (calcPrestigeSeeds(cur) < AUTO_RESET_MIN_SEEDS) return;
+      const targetThreshold = Math.max(10, cur.prestige.autoResetThreshold || AUTO_RESET_MIN_SEEDS);
+      if (calcPrestigeSeeds(cur) < targetThreshold) return;
       const isEn = cur.lang === 'en';
       const gained = doPrestige();
       showFloatingText(
@@ -709,10 +723,14 @@ export function useGameEngine() {
         isEn ? `🌌 Auto Re-sow +${fmtInt(gained)}` : `🌌 หว่านใหม่อัตโนมัติ +${fmtInt(gained)}`,
         '#b78cf0'
       );
-    }, 20000);
+      // Instant kickstart buy right after auto-reset
+      setTimeout(() => {
+        evaluateAutoBuy(stateRef.current, totalRate(), setState);
+      }, 50);
+    }, 2500);
 
     return () => clearInterval(interval);
-  }, [doPrestige, showFloatingText]);
+  }, [doPrestige, showFloatingText, totalRate]);
 
   // Random event scheduler (105-155s interval)
   const eventTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -844,6 +862,7 @@ export function useGameEngine() {
     toggleAutoEvent,
     buyAutoReset,
     toggleAutoReset,
+    setAutoResetThreshold,
     toggleAutoRoot,
     buyEventBonus,
     buyEventDuration,
