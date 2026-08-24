@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { AutoRootMode, GameState, Language, SaveSlotMeta, SkinId } from '@/types/game';
 import { GAME_VERSION, SAVE_SLOT_COUNT, SKIN_DEFS } from '@/constants/gameData';
 import { decodeSave, getSlotMeta } from '@/lib/storage';
-import { fmtInt } from '@/lib/formatters';
+import { fmt, fmtInt } from '@/lib/formatters';
 import { getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
 import { ConfirmModal } from './ConfirmModal';
-import { SKIN_NAMES, t } from '@/lib/i18n';
+import { MODULE_TRANSLATIONS, SKIN_NAMES, t } from '@/lib/i18n';
 
 interface OptionsModalProps {
   isOpen: boolean;
@@ -443,24 +443,51 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 <div style={{ textAlign: 'left' }}>
                   {Array.from({ length: SAVE_SLOT_COUNT }, (_, i) => i + 1).map(slot => {
                     const meta = slotsMeta[slot];
-                    const summary = meta
-                      ? isEn
-                        ? `Saved on ${new Date(meta.savedAt).toLocaleString('en-US', {
-                            dateStyle: 'short',
-                            timeStyle: 'short',
-                          })} · ${meta.totalOwned || 0} roots · ${fmtInt(meta.seeds || 0)} seeds`
-                        : `บันทึกเมื่อ ${new Date(meta.savedAt).toLocaleString('th-TH', {
-                            dateStyle: 'short',
-                            timeStyle: 'short',
-                          })} · ${meta.totalOwned || 0} ต้น (รวมทุกชนิด) · ${fmtInt(meta.seeds || 0)} เมล็ด`
-                      : tr.emptySlot;
+                    const dateString = meta
+                      ? new Date(meta.savedAt).toLocaleString(isEn ? 'en-US' : 'th-TH', {
+                          dateStyle: 'short',
+                          timeStyle: 'short',
+                        })
+                      : '';
+                    const highestName = meta?.highestModuleId
+                      ? (MODULE_TRANSLATIONS[meta.highestModuleId]?.[lang]?.name || meta.highestModuleId)
+                      : null;
+                    const nutrientText = meta?.nutrients !== undefined ? fmt(meta.nutrients) : null;
+                    const pendingText = meta?.pendingSeeds && meta.pendingSeeds > 0
+                      ? ` (+${fmtInt(meta.pendingSeeds)} ${isEn ? 'pending' : 'รอรับ ✨'})`
+                      : '';
 
                     return (
                       <div key={slot} className="prestige-item slot-item">
                         <div className="p-top">
                           <span>{isEn ? `Slot ${slot}` : `ช่อง ${slot}`}</span>
+                          {meta && (
+                            <span style={{ fontSize: '11px', color: 'var(--root-cream-dim)', fontWeight: 400 }}>
+                              {dateString}
+                            </span>
+                          )}
                         </div>
-                        <div className="p-desc">{summary}</div>
+                        <div className="p-desc" style={{ marginTop: '4px', lineHeight: 1.5 }}>
+                          {meta ? (
+                            <>
+                              {nutrientText && (
+                                <div>
+                                  🌱 <b style={{ color: 'var(--accent-amber)' }}>{nutrientText}</b> {isEn ? 'nutrients' : 'สารอาหาร'}
+                                  {highestName && <span> · {highestName} ({fmtInt(meta.totalOwned || 0)} {isEn ? 'roots' : 'ต้น'})</span>}
+                                </div>
+                              )}
+                              <div style={{ color: 'var(--prestige-accent)' }}>
+                                🌌 <b>{fmtInt(meta.seeds || 0)}</b> {isEn ? 'Seeds' : 'เมล็ดนิรันดร์'}
+                                {pendingText && <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>{pendingText}</span>}
+                                {meta.prestigeCount !== undefined && meta.prestigeCount > 0 && (
+                                  <span style={{ color: 'var(--root-cream-dim)' }}> · Prestige ×{meta.prestigeCount}</span>
+                                )}
+                              </div>
+                            </>
+                          ) : (
+                            <span style={{ opacity: 0.6 }}>{tr.emptySlot}</span>
+                          )}
+                        </div>
                         <div className="modal-actions">
                           <button onClick={() => handleSaveSlot(slot)}>{tr.save}</button>
                           {meta && (

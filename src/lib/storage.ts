@@ -1,5 +1,5 @@
 import { GameState, SavePayload, SaveSlotMeta } from '@/types/game';
-import { BUY_QTY_OPTIONS, MODULE_DEFS } from '@/constants/gameData';
+import { BUY_QTY_OPTIONS, calcPrestigeSeeds, MODULE_DEFS } from '@/constants/gameData';
 
 export const STORAGE_KEY = 'root-idle-state-v1';
 
@@ -257,11 +257,17 @@ export function getSlotMeta(slotNum: number): SaveSlotMeta | null {
 export function saveSlot(slotNum: number, state: GameState): void {
   if (typeof window === 'undefined') return;
   try {
+    const highestOwned = MODULE_DEFS.slice().reverse().find(d => (state.owned[d.id] || 0) > 0);
     const meta: SaveSlotMeta = {
       code: encodeSave(state),
       savedAt: Date.now(),
       totalOwned: state.totalOwned,
       seeds: Math.floor(state.eternalSeeds),
+      pendingSeeds: calcPrestigeSeeds(state),
+      nutrients: state.nutrients,
+      highestModuleId: highestOwned ? highestOwned.id : 'fine',
+      prestigeCount: state.stats?.prestigeCount || 0,
+      achievementsCount: state.achievements?.length || 0,
     };
     window.localStorage.setItem(`save-slot-${slotNum}`, JSON.stringify(meta));
   } catch (e) {

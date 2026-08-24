@@ -107,6 +107,11 @@ export interface SaveSlotMeta {
   savedAt: number;
   totalOwned: number;
   seeds: number;
+  pendingSeeds?: number;
+  nutrients?: number;
+  highestModuleId?: string;
+  prestigeCount?: number;
+  achievementsCount?: number;
 }
 
 export interface SavePayload {
