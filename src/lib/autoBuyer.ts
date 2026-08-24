@@ -87,10 +87,11 @@ export function evaluateAutoBuy(
       const count = state.owned[def.id] || 0;
       const cost = costFor(def, count);
       const eff = effectiveRate(state, def);
-      const moduleTotal = eff * count;
-      const shareOfTotal = currentBaseRate > 0 ? moduleTotal / currentBaseRate : 0;
-      const marginalGain = eff / effectiveTotalRate;
       const isNewUnlock = count === 0;
+      const projectedModuleTotal = eff * (count + 1);
+      const projectedTotalRate = currentBaseRate + eff;
+      const shareOfTotal = projectedTotalRate > 0 ? projectedModuleTotal / projectedTotalRate : 0;
+      const marginalGain = eff / effectiveTotalRate;
 
       candidates.push({
         type: 'module',
@@ -121,8 +122,9 @@ export function evaluateAutoBuy(
           const cost = rootUpgradeCost(def, level);
           const eff = effectiveRate(state, def);
           const gain = count * eff * (rootUpgradeLevelMult(level) - 1);
-          const moduleTotal = eff * count;
-          const shareOfTotal = currentBaseRate > 0 ? moduleTotal / currentBaseRate : 0;
+          const projectedTotalRate = currentBaseRate + gain;
+          const projectedModuleTotal = eff * count * rootUpgradeLevelMult(level);
+          const shareOfTotal = projectedTotalRate > 0 ? projectedModuleTotal / projectedTotalRate : 0;
           const marginalGain = gain / effectiveTotalRate;
 
           candidates.push({
@@ -180,14 +182,14 @@ export function evaluateAutoBuy(
 
     const activePool = highImpactCandidates.length > 0 ? highImpactCandidates : candidates;
 
-    // Classic basic mode: buy cheapest high-impact candidate
+    // Classic basic mode: buy highest-yield affordable high-impact candidate (Top-Down)
     if (!isSmart) {
       const affordable = activePool
         .filter(c => c.cost <= currentNutrients)
         .sort((a, b) => {
-          // Prioritize higher share, then lower cost
-          if (b.shareOfTotal !== a.shareOfTotal) return b.shareOfTotal - a.shareOfTotal;
-          return a.cost - b.cost;
+          // Prioritize higher share, then higher value (Top-Down)
+          if (Math.abs(b.shareOfTotal - a.shareOfTotal) > 0.03) return b.shareOfTotal - a.shareOfTotal;
+          return b.value - a.value;
         });
       if (affordable.length > 0) {
         affordable[0].apply();
@@ -232,10 +234,13 @@ export function evaluateAutoBuy(
     });
 
     if (reachable.length === 0) {
-      // If nothing within standard window, buy highest ROI affordable candidate if any
+      // If nothing within standard window, buy highest value affordable candidate if any (Top-Down)
       const affordable = evaluatedPool
         .filter(c => c.waitSec === 0)
-        .sort((a, b) => (b.value / Math.max(1, b.cost)) - (a.value / Math.max(1, a.cost)));
+        .sort((a, b) => {
+          if (Math.abs(b.shareOfTotal - a.shareOfTotal) > 0.03) return b.shareOfTotal - a.shareOfTotal;
+          return b.value - a.value;
+        });
       if (affordable.length > 0) {
         affordable[0].apply();
         currentNutrients -= affordable[0].cost;
@@ -246,39 +251,47 @@ export function evaluateAutoBuy(
     }
 
     // Sort candidates:
-    // 1. Major target (>= 20% or new tier) takes highest priority
-    // 2. Affordable items with strong secondary share take priority over long waits
-    // 3. Higher share of total production
-    // 4. Faster wait time / best ROI
+    // 1. Major target (>= 20% or new tier) takes absolute highest priority
+    // 2. If both are major targets: new tier unlock -> higher marginal gain -> wait time
+    // 3. For secondary tiers: if both affordable now, buy highest yield / value (Top-Down)
+    // 4. Higher share of total production
+    // 5. Faster wait time / best ROI
     reachable.sort((a, b) => {
-      // If one is a Major Target (>= 20% / new unlock)
+      // 1. If one is a Major Target (>= 20% / new unlock) and the other is not, Major Target always wins
       if (a.isMajor !== b.isMajor) {
         return a.isMajor ? -1 : 1;
       }
 
-      // If both are affordable now, buy higher share
-      if (a.waitSec === 0 && b.waitSec === 0) {
-        if (Math.abs(b.shareOfTotal - a.shareOfTotal) > 0.05) {
-          return b.shareOfTotal - a.shareOfTotal;
-        }
-        return (b.value / Math.max(1, b.cost)) - (a.value / Math.max(1, a.cost));
+      // 2. If both are Major Targets
+      if (a.isMajor && b.isMajor) {
+        if (a.isNewUnlock !== b.isNewUnlock) return a.isNewUnlock ? -1 : 1;
+        if (Math.abs(b.marginalGain - a.marginalGain) > 0.08) return b.marginalGain - a.marginalGain;
+        return a.waitSec - b.waitSec;
       }
 
-      // If one is affordable now with solid share (>= 5%) and the other requires waiting for a secondary tier
+      // 3. For non-major tiers: if both are affordable now, buy higher share and higher value (Top-Down)
+      if (a.waitSec === 0 && b.waitSec === 0) {
+        if (Math.abs(b.shareOfTotal - a.shareOfTotal) > 0.03) {
+          return b.shareOfTotal - a.shareOfTotal;
+        }
+        return b.value - a.value;
+      }
+
+      // 4. For non-major tiers: affordable secondary stepping stone (>= 5%) takes precedence
       if (a.waitSec === 0 && b.waitSec > 0 && a.shareOfTotal >= 0.05) return -1;
       if (b.waitSec === 0 && a.waitSec > 0 && b.shareOfTotal >= 0.05) return 1;
 
-      // Higher share of total production takes priority
+      // 5. Higher share of total production takes priority
       if (Math.abs(b.shareOfTotal - a.shareOfTotal) > 0.08) {
         return b.shareOfTotal - a.shareOfTotal;
       }
 
-      // Shorter wait time for secondary stepping stones
+      // 6. Shorter wait time for secondary stepping stones
       if (Math.abs(a.waitSec - b.waitSec) > 30) {
         return a.waitSec - b.waitSec;
       }
 
-      // Best ROI
+      // 7. Best ROI
       const roiB = b.value / Math.max(1, b.cost);
       const roiA = a.value / Math.max(1, a.cost);
       return roiB - roiA;

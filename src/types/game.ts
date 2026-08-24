@@ -112,6 +112,9 @@ export interface SaveSlotMeta {
   highestModuleId?: string;
   prestigeCount?: number;
   achievementsCount?: number;
+  totalPlayTimeSeconds?: number;
+  lifetimeNutrients?: number;
+  lifetimeSeeds?: number;
 }
 
 export interface SavePayload {

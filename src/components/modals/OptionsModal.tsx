@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { AutoRootMode, GameState, Language, SaveSlotMeta, SkinId } from '@/types/game';
 import { GAME_VERSION, SAVE_SLOT_COUNT, SKIN_DEFS } from '@/constants/gameData';
 import { decodeSave, getSlotMeta } from '@/lib/storage';
-import { fmt, fmtInt } from '@/lib/formatters';
+import { fmt, fmtInt, formatDuration } from '@/lib/formatters';
 import { getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
 import { ConfirmModal } from './ConfirmModal';
 import { MODULE_TRANSLATIONS, SKIN_NAMES, t } from '@/lib/i18n';
@@ -449,13 +449,22 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                           timeStyle: 'short',
                         })
                       : '';
+                    const playTimeText = meta?.totalPlayTimeSeconds && meta.totalPlayTimeSeconds > 0
+                      ? formatDuration(meta.totalPlayTimeSeconds, lang)
+                      : null;
                     const highestName = meta?.highestModuleId
                       ? (MODULE_TRANSLATIONS[meta.highestModuleId]?.[lang]?.name || meta.highestModuleId)
                       : null;
                     const nutrientText = meta?.nutrients !== undefined ? fmt(meta.nutrients) : null;
+                    const lifetimeNutrientsText = meta?.lifetimeNutrients && meta.lifetimeNutrients > (meta.nutrients || 0)
+                      ? fmt(meta.lifetimeNutrients)
+                      : null;
                     const pendingText = meta?.pendingSeeds && meta.pendingSeeds > 0
                       ? ` (+${fmtInt(meta.pendingSeeds)} ${isEn ? 'pending' : 'รอรับ ✨'})`
                       : '';
+                    const lifetimeSeedsText = meta?.lifetimeSeeds && meta.lifetimeSeeds > (meta.seeds || 0)
+                      ? fmtInt(meta.lifetimeSeeds)
+                      : null;
 
                     return (
                       <div key={slot} className="prestige-item slot-item">
@@ -463,7 +472,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                           <span>{isEn ? `Slot ${slot}` : `ช่อง ${slot}`}</span>
                           {meta && (
                             <span style={{ fontSize: '11px', color: 'var(--root-cream-dim)', fontWeight: 400 }}>
-                              {dateString}
+                              {playTimeText ? `⏱️ ${playTimeText} · ` : ''}{dateString}
                             </span>
                           )}
                         </div>
@@ -473,12 +482,22 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                               {nutrientText && (
                                 <div>
                                   🌱 <b style={{ color: 'var(--accent-amber)' }}>{nutrientText}</b> {isEn ? 'nutrients' : 'สารอาหาร'}
+                                  {lifetimeNutrientsText && (
+                                    <span style={{ color: 'var(--root-cream-dim)', fontSize: '10.5px' }}>
+                                      {' '}({isEn ? 'lifetime' : 'สะสม'} {lifetimeNutrientsText})
+                                    </span>
+                                  )}
                                   {highestName && <span> · {highestName} ({fmtInt(meta.totalOwned || 0)} {isEn ? 'roots' : 'ต้น'})</span>}
                                 </div>
                               )}
                               <div style={{ color: 'var(--prestige-accent)' }}>
                                 🌌 <b>{fmtInt(meta.seeds || 0)}</b> {isEn ? 'Seeds' : 'เมล็ดนิรันดร์'}
                                 {pendingText && <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>{pendingText}</span>}
+                                {lifetimeSeedsText && (
+                                  <span style={{ color: '#ffd76a', fontSize: '10.5px' }}>
+                                    {' '}· {isEn ? 'all-time' : 'ตลอดกาล'} {lifetimeSeedsText}
+                                  </span>
+                                )}
                                 {meta.prestigeCount !== undefined && meta.prestigeCount > 0 && (
                                   <span style={{ color: 'var(--root-cream-dim)' }}> · Prestige ×{meta.prestigeCount}</span>
                                 )}

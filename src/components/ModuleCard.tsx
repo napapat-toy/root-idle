@@ -71,15 +71,20 @@ export const ModuleCard: React.FC<ModuleCardProps> = React.memo(({
           <span className="module-owned">×{owned}</span>
         </div>
 
-        <div className="module-desc">{localized.desc}</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '3px', gap: '8px' }}>
+          <div className="module-desc" style={{ marginTop: 0 }}>{localized.desc}</div>
+          <span style={{ fontSize: '11px', color: 'var(--accent-glow-dim)', whiteSpace: 'nowrap', fontFamily: 'monospace', flexShrink: 0, opacity: 0.9 }}>
+            +{fmt(effRate * qty)}{isEn ? '/s' : '/วิ'}{owned > 0 ? (isEn ? ' next' : ' ต่อรอบ') : ''}
+          </span>
+        </div>
 
         <div className="module-bottom">
           <span className="module-cost">
             {fmt(cost)}
             {qty > 1 ? ` (x${qty})` : ''}
           </span>
-          <span className={`module-rate ${ruLevel > 0 || echoMult > 1 ? 'boosted' : ''}`}>
-            +{fmt(moduleTotalRate)}{isEn ? '/s' : '/วิ'}
+          <span className={`module-rate ${ruLevel > 0 || echoMult > 1 || owned === 0 ? 'boosted' : ''}`}>
+            +{fmt(owned === 0 ? effRate * qty : moduleTotalRate)}{isEn ? '/s' : '/วิ'}
           </span>
         </div>
       </div>

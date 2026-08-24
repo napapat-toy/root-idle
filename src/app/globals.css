@@ -668,12 +668,12 @@ svg#rootCanvas {
   }
 }
 
-.modal-wrapper.achievements-modal-wrapper { max-width: 480px; }
-.modal-wrapper.stats-modal-wrapper { max-width: 460px; }
-.modal-wrapper.prestige-modal-wrapper { max-width: 440px; }
-.modal-wrapper.options-modal-wrapper { max-width: 400px; }
+.modal-wrapper.achievements-modal-wrapper { max-width: 580px; }
+.modal-wrapper.stats-modal-wrapper { max-width: 640px; }
+.modal-wrapper.prestige-modal-wrapper { max-width: 480px; }
+.modal-wrapper.options-modal-wrapper { max-width: 460px; }
 .modal-wrapper.offline-modal-wrapper,
-.modal-wrapper.confirm-modal-wrapper { max-width: 350px; }
+.modal-wrapper.confirm-modal-wrapper { max-width: 380px; }
 
 .offline-modal {
   background: var(--bg-panel);
@@ -1088,38 +1088,58 @@ svg#rootCanvas {
    11. STATS DASHBOARD
    ========================================================================== */
 
+.stats-modal-content {
+  @apply sm:p-6;
+}
+
+.stats-modal-content .icon {
+  @apply text-[28px] sm:text-[36px] mb-1 sm:mb-1.5;
+}
+
+.stats-modal-content h2 {
+  @apply text-[18px] sm:text-[22px] mb-1;
+}
+
+.stats-modal-content .away-time {
+  @apply text-[12px] sm:text-[13px] mb-3 sm:mb-4.5;
+}
+
 .stats-dashboard-grid {
-  @apply grid grid-cols-1 sm:grid-cols-2 gap-2.5;
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5;
 }
 
 .stats-card {
-  @apply bg-[rgba(30,20,14,0.75)] border border-[#3a2a1c] rounded-[9px] p-2.5 sm:p-3 flex flex-col gap-1.5 text-left;
+  @apply bg-[rgba(30,20,14,0.75)] border border-[#3a2a1c] rounded-[10px] p-3 sm:p-3.5 flex flex-col gap-2 text-left transition-colors duration-150;
+}
+
+.stats-card:hover {
+  @apply border-[#543b27] bg-[rgba(36,25,18,0.85)];
 }
 
 .stats-card-header {
-  @apply flex items-center gap-1.5 border-b border-[rgba(255,255,255,0.08)] pb-1;
+  @apply flex items-center gap-2 border-b border-[rgba(255,255,255,0.08)] pb-1.5;
 }
 
-.stats-card-icon { @apply text-sm; }
+.stats-card-icon { @apply text-base sm:text-lg; }
 
 .stats-card-title {
-  @apply text-[12px] font-bold text-[#eadfc7] tracking-[0.2px];
+  @apply text-[12.5px] sm:text-[13.5px] font-bold text-[#eadfc7] tracking-[0.2px];
 }
 
 .stats-card-rows {
-  @apply flex flex-col gap-1;
+  @apply flex flex-col gap-1.5 sm:gap-2;
 }
 
 .stats-row {
-  @apply flex justify-between items-center text-[11px];
+  @apply flex justify-between items-center text-[11.5px] sm:text-[12.5px];
 }
 
-.stats-label { @apply text-[#a99a80]; }
-.stats-value { @apply font-semibold text-[#eadfc7]; }
+.stats-label { @apply text-[#a99a80] text-[11.5px] sm:text-[12.5px]; }
+.stats-value { @apply font-semibold text-[#eadfc7] text-[11.5px] sm:text-[12.5px]; }
 .stats-value.highlight { @apply text-[#ffd76a]; }
 .stats-value.golden { @apply text-[#e0a94a] font-bold; }
-.stats-value.purple { color: var(--prestige-accent); }
-.stats-value.green { @apply text-[#8fd17a]; }
+.stats-value.purple { color: var(--prestige-accent); font-semibold: 600; }
+.stats-value.green { @apply text-[#8fd17a] font-semibold; }
 
 /* ==========================================================================
    12. GLOBAL MOBILE RESPONSIVENESS (<= 480px)

@@ -248,7 +248,34 @@ export function getSlotMeta(slotNum: number): SaveSlotMeta | null {
   try {
     const raw = window.localStorage.getItem(`save-slot-${slotNum}`);
     if (!raw) return null;
-    return JSON.parse(raw) as SaveSlotMeta;
+    const meta = JSON.parse(raw) as SaveSlotMeta;
+
+    // Auto-backfill rich metadata for older saves by parsing meta.code
+    if (meta && meta.code && (meta.nutrients === undefined || meta.pendingSeeds === undefined || meta.totalPlayTimeSeconds === undefined)) {
+      try {
+        const payload = decodeSave(meta.code);
+        const owned = payload.o || {};
+        const highestOwned = MODULE_DEFS.slice().reverse().find(d => (owned[d.id] || 0) > 0);
+        const runEarned = payload.re || payload.n || 0;
+        const goldenLevel = payload.p?.goldenLevel || 0;
+        const baseSeeds = Math.floor(Math.cbrt(runEarned / 1000000));
+        const pendingSeeds = Math.max(0, Math.floor(baseSeeds * (1 + goldenLevel * 0.05)));
+
+        meta.nutrients = payload.n || 0;
+        meta.pendingSeeds = pendingSeeds;
+        meta.highestModuleId = highestOwned ? highestOwned.id : 'fine';
+        meta.prestigeCount = payload.st?.prestigeCount || 0;
+        meta.achievementsCount = payload.ach?.length || 0;
+        meta.totalOwned = payload.t || Object.values(owned).reduce((a, b) => a + b, 0);
+        meta.totalPlayTimeSeconds = payload.pt || 0;
+        meta.lifetimeSeeds = payload.st?.totalSeedsEarnedLifetime || payload.es || 0;
+        meta.lifetimeNutrients = payload.st?.totalNutrientsEarnedLifetime || runEarned;
+      } catch {
+        // graceful fallback
+      }
+    }
+
+    return meta;
   } catch {
     return null;
   }
@@ -268,6 +295,9 @@ export function saveSlot(slotNum: number, state: GameState): void {
       highestModuleId: highestOwned ? highestOwned.id : 'fine',
       prestigeCount: state.stats?.prestigeCount || 0,
       achievementsCount: state.achievements?.length || 0,
+      totalPlayTimeSeconds: state.totalPlayTimeSeconds || 0,
+      lifetimeSeeds: Math.max(state.stats?.totalSeedsEarnedLifetime || 0, state.eternalSeeds || 0),
+      lifetimeNutrients: state.stats?.totalNutrientsEarnedLifetime || state.runEarned || state.nutrients || 0,
     };
     window.localStorage.setItem(`save-slot-${slotNum}`, JSON.stringify(meta));
   } catch (e) {
