@@ -5,10 +5,14 @@ import { GameState, Language } from '@/types/game';
 import {
   BUY_QTY_OPTIONS,
   MODULE_DEFS,
+  baseTotalRate,
   echoCost,
+  effectiveRate,
+  globalEchoMultiplier,
   rootUpgradeCost,
   rootUpgradeIsMilestone,
   rootUpgradeLevelMult,
+  rootUpgradeMultiplier,
   rootUpgradeRequireOwned,
 } from '@/constants/gameData';
 import { fmt, formatDuration } from '@/lib/formatters';
@@ -77,24 +81,22 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
   }, [state.rootUpgrades, state.echoes]);
 
   const echoMult = useMemo(() => {
-    let sum = 0;
-    MODULE_DEFS.forEach(d => {
-      sum += (state.echoes[d.id] || 0) * 0.01;
-    });
-    return sum;
+    return globalEchoMultiplier(state);
   }, [state.echoes]);
 
-  // Rates memo
+  // Rates memo - calculates exact canonical effective rates and shares in sync with active buffs
   const moduleRates = useMemo(() => {
     const map: Record<string, { effRate: number; totalRate: number; shareText: string; ruMult: number }> = {};
-    const prMult = 1 + (state.prestige.passiveRateLevel || 0) * 0.01;
+    const baseTotal = baseTotalRate(state);
+    const buffMult = baseTotal > 0 ? totalRate / baseTotal : 1;
+
     MODULE_DEFS.forEach(def => {
       const count = state.owned[def.id] || 0;
-      const ruLevel = state.rootUpgrades[def.id] || 0;
-      const ruMult = rootUpgradeLevelMult(ruLevel);
-      const eff = def.rate * ruMult * (1 + echoMult) * prMult;
+      const baseEff = effectiveRate(state, def);
+      const eff = baseEff * buffMult;
       const tot = eff * count;
       const share = totalRate > 0 ? ((tot / totalRate) * 100).toFixed(1) : '0.0';
+      const ruMult = rootUpgradeMultiplier(state, def.id);
       map[def.id] = {
         effRate: eff,
         totalRate: tot,
@@ -103,7 +105,7 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
       };
     });
     return map;
-  }, [state.owned, state.rootUpgrades, state.prestige.passiveRateLevel, echoMult, totalRate]);
+  }, [state, totalRate]);
 
   const hasUpgradesOrEchoes = unlockedUpgradeIds.length > 0 || unlockedEchoIds.length > 0;
 
