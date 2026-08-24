@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AutoRootMode, GameState, Language, SaveSlotMeta, SkinId } from '@/types/game';
-import { SAVE_SLOT_COUNT, SKIN_DEFS } from '@/constants/gameData';
+import { GAME_VERSION, SAVE_SLOT_COUNT, SKIN_DEFS } from '@/constants/gameData';
 import { decodeSave, getSlotMeta } from '@/lib/storage';
 import { fmtInt } from '@/lib/formatters';
 import { getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
@@ -492,6 +492,10 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 <button className="danger-btn" onClick={handleHardResetClick}>
                   {tr.hardResetBtn}
                 </button>
+
+                <div style={{ marginTop: '22px', textAlign: 'center', fontSize: '11px', color: 'var(--root-cream-dim)', opacity: 0.5, letterSpacing: '0.06em' }}>
+                  Root Idle · v{GAME_VERSION}
+                </div>
               </>
             )}
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { GameState, Language } from '@/types/game';
-import { stageName } from '@/constants/gameData';
+import { GAME_VERSION, stageName } from '@/constants/gameData';
 import { fmt, formatDuration } from '@/lib/formatters';
 import { ACHIEVEMENTS } from '@/constants/achievementsData';
 import { t } from '@/lib/i18n';
@@ -153,6 +153,10 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 </div>
               </div>
             </div>
+          </div>
+
+          <div style={{ marginTop: '18px', textAlign: 'center', fontSize: '11px', color: 'var(--root-cream-dim)', opacity: 0.5, letterSpacing: '0.06em' }}>
+            Root Idle · v{GAME_VERSION}
           </div>
         </div>
       </div>

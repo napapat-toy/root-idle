@@ -1,5 +1,7 @@
 import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
 
+export const GAME_VERSION = '1.5.0';
+
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
 export const PRESTIGE_UNLOCK_ECHOES = 5;
