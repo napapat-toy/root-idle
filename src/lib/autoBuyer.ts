@@ -20,6 +20,7 @@ export interface AutoBuyCandidate {
   shareOfTotal: number; // proportion of total income (0.0 to 1.0)
   marginalGain: number; // fraction added to totalRate
   isNewUnlock: boolean; // whether this unlocks a new tier
+  isGatekeeper?: boolean; // whether this is needed (< 10) to unlock the next tier
   apply: () => void;
 }
 
@@ -89,6 +90,7 @@ export function evaluateAutoBuy(
       const cost = costFor(def, count);
       const eff = effectiveRate(state, def);
       const isNewUnlock = count === 0;
+      const isGatekeeper = i < MODULE_DEFS.length - 1 && count < MODULE_UNLOCK_REQUIRE_OWNED;
       const projectedModuleTotal = eff * (count + 1);
       const projectedTotalRate = currentBaseRate + eff;
       const shareOfTotal = projectedTotalRate > 0 ? projectedModuleTotal / projectedTotalRate : 0;
@@ -102,6 +104,7 @@ export function evaluateAutoBuy(
         shareOfTotal,
         marginalGain,
         isNewUnlock,
+        isGatekeeper,
         apply: () => {
           setState(prev => ({
             ...prev,
@@ -174,9 +177,9 @@ export function evaluateAutoBuy(
     if (candidates.length === 0) break;
 
     // Filter out obsolete < 1% candidates when total rate is developed (> 50)
-    // Always keep candidates that unlock new tiers or produce >= 1% of total income
+    // Always keep candidates that unlock new tiers, gatekeepers to next tiers, or produce >= 1% of total income
     const highImpactCandidates = candidates.filter(c => {
-      if (c.isNewUnlock) return true;
+      if (c.isNewUnlock || c.isGatekeeper) return true;
       if (totalRate <= 50) return true;
       return c.shareOfTotal >= 0.01 || c.marginalGain >= 0.01;
     });
@@ -188,6 +191,8 @@ export function evaluateAutoBuy(
       const affordable = activePool
         .filter(c => c.cost <= currentNutrients)
         .sort((a, b) => {
+          // Gatekeepers take absolute priority to unblock the tree
+          if (a.isGatekeeper !== b.isGatekeeper) return a.isGatekeeper ? -1 : 1;
           // Prioritize higher share, then higher value (Top-Down)
           if (Math.abs(b.shareOfTotal - a.shareOfTotal) > 0.03) return b.shareOfTotal - a.shareOfTotal;
           return b.value - a.value;
@@ -215,12 +220,12 @@ export function evaluateAutoBuy(
     }
 
     // 2. Classify candidates by wait time & impact:
-    // - Major Targets (New unlock or >= 20% share / +20% marginal boost): wait up to 20 mins (1,200s)
+    // - Major Targets (Gatekeeper, New unlock or >= 20% share / +20% marginal boost): wait up to 20 mins (1,200s)
     // - Secondary Stepping Stones (5% - 20% share / gain): wait up to 5 mins (300s)
     const evaluatedPool = activePool.map(c => {
       const needed = Math.max(0, c.cost - currentNutrients);
       const waitSec = needed / Math.max(0.01, totalRate);
-      const isMajor = c.isNewUnlock || c.shareOfTotal >= 0.20 || c.marginalGain >= 0.20;
+      const isMajor = c.isNewUnlock || c.isGatekeeper || c.shareOfTotal >= 0.20 || c.marginalGain >= 0.20;
       return {
         ...c,
         waitSec,
@@ -239,6 +244,7 @@ export function evaluateAutoBuy(
       const affordable = evaluatedPool
         .filter(c => c.waitSec === 0)
         .sort((a, b) => {
+          if (a.isGatekeeper !== b.isGatekeeper) return a.isGatekeeper ? -1 : 1;
           if (Math.abs(b.shareOfTotal - a.shareOfTotal) > 0.03) return b.shareOfTotal - a.shareOfTotal;
           return b.value - a.value;
         });
@@ -252,19 +258,20 @@ export function evaluateAutoBuy(
     }
 
     // Sort candidates:
-    // 1. Major target (>= 20% or new tier) takes absolute highest priority
-    // 2. If both are major targets: new tier unlock -> higher marginal gain -> wait time
+    // 1. Gatekeeper to next tier / Major target takes highest priority
+    // 2. If both are major targets: gatekeeper -> new tier unlock -> higher marginal gain -> wait time
     // 3. For secondary tiers: if both affordable now, buy highest yield / value (Top-Down)
     // 4. Higher share of total production
     // 5. Faster wait time / best ROI
     reachable.sort((a, b) => {
-      // 1. If one is a Major Target (>= 20% / new unlock) and the other is not, Major Target always wins
+      // 1. If one is a Major Target (>= 20% / new unlock / gatekeeper) and the other is not, Major Target always wins
       if (a.isMajor !== b.isMajor) {
         return a.isMajor ? -1 : 1;
       }
 
       // 2. If both are Major Targets
       if (a.isMajor && b.isMajor) {
+        if (a.isGatekeeper !== b.isGatekeeper) return a.isGatekeeper ? -1 : 1;
         if (a.isNewUnlock !== b.isNewUnlock) return a.isNewUnlock ? -1 : 1;
         if (Math.abs(b.marginalGain - a.marginalGain) > 0.08) return b.marginalGain - a.marginalGain;
         return a.waitSec - b.waitSec;
