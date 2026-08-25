@@ -186,15 +186,15 @@ h1 span {
    ========================================================================== */
 
 .top-actions-row {
-  @apply w-full flex items-center justify-between gap-1.5 flex-wrap sm:flex-nowrap mb-0;
+  @apply w-full flex items-center justify-between gap-1.5 flex-wrap sm:flex-nowrap mb-0 pt-1.5 pb-0.5 px-0.5;
 }
 
 .top-actions-left {
-  @apply flex items-center gap-1.5 flex-wrap min-w-0;
+  @apply flex items-center gap-1.5 flex-wrap min-w-0 py-0.5;
 }
 
 .utility-btn-group {
-  @apply flex items-center gap-1.5 shrink-0 ml-auto;
+  @apply flex items-center gap-1.5 shrink-0 ml-auto py-1 px-1;
 }
 
 .utility-divider {
