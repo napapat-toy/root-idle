@@ -4,7 +4,7 @@
 ![React](https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=for-the-badge&logo=tailwindcss)
-![Version](https://img.shields.io/badge/version-1.6.1-orange?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.6.2-orange?style=for-the-badge)
 ![i18n](https://img.shields.io/badge/i18n-TH%20%7C%20EN-green?style=for-the-badge)
 
 **เกม Idle ปลูกรากไม้สไตล์เซน — รดน้ำ รอ และดูรากแผ่ขยายเองไปเรื่อยๆ ใต้ผืนดิน**  

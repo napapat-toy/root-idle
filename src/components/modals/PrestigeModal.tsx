@@ -11,6 +11,7 @@ import {
   AUTO_ROOT_ALL_COST,
   AUTO_ROOT_COST,
   AUTO_ROOT_SMART_COST,
+  calcBulkPrestigeUpgrade,
   calcPrestigeSeeds,
   eventBonusCost,
   eventDurationCost,
@@ -24,6 +25,7 @@ import {
   luckyDurationCost,
   luckyDurationExtra,
   luckyDurationMaxed,
+  LUCKY_DURATION_MAX_LEVEL,
   luckyMagnitudeCost,
   OFFLINE_CAP_HOURS,
   offlineCapCost,
@@ -41,9 +43,9 @@ interface PrestigeModalProps {
   state: GameState;
   onClose: () => void;
   onConfirmPrestige: () => void;
-  onBuyStarterCulture: () => void;
-  onBuyGoldenSeed: () => void;
-  onBuyPassiveRate: () => void;
+  onBuyStarterCulture: (amount?: number | 'max') => void;
+  onBuyGoldenSeed: (amount?: number | 'max') => void;
+  onBuyPassiveRate: (amount?: number | 'max') => void;
   onBuyAutoRoot: () => void;
   onToggleAutoRoot: () => void;
   onSetAutoRootMode: (mode: AutoRootMode) => void;
@@ -54,11 +56,11 @@ interface PrestigeModalProps {
   onBuyAutoReset: () => void;
   onToggleAutoReset: () => void;
   onOpenAutoResetConfig?: () => void;
-  onBuyEventBonus: () => void;
+  onBuyEventBonus: (amount?: number | 'max') => void;
   onBuyEventDuration: () => void;
   onBuyLuckyChance: () => void;
-  onBuyLuckyMagnitude: () => void;
-  onBuyLuckyDuration: () => void;
+  onBuyLuckyMagnitude: (amount?: number | 'max') => void;
+  onBuyLuckyDuration: (amount?: number | 'max') => void;
   onBuyOfflineCapUpgrade: () => void;
   onBuyAuraRoots: () => void;
   onBuySkin: (skinKey: 'skinSameOrigin' | 'skinGrayscale' | 'skinGradient') => void;
@@ -146,6 +148,83 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
     );
   };
 
+  const renderBulkItem = (
+    title: string,
+    badge: string,
+    desc: string,
+    costFn: (lvl: number) => number,
+    currentLevel: number,
+    onBuy: (amount?: number | 'max') => void,
+    maxLevel: number = Infinity
+  ) => {
+    const isMaxed = currentLevel >= maxLevel;
+    if (isMaxed) {
+      return renderItem(title, isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓', desc, '—', undefined, true, true);
+    }
+    const cost1 = costFn(currentLevel);
+    const { count: maxBuyable } = calcBulkPrestigeUpgrade(currentLevel, seeds, costFn, 'max', maxLevel);
+    const disabled = seeds < cost1;
+
+    return (
+      <div
+        className={`prestige-item ${disabled ? 'disabled' : ''}`}
+        onClick={() => { if (!disabled) onBuy(1); }}
+      >
+        <div className="p-top">
+          <span>{title}</span>
+          <span className="font-mono">{badge}</span>
+        </div>
+        <div className="p-desc">{desc}</div>
+        <div className="p-cost" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', flexWrap: 'wrap', gap: '6px' }}>
+          <span style={{ fontSize: '11.5px', color: 'var(--prestige-accent)' }}>
+            {fmtInt(cost1)} 🌌
+          </span>
+          <div className="passive-bulk-row" onClick={e => e.stopPropagation()}>
+            <button
+              type="button"
+              className="btn-passive-bulk"
+              disabled={disabled}
+              onClick={() => onBuy(1)}
+              title={isEn ? 'Buy 1 Level' : 'ซื้อ 1 เลเวล'}
+            >
+              +1
+            </button>
+            {maxBuyable >= 5 && (
+              <button
+                type="button"
+                className="btn-passive-bulk"
+                onClick={() => onBuy(5)}
+                title={isEn ? 'Buy 5 Levels' : 'ซื้อ 5 เลเวล'}
+              >
+                +5
+              </button>
+            )}
+            {maxBuyable >= 20 && (
+              <button
+                type="button"
+                className="btn-passive-bulk"
+                onClick={() => onBuy(10)}
+                title={isEn ? 'Buy 10 Levels' : 'ซื้อ 10 เลเวล'}
+              >
+                +10
+              </button>
+            )}
+            {maxBuyable > 1 && (
+              <button
+                type="button"
+                className="btn-passive-bulk btn-passive-max"
+                onClick={() => onBuy('max')}
+                title={isEn ? `Buy Max Possible (+${maxBuyable} Levels)` : `ซื้อสูงสุดเท่าที่ทำได้ (+${maxBuyable} เลเวล)`}
+              >
+                MAX (+{maxBuyable})
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderSectionHeader = (text: string) => (
     <div className="prestige-section-header">{text}</div>
   );
@@ -183,48 +262,44 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               {/* ===== Economy ===== */}
               {renderSectionHeader(tr.prestigeSecEconomy)}
               {(() => {
-                const sc = starterCultureCost(state);
-                return renderItem(
+                const sLvl = state.prestige.starterLevel || 0;
+                return renderBulkItem(
                   isEn ? '🌱 Starter Culture' : '🌱 หัวเชื้อเริ่มต้น',
-                  isEn ? `Level ${state.prestige.starterLevel}` : `เลเวล ${state.prestige.starterLevel}`,
+                  isEn ? `Lv.${sLvl}` : `เลเวล ${sLvl}`,
                   isEn
-                    ? `Immediately gain +10 Fine Roots and guarantee ${(state.prestige.starterLevel || 0) * 10 + 10} roots upon every future Prestige`
-                    : `ได้รากฝอยฟรีทันที +10 ต้น (ใช้ได้เลยรอบนี้) และการันตี ${
-                        (state.prestige.starterLevel || 0) * 10 + 10
-                      } ต้นทุกครั้งที่หว่านใหม่ต่อจากนี้`,
-                  `${sc} 🌌`,
-                  onBuyStarterCulture,
-                  seeds < sc
+                    ? `Immediately gain +10 Fine Roots and guarantee ${sLvl * 10 + 10} roots upon every future Prestige`
+                    : `ได้รากฝอยฟรีทันที +10 ต้น (ใช้ได้เลยรอบนี้) และการันตี ${sLvl * 10 + 10} ต้นทุกครั้งที่หว่านใหม่ต่อจากนี้`,
+                  (lvl) => Math.ceil(15 * Math.pow(1.5, lvl)),
+                  sLvl,
+                  onBuyStarterCulture
                 );
               })()}
 
               {(() => {
-                const gs = goldenSeedCost(state);
-                return renderItem(
+                const gLvl = state.prestige.goldenLevel || 0;
+                return renderBulkItem(
                   isEn ? '✨ Golden Seeds' : '✨ เมล็ดทองคำ',
-                  isEn ? `Level ${state.prestige.goldenLevel}` : `เลเวล ${state.prestige.goldenLevel}`,
+                  isEn ? `Lv.${gLvl} (+${gLvl * 5}%)` : `เลเวล ${gLvl} (+${gLvl * 5}%)`,
                   isEn
-                    ? `Increases Eternal Seeds gained upon Prestige by +5% (Currently +${(state.prestige.goldenLevel || 0) * 5}%)`
-                    : `เพิ่มเมล็ดนิรันดร์ที่ได้รับตอน Prestige ครั้งต่อไปอีก 5% (ตอนนี้ +${
-                        (state.prestige.goldenLevel || 0) * 5
-                      }%)`,
-                  `${gs} 🌌`,
-                  onBuyGoldenSeed,
-                  seeds < gs
+                    ? `Increases Eternal Seeds gained upon Prestige by +5% (Currently +${gLvl * 5}%)`
+                    : `เพิ่มเมล็ดนิรันดร์ที่ได้รับตอน Prestige ครั้งต่อไปอีก 5% (ตอนนี้ +${gLvl * 5}%)`,
+                  (lvl) => Math.ceil(20 * Math.pow(1.6, lvl)),
+                  gLvl,
+                  onBuyGoldenSeed
                 );
               })()}
 
               {(() => {
                 const pr = state.prestige.passiveRateLevel || 0;
-                return renderItem(
+                return renderBulkItem(
                   isEn ? '🌟 Eternal Growth Essence' : '🌟 พลังรากนิรันดร์',
-                  isEn ? `Level ${pr}` : `เลเวล ${pr}`,
+                  isEn ? `Lv.${pr} (+${pr}%)` : `เลเวล ${pr} (+${pr}%)`,
                   isEn
                     ? `Permanent +1% global production rate bonus across the entire garden (Currently +${pr}%)`
                     : `เพิ่มเรทรวมทั้งฟาร์มแบบถาวรอีก 1% ไม่จำกัดจำนวนครั้ง (ตอนนี้ +${pr}%)`,
-                  `${PASSIVE_RATE_COST} 🌌`,
-                  onBuyPassiveRate,
-                  seeds < PASSIVE_RATE_COST
+                  () => PASSIVE_RATE_COST,
+                  pr,
+                  onBuyPassiveRate
                 );
               })()}
 
@@ -418,18 +493,16 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               {/* ===== Events & Buffs ===== */}
               {renderSectionHeader(tr.prestigeSecEvents)}
               {(() => {
-                const ebc = eventBonusCost(state);
-                return renderItem(
+                const ebLevel = state.prestige.eventBonusLevel || 0;
+                return renderBulkItem(
                   isEn ? '💰 Event Value Booster' : '💰 โบนัสอีเว้น',
-                  isEn ? `Level ${state.prestige.eventBonusLevel}` : `เลเวล ${state.prestige.eventBonusLevel}`,
+                  isEn ? `Lv.${ebLevel} (+${ebLevel * 20}%)` : `เลเวล ${ebLevel} (+${ebLevel * 20}%)`,
                   isEn
-                    ? `Increases reward gains from floating events by +20% (Currently +${(state.prestige.eventBonusLevel || 0) * 20}%)`
-                    : `เพิ่มผลตอบแทนของกล่องสมบัติ/บัฟ/โชคดี ที่ได้จากการคลิกอีเว้นอีก 20% (ตอนนี้ +${
-                        (state.prestige.eventBonusLevel || 0) * 20
-                      }%)`,
-                  `${ebc} 🌌`,
-                  onBuyEventBonus,
-                  seeds < ebc
+                    ? `Increases reward gains from floating events by +20% (Currently +${ebLevel * 20}%)`
+                    : `เพิ่มผลตอบแทนของกล่องสมบัติ/บัฟ/โชคดี ที่ได้จากการคลิกอีเว้นอีก 20% (ตอนนี้ +${ebLevel * 20}%)`,
+                  (lvl) => Math.ceil(25 * Math.pow(1.55, lvl)),
+                  ebLevel,
+                  onBuyEventBonus
                 );
               })()}
 
@@ -469,35 +542,32 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               })()}
 
               {(() => {
-                const lmc = luckyMagnitudeCost(state);
                 const lmLevel = state.prestige.luckyMagnitudeLevel || 0;
-                return renderItem(
+                return renderBulkItem(
                   isEn ? '🍀 Lucky Magnitude Multiplier' : '🍀 โชคดีทวีคูณ',
-                  isEn ? `Level ${lmLevel}` : `เลเวล ${lmLevel}`,
+                  isEn ? `Lv.${lmLevel} (×${lmLevel + 1})` : `เลเวล ${lmLevel} (×${lmLevel + 1})`,
                   isEn
                     ? `Stacks Lucky Clover (×777) multiplier — Currently ×${lmLevel + 1}, next level ×${lmLevel + 2}`
                     : `ทบตัวคูณของบัฟโชคดี (×777) เพิ่มอีกชั้น — ตอนนี้ ×${lmLevel + 1} ต่อไปเป็น ×${lmLevel + 2}`,
-                  `${lmc} 🌌`,
-                  onBuyLuckyMagnitude,
-                  seeds < lmc
+                  (lvl) => 3000 * (lvl + 1),
+                  lmLevel,
+                  onBuyLuckyMagnitude
                 );
               })()}
 
               {(() => {
-                const ldc = luckyDurationCost(state);
                 const ldLevel = state.prestige.luckyDurationLevel || 0;
-                const ldMaxed = luckyDurationMaxed(state);
                 const curSecs = Math.min(60, 7 + ldLevel);
-                return renderItem(
+                return renderBulkItem(
                   isEn ? '⏳🍀 Extended Lucky Duration' : '⏳🍀 โชคดีอยู่นานขึ้น',
-                  ldMaxed ? (isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓') : (isEn ? `Level ${ldLevel}` : `เลเวล ${ldLevel}`),
-                  ldMaxed
-                    ? (isEn ? `Maxed out at ${curSecs} seconds (Cap: 60s)` : `เต็มแล้วที่ ${curSecs} วินาที (สูงสุด 60 วินาที)`)
-                    : (isEn ? `Extends Lucky Clover duration (+1s/level) — Currently ${curSecs}s, next ${curSecs + 1}s (Cap: 60s)` : `ยืดเวลาบัฟโชคดี (+1 วิ/เลเวล) — ตอนนี้ ${curSecs} วิ เลเวลต่อไปเป็น ${curSecs + 1} วิ (สูงสุด 60 วิ)`),
-                  ldMaxed ? '—' : `${ldc} 🌌`,
+                  isEn ? `Lv.${ldLevel} (${curSecs}s)` : `เลเวล ${ldLevel} (${curSecs}วิ)`,
+                  isEn
+                    ? `Extends Lucky Clover duration (+1s/level) — Currently ${curSecs}s (Cap: 60s)`
+                    : `ยืดเวลาบัฟโชคดี (+1 วิ/เลเวล) — ตอนนี้ ${curSecs} วิ (สูงสุด 60 วิ)`,
+                  (lvl) => Math.ceil(100 * Math.pow(1.12, lvl)),
+                  ldLevel,
                   onBuyLuckyDuration,
-                  !ldMaxed && seeds < ldc,
-                  ldMaxed
+                  LUCKY_DURATION_MAX_LEVEL
                 );
               })()}
 

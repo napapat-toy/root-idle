@@ -1,6 +1,6 @@
 import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
 
-export const GAME_VERSION = '1.6.1';
+export const GAME_VERSION = '1.6.2';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
@@ -321,4 +321,27 @@ export function stageName(totalOwned: number, lang: Language = 'th'): string {
   if (totalOwned < 2500) return isEn ? 'Primordial Energy Plane' : 'มิติพลังงานบรรพกาล';
   if (totalOwned < 5000) return isEn ? 'Subterranean Singularity' : 'แก่นเอกภาวะใต้โลก';
   return isEn ? 'Eternal Yggdrasil Canopy' : 'รากพฤกษาอนันต์กาล';
+}
+
+export function calcBulkPrestigeUpgrade(
+  currentLevel: number,
+  seeds: number,
+  costFn: (lvl: number) => number,
+  qty: number | 'max',
+  maxLevel: number = Infinity
+): { count: number; totalCost: number } {
+  let count = 0;
+  let totalCost = 0;
+  let lvl = currentLevel;
+  const targetCount = qty === 'max' ? Infinity : qty;
+
+  while (count < targetCount && lvl < maxLevel) {
+    const nextCost = costFn(lvl);
+    if (totalCost + nextCost > seeds) break;
+    totalCost += nextCost;
+    count++;
+    lvl++;
+  }
+
+  return { count, totalCost };
 }

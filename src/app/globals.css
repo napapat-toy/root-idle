@@ -940,6 +940,43 @@ svg#rootCanvas {
   @apply font-mono text-xs text-[#b78cf0] mt-1.5;
 }
 
+.passive-bulk-row {
+  @apply flex flex-wrap gap-1 items-center justify-end;
+}
+
+.btn-passive-bulk {
+  @apply bg-[rgba(183,140,240,0.15)] border border-[rgba(183,140,240,0.35)] text-[#d8b8ff] rounded px-2 py-0.5 text-[11px] font-mono font-bold cursor-pointer transition-all duration-150 select-none;
+}
+
+.btn-passive-bulk:hover:not(:disabled) {
+  @apply bg-[rgba(183,140,240,0.3)] border-[#d8b8ff] text-[#ffffff] -translate-y-px shadow-[0_0_8px_rgba(183,140,240,0.3)];
+}
+
+.btn-passive-bulk:active:not(:disabled) {
+  @apply scale-95;
+}
+
+.btn-passive-bulk:disabled {
+  @apply opacity-30 cursor-not-allowed border-transparent bg-transparent text-[#7a6a8a];
+}
+
+.btn-passive-bulk.btn-passive-max {
+  @apply bg-[rgba(255,215,106,0.18)] border-[rgba(255,215,106,0.4)] text-[#ffd76a];
+}
+
+.btn-passive-bulk.btn-passive-max:hover:not(:disabled) {
+  @apply bg-[rgba(255,215,106,0.35)] border-[#ffe494] text-[#fff9e6] shadow-[0_0_10px_rgba(255,215,106,0.4)];
+}
+
+@media (max-width: 480px) {
+  .passive-bulk-row {
+    @apply gap-1 w-full justify-end mt-0.5;
+  }
+  .btn-passive-bulk {
+    @apply px-1.5 py-0.5 text-[10px];
+  }
+}
+
 /* ==========================================================================
    9. ACHIEVEMENTS SYSTEM
    ========================================================================== */
