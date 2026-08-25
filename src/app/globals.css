@@ -443,6 +443,12 @@ svg#rootCanvas {
   box-shadow: 0 0 10px rgba(224, 169, 74, 0.4);
 }
 
+.upgrade-tile.synergy.active-owned {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+
 .upgrade-tile-icon {
   @apply text-base leading-none transition-opacity duration-150;
 }

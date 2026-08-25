@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Language, ModuleDef } from '@/types/game';
-import { bulkCostFor } from '@/constants/gameData';
+import { bulkCostFor, moduleMilestoneMultiplier } from '@/constants/gameData';
 import { fmt } from '@/lib/formatters';
 import { MODULE_TRANSLATIONS } from '@/lib/i18n';
 
@@ -94,6 +94,14 @@ export const ModuleCard: React.FC<ModuleCardProps> = React.memo(({
           <span>{isEn ? 'Base Rate' : 'เรทเริ่มต้น'}</span>
           <b className="mh-base">+{fmt(def.rate)}{isEn ? '/s' : '/วิ'}</b>
         </div>
+        {owned >= 10 && (
+          <div className="mh-row">
+            <span>{isEn ? 'Milestone Bonus' : 'โบนัสไมล์สโตน (x10)'}</span>
+            <b className="mh-ru" style={{ color: '#ffd76a' }}>
+              ×{moduleMilestoneMultiplier(owned).toFixed(1)}
+            </b>
+          </div>
+        )}
         <div className="mh-row">
           <span>{isEn ? 'Root Upgrade' : 'อัพเกรดราก'}</span>
           <b className="mh-ru">

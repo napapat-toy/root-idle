@@ -7,13 +7,15 @@ import {
   effectiveRate,
   MODULE_DEFS,
   MODULE_UNLOCK_REQUIRE_OWNED,
+  rootSynergyCost,
+  rootSynergyUnlocked,
   rootUpgradeCost,
   rootUpgradeLevelMult,
   rootUpgradeRequireOwned,
 } from '@/constants/gameData';
 
 export interface AutoBuyCandidate {
-  type: 'module' | 'upgrade' | 'echo';
+  type: 'module' | 'upgrade' | 'echo' | 'synergy';
   id: string;
   cost: number;
   value: number; // rate gain per second
@@ -167,6 +169,30 @@ export function evaluateAutoBuy(
                 ...prev,
                 nutrients: Math.max(0, prev.nutrients - cost),
                 echoes: { ...prev.echoes, [def.id]: (prev.echoes[def.id] || 0) + 1 },
+              }));
+            },
+          });
+        }
+      });
+
+      MODULE_DEFS.forEach(def => {
+        if (rootSynergyUnlocked(state, def.id) && !state.rootSynergies?.[def.id]) {
+          const cost = rootSynergyCost(def);
+          const count = state.owned[def.id] || 0;
+          const gain = totalRate * (count * 0.001); // +0.1% per unit
+          candidates.push({
+            type: 'synergy',
+            id: def.id,
+            cost,
+            value: gain,
+            shareOfTotal: 1.0, // Synergy buffs entire farm globally
+            marginalGain: count * 0.001,
+            isNewUnlock: true,
+            apply: () => {
+              setState(prev => ({
+                ...prev,
+                nutrients: Math.max(0, prev.nutrients - cost),
+                rootSynergies: { ...prev.rootSynergies, [def.id]: true },
               }));
             },
           });

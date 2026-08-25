@@ -1,6 +1,6 @@
 import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
 
-export const GAME_VERSION = '1.6.2';
+export const GAME_VERSION = '1.7.0';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
@@ -40,26 +40,26 @@ export const AUTO_EVENT_COST = 1000;
 export const SAVE_SLOT_COUNT = 5;
 
 export const MODULE_DEFS: ModuleDef[] = [
-  { id: 'fine',        name: 'รากฝอย',                  desc: 'รากเล็กจิ๋วที่แทรกดินหาความชื้น',             baseCost: 10,              costMult: 1.15, rate: 0.6,          color: '#eadfc7' },
-  { id: 'nodule',      name: 'ปมราก',                   desc: 'กักเก็บสารอาหารไว้ใช้ต่อเนื่อง',               baseCost: 80,              costMult: 1.17, rate: 4,            color: '#e0a94a' },
-  { id: 'myco',        name: 'เชื้อราไมคอร์ไรซา',       desc: 'ทำงานร่วมกับรากเพื่อดูดซึมสารอาหารเพิ่ม',     baseCost: 650,             costMult: 1.19, rate: 24,           color: '#8fd17a' },
-  { id: 'core',        name: 'แก่นราก',                 desc: 'แกนรากลึกที่สูบสารอาหารมหาศาลจากใต้ดิน',       baseCost: 6000,            costMult: 1.22, rate: 150,          color: '#d1673f' },
-  { id: 'vine',        name: 'เถารากยักษ์',             desc: 'เถารากที่ชอนไชไปทั่วชั้นดินลึก',             baseCost: 65000,           costMult: 1.24, rate: 950,          color: '#5fa8d1' },
-  { id: 'bionode',     name: 'ปมพลังงานชีวภาพ',         desc: 'แปลงสารอินทรีย์เป็นพลังงานเข้มข้น',           baseCost: 750000,          costMult: 1.26, rate: 7200,         color: '#c77dd1' },
-  { id: 'eternal',     name: 'รากอมตะ',                 desc: 'รากโบราณที่ไม่เคยหยุดเติบโต',                baseCost: 9500000,         costMult: 1.28, rate: 58000,        color: '#f2d24a' },
-  { id: 'nexus',       name: 'แก่นโลกใต้ดิน',           desc: 'เชื่อมต่อกับแหล่งพลังงานใจกลางโลก',           baseCost: 140000000,       costMult: 1.30, rate: 480000,       color: '#ff6b6b' },
-  { id: 'crystal',     name: 'ใยรากคริสตัล',            desc: 'โครงสร้างรากที่ตกผลึกดูดพลังงานสูง',           baseCost: 2400000000,      costMult: 1.32, rate: 4500000,      color: '#8ad6e0' },
-  { id: 'heart',       name: 'หัวใจราก',                desc: 'ศูนย์กลางที่สูบฉีดพลังงานทั่วเครือข่ายราก',   baseCost: 45000000000,     costMult: 1.34, rate: 48000000,     color: '#ff9ecf' },
-  { id: 'seed',        name: 'เมล็ดพันธุ์อนันต์',       desc: 'เมล็ดที่งอกซ้ำได้ไม่รู้จบ',                  baseCost: 900000000000,    costMult: 1.36, rate: 580000000,    color: '#c8e06a' },
-  { id: 'throne',      name: 'บัลลังก์ราก',             desc: 'จุดสูงสุดของเครือข่ายรากพิภพ',                baseCost: 20000000000000,  costMult: 1.38, rate: 7500000000,   color: '#e0c168' },
-  { id: 'magma',       name: 'รากแก่นแมกมา',            desc: 'ชอนไชชั้นหินหลอมเหลวดูดซับความร้อนใต้พิภพ',   baseCost: 500000000000000, costMult: 1.40, rate: 110000000000, color: '#ff5722' },
-  { id: 'aether',      name: 'รากไอธาตุบรรพกาล',        desc: 'สัมผัสกระแสพลังงานบรรพกาลใต้แผ่นเปลือกโลก',   baseCost: 15000000000000000, costMult: 1.42, rate: 1800000000000, color: '#a855f7' },
-  { id: 'void',        name: 'รากห้วงสุญญะ',            desc: 'หยั่งลึกลงสู่รอยแยกมิติความว่างเปล่า',        baseCost: 500000000000000000, costMult: 1.44, rate: 32000000000000, color: '#6366f1' },
-  { id: 'astral',      name: 'รากธารดวงดาวใต้พิภพ',     desc: 'เชื่อมโยงสนามแม่เหล็กโลกกับละอองดวงดาว',     baseCost: 18000000000000000000, costMult: 1.46, rate: 650000000000000, color: '#38bdf8' },
-  { id: 'chronos',     name: 'รากกาลเวลาบรรจบ',          desc: 'รากที่เติบโตข้ามมิติเวลาดูดซับพลังงานทุกยุค', baseCost: 700000000000000000000, costMult: 1.48, rate: 14000000000000000, color: '#facc15' },
-  { id: 'singularity', name: 'รากเอกภาวะมวลเข้มข้น',    desc: 'จุดศูนย์กลางแรงดึงดูดดูดซับสารอาหารทุกอะตอม', baseCost: 30000000000000000000000, costMult: 1.50, rate: 350000000000000000, color: '#ec4899' },
-  { id: 'genesis',     name: 'รากกำเนิดปฐมกาล',          desc: 'รากต้นกำเนิดแห่งสิ่งมีชีวิตทั้งมวลใต้พิภพ',   baseCost: 1500000000000000000000000, costMult: 1.52, rate: 9500000000000000000, color: '#34d399' },
-  { id: 'yggdrasil',   name: 'รากต้นไม้โลก',            desc: 'เสาค้ำจุนใต้พิภพ เชื่อมต่อมิติที่ไม่มีที่สิ้นสุด...', baseCost: 90000000000000000000000000, costMult: 1.54, rate: 300000000000000000000, color: '#fbbf24' },
+  { id: 'fine',        name: 'รากฝอย',                  desc: 'รากเล็กจิ๋วที่แทรกดินหาความชื้น',             baseCost: 10,              costMult: 1.150, rate: 0.6,          color: '#eadfc7' },
+  { id: 'nodule',      name: 'ปมราก',                   desc: 'กักเก็บสารอาหารไว้ใช้ต่อเนื่อง',               baseCost: 80,              costMult: 1.155, rate: 4,            color: '#e0a94a' },
+  { id: 'myco',        name: 'เชื้อราไมคอร์ไรซา',       desc: 'ทำงานร่วมกับรากเพื่อดูดซึมสารอาหารเพิ่ม',     baseCost: 650,             costMult: 1.160, rate: 24,           color: '#8fd17a' },
+  { id: 'core',        name: 'แก่นราก',                 desc: 'แกนรากลึกที่สูบสารอาหารมหาศาลจากใต้ดิน',       baseCost: 6000,            costMult: 1.165, rate: 150,          color: '#d1673f' },
+  { id: 'vine',        name: 'เถารากยักษ์',             desc: 'เถารากที่ชอนไชไปทั่วชั้นดินลึก',             baseCost: 65000,           costMult: 1.170, rate: 950,          color: '#5fa8d1' },
+  { id: 'bionode',     name: 'ปมพลังงานชีวภาพ',         desc: 'แปลงสารอินทรีย์เป็นพลังงานเข้มข้น',           baseCost: 750000,          costMult: 1.175, rate: 7200,         color: '#c77dd1' },
+  { id: 'eternal',     name: 'รากอมตะ',                 desc: 'รากโบราณที่ไม่เคยหยุดเติบโต',                baseCost: 9500000,         costMult: 1.180, rate: 58000,        color: '#f2d24a' },
+  { id: 'nexus',       name: 'แก่นโลกใต้ดิน',           desc: 'เชื่อมต่อกับแหล่งพลังงานใจกลางโลก',           baseCost: 140000000,       costMult: 1.185, rate: 480000,       color: '#ff6b6b' },
+  { id: 'crystal',     name: 'ใยรากคริสตัล',            desc: 'โครงสร้างรากที่ตกผลึกดูดพลังงานสูง',           baseCost: 2400000000,      costMult: 1.190, rate: 4500000,      color: '#8ad6e0' },
+  { id: 'heart',       name: 'หัวใจราก',                desc: 'ศูนย์กลางที่สูบฉีดพลังงานทั่วเครือข่ายราก',   baseCost: 45000000000,     costMult: 1.195, rate: 48000000,     color: '#ff9ecf' },
+  { id: 'seed',        name: 'เมล็ดพันธุ์อนันต์',       desc: 'เมล็ดที่งอกซ้ำได้ไม่รู้จบ',                  baseCost: 900000000000,    costMult: 1.200, rate: 580000000,    color: '#c8e06a' },
+  { id: 'throne',      name: 'บัลลังก์ราก',             desc: 'จุดสูงสุดของเครือข่ายรากพิภพ',                baseCost: 20000000000000,  costMult: 1.205, rate: 7500000000,   color: '#e0c168' },
+  { id: 'magma',       name: 'รากแก่นแมกมา',            desc: 'ชอนไชชั้นหินหลอมเหลวดูดซับความร้อนใต้พิภพ',   baseCost: 500000000000000, costMult: 1.210, rate: 110000000000, color: '#ff5722' },
+  { id: 'aether',      name: 'รากไอธาตุบรรพกาล',        desc: 'สัมผัสกระแสพลังงานบรรพกาลใต้แผ่นเปลือกโลก',   baseCost: 15000000000000000, costMult: 1.215, rate: 1800000000000, color: '#a855f7' },
+  { id: 'void',        name: 'รากห้วงสุญญะ',            desc: 'หยั่งลึกลงสู่รอยแยกมิติความว่างเปล่า',        baseCost: 500000000000000000, costMult: 1.220, rate: 32000000000000, color: '#6366f1' },
+  { id: 'astral',      name: 'รากธารดวงดาวใต้พิภพ',     desc: 'เชื่อมโยงสนามแม่เหล็กโลกกับละอองดวงดาว',     baseCost: 18000000000000000000, costMult: 1.225, rate: 650000000000000, color: '#38bdf8' },
+  { id: 'chronos',     name: 'รากกาลเวลาบรรจบ',          desc: 'รากที่เติบโตข้ามมิติเวลาดูดซับพลังงานทุกยุค', baseCost: 700000000000000000000, costMult: 1.230, rate: 14000000000000000, color: '#facc15' },
+  { id: 'singularity', name: 'รากเอกภาวะมวลเข้มข้น',    desc: 'จุดศูนย์กลางแรงดึงดูดดูดซับสารอาหารทุกอะตอม', baseCost: 30000000000000000000000, costMult: 1.235, rate: 350000000000000000, color: '#ec4899' },
+  { id: 'genesis',     name: 'รากกำเนิดปฐมกาล',          desc: 'รากต้นกำเนิดแห่งสิ่งมีชีวิตทั้งมวลใต้พิภพ',   baseCost: 1500000000000000000000000, costMult: 1.240, rate: 9500000000000000000, color: '#34d399' },
+  { id: 'yggdrasil',   name: 'รากต้นไม้โลก',            desc: 'เสาค้ำจุนใต้พิภพ เชื่อมต่อมิติที่ไม่มีที่สิ้นสุด...', baseCost: 90000000000000000000000000, costMult: 1.250, rate: 300000000000000000000, color: '#fbbf24' },
 ];
 
 export const MODULE_COLOR_MAP: Record<string, string> = Object.fromEntries(
@@ -83,6 +83,7 @@ export function createFreshState(): GameState {
     totalOwned: 0,
     rootUpgrades: {},
     echoes: {},
+    rootSynergies: {},
     buyQty: 1,
     lockGapBackfilled: false,
     totalPlayTimeSeconds: 0,
@@ -179,8 +180,12 @@ export function totalEchoCount(state: GameState): number {
   return s;
 }
 
+export function echoBonusPct(state: GameState): number {
+  return totalEchoCount(state);
+}
+
 export function globalEchoMultiplier(state: GameState): number {
-  return 1 + totalEchoCount(state) * 0.01;
+  return 1 + echoBonusPct(state) * 0.01;
 }
 
 export function echoUnlockedFor(state: GameState, moduleId: string): boolean {
@@ -188,27 +193,82 @@ export function echoUnlockedFor(state: GameState, moduleId: string): boolean {
     && (state.rootUpgrades[moduleId] || 0) >= ECHO_REQUIRE_UPGRADE_LEVEL;
 }
 
+export function prestigeBonusPct(state: GameState): number {
+  return state.prestige.passiveRateLevel || 0;
+}
+
 export function prestigeRateMultiplier(state: GameState): number {
-  return 1 + (state.prestige.passiveRateLevel || 0) * 0.01;
+  return 1 + prestigeBonusPct(state) * 0.01;
+}
+
+export function achievementBonusPct(state: GameState): number {
+  return state.achievements?.length || 0;
 }
 
 export function achievementRateMultiplier(state: GameState): number {
-  return 1 + (state.achievements?.length || 0) * 0.01;
+  return 1 + achievementBonusPct(state) * 0.01;
 }
 
-export function effectiveRate(state: GameState, def: ModuleDef): number {
+export const ROOT_SYNERGY_REQUIRE_OWNED = 50;
+export const ROOT_SYNERGY_PCT_PER_UNIT = 0.1; // +0.1% per owned unit
+
+export function rootSynergyUnlocked(state: GameState, moduleId: string): boolean {
+  return (state.owned[moduleId] || 0) >= ROOT_SYNERGY_REQUIRE_OWNED || !!state.rootSynergies?.[moduleId];
+}
+
+export function rootSynergyCost(def: ModuleDef): number {
+  return bulkCostFor(def, ROOT_SYNERGY_REQUIRE_OWNED, 5);
+}
+
+export function speciesSynergyBonusPct(state: GameState, moduleId: string): number {
+  if (!state.rootSynergies?.[moduleId]) return 0;
+  return Number(((state.owned[moduleId] || 0) * ROOT_SYNERGY_PCT_PER_UNIT).toFixed(1));
+}
+
+export function totalSynergyBonusPct(state: GameState): number {
+  let s = 0;
+  MODULE_DEFS.forEach(d => {
+    s += speciesSynergyBonusPct(state, d.id);
+  });
+  return Number(s.toFixed(1));
+}
+
+export function totalSynergiesCount(state: GameState): number {
+  return MODULE_DEFS.filter(d => !!state.rootSynergies?.[d.id]).length;
+}
+
+export function totalGlobalBonusPercent(state: GameState): number {
+  return Number((echoBonusPct(state) + prestigeBonusPct(state) + achievementBonusPct(state) + totalSynergyBonusPct(state)).toFixed(1));
+}
+
+export function globalRateMultiplier(state: GameState): number {
+  return 1 + totalGlobalBonusPercent(state) * 0.01;
+}
+
+export function moduleMilestoneMultiplier(count: number): number {
+  return Math.pow(2.0, Math.floor(count / 10));
+}
+
+export function totalMilestonesCount(state: GameState): number {
+  let count = 0;
+  MODULE_DEFS.forEach(m => {
+    count += Math.floor((state.owned[m.id] || 0) / 10);
+  });
+  return count;
+}
+
+export function effectiveRate(state: GameState, def: ModuleDef, targetCount?: number): number {
+  const count = targetCount !== undefined ? targetCount : (state.owned[def.id] || 0);
   return (
     def.rate *
+    moduleMilestoneMultiplier(count) *
     rootUpgradeMultiplier(state, def.id) *
-    globalEchoMultiplier(state) *
-    prestigeRateMultiplier(state) *
-    achievementRateMultiplier(state)
+    globalRateMultiplier(state)
   );
 }
 
 export function baseTotalRate(state: GameState): number {
-  const achMult = achievementRateMultiplier(state);
-  let r = BASE_RATE * globalEchoMultiplier(state) * prestigeRateMultiplier(state) * achMult;
+  let r = BASE_RATE * globalRateMultiplier(state);
   MODULE_DEFS.forEach(m => {
     r += (state.owned[m.id] || 0) * effectiveRate(state, m);
   });

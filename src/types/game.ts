@@ -58,6 +58,7 @@ export interface GameState {
   totalOwned: number;
   rootUpgrades: Record<string, number>; // moduleId -> level
   echoes: Record<string, number>;      // moduleId -> level
+  rootSynergies: Record<string, boolean>; // moduleId -> owned
   buyQty: number;
   lockGapBackfilled: boolean;
   totalPlayTimeSeconds: number;
@@ -124,6 +125,7 @@ export interface SavePayload {
   t: number;
   ru?: Record<string, number>;
   e?: Record<string, number>;
+  syn?: Record<string, boolean>;
   q?: number;
   re?: number;
   es?: number;

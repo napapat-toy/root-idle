@@ -2,7 +2,18 @@
 
 import React from 'react';
 import { GameState, Language } from '@/types/game';
-import { GAME_VERSION, stageName } from '@/constants/gameData';
+import {
+  GAME_VERSION,
+  stageName,
+  echoBonusPct,
+  prestigeBonusPct,
+  achievementBonusPct,
+  totalSynergyBonusPct,
+  totalSynergiesCount,
+  totalGlobalBonusPercent,
+  globalRateMultiplier,
+  totalMilestonesCount,
+} from '@/constants/gameData';
 import { fmt, formatDuration } from '@/lib/formatters';
 import { ACHIEVEMENTS } from '@/constants/achievementsData';
 import { t } from '@/lib/i18n';
@@ -40,6 +51,15 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
 
   const lifetimeNutrients = stats.totalNutrientsEarnedLifetime || (state.runEarned + (stats.prestigeCount > 0 ? state.nutrients : 0));
   const lifetimeSeeds = Math.max(stats.totalSeedsEarnedLifetime || 0, state.eternalSeeds || 0);
+
+  const echoPct = echoBonusPct(state);
+  const prestigePct = prestigeBonusPct(state);
+  const achPct = achievementBonusPct(state);
+  const synPct = totalSynergyBonusPct(state);
+  const synCount = totalSynergiesCount(state);
+  const totalPct = totalGlobalBonusPercent(state);
+  const globalMult = globalRateMultiplier(state);
+  const milestoneCount = totalMilestonesCount(state);
 
   return (
     <div className="offline-backdrop" onClick={onClose}>
@@ -150,6 +170,44 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 <div className="stats-row">
                   <span className="stats-label">{tr.statLuckyCount}:</span>
                   <span className="stats-value golden">{stats.luckyJackpotCount} {isEn ? 'times' : 'ครั้ง'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. Production Multipliers & Bonuses */}
+            <div className="stats-card" style={{ gridColumn: 'span 2' }}>
+              <div className="stats-card-header">
+                <span className="stats-card-icon">⚡</span>
+                <span className="stats-card-title">{isEn ? 'Production Bonuses & Multiplier' : 'โบนัสและตัวคูณการผลิตรวม'}</span>
+              </div>
+              <div style={{ background: 'rgba(255, 215, 106, 0.08)', border: '1px solid rgba(255, 215, 106, 0.25)', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+                <span style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--root-cream)' }}>
+                  ✨ {isEn ? 'Total Global Bonus (All Farm)' : 'โบนัสพลังผลิตรวมทั้งฟาร์ม (Global Bonus)'}:
+                </span>
+                <span style={{ fontSize: '15px', fontWeight: 700, fontFamily: 'monospace', color: '#ffd76a' }}>
+                  +{totalPct}% <span style={{ fontSize: '12px', opacity: 0.85, fontWeight: 500 }}>(×{globalMult.toFixed(2)})</span>
+                </span>
+              </div>
+              <div className="stats-card-rows" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '8px 16px' }}>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Milestones Reached (10s)' : 'ไมล์สโตนที่ปลด (ครบ 10 ต้น)'}:</span>
+                  <span className="stats-value highlight">{milestoneCount} {isEn ? 'milestones' : 'ขั้น'}</span>
+                </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Root Echo Bonus' : 'โบนัสสะท้อนราก'}:</span>
+                  <span className="stats-value green">+{echoPct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({echoPct} {isEn ? 'units' : 'ต้น'})</span></span>
+                </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Prestige Passive Bonus' : 'โบนัสพลังรากนิรันดร์'}:</span>
+                  <span className="stats-value purple">+{prestigePct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({isEn ? 'Lv.' : 'เลเวล '}{prestigePct})</span></span>
+                </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Achievement Bonus' : 'โบนัสเหรียญความสำเร็จ'}:</span>
+                  <span className="stats-value golden">+{achPct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({achPct} {isEn ? 'achievements' : 'เหรียญ'})</span></span>
+                </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Root Networks Bonus' : 'โบนัสเครือข่ายราก (Synergies)'}:</span>
+                  <span className="stats-value" style={{ color: '#38bdf8' }}>+{synPct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({synCount} {isEn ? 'species' : 'ชนิด'})</span></span>
                 </div>
               </div>
             </div>

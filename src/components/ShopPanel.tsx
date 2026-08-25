@@ -10,6 +10,9 @@ import {
   echoCost,
   effectiveRate,
   globalEchoMultiplier,
+  rootSynergyCost,
+  rootSynergyUnlocked,
+  speciesSynergyBonusPct,
   rootUpgradeCost,
   rootUpgradeIsMilestone,
   rootUpgradeLevelMult,
@@ -26,6 +29,7 @@ interface ShopPanelProps {
   onBuyModule: (id: string) => void;
   onBuyRootUpgrade: (id: string) => void;
   onBuyEcho: (id: string) => void;
+  onBuyRootSynergy: (id: string) => void;
   onSetBuyQty: (qty: number) => void;
 }
 
@@ -35,13 +39,14 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
   onBuyModule,
   onBuyRootUpgrade,
   onBuyEcho,
+  onBuyRootSynergy,
   onSetBuyQty,
 }) => {
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
   const tr = t(lang);
 
-  const [hoveredTile, setHoveredTile] = useState<{ type: 'ru' | 'echo'; id: string } | null>(null);
+  const [hoveredTile, setHoveredTile] = useState<{ type: 'ru' | 'echo' | 'syn'; id: string } | null>(null);
 
   // Sequential unlock logic for modules (requires MODULE_UNLOCK_REQUIRE_OWNED of prior tier)
   const { unlockedModules, firstLockedIndex } = useMemo(() => {
@@ -81,9 +86,16 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
     }).map(d => d.id);
   }, [state.rootUpgrades, state.echoes]);
 
+  // Unlocked Synergies (Owned >= 50 or already purchased)
+  const unlockedSynergyIds = useMemo(() => {
+    return MODULE_DEFS.filter(def => {
+      return rootSynergyUnlocked(state, def.id);
+    }).map(d => d.id);
+  }, [state.owned, state.rootSynergies]);
+
   const echoMult = useMemo(() => {
     return globalEchoMultiplier(state);
-  }, [state.echoes]);
+  }, [state]);
 
   // Rates memo - calculates exact canonical effective rates and shares in sync with active buffs
   const moduleRates = useMemo(() => {
@@ -108,7 +120,7 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
     return map;
   }, [state, totalRate]);
 
-  const hasUpgradesOrEchoes = unlockedUpgradeIds.length > 0 || unlockedEchoIds.length > 0;
+  const hasUpgradesOrEchoes = unlockedUpgradeIds.length > 0 || unlockedEchoIds.length > 0 || unlockedSynergyIds.length > 0;
 
   // Compute hovered upgrade card details
   const previewDetails = useMemo(() => {
@@ -167,6 +179,27 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
       };
     }
 
+    if (hoveredTile.type === 'syn') {
+      const isOwned = !!state.rootSynergies?.[def.id];
+      const count = state.owned[def.id] || 0;
+      const bonusPct = speciesSynergyBonusPct(state, def.id);
+      const cost = rootSynergyCost(def);
+      const affordable = state.nutrients >= cost;
+
+      return {
+        icon: '🌐',
+        title: isEn ? `Network: ${localizedName}` : `เครือข่าย: ${localizedName}`,
+        desc: isEn
+          ? `Each ${localizedName} grants +0.1% global production across all roots! (Current ${count} units = +${(count * 0.1).toFixed(1)}%)`
+          : `ราก ${localizedName} ทุกๆ 1 ต้น มอบโบนัส +0.1% ให้กับผลผลิตทั้งฟาร์ม! (ตอนนี้มี ${count} ต้น = +${(count * 0.1).toFixed(1)}%)`,
+        reqText: null,
+        costText: isOwned ? (isEn ? 'ACTIVE' : 'เปิดใช้งานแล้ว') : fmt(cost),
+        multText: isOwned ? `+${bonusPct}% (${isEn ? 'Active' : 'ทำงานอยู่'})` : '+0.1%/ต้น',
+        color: '#38bdf8',
+        canBuy: !isOwned && affordable,
+      };
+    }
+
     return null;
   }, [hoveredTile, state, lang, isEn, totalRate]);
 
@@ -192,9 +225,9 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
         {hasUpgradesOrEchoes && (
           <div className="upgrade-store-container">
             <div className="upgrade-store-header">
-              <span>{isEn ? '⚡ Upgrades & Echoes' : '⚡ อัพเกรด & สะท้อนราก'}</span>
+              <span>{isEn ? '⚡ Upgrades, Echoes & Networks' : '⚡ อัพเกรด, สะท้อน & เครือข่ายราก'}</span>
               <span className="upgrade-store-count">
-                {unlockedUpgradeIds.length + unlockedEchoIds.length}
+                {unlockedUpgradeIds.length + unlockedEchoIds.length + unlockedSynergyIds.length}
               </span>
             </div>
 
@@ -254,6 +287,35 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
                     </div>
                     <div className="upgrade-tile-badge">
                       {echoes === 0 ? 'NEW' : `×${echoes}`}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Root Synergy Tiles (Unlocked at 50 units) */}
+              {unlockedSynergyIds.map(id => {
+                const def = MODULE_DEFS.find(m => m.id === id)!;
+                const isOwned = !!state.rootSynergies?.[id];
+                const cost = rootSynergyCost(def);
+                const affordable = state.nutrients >= cost;
+                const canBuy = !isOwned && affordable;
+                const isHovered = hoveredTile?.type === 'syn' && hoveredTile?.id === id;
+                const bonusPct = speciesSynergyBonusPct(state, id);
+
+                return (
+                  <div
+                    key={`syn-${id}`}
+                    onClick={canBuy ? () => onBuyRootSynergy(id) : undefined}
+                    onMouseEnter={() => setHoveredTile({ type: 'syn', id })}
+                    onMouseLeave={() => setHoveredTile(null)}
+                    className={`upgrade-tile synergy ${isOwned ? 'active-owned' : !affordable ? 'disabled' : ''} ${isHovered ? 'active-hover' : ''}`}
+                    style={{ borderColor: isOwned ? '#38bdf8' : def.color }}
+                  >
+                    <div className="upgrade-tile-icon" style={{ color: isOwned ? '#38bdf8' : def.color }}>
+                      🌐
+                    </div>
+                    <div className="upgrade-tile-badge" style={{ color: isOwned ? '#38bdf8' : '#eadfc7' }}>
+                      {isOwned ? `+${bonusPct}%` : '50+'}
                     </div>
                   </div>
                 );

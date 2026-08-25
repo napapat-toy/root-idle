@@ -54,6 +54,8 @@ import {
   offlineCapMaxed,
   PASSIVE_RATE_COST,
   prestigeUnlocked,
+  rootSynergyCost,
+  rootSynergyUnlocked,
   rootUpgradeCost,
   rootUpgradeIsMilestone,
   rootUpgradeLevelMult,
@@ -193,6 +195,21 @@ export function useGameEngine() {
       echoes: { ...prev.echoes, [moduleId]: (prev.echoes[moduleId] || 0) + 1 },
     }));
   }, [totalRate]);
+
+  // Buy Root Synergy
+  const buyRootSynergy = useCallback((moduleId: string) => {
+    const cur = stateRef.current;
+    const def = MODULE_DEFS.find(m => m.id === moduleId);
+    if (!def || cur.rootSynergies?.[moduleId] || !rootSynergyUnlocked(cur, moduleId)) return;
+    const cost = rootSynergyCost(def);
+    if (cur.nutrients < cost) return;
+
+    setState(prev => ({
+      ...prev,
+      nutrients: prev.nutrients - cost,
+      rootSynergies: { ...prev.rootSynergies, [moduleId]: true },
+    }));
+  }, []);
 
   // Set buy quantity
   const setBuyQty = useCallback((qty: number) => {
@@ -886,6 +903,7 @@ export function useGameEngine() {
     buyModule,
     buyRootUpgrade,
     buyEcho,
+    buyRootSynergy,
     setBuyQty,
     claimEvent,
     claimOffline,

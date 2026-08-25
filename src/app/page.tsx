@@ -33,6 +33,7 @@ export default function Home() {
     buyModule,
     buyRootUpgrade,
     buyEcho,
+    buyRootSynergy,
     setBuyQty,
     claimEvent,
     claimOffline,
@@ -127,6 +128,7 @@ export default function Home() {
           onBuyModule={buyModule}
           onBuyRootUpgrade={buyRootUpgrade}
           onBuyEcho={buyEcho}
+          onBuyRootSynergy={buyRootSynergy}
           onSetBuyQty={setBuyQty}
         />
       </div>
