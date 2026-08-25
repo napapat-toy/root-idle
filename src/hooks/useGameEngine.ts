@@ -72,7 +72,7 @@ import {
   saveSlot,
   saveToLocalStorage,
 } from '@/lib/storage';
-import { fmt, fmtInt } from '@/lib/formatters';
+import { fmt, fmtInt, fmtMultiplier } from '@/lib/formatters';
 
 export function useGameEngine() {
   const [state, setState] = useState<GameState>(createFreshState);
@@ -313,7 +313,7 @@ export function useGameEngine() {
       showFloatingText(
         ev.left + 26,
         ev.top + 20,
-        isEn ? `🍀 Lucky! ×${fmtInt(mult)}` : `🍀 โชคดี! ×${fmtInt(mult)}`,
+        `🍀 ×${fmtMultiplier(mult)}`,
         '#ffd76a'
       );
     } else {

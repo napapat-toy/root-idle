@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import { ActiveBuff, Branch, FloatingTextItem, GameEventItem, Language, SkinId } from '@/types/game';
 import { getBranchColor } from '@/lib/treeGenerator';
 import { stageName } from '@/constants/gameData';
-import { fmtInt } from '@/lib/formatters';
+import { fmtMultiplier } from '@/lib/formatters';
 
 interface StageCanvasProps {
   totalOwned: number;
@@ -189,11 +189,11 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
   const now = Date.now();
   if (activeBuff && now < activeBuff.expiresAt) {
     const remain = Math.ceil((activeBuff.expiresAt - now) / 1000);
-    buffBadges.push(`⚡ ×${activeBuff.multiplier.toFixed(2)} ${remain}${isEn ? 's' : 'วิ'}`);
+    buffBadges.push(`⚡ ×${activeBuff.multiplier.toFixed(2)} (${remain}${isEn ? 's' : 'วิ'})`);
   }
   if (activeLuckyBuff && now < activeLuckyBuff.expiresAt) {
     const remain = Math.ceil((activeLuckyBuff.expiresAt - now) / 1000);
-    buffBadges.push(`🍀 ×${fmtInt(activeLuckyBuff.multiplier)} ${remain}${isEn ? 's' : 'วิ'}`);
+    buffBadges.push(`🍀 ×${fmtMultiplier(activeLuckyBuff.multiplier)} (${remain}${isEn ? 's' : 'วิ'})`);
   }
 
   return (

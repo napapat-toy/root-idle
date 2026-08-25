@@ -6,6 +6,7 @@ import {
   echoUnlockedFor,
   effectiveRate,
   MODULE_DEFS,
+  MODULE_UNLOCK_REQUIRE_OWNED,
   rootUpgradeCost,
   rootUpgradeLevelMult,
   rootUpgradeRequireOwned,
@@ -83,7 +84,7 @@ export function evaluateAutoBuy(
 
     // 1. Base root modules
     MODULE_DEFS.forEach((def, i) => {
-      if (i > 0 && (state.owned[MODULE_DEFS[i - 1].id] || 0) < 1) return;
+      if (i > 0 && (state.owned[MODULE_DEFS[i - 1].id] || 0) < MODULE_UNLOCK_REQUIRE_OWNED) return;
       const count = state.owned[def.id] || 0;
       const cost = costFor(def, count);
       const eff = effectiveRate(state, def);

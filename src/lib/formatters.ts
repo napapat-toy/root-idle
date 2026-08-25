@@ -18,6 +18,12 @@ export function fmtInt(n: number): string {
   return fmt(n);
 }
 
+export function fmtMultiplier(m: number): string {
+  if (m < 10) return m.toFixed(2);
+  if (m < 1000000) return Math.round(m).toLocaleString('en-US');
+  return fmt(m);
+}
+
 export function formatDuration(sec: number, lang: Language = 'th'): string {
   sec = Math.round(sec);
   const isEn = lang === 'en';

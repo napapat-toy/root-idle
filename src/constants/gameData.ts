@@ -1,6 +1,6 @@
 import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
 
-export const GAME_VERSION = '1.6.0';
+export const GAME_VERSION = '1.6.1';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
@@ -9,14 +9,15 @@ export const SEED_DIVIDER = 1000000;
 export const OFFLINE_CAP_HOURS = [24, 48, 72];
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 
+export const MODULE_UNLOCK_REQUIRE_OWNED = 10;
 export const ROOT_UPGRADE_MILESTONE_MULT = 2.0;
 export const ROOT_UPGRADE_NORMAL_MULT = 1.3;
 export const ROOT_UPGRADE_DISCOUNT = 0.55;
 
-export const ECHO_REQUIRE_OWNED = 100;
+export const ECHO_REQUIRE_OWNED = 20;
 export const ECHO_BASE_SECONDS = 200;
 export const ECHO_COST_MULT = 4;
-export const ECHO_REQUIRE_UPGRADE_LEVEL = 5;
+export const ECHO_REQUIRE_UPGRADE_LEVEL = 3;
 
 export const EVENT_DURATION_MAX_LEVEL = 4;
 export const LUCKY_DURATION_BASE = 7;
@@ -141,9 +142,9 @@ export function bulkCostFor(def: ModuleDef, ownedCount: number, qty: number): nu
   return Math.ceil(total);
 }
 
-// Root Upgrades
+// Root Upgrades (Lv.1 = 5 owned, Lv.2 = 10 owned, Lv.3 = 15 owned, Lv.4 = 20 owned, Lv.5 = 25 owned)
 export function rootUpgradeRequireOwned(level: number): number {
-  return Math.round(10 * Math.pow(1.55, level - 1));
+  return 5 * level;
 }
 
 export function rootUpgradeIsMilestone(level: number): boolean {

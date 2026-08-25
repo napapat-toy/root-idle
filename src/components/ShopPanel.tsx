@@ -5,6 +5,7 @@ import { GameState, Language } from '@/types/game';
 import {
   BUY_QTY_OPTIONS,
   MODULE_DEFS,
+  MODULE_UNLOCK_REQUIRE_OWNED,
   baseTotalRate,
   echoCost,
   effectiveRate,
@@ -42,13 +43,13 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
 
   const [hoveredTile, setHoveredTile] = useState<{ type: 'ru' | 'echo'; id: string } | null>(null);
 
-  // Sequential unlock logic for modules
+  // Sequential unlock logic for modules (requires MODULE_UNLOCK_REQUIRE_OWNED of prior tier)
   const { unlockedModules, firstLockedIndex } = useMemo(() => {
     let unlocked = 0;
     while (unlocked < MODULE_DEFS.length) {
       const def = MODULE_DEFS[unlocked];
       const count = state.owned[def.id] || 0;
-      if (count > 0) {
+      if (count >= MODULE_UNLOCK_REQUIRE_OWNED) {
         unlocked++;
       } else {
         unlocked++;
@@ -313,14 +314,14 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
           <div className="upgrade-hint">
             {isEn ? (
               <>
-                🔒 {MODULE_DEFS.length - firstLockedIndex} deeper root species awaiting — purchase at least 1{' '}
+                🔒 {MODULE_DEFS.length - firstLockedIndex} deeper root species awaiting — own at least {MODULE_UNLOCK_REQUIRE_OWNED}{' '}
                 {MODULE_TRANSLATIONS[MODULE_DEFS[firstLockedIndex - 1].id]?.[lang]?.name || MODULE_DEFS[firstLockedIndex - 1].name} to unlock{' '}
                 {MODULE_TRANSLATIONS[MODULE_DEFS[firstLockedIndex].id]?.[lang]?.name || MODULE_DEFS[firstLockedIndex].name}
               </>
             ) : (
               <>
                 🔒 มีรากเสริมอีก {MODULE_DEFS.length - firstLockedIndex} ชนิดรออยู่ — ซื้อ{' '}
-                {MODULE_DEFS[firstLockedIndex - 1].name} อย่างน้อย 1 ต้น เพื่อปลดล็อก{' '}
+                {MODULE_DEFS[firstLockedIndex - 1].name} อย่างน้อย {MODULE_UNLOCK_REQUIRE_OWNED} ต้น เพื่อปลดล็อก{' '}
                 {MODULE_DEFS[firstLockedIndex].name}
               </>
             )}
