@@ -1,4 +1,5 @@
 import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
+import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 
 export const GAME_VERSION = '1.7.0';
 
@@ -202,7 +203,8 @@ export function prestigeRateMultiplier(state: GameState): number {
 }
 
 export function achievementBonusPct(state: GameState): number {
-  return state.achievements?.length || 0;
+  if (!state.achievements || state.achievements.length === 0) return 0;
+  return state.achievements.reduce((sum, id) => sum + (ACHIEVEMENT_BONUS_MAP[id] || 1), 0);
 }
 
 export function achievementRateMultiplier(state: GameState): number {

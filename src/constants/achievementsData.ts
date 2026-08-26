@@ -18,6 +18,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ก้าวแรกสู่ดิน',
     desc: 'ซื้อรากเสริมรวม 1 ต้น',
     icon: '🌱',
+    bonusPct: 1,
     check: (s) => s.totalOwned >= 1,
   },
   {
@@ -26,6 +27,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'รากแตกแขนง',
     desc: 'มีรากเสริมรวมสะสม 50 ต้น',
     icon: '🌿',
+    bonusPct: 2,
     check: (s) => s.totalOwned >= 50,
   },
   {
@@ -34,6 +36,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'รากไม้พันปี',
     desc: 'มีรากเสริมรวมสะสม 250 ต้น',
     icon: '🌲',
+    bonusPct: 3,
     check: (s) => s.totalOwned >= 250,
   },
   {
@@ -42,6 +45,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'พฤกษานิรันดร์',
     desc: 'มีรากเสริมรวมสะสม 1,000 ต้น',
     icon: '🌳',
+    bonusPct: 5,
     check: (s) => s.totalOwned >= 1000,
   },
   {
@@ -50,6 +54,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'อาณาจักรราก',
     desc: 'มีรากเสริมรวมสะสม 2,500 ต้น',
     icon: '🌴',
+    bonusPct: 6,
     check: (s) => s.totalOwned >= 2500,
   },
   {
@@ -58,6 +63,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'เครือข่ายรากไร้ขอบเขต',
     desc: 'มีรากเสริมรวมสะสม 5,000 ต้น',
     icon: '🎋',
+    bonusPct: 7,
     check: (s) => s.totalOwned >= 5000,
   },
   {
@@ -66,22 +72,70 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ผืนป่าครอบพิภพ',
     desc: 'มีรากเสริมรวมสะสม 10,000 ต้น',
     icon: '🪐',
+    bonusPct: 8,
     check: (s) => s.totalOwned >= 10000,
+  },
+  {
+    id: 'root_25000',
+    category: 'roots',
+    title: 'ผืนพิภพแห่งรากไม้',
+    desc: 'มีรากเสริมรวมสะสม 25,000 ต้น',
+    icon: '🌍',
+    bonusPct: 9,
+    check: (s) => s.totalOwned >= 25000,
+  },
+  {
+    id: 'root_50000',
+    category: 'roots',
+    title: 'รากไม้โอบล้อมจักรวาล',
+    desc: 'มีรากเสริมรวมสะสม 50,000 ต้น',
+    icon: '🌌',
+    bonusPct: 10,
+    check: (s) => s.totalOwned >= 50000,
+  },
+  {
+    id: 'fine_root_100',
+    category: 'roots',
+    title: 'ทุ่งรากฝอย',
+    desc: 'มีรากฝอย (Fine Roots) สะสม 100 ต้น',
+    icon: '🌾',
+    bonusPct: 2,
+    check: (s) => (s.owned['fine'] || 0) >= 100,
+  },
+  {
+    id: 'fine_root_500',
+    category: 'roots',
+    title: 'พรมรากฝอยใต้ดิน',
+    desc: 'มีรากฝอย (Fine Roots) สะสม 500 ต้น',
+    icon: '🌱',
+    bonusPct: 5,
+    check: (s) => (s.owned['fine'] || 0) >= 500,
+  },
+  {
+    id: 'fine_root_1000',
+    category: 'roots',
+    title: 'มหาสมุทรรากฝอย',
+    desc: 'มีรากฝอย (Fine Roots) สะสม 1,000 ต้น',
+    icon: '🌿',
+    bonusPct: 10,
+    check: (s) => (s.owned['fine'] || 0) >= 1000,
   },
   {
     id: 'all_modules_unlocked',
     category: 'roots',
     title: 'นักสะสมสายพันธุ์',
-    desc: 'ปลดล็อกรากเสริมครบทุกชนิดในร้านค้า (12 สายพันธุ์)',
+    desc: 'ปลดล็อกรากเสริมครบทุกชนิดในร้านค้า (21 สายพันธุ์)',
     icon: '📜',
+    bonusPct: 10,
     check: (s) => MODULE_DEFS.every(d => (s.owned[d.id] || 0) >= 1),
   },
   {
     id: 'apex_root_1',
     category: 'roots',
-    title: 'นั่งบัลลังก์ราก',
-    desc: 'มีบัลลังก์ราก (Throne) รากขั้นสูงสุดอย่างน้อย 1 ต้น',
+    title: 'กำเนิดรากต้นไม้โลก',
+    desc: 'มีรากต้นไม้โลก (Yggdrasil) รากขั้นสูงสุดอย่างน้อย 1 ต้น',
     icon: '👑',
+    bonusPct: 5,
     check: (s) => {
       const last = MODULE_DEFS[MODULE_DEFS.length - 1];
       return (s.owned[last.id] || 0) >= 1;
@@ -90,9 +144,10 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   {
     id: 'apex_root_10',
     category: 'roots',
-    title: 'ราชันย์แห่งรากไม้',
-    desc: 'มีบัลลังก์ราก (Throne) อย่างน้อย 10 ต้น',
+    title: 'เสาค้ำจุนใต้พิภพ',
+    desc: 'มีรากต้นไม้โลก (Yggdrasil) อย่างน้อย 10 ต้น',
     icon: '💎',
+    bonusPct: 8,
     check: (s) => {
       const last = MODULE_DEFS[MODULE_DEFS.length - 1];
       return (s.owned[last.id] || 0) >= 10;
@@ -101,9 +156,10 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   {
     id: 'apex_root_50',
     category: 'roots',
-    title: 'จักรพรรดิใต้พิภพ',
-    desc: 'มีบัลลังก์ราก (Throne) อย่างน้อย 50 ต้น',
+    title: 'จักรพรรดิแห่งพฤกษาอนันต์',
+    desc: 'มีรากต้นไม้โลก (Yggdrasil) อย่างน้อย 50 ต้น',
     icon: '🏛️',
+    bonusPct: 10,
     check: (s) => {
       const last = MODULE_DEFS[MODULE_DEFS.length - 1];
       return (s.owned[last.id] || 0) >= 50;
@@ -115,6 +171,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'อัพเกรดรากขั้นแรก',
     desc: 'อัพเกรดรากเสริมชนิดใดก็ได้แตะเลเวล 1',
     icon: '⬆️',
+    bonusPct: 1,
     check: (s) => Object.values(s.rootUpgrades || {}).some(lv => lv >= 1),
   },
   {
@@ -123,6 +180,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ก้าวกระโดด ×2',
     desc: 'อัพเกรดรากเสริมแตะเลเวล 5 (รับโบนัส ×2 Milestone)',
     icon: '⭐',
+    bonusPct: 3,
     check: (s) => Object.values(s.rootUpgrades || {}).some(lv => lv >= 5),
   },
   {
@@ -131,6 +189,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'พลังแห่งวิวัฒนาการ',
     desc: 'อัพเกรดรากเสริมชนิดใดก็ได้แตะเลเวล 10',
     icon: '🌟',
+    bonusPct: 7,
     check: (s) => Object.values(s.rootUpgrades || {}).some(lv => lv >= 10),
   },
   {
@@ -139,6 +198,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'สะท้อนรากแรก',
     desc: 'ซื้อสะท้อนราก (Echo) ครั้งแรก',
     icon: '✨',
+    bonusPct: 2,
     check: (s) => Object.values(s.echoes || {}).some(lv => lv >= 1),
   },
   {
@@ -147,15 +207,44 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'สะท้อนประสานเสียง',
     desc: 'ซื้อสะท้อนรากสะสมรวม 10 ครั้ง',
     icon: '🔔',
+    bonusPct: 5,
     check: (s) => Object.values(s.echoes || {}).reduce((a, b) => a + b, 0) >= 10,
   },
   {
     id: 'echo_all',
     category: 'roots',
     title: 'เสียงก้องกังวานทั้งผืนดิน',
-    desc: 'ปลดล็อกสะท้อนราก (Echo) ครบทั้ง 12 สายพันธุ์',
+    desc: 'ปลดล็อกสะท้อนราก (Echo) ครบทั้ง 21 สายพันธุ์',
     icon: '🎶',
+    bonusPct: 10,
     check: (s) => MODULE_DEFS.every(d => (s.echoes?.[d.id] || 0) >= 1),
+  },
+  {
+    id: 'synergy_1',
+    category: 'roots',
+    title: 'สายสัมพันธ์แรก',
+    desc: 'เปิดใช้งานเครือข่ายราก (Synergy) ชนิดใดก็ได้ 1 ชนิด',
+    icon: '🌐',
+    bonusPct: 3,
+    check: (s) => Object.values(s.rootSynergies || {}).some(v => !!v),
+  },
+  {
+    id: 'synergy_10',
+    category: 'roots',
+    title: 'โครงข่ายรากพิภพ',
+    desc: 'เปิดใช้งานเครือข่ายราก (Synergy) สะสมครบ 10 ชนิด',
+    icon: '🕸️',
+    bonusPct: 6,
+    check: (s) => Object.values(s.rootSynergies || {}).filter(v => !!v).length >= 10,
+  },
+  {
+    id: 'synergy_all',
+    category: 'roots',
+    title: 'เอกภาพแห่งผืนดิน',
+    desc: 'เปิดใช้งานเครือข่ายราก (Synergy) ครบทั้ง 21 สายพันธุ์',
+    icon: '🌍',
+    bonusPct: 10,
+    check: (s) => MODULE_DEFS.every(d => !!s.rootSynergies?.[d.id]),
   },
 
   // ===== ⚡ หมวด 2: เศรษฐกิจ & ผลผลิตสารอาหาร (Economy & Rate) =====
@@ -165,6 +254,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'หยดน้ำสร้างป่า',
     desc: 'สะสมสารอาหารครบ 1,000 (1K)',
     icon: '💧',
+    bonusPct: 1,
     check: (s) => s.nutrients >= 1000 || s.runEarned >= 1000 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1000,
   },
   {
@@ -173,6 +263,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'มหาเศรษฐีผืนดิน',
     desc: 'สะสมสารอาหารครบ 1,000,000 (1M)',
     icon: '💰',
+    bonusPct: 2,
     check: (s) => s.nutrients >= 1e6 || s.runEarned >= 1e6 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e6,
   },
   {
@@ -181,6 +272,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ขุมทรัพย์ใต้พิภพ',
     desc: 'สะสมสารอาหารครบ 1,000,000,000 (1B)',
     icon: '💎',
+    bonusPct: 3,
     check: (s) => s.nutrients >= 1e9 || s.runEarned >= 1e9 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e9,
   },
   {
@@ -189,6 +281,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ขุมพลังมหาศาล',
     desc: 'สะสมสารอาหารครบ 100,000,000,000 (100B)',
     icon: '🔮',
+    bonusPct: 4,
     check: (s) => s.nutrients >= 1e11 || s.runEarned >= 1e11 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e11,
   },
   {
@@ -197,6 +290,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ความอุดมสมบูรณ์ไร้ขีดจำกัด',
     desc: 'สะสมสารอาหารครบ 1T (Trillion)',
     icon: '🌟',
+    bonusPct: 5,
     check: (s) => s.nutrients >= 1e12 || s.runEarned >= 1e12 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e12,
   },
   {
@@ -205,6 +299,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ทะเลสาบสารอาหาร',
     desc: 'สะสมสารอาหารครบ 100T (100 Trillion)',
     icon: '🌊',
+    bonusPct: 6,
     check: (s) => s.nutrients >= 1e14 || s.runEarned >= 1e14 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e14,
   },
   {
@@ -213,6 +308,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'พลังแห่งจักรวาล',
     desc: 'สะสมสารอาหารครบ 1Qa (Quadrillion)',
     icon: '🌌',
+    bonusPct: 7,
     check: (s) => s.nutrients >= 1e15 || s.runEarned >= 1e15 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e15,
   },
   {
@@ -221,6 +317,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'มหาสมุทรแห่งชีวิต',
     desc: 'สะสมสารอาหารครบ 100Qa (100 Quadrillion)',
     icon: '🪐',
+    bonusPct: 8,
     check: (s) => s.nutrients >= 1e17 || s.runEarned >= 1e17 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e17,
   },
   {
@@ -229,6 +326,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'แก่นแท้แห่งสรรพสิ่ง',
     desc: 'สะสมสารอาหารครบ 1Qi (Quintillion)',
     icon: '☀️',
+    bonusPct: 9,
     check: (s) => s.nutrients >= 1e18 || s.runEarned >= 1e18 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e18,
   },
   {
@@ -237,7 +335,26 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'กำเนิดจักรวาลใหม่',
     desc: 'สะสมสารอาหารครบ 1Sx (Sextillion)',
     icon: '💫',
+    bonusPct: 10,
     check: (s) => s.nutrients >= 1e21 || s.runEarned >= 1e21 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e21,
+  },
+  {
+    id: 'nutrients_1sp',
+    category: 'economy',
+    title: 'มหันตภัยสารอาหาร',
+    desc: 'สะสมสารอาหารครบ 1Sp (Septillion)',
+    icon: '🪐',
+    bonusPct: 10,
+    check: (s) => s.nutrients >= 1e24 || s.runEarned >= 1e24 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e24,
+  },
+  {
+    id: 'nutrients_1oc',
+    category: 'economy',
+    title: 'ขุมพลังไร้ที่สิ้นสุด',
+    desc: 'สะสมสารอาหารครบ 1Oc (Octillion)',
+    icon: '👑',
+    bonusPct: 10,
+    check: (s) => s.nutrients >= 1e27 || s.runEarned >= 1e27 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e27,
   },
   {
     id: 'rate_10k',
@@ -245,6 +362,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'เร่งฝีเท้า',
     desc: 'ผลิตสารอาหารเกิน 10,000 / วินาที',
     icon: '⚡',
+    bonusPct: 1,
     check: (_, rate) => rate >= 10000,
   },
   {
@@ -253,6 +371,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'น้ำตกสารอาหาร',
     desc: 'ผลิตสารอาหารเกิน 10,000,000 / วินาที',
     icon: '🌊',
+    bonusPct: 3,
     check: (_, rate) => rate >= 1e7,
   },
   {
@@ -261,6 +380,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'พลังไหลบ่า',
     desc: 'ผลิตสารอาหารเกิน 100,000,000,000 / วินาที (100B/วิ)',
     icon: '🔥',
+    bonusPct: 5,
     check: (_, rate) => rate >= 1e11,
   },
   {
@@ -269,6 +389,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'มหาวาตภัยสารอาหาร',
     desc: 'ผลิตสารอาหารเกิน 1,000,000,000,000 / วินาที (1T/วิ)',
     icon: '🌪️',
+    bonusPct: 7,
     check: (_, rate) => rate >= 1e12,
   },
   {
@@ -277,6 +398,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ดัชนีการเติบโตระดับดวงดาว',
     desc: 'ผลิตสารอาหารเกิน 1Qa / วินาที (Quadrillion/วิ)',
     icon: '🌠',
+    bonusPct: 8,
     check: (_, rate) => rate >= 1e15,
   },
   {
@@ -285,7 +407,26 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'พลังขับเคลื่อนแห่งอนันต์',
     desc: 'ผลิตสารอาหารเกิน 1Qi / วินาที (Quintillion/วิ)',
     icon: '🌌',
+    bonusPct: 9,
     check: (_, rate) => rate >= 1e18,
+  },
+  {
+    id: 'rate_1sx',
+    category: 'economy',
+    title: 'คลื่นพลังเซกทิลเลียน',
+    desc: 'ผลิตสารอาหารเกิน 1Sx / วินาที (Sextillion/วิ)',
+    icon: '⚡',
+    bonusPct: 10,
+    check: (_, rate) => rate >= 1e21,
+  },
+  {
+    id: 'rate_1sp',
+    category: 'economy',
+    title: 'อัตราการเติบโตระดับดาราจักร',
+    desc: 'ผลิตสารอาหารเกิน 1Sp / วินาที (Septillion/วิ)',
+    icon: '🌌',
+    bonusPct: 10,
+    check: (_, rate) => rate >= 1e24,
   },
 
   // ===== 🌌 หมวด 3: การหว่านใหม่ & ความเป็นนิรันดร์ (Prestige & Eternity) =====
@@ -295,6 +436,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'วัฏจักรใหม่',
     desc: 'ทำการ Prestige (หว่านใหม่) ครั้งแรก',
     icon: '🔄',
+    bonusPct: 2,
     check: (s) => (s.stats?.prestigeCount || 0) >= 1 || s.eternalSeeds > 0,
   },
   {
@@ -303,6 +445,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'การเดินทางที่ไม่สิ้นสุด',
     desc: 'Prestige หว่านใหม่สะสมครบ 5 ครั้ง',
     icon: '🔁',
+    bonusPct: 4,
     check: (s) => (s.stats?.prestigeCount || 0) >= 5,
   },
   {
@@ -311,6 +454,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ผู้ตรัสรู้ใต้ดิน',
     desc: 'Prestige หว่านใหม่สะสมครบ 20 ครั้ง',
     icon: '🧘',
+    bonusPct: 7,
     check: (s) => (s.stats?.prestigeCount || 0) >= 20,
   },
   {
@@ -319,6 +463,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'วัฏสงสารนิรันดร์',
     desc: 'Prestige หว่านใหม่สะสมครบ 50 ครั้ง',
     icon: '♾️',
+    bonusPct: 10,
     check: (s) => (s.stats?.prestigeCount || 0) >= 50,
   },
   {
@@ -327,6 +472,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'เก็บเกี่ยวเมล็ดพันธุ์',
     desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 10 เมล็ด',
     icon: '🌱',
+    bonusPct: 1,
     check: (s) => s.eternalSeeds >= 10 || (s.stats?.totalSeedsEarnedLifetime || 0) >= 10,
   },
   {
@@ -335,6 +481,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'คลังเมล็ดดวงดาว',
     desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 1,000 เมล็ด',
     icon: '✨',
+    bonusPct: 3,
     check: (s) => s.eternalSeeds >= 1000 || (s.stats?.totalSeedsEarnedLifetime || 0) >= 1000,
   },
   {
@@ -343,6 +490,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'มหาเศรษฐีเมล็ดนิรันดร์',
     desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 100,000 เมล็ด',
     icon: '🌌',
+    bonusPct: 5,
     check: (s) => s.eternalSeeds >= 100000 || (s.stats?.totalSeedsEarnedLifetime || 0) >= 100000,
   },
   {
@@ -351,6 +499,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'สวนแห่งเทพนิรันดร์',
     desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 1,000,000 เมล็ด (1M)',
     icon: '🪐',
+    bonusPct: 8,
     check: (s) => s.eternalSeeds >= 1e6 || (s.stats?.totalSeedsEarnedLifetime || 0) >= 1e6,
   },
   {
@@ -359,7 +508,17 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ดาราจักรเมล็ดพันธุ์',
     desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 10,000,000 เมล็ด (10M)',
     icon: '👑',
+    bonusPct: 10,
     check: (s) => s.eternalSeeds >= 1e7 || (s.stats?.totalSeedsEarnedLifetime || 0) >= 1e7,
+  },
+  {
+    id: 'seeds_50m',
+    category: 'prestige',
+    title: 'จอมราชันย์แห่งเมล็ดพันธุ์',
+    desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 50,000,000 เมล็ด (50M)',
+    icon: '💎',
+    bonusPct: 10,
+    check: (s) => s.eternalSeeds >= 5e7 || (s.stats?.totalSeedsEarnedLifetime || 0) >= 5e7,
   },
   {
     id: 'full_auto_unlocked',
@@ -367,23 +526,26 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'สายออโต้เต็มรูปแบบ',
     desc: 'ปลดล็อก ออโต้ราก + ออโต้อีเวนต์ + ออโต้หว่านใหม่ ครบทั้ง 3 สาย',
     icon: '🤖',
-    check: (s) => s.prestige.autoRoot && s.prestige.autoEvent && s.prestige.autoReset,
+    bonusPct: 8,
+    check: (s) => !!s.prestige.autoRoot && !!s.prestige.autoEvent && !!s.prestige.autoReset,
   },
   {
     id: 'golden_seed_max',
     category: 'prestige',
     title: 'เมล็ดทองคำเบ่งบาน',
-    desc: 'อัพเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) เต็มเลเวล 5',
+    desc: 'อัพเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 5',
     icon: '🏆',
+    bonusPct: 7,
     check: (s) => (s.prestige.goldenLevel || 0) >= 5,
   },
   {
     id: 'lucky_duration_max',
     category: 'prestige',
     title: 'โชคชะตายืนยาว',
-    desc: 'อัพเกรดระยะเวลาบัฟโชคดีครบ 60 วินาทีเต็ม',
+    desc: 'อัพเกรดระยะเวลาบัฟโชคดีครบ 20 วินาทีเต็ม (สูงสุด)',
     icon: '⏳',
-    check: (s) => (s.prestige.luckyDurationLevel || 0) >= 53,
+    bonusPct: 10,
+    check: (s) => (s.prestige.luckyDurationLevel || 0) >= 15,
   },
 
   // ===== 🍀 หมวด 4: โชคชะตา & เหตุการณ์พิเศษ (Luck & Events) =====
@@ -393,6 +555,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ตาไวคว้าทัน',
     desc: 'คลิกเก็บอีเวนต์บนจอครั้งแรก',
     icon: '🎯',
+    bonusPct: 1,
     check: (s) => (s.stats?.totalEventsClaimed || 0) >= 1,
   },
   {
@@ -401,6 +564,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'นักล่าสมบัติ',
     desc: 'เก็บอีเวนต์สะสมครบ 25 ครั้ง',
     icon: '🎁',
+    bonusPct: 3,
     check: (s) => (s.stats?.totalEventsClaimed || 0) >= 25,
   },
   {
@@ -409,6 +573,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ผู้ไม่เคยพลาด',
     desc: 'เก็บอีเวนต์สะสมครบ 100 ครั้ง',
     icon: '⚡',
+    bonusPct: 6,
     check: (s) => (s.stats?.totalEventsClaimed || 0) >= 100,
   },
   {
@@ -417,6 +582,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'มือเก็บเกี่ยวแห่งตำนาน',
     desc: 'เก็บอีเวนต์สะสมครบ 500 ครั้ง',
     icon: '🌠',
+    bonusPct: 10,
     check: (s) => (s.stats?.totalEventsClaimed || 0) >= 500,
   },
   {
@@ -425,6 +591,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'แจ็กพอตแห่งโชคชะตา',
     desc: 'ได้รับบัฟโชคดี 🍀 (×777) ครั้งแรก',
     icon: '🍀',
+    bonusPct: 5,
     check: (s) => (s.stats?.luckyJackpotCount || 0) >= 1,
   },
   {
@@ -433,6 +600,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'เทพแห่งโชคลาภ',
     desc: 'ได้รับบัฟโชคดี 🍀 (×777) สะสมครบ 10 ครั้ง',
     icon: '🎲',
+    bonusPct: 10,
     check: (s) => (s.stats?.luckyJackpotCount || 0) >= 10,
   },
   {
@@ -441,6 +609,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'แจ็กพอตซ้อนแจ็กพอต',
     desc: 'เก็บกล่อง 🎁 ได้รับสารอาหารก้อนโตขณะมีบัฟโชคดีทำงานอยู่',
     icon: '💥',
+    bonusPct: 10,
     check: (s) => s.stats?.superJackpotClaimed === true,
   },
 
@@ -451,6 +620,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'นักแต่งสวน',
     desc: 'สวมใส่สกินพิเศษรูปแบบใดก็ได้',
     icon: '🎨',
+    bonusPct: 2,
     check: (s) => s.prestige.activeSkin !== 'none',
   },
   {
@@ -459,11 +629,12 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ตู้เสื้อผ้ารากไม้',
     desc: 'ปลดล็อกสกินในร้าน Prestige ครบทั้ง 4 รูปแบบ',
     icon: '👗',
+    bonusPct: 8,
     check: (s) =>
-      s.prestige.auraRoots &&
-      s.prestige.skinSameOrigin &&
-      s.prestige.skinGrayscale &&
-      s.prestige.skinGradient,
+      !!s.prestige.auraRoots &&
+      !!s.prestige.skinSameOrigin &&
+      !!s.prestige.skinGrayscale &&
+      !!s.prestige.skinGradient,
   },
 
   // ===== ⏳ หมวด 6: เวลา & ความผูกพัน (Dedication & Time) =====
@@ -473,6 +644,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'รดน้ำอย่างใจเย็น',
     desc: 'เวลาเล่นสะสมรวมครบ 10 นาที',
     icon: '⏱️',
+    bonusPct: 1,
     check: (s) => s.totalPlayTimeSeconds >= 600,
   },
   {
@@ -481,6 +653,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ผู้เฝ้ามองราก',
     desc: 'เวลาเล่นสะสมรวมครบ 1 ชั่วโมง',
     icon: '⏳',
+    bonusPct: 3,
     check: (s) => s.totalPlayTimeSeconds >= 3600,
   },
   {
@@ -489,6 +662,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ป่าไม้ตลอดกาล',
     desc: 'เวลาเล่นสะสมรวมครบ 12 ชั่วโมง',
     icon: '🏆',
+    bonusPct: 7,
     check: (s) => s.totalPlayTimeSeconds >= 43200,
   },
   {
@@ -497,6 +671,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'ผู้พิทักษ์ผืนป่า',
     desc: 'เวลาเล่นสะสมรวมครบ 24 ชั่วโมง (1 วันเต็ม)',
     icon: '🛡️',
+    bonusPct: 10,
     check: (s) => s.totalPlayTimeSeconds >= 86400,
   },
   {
@@ -505,6 +680,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'กลับมาดูแล',
     desc: 'เก็บผลผลิตออฟไลน์ (Offline Gain) ที่หายไปเกิน 1 ชั่วโมง',
     icon: '🏡',
+    bonusPct: 2,
     check: (s) => (s.stats?.maxOfflineTimeSeconds || 0) >= 3600,
   },
   {
@@ -513,6 +689,11 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     title: 'การหลับใหลอันยาวนาน',
     desc: 'เก็บผลผลิตออฟไลน์ (Offline Gain) ที่หายไปเกิน 24 ชั่วโมง',
     icon: '💤',
+    bonusPct: 8,
     check: (s) => (s.stats?.maxOfflineTimeSeconds || 0) >= 86400,
   },
 ];
+
+export const ACHIEVEMENT_BONUS_MAP: Record<string, number> = Object.fromEntries(
+  ACHIEVEMENTS.map(a => [a.id, a.bonusPct])
+);

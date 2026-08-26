@@ -1077,6 +1077,10 @@ svg#rootCanvas {
   @apply bg-[rgba(0,0,0,0.3)] text-[#a99a80] border border-[rgba(255,255,255,0.08)];
 }
 
+.achievement-bonus-pill {
+  @apply text-[9.5px] font-bold px-1.5 py-0.5 rounded bg-[rgba(255,215,106,0.12)] text-[#ffd76a] border border-[rgba(255,215,106,0.3)];
+}
+
 /* ==========================================================================
    10. TOAST NOTIFICATIONS
    ========================================================================== */

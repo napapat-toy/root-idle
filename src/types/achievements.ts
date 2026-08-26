@@ -8,6 +8,7 @@ export interface AchievementDef {
   title: string;
   desc: string;
   icon: string;
+  bonusPct: number;
   check: (state: GameState, totalRate: number) => boolean;
 }
 

@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { GameState, Language } from '@/types/game';
 import { ACHIEVEMENT_CATEGORIES, ACHIEVEMENTS } from '@/constants/achievementsData';
+import { achievementBonusPct } from '@/constants/gameData';
 import { AchievementCategory } from '@/types/achievements';
 import { ACHIEVEMENT_TRANSLATIONS, CATEGORY_NAMES, t } from '@/lib/i18n';
 
@@ -30,6 +31,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = React.memo(({
   const totalCount = ACHIEVEMENTS.length;
   const unlockedCount = unlockedSet.size;
   const progressPct = Math.round((unlockedCount / totalCount) * 100);
+  const totalBonus = achievementBonusPct(state);
 
   const filteredAchievements = useMemo(() => {
     if (selectedCategory === 'all') return ACHIEVEMENTS;
@@ -50,8 +52,8 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = React.memo(({
           <h2>{tr.achievementsTitle}</h2>
           <div className="away-time" style={{ marginBottom: '8px' }}>
             {isEn
-              ? 'Unlock milestones to earn a permanent +1% global production rate bonus per achievement'
-              : 'ปลดล็อกเป้าหมายเพื่อรับ +1% โบนัสอัตราผลิตสารอาหารรวมถาวร ต่อทุกความสำเร็จ'}
+              ? 'Unlock milestones to earn permanent global production rate bonuses (+1% to +10% per achievement)'
+              : 'ปลดล็อกเป้าหมายเพื่อรับโบนัสอัตราผลิตสารอาหารรวมถาวร (+1% ถึง +10% ต่อความสำเร็จ)'}
           </div>
 
           {/* Progress Overview */}
@@ -61,7 +63,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = React.memo(({
                 {isEn ? 'Progress' : 'ความคืบหน้า'}: <b>{unlockedCount} / {totalCount}</b> ({progressPct}%)
               </span>
               <span className="achievement-bonus-tag">
-                {isEn ? `Current Bonus: +${unlockedCount}% Global Rate` : `โบนัสปัจจุบัน: +${unlockedCount}% เรตถาวร`}
+                {isEn ? `Current Bonus: +${totalBonus}% Global Rate` : `โบนัสปัจจุบัน: +${totalBonus}% เรตถาวร`}
               </span>
             </div>
             <div className="achievement-progress-bar-bg">
@@ -114,9 +116,12 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = React.memo(({
                   <div className="achievement-item-info">
                     <div className="achievement-item-header">
                       <span className="achievement-item-title">{localized.title}</span>
-                      <span className={`achievement-item-badge ${isUnlocked ? 'unlocked' : 'locked'}`}>
-                        {isUnlocked ? `✓ ${tr.achUnlocked}` : `🔒 ${tr.achLocked}`}
-                      </span>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="achievement-bonus-pill">+{ach.bonusPct}%</span>
+                        <span className={`achievement-item-badge ${isUnlocked ? 'unlocked' : 'locked'}`}>
+                          {isUnlocked ? `✓ ${tr.achUnlocked}` : `🔒 ${tr.achLocked}`}
+                        </span>
+                      </div>
                     </div>
                     <div className="achievement-item-desc">{localized.desc}</div>
                   </div>
