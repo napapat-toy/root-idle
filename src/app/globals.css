@@ -1185,7 +1185,7 @@ svg#rootCanvas {
 .stats-value { @apply font-semibold text-root-cream text-[11.5px] sm:text-[12.5px]; }
 .stats-value.highlight { @apply text-[#ffd76a]; }
 .stats-value.golden { @apply text-accent-amber font-bold; }
-.stats-value.purple { color: var(--prestige-accent); font-semibold: 600; }
+.stats-value.purple { color: var(--prestige-accent); font-weight: 600; }
 .stats-value.green { @apply text-[#8fd17a] font-semibold; }
 
 /* ==========================================================================
@@ -1232,7 +1232,7 @@ svg#rootCanvas {
   }
 
   .modal-actions button {
-    @apply flex-1 min-h-[42px] px-3 py-2.5 text-[13px];
+    @apply flex-1 min-h-10.5 px-3 py-2.5 text-[13px];
   }
 
   .achievement-toast-container {
