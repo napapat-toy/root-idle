@@ -59,7 +59,7 @@ body {
    ========================================================================== */
 
 .app {
-  @apply w-full max-w-[1240px] grid grid-cols-1 md:grid-cols-[1fr_390px] lg:grid-cols-[1fr_420px] gap-4 p-4 sm:p-5;
+  @apply w-full max-w-310 grid grid-cols-1 md:grid-cols-[1fr_390px] lg:grid-cols-[1fr_420px] gap-4 p-4 sm:p-5;
   padding-top: max(16px, env(safe-area-inset-top));
   padding-bottom: max(16px, env(safe-area-inset-bottom));
   padding-left: max(18px, env(safe-area-inset-left));
@@ -141,7 +141,7 @@ body {
    ========================================================================== */
 
 header {
-  @apply col-span-full flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-3 border-b border-[#3a2a1c] pb-2.5 mb-0;
+  @apply col-span-full flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-3 border-b border-soil-line pb-2.5 mb-0;
 }
 
 .header-title-box {
@@ -150,7 +150,7 @@ header {
 
 h1 {
   font-family: 'Fraunces', serif;
-  @apply font-bold text-[28px] m-0 tracking-[0.3px] text-[#eadfc7];
+  @apply font-bold text-[28px] m-0 tracking-[0.3px] text-root-cream;
 }
 
 h1 span {
@@ -158,7 +158,7 @@ h1 span {
 }
 
 .subtitle {
-  @apply text-[12.5px] text-[#a99a80] mt-0.5 leading-[1.4];
+  @apply text-[12.5px] text-root-cream-dim mt-0.5 leading-[1.4];
 }
 
 .stats {
@@ -166,7 +166,7 @@ h1 span {
 }
 
 .stats .amount {
-  @apply text-[26px] font-bold text-[#e0a94a];
+  @apply text-[26px] font-bold text-accent-amber;
 }
 
 .stats-sub {
@@ -174,7 +174,7 @@ h1 span {
 }
 
 .stats .rate {
-  @apply text-xs text-[#7ea35c];
+  @apply text-xs text-accent-glow-dim;
 }
 
 .stats .rate.seeds {
@@ -198,28 +198,28 @@ h1 span {
 }
 
 .utility-divider {
-  @apply w-[1px] h-5 bg-[#3a2a1c] mx-0.5;
+  @apply w-px h-5 bg-soil-line mx-0.5;
 }
 
 /* Base Pill Button */
 .prestige-mini-btn {
-  @apply inline-flex items-center gap-1.5 bg-[#1c1526] border border-[#8a68b8] text-[#b78cf0] text-xs font-sans px-3.5 py-1.5 rounded-full cursor-pointer shadow-[0_0_12px_rgba(183,140,240,0.15)] transition-all duration-150 whitespace-nowrap;
+  @apply inline-flex items-center gap-1.5 bg-prestige-bg border border-prestige-accent-dim text-prestige-accent text-xs font-sans px-3.5 py-1.5 rounded-full cursor-pointer shadow-[0_0_12px_rgba(183,140,240,0.15)] transition-all duration-150 whitespace-nowrap;
 }
 
 .prestige-mini-btn:hover {
-  @apply bg-[#8a68b8] text-[#1c1526] -translate-y-px;
+  @apply bg-prestige-accent-dim text-prestige-bg -translate-y-px;
 }
 
 .prestige-mini-btn.toggled-off {
-  @apply opacity-50 border-[#3a2a1c]! text-[#a99a80]!;
+  @apply opacity-50 border-soil-line! text-root-cream-dim!;
 }
 
 .utility-icon-btn {
-  @apply relative inline-flex items-center justify-center w-[32px] h-[32px] rounded-[8px] bg-[#2a1c12] border border-[#3a2a1c] text-[#eadfc7] text-sm cursor-pointer shrink-0 transition-all duration-150 select-none;
+  @apply relative inline-flex items-center justify-center w-8 h-8 rounded-[8px] bg-soil-panel-2 border border-soil-line text-root-cream text-sm cursor-pointer shrink-0 transition-all duration-150 select-none;
 }
 
 .utility-icon-btn:hover {
-  @apply border-[#8a68b8] bg-[rgba(65,45,25,0.85)] text-[#eadfc7] shadow-[0_0_10px_rgba(183,140,240,0.25)] -translate-y-px;
+  @apply border-prestige-accent-dim bg-[rgba(65,45,25,0.85)] text-root-cream shadow-[0_0_10px_rgba(183,140,240,0.25)] -translate-y-px;
 }
 
 .utility-icon-btn:active {
@@ -274,7 +274,7 @@ h1 span {
 }
 
 .stage-label {
-  @apply inline-block text-[11px] tracking-[1.5px] uppercase text-[#a99a80] font-mono opacity-85 bg-[rgba(20,14,9,0.55)] px-2 py-0.5 rounded-md backdrop-blur-[2px];
+  @apply inline-block text-[11px] tracking-[1.5px] uppercase text-root-cream-dim font-mono opacity-85 bg-[rgba(20,14,9,0.55)] px-2 py-0.5 rounded-md backdrop-blur-[2px];
 }
 
 .buff-badge {
@@ -291,7 +291,7 @@ svg#rootCanvas {
 }
 
 .game-event {
-  @apply absolute w-[52px] h-[52px] rounded-full flex items-center justify-center text-2xl cursor-pointer border-none p-0 z-6;
+  @apply absolute w-13 h-13 rounded-full flex items-center justify-center text-2xl cursor-pointer border-none p-0 z-6;
   background: radial-gradient(circle at 35% 30%, #4a3a24, #2a1d10);
   box-shadow: 0 0 0 2px var(--accent-amber), 0 0 18px rgba(224, 169, 74, 0.55);
   animation: eventPulse 1.1s ease-in-out infinite;
@@ -366,7 +366,7 @@ svg#rootCanvas {
 
 .panel-title {
   font-family: 'Fraunces', serif;
-  @apply text-sm font-semibold text-[#a99a80] uppercase tracking-[0.8px];
+  @apply text-sm font-semibold text-root-cream-dim uppercase tracking-[0.8px];
 }
 
 #shopList {
@@ -399,15 +399,15 @@ svg#rootCanvas {
    ========================================================================== */
 
 .upgrade-store-container {
-  @apply bg-[rgba(26,18,12,0.85)] border border-[#3a2a1c] rounded-xl p-2.5 flex flex-col gap-2 mb-1.5 shadow-[inset_0_2px_6px_rgba(0,0,0,0.4)] relative z-30;
+  @apply bg-[rgba(26,18,12,0.85)] border border-soil-line rounded-xl p-2.5 flex flex-col gap-2 mb-1.5 shadow-[inset_0_2px_6px_rgba(0,0,0,0.4)] relative z-30;
 }
 
 .upgrade-store-header {
-  @apply flex justify-between items-center text-[11px] font-bold text-[#b7e08a] uppercase tracking-[0.5px] px-0.5;
+  @apply flex justify-between items-center text-[11px] font-bold text-accent-glow uppercase tracking-[0.5px] px-0.5;
 }
 
 .upgrade-store-count {
-  @apply bg-[#2a1c12] text-[#a99a80] text-[10px] px-1.5 py-0.5 rounded-full border border-[#3a2a1c];
+  @apply bg-soil-panel-2 text-root-cream-dim text-[10px] px-1.5 py-0.5 rounded-full border border-soil-line;
 }
 
 .upgrade-store-grid {
@@ -415,12 +415,12 @@ svg#rootCanvas {
 }
 
 .upgrade-tile {
-  @apply relative w-[42px] h-[42px] rounded-lg bg-[#20160f] border border-[#3a2a1c] flex flex-col items-center justify-center cursor-pointer transition-all duration-150 select-none;
+  @apply relative w-10.5 h-10.5 rounded-lg bg-soil-panel border border-soil-line flex flex-col items-center justify-center cursor-pointer transition-all duration-150 select-none;
 }
 
 .upgrade-tile:hover:not(.disabled),
 .upgrade-tile:hover {
-  @apply bg-[#2a1c12] -translate-y-0.5 scale-108 z-40;
+  @apply bg-soil-panel-2 -translate-y-0.5 scale-108 z-40;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
 }
 
@@ -454,15 +454,15 @@ svg#rootCanvas {
 }
 
 .upgrade-tile-badge {
-  @apply text-[8.5px] font-mono font-bold text-[#eadfc7] leading-none mt-0.5 transition-opacity duration-150;
+  @apply text-[8.5px] font-mono font-bold text-root-cream leading-none mt-0.5 transition-opacity duration-150;
 }
 
 .upgrade-shelf-preview-card {
-  @apply absolute left-0 right-0 top-[calc(100%+4px)] bg-[#24180f] border border-[#3a2a1c] rounded-lg p-2.5 font-mono text-[11px] shadow-[0_12px_32px_rgba(0,0,0,0.95)] z-50 text-left pointer-events-none transition-opacity duration-100;
+  @apply absolute left-0 right-0 top-[calc(100%+4px)] bg-[#24180f] border border-soil-line rounded-lg p-2.5 font-mono text-[11px] shadow-[0_12px_32px_rgba(0,0,0,0.95)] z-50 text-left pointer-events-none transition-opacity duration-100;
 }
 
 .upgrade-tile.active-hover {
-  @apply bg-[#2a1c12] -translate-y-0.5 scale-108 z-40;
+  @apply bg-soil-panel-2 -translate-y-0.5 scale-108 z-40;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
 }
 
@@ -471,7 +471,7 @@ svg#rootCanvas {
 }
 
 .uth-desc {
-  @apply text-[11px] text-[#a99a80] mb-1.5 leading-[1.3] font-sans;
+  @apply text-[11px] text-root-cream-dim mb-1.5 leading-[1.3] font-sans;
 }
 
 .uth-req {
@@ -479,31 +479,31 @@ svg#rootCanvas {
 }
 
 .uth-bottom {
-  @apply flex justify-between items-center text-[11px] pt-1 border-t border-[#3a2a1c];
+  @apply flex justify-between items-center text-[11px] pt-1 border-t border-soil-line;
 }
 
 .uth-cost {
-  @apply text-[#e0a94a] font-bold font-mono;
+  @apply text-accent-amber font-bold font-mono;
 }
 
 .uth-mult {
-  @apply text-[#b7e08a] font-bold font-mono;
+  @apply text-accent-glow font-bold font-mono;
 }
 
 .panel-subtitle-row {
-  @apply text-xs font-bold text-[#a99a80] uppercase tracking-[0.5px] px-1 mt-1 mb-0.5 flex items-center justify-between;
+  @apply text-xs font-bold text-root-cream-dim uppercase tracking-[0.5px] px-1 mt-1 mb-0.5 flex items-center justify-between;
 }
 
 .qty-btn {
-  @apply flex-1 bg-[#20160f] border border-[#3a2a1c] text-[#a99a80] font-mono text-[12.5px] py-2 rounded-lg cursor-pointer transition-all duration-150;
+  @apply flex-1 bg-soil-panel border border-soil-line text-root-cream-dim font-mono text-[12.5px] py-2 rounded-lg cursor-pointer transition-all duration-150;
 }
 
 .qty-btn:hover {
-  @apply border-[#7ea35c] text-[#eadfc7];
+  @apply border-accent-glow-dim text-root-cream;
 }
 
 .qty-btn.active {
-  @apply bg-[#7ea35c] border-[#7ea35c] text-[#12190d] font-semibold;
+  @apply bg-accent-glow-dim border-accent-glow-dim text-[#12190d] font-semibold;
 }
 
 .module {
@@ -542,15 +542,15 @@ svg#rootCanvas {
 }
 
 .module-name {
-  @apply font-semibold text-[14.5px] text-[#eadfc7];
+  @apply font-semibold text-[14.5px] text-root-cream;
 }
 
 .module-owned {
-  @apply font-mono text-[12.5px] text-[#7ea35c];
+  @apply font-mono text-[12.5px] text-accent-glow-dim;
 }
 
 .module-desc {
-  @apply text-[12px] text-[#a99a80] mt-1 leading-[1.4];
+  @apply text-[12px] text-root-cream-dim mt-1 leading-[1.4];
 }
 
 .module-bottom {
@@ -571,7 +571,7 @@ svg#rootCanvas {
 }
 
 .module-hovercard {
-  @apply absolute left-0 right-0 top-[calc(100%+6px)] bg-[#2a1c12] border border-[#7ea35c] rounded-lg p-2.5 font-mono text-[11px] shadow-[0_10px_28px_rgba(0,0,0,0.85)] z-50 opacity-0 invisible -translate-y-1 transition-all duration-150 pointer-events-none;
+  @apply absolute left-0 right-0 top-[calc(100%+6px)] bg-soil-panel-2 border border-accent-glow-dim rounded-lg p-2.5 font-mono text-[11px] shadow-[0_10px_28px_rgba(0,0,0,0.85)] z-50 opacity-0 invisible -translate-y-1 transition-all duration-150 pointer-events-none;
 }
 
 .module:hover .module-hovercard {
@@ -584,11 +584,11 @@ svg#rootCanvas {
 }
 
 .mh-row {
-  @apply flex justify-between mb-1 text-[#a99a80];
+  @apply flex justify-between mb-1 text-root-cream-dim;
 }
 
 .mh-row b {
-  @apply font-semibold text-[#eadfc7];
+  @apply font-semibold text-root-cream;
 }
 
 .mh-base { color: var(--root-cream-dim) !important; }
@@ -598,7 +598,7 @@ svg#rootCanvas {
 .mh-share { color: var(--accent-amber) !important; }
 
 .mh-divider {
-  @apply h-[1px] bg-[#3a2a1c] my-1.5;
+  @apply h-px bg-soil-line my-1.5;
 }
 
 .mh-highlight {
@@ -625,11 +625,11 @@ svg#rootCanvas {
 }
 
 .upgrade-hint {
-  @apply text-[11.5px] text-[#a99a80] opacity-60 py-2 px-0.5 text-center;
+  @apply text-[11.5px] text-root-cream-dim opacity-60 py-2 px-0.5 text-center;
 }
 
 .footer-note {
-  @apply text-[11px] text-[#a99a80] opacity-60 text-center mt-1.5;
+  @apply text-[11px] text-root-cream-dim opacity-60 text-center mt-1.5;
 }
 
 .footer-note.playtime-note {
@@ -690,11 +690,11 @@ svg#rootCanvas {
 }
 
 .modal-close-x {
-  @apply absolute -top-2.5 -right-2.5 bg-[#2a1c12] border border-[#3a2a1c] text-[#a99a80] text-lg leading-none w-8 h-8 rounded-full cursor-pointer z-10 flex items-center justify-center transition-all duration-150 shadow-[0_2px_8px_rgba(0,0,0,0.4)];
+  @apply absolute -top-2.5 -right-2.5 bg-soil-panel-2 border border-soil-line text-root-cream-dim text-lg leading-none w-8 h-8 rounded-full cursor-pointer z-10 flex items-center justify-center transition-all duration-150 shadow-[0_2px_8px_rgba(0,0,0,0.4)];
 }
 
 .modal-close-x:hover {
-  @apply text-[#eadfc7] border-[#8a68b8] bg-[#362417] scale-108;
+  @apply text-root-cream border-prestige-accent-dim bg-[#362417] scale-108;
 }
 
 .modal-close-x:active {
@@ -712,19 +712,19 @@ svg#rootCanvas {
 
 .offline-modal h2 {
   font-family: 'Fraunces', serif;
-  @apply text-[17.5px] m-0 mb-1 text-[#eadfc7];
+  @apply text-[17.5px] m-0 mb-1 text-root-cream;
 }
 
 .offline-modal .away-time {
-  @apply text-[12px] text-[#a99a80] mb-3;
+  @apply text-[12px] text-root-cream-dim mb-3;
 }
 
 .offline-modal .gain {
-  @apply font-mono text-[24px] font-semibold text-[#e0a94a] my-1 mb-3.5;
+  @apply font-mono text-[24px] font-semibold text-accent-amber my-1 mb-3.5;
 }
 
 .offline-modal button {
-  @apply bg-[#7ea35c] text-[#12190d] border-none px-5 py-2 rounded-[8px] font-semibold text-[13px] cursor-pointer font-sans transition-all duration-150;
+  @apply bg-accent-glow-dim text-[#12190d] border-none px-5 py-2 rounded-[8px] font-semibold text-[13px] cursor-pointer font-sans transition-all duration-150;
 }
 
 .offline-modal button:hover {
@@ -740,11 +740,11 @@ svg#rootCanvas {
 }
 
 .generic-modal .modal-actions button.secondary {
-  @apply bg-[#2a1c12] text-[#eadfc7] border border-[#3a2a1c];
+  @apply bg-soil-panel-2 text-root-cream border border-soil-line;
 }
 
 .generic-modal textarea {
-  @apply w-full h-[90px] bg-[#1a120c] text-[#eadfc7] border border-[#3a2a1c] rounded-lg p-2 font-mono text-[11px] mb-2.5 resize-none;
+  @apply w-full h-22.5 bg-[#1a120c] text-root-cream border border-soil-line rounded-lg p-2 font-mono text-[11px] mb-2.5 resize-none;
 }
 
 .generic-modal .import-error {
@@ -785,7 +785,7 @@ svg#rootCanvas {
 }
 
 .modal-desc {
-  @apply text-xs text-[#a99a80] leading-relaxed;
+  @apply text-xs text-root-cream-dim leading-relaxed;
 }
 
 .auto-reset-presets {
@@ -793,15 +793,15 @@ svg#rootCanvas {
 }
 
 .preset-chip {
-  @apply bg-[#20160f] border border-[#3a2a1c] text-[#eadfc7] text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full cursor-pointer transition-all duration-150;
+  @apply bg-soil-panel border border-soil-line text-root-cream text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full cursor-pointer transition-all duration-150;
 }
 
 .preset-chip:hover {
-  @apply border-[#b78cf0] text-[#b78cf0] -translate-y-0.5;
+  @apply border-prestige-accent text-prestige-accent -translate-y-0.5;
 }
 
 .preset-chip.active {
-  @apply bg-[#8a68b8] border-[#8a68b8] text-[#1c1526] font-bold shadow-[0_0_10px_rgba(183,140,240,0.4)];
+  @apply bg-prestige-accent-dim border-prestige-accent-dim text-prestige-bg font-bold shadow-[0_0_10px_rgba(183,140,240,0.4)];
 }
 
 .auto-reset-form {
@@ -813,31 +813,31 @@ svg#rootCanvas {
 }
 
 .input-label {
-  @apply text-[11px] font-semibold text-[#a99a80] uppercase tracking-[0.5px];
+  @apply text-[11px] font-semibold text-root-cream-dim uppercase tracking-[0.5px];
 }
 
 .auto-reset-input {
-  @apply w-full bg-[#1a120c] border border-[#3a2a1c] text-[#eadfc7] rounded-lg px-3 py-2.5 font-mono text-base font-bold transition-all duration-150 outline-none text-center;
+  @apply w-full bg-[#1a120c] border border-soil-line text-root-cream rounded-lg px-3 py-2.5 font-mono text-base font-bold transition-all duration-150 outline-none text-center;
 }
 
 .auto-reset-input:focus {
-  @apply border-[#b78cf0] shadow-[0_0_12px_rgba(183,140,240,0.25)];
+  @apply border-prestige-accent shadow-[0_0_12px_rgba(183,140,240,0.25)];
 }
 
 .auto-reset-preview-box {
-  @apply bg-[#1a120c] border border-[#3a2a1c] rounded-lg p-2.5 flex flex-col gap-0.5 text-center transition-all duration-150;
+  @apply bg-[#1a120c] border border-soil-line rounded-lg p-2.5 flex flex-col gap-0.5 text-center transition-all duration-150;
 }
 
 .preview-label {
-  @apply text-[11px] text-[#a99a80];
+  @apply text-[11px] text-root-cream-dim;
 }
 
 .preview-value {
-  @apply text-xs text-[#b78cf0] font-mono;
+  @apply text-xs text-prestige-accent font-mono;
 }
 
 .preview-value b {
-  @apply text-sm text-[#eadfc7];
+  @apply text-sm text-root-cream;
 }
 
 .auto-reset-error-hint {
@@ -849,11 +849,11 @@ svg#rootCanvas {
 }
 
 .auto-cfg-btn {
-  @apply bg-[rgba(138,104,184,0.15)] border border-[rgba(183,140,240,0.3)] text-[#b78cf0] rounded-md px-2.5 py-1 text-[11px] font-sans font-medium cursor-pointer transition-all duration-150 flex items-center gap-1;
+  @apply bg-[rgba(138,104,184,0.15)] border border-[rgba(183,140,240,0.3)] text-prestige-accent rounded-md px-2.5 py-1 text-[11px] font-sans font-medium cursor-pointer transition-all duration-150 flex items-center gap-1;
 }
 
 .auto-cfg-btn:hover {
-  @apply bg-[rgba(183,140,240,0.25)] border-[#b78cf0] text-[#eadfc7] -translate-y-px;
+  @apply bg-[rgba(183,140,240,0.25)] border-prestige-accent text-root-cream -translate-y-px;
 }
 
 .auto-cfg-btn.toggle-on {
@@ -865,11 +865,11 @@ svg#rootCanvas {
 }
 
 .auto-cfg-btn.toggle-off {
-  @apply bg-[rgba(255,255,255,0.04)] border-[#3a2a1c] text-[#a99a80];
+  @apply bg-[rgba(255,255,255,0.04)] border-soil-line text-root-cream-dim;
 }
 
 .auto-cfg-btn.toggle-off:hover {
-  @apply bg-[rgba(255,255,255,0.08)] border-[#5a422e] text-[#eadfc7];
+  @apply bg-[rgba(255,255,255,0.08)] border-[#5a422e] text-root-cream;
 }
 
 /* ==========================================================================
@@ -878,7 +878,7 @@ svg#rootCanvas {
 
 .prestige-section-header {
   font-family: 'Fraunces', serif;
-  @apply text-[12.5px] tracking-[0.5px] text-[#b78cf0] uppercase mt-4 mb-2 pb-1 border-b border-[#8a68b8];
+  @apply text-[12.5px] tracking-[0.5px] text-prestige-accent uppercase mt-4 mb-2 pb-1 border-b border-prestige-accent-dim;
 }
 
 .prestige-section-header:first-child {
@@ -921,7 +921,7 @@ svg#rootCanvas {
 }
 
 .prestige-item.owned.is-active {
-  @apply opacity-85 bg-[rgba(25,18,35,0.6)] border-[#7ea35c];
+  @apply opacity-85 bg-[rgba(25,18,35,0.6)] border-accent-glow-dim;
   box-shadow: inset 0 0 0 1px rgba(143, 209, 122, 0.35);
 }
 
@@ -939,11 +939,11 @@ svg#rootCanvas {
 }
 
 .prestige-item .p-desc {
-  @apply text-[11.5px] text-[#a99a80] mt-1 leading-[1.4];
+  @apply text-[11.5px] text-root-cream-dim mt-1 leading-[1.4];
 }
 
 .prestige-item .p-cost {
-  @apply font-mono text-xs text-[#b78cf0] mt-1.5;
+  @apply font-mono text-xs text-prestige-accent mt-1.5;
 }
 
 .passive-bulk-row {
@@ -1000,7 +1000,7 @@ svg#rootCanvas {
 }
 
 .achievement-progress-bar-bg {
-  @apply w-full h-1.5 bg-[rgba(20,14,10,0.9)] rounded-md overflow-hidden border border-[#3a2a1c];
+  @apply w-full h-1.5 bg-[rgba(20,14,10,0.9)] rounded-md overflow-hidden border border-soil-line;
 }
 
 .achievement-progress-bar-fill {
@@ -1014,11 +1014,11 @@ svg#rootCanvas {
 }
 
 .achievement-tab-btn {
-  @apply bg-[rgba(32,22,15,0.6)] border border-[#3a2a1c] text-[#a99a80] rounded-md px-2 py-0.5 text-[11px] cursor-pointer transition-all duration-150;
+  @apply bg-[rgba(32,22,15,0.6)] border border-soil-line text-root-cream-dim rounded-md px-2 py-0.5 text-[11px] cursor-pointer transition-all duration-150;
 }
 
 .achievement-tab-btn:hover {
-  @apply bg-[rgba(45,30,20,0.8)] text-[#eadfc7];
+  @apply bg-[rgba(45,30,20,0.8)] text-root-cream;
 }
 
 .achievement-tab-btn.active {
@@ -1030,7 +1030,7 @@ svg#rootCanvas {
 }
 
 .achievement-item-card {
-  @apply flex items-center gap-2.5 p-2 sm:p-2.5 rounded-[9px] border border-[#3a2a1c] transition-all duration-150;
+  @apply flex items-center gap-2.5 p-2 sm:p-2.5 rounded-[9px] border border-soil-line transition-all duration-150;
 }
 
 .achievement-item-card.unlocked {
@@ -1054,7 +1054,7 @@ svg#rootCanvas {
 }
 
 .achievement-item-title {
-  @apply font-semibold text-[12.5px] text-[#eadfc7];
+  @apply font-semibold text-[12.5px] text-root-cream;
 }
 
 .achievement-item-card.unlocked .achievement-item-title {
@@ -1062,7 +1062,7 @@ svg#rootCanvas {
 }
 
 .achievement-item-desc {
-  @apply text-[11px] text-[#a99a80] leading-[1.3];
+  @apply text-[11px] text-root-cream-dim leading-[1.3];
 }
 
 .achievement-item-badge {
@@ -1074,7 +1074,7 @@ svg#rootCanvas {
 }
 
 .achievement-item-badge.locked {
-  @apply bg-[rgba(0,0,0,0.3)] text-[#a99a80] border border-[rgba(255,255,255,0.08)];
+  @apply bg-[rgba(0,0,0,0.3)] text-root-cream-dim border border-[rgba(255,255,255,0.08)];
 }
 
 .achievement-bonus-pill {
@@ -1108,11 +1108,11 @@ svg#rootCanvas {
 }
 
 .achievement-toast-title {
-  @apply text-[13.5px] font-bold text-[#eadfc7];
+  @apply text-[13.5px] font-bold text-root-cream;
 }
 
 .achievement-toast-desc {
-  @apply text-[11.5px] text-[#a99a80] mt-0.5;
+  @apply text-[11.5px] text-root-cream-dim mt-0.5;
 }
 
 @keyframes toastSlideIn {
@@ -1156,7 +1156,7 @@ svg#rootCanvas {
 }
 
 .stats-card {
-  @apply bg-[rgba(30,20,14,0.75)] border border-[#3a2a1c] rounded-[10px] p-3 sm:p-3.5 flex flex-col gap-2 text-left transition-colors duration-150;
+  @apply bg-[rgba(30,20,14,0.75)] border border-soil-line rounded-[10px] p-3 sm:p-3.5 flex flex-col gap-2 text-left transition-colors duration-150;
 }
 
 .stats-card:hover {
@@ -1170,7 +1170,7 @@ svg#rootCanvas {
 .stats-card-icon { @apply text-base sm:text-lg; }
 
 .stats-card-title {
-  @apply text-[12.5px] sm:text-[13.5px] font-bold text-[#eadfc7] tracking-[0.2px];
+  @apply text-[12.5px] sm:text-[13.5px] font-bold text-root-cream tracking-[0.2px];
 }
 
 .stats-card-rows {
@@ -1181,10 +1181,10 @@ svg#rootCanvas {
   @apply flex justify-between items-center text-[11.5px] sm:text-[12.5px];
 }
 
-.stats-label { @apply text-[#a99a80] text-[11.5px] sm:text-[12.5px]; }
-.stats-value { @apply font-semibold text-[#eadfc7] text-[11.5px] sm:text-[12.5px]; }
+.stats-label { @apply text-root-cream-dim text-[11.5px] sm:text-[12.5px]; }
+.stats-value { @apply font-semibold text-root-cream text-[11.5px] sm:text-[12.5px]; }
 .stats-value.highlight { @apply text-[#ffd76a]; }
-.stats-value.golden { @apply text-[#e0a94a] font-bold; }
+.stats-value.golden { @apply text-accent-amber font-bold; }
 .stats-value.purple { color: var(--prestige-accent); font-semibold: 600; }
 .stats-value.green { @apply text-[#8fd17a] font-semibold; }
 
