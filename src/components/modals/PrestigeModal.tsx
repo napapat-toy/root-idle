@@ -25,6 +25,8 @@ import {
   luckyDurationCost,
   luckyDurationExtra,
   luckyDurationMaxed,
+  LUCKY_DURATION_BASE,
+  LUCKY_DURATION_MAX,
   LUCKY_DURATION_MAX_LEVEL,
   luckyMagnitudeCost,
   OFFLINE_CAP_HOURS,
@@ -558,13 +560,13 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
               {(() => {
                 const ldLevel = state.prestige.luckyDurationLevel || 0;
-                const curSecs = Math.min(60, 7 + ldLevel);
+                const curSecs = Math.min(LUCKY_DURATION_MAX, LUCKY_DURATION_BASE + ldLevel);
                 return renderBulkItem(
                   isEn ? '⏳🍀 Extended Lucky Duration' : '⏳🍀 โชคดีอยู่นานขึ้น',
                   isEn ? `Lv.${ldLevel} (${curSecs}s)` : `เลเวล ${ldLevel} (${curSecs}วิ)`,
                   isEn
-                    ? `Extends Lucky Clover duration (+1s/level) — Currently ${curSecs}s (Cap: 60s)`
-                    : `ยืดเวลาบัฟโชคดี (+1 วิ/เลเวล) — ตอนนี้ ${curSecs} วิ (สูงสุด 60 วิ)`,
+                    ? `Extends Lucky Clover duration (+1s/level) — Currently ${curSecs}s (Cap: ${LUCKY_DURATION_MAX}s)`
+                    : `ยืดเวลาบัฟโชคดี (+1 วิ/เลเวล) — ตอนนี้ ${curSecs} วิ (สูงสุด ${LUCKY_DURATION_MAX} วิ)`,
                   luckyDurationCost,
                   ldLevel,
                   onBuyLuckyDuration,

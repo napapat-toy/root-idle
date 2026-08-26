@@ -20,13 +20,13 @@ export const ECHO_COST_MULT = 4;
 export const ECHO_REQUIRE_UPGRADE_LEVEL = 3;
 
 export const EVENT_DURATION_MAX_LEVEL = 4;
-export const LUCKY_DURATION_BASE = 7;
-export const LUCKY_DURATION_MAX = 60;
-export const LUCKY_DURATION_MAX_LEVEL = LUCKY_DURATION_MAX - LUCKY_DURATION_BASE; // 53 levels
-export const LUCKY_CHANCE_BASE = 0.007;
-export const LUCKY_CHANCE_STEP = 0.007;
-export const LUCKY_CHANCE_MAX_LEVEL = 9;
-export const LUCKY_CHANCE_MAX = 0.07;
+export const LUCKY_DURATION_BASE = 5;
+export const LUCKY_DURATION_MAX = 20;
+export const LUCKY_DURATION_MAX_LEVEL = LUCKY_DURATION_MAX - LUCKY_DURATION_BASE; // 15 levels
+export const LUCKY_CHANCE_BASE = 0.002;
+export const LUCKY_CHANCE_STEP = 0.001;
+export const LUCKY_CHANCE_MAX_LEVEL = 8;
+export const LUCKY_CHANCE_MAX = 0.010;
 
 export const PASSIVE_RATE_COST = 100;
 export const AUTO_ROOT_COST = 50;
