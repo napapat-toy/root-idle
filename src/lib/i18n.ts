@@ -523,7 +523,7 @@ export const UI_TEXTS = {
     achievementsTitle: 'เหรียญความสำเร็จ (Achievements)',
     allCategories: 'ทั้งหมด',
     unlockedProgress: 'ปลดล็อกแล้ว {unlocked} / {total} อัน (โบนัสเรตรวม +{pct}%)',
-    achUnlocked: 'สำเร็จ (+1%)',
+    achUnlocked: 'สำเร็จ',
     achLocked: 'ยังไม่สำเร็จ',
     
     // Stats Modal
@@ -648,7 +648,7 @@ export const UI_TEXTS = {
     achievementsTitle: 'Achievements',
     allCategories: 'All Categories',
     unlockedProgress: 'Unlocked {unlocked} / {total} (+{pct}% Global Rate Bonus)',
-    achUnlocked: 'Completed (+1%)',
+    achUnlocked: 'Completed',
     achLocked: 'Locked',
     
     // Stats Modal
