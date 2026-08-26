@@ -23,6 +23,7 @@ export interface AutoBuyCandidate {
   marginalGain: number; // fraction added to totalRate
   isNewUnlock: boolean; // whether this unlocks a new tier
   isGatekeeper?: boolean; // whether this is needed (< 10) to unlock the next tier
+  isMilestoneTarget?: boolean; // whether this is < 100 roots and costs <= 10% of current nutrients
   apply: () => void;
 }
 
@@ -93,6 +94,7 @@ export function evaluateAutoBuy(
       const eff = effectiveRate(state, def);
       const isNewUnlock = count === 0;
       const isGatekeeper = i < MODULE_DEFS.length - 1 && count < MODULE_UNLOCK_REQUIRE_OWNED;
+      const isMilestoneTarget = count < 100 && cost <= currentNutrients * 0.10;
       const projectedModuleTotal = eff * (count + 1);
       const projectedTotalRate = currentBaseRate + eff;
       const shareOfTotal = projectedTotalRate > 0 ? projectedModuleTotal / projectedTotalRate : 0;
@@ -107,6 +109,7 @@ export function evaluateAutoBuy(
         marginalGain,
         isNewUnlock,
         isGatekeeper,
+        isMilestoneTarget,
         apply: () => {
           setState(prev => ({
             ...prev,
@@ -203,9 +206,9 @@ export function evaluateAutoBuy(
     if (candidates.length === 0) break;
 
     // Filter out obsolete < 1% candidates when total rate is developed (> 50)
-    // Always keep candidates that unlock new tiers, gatekeepers to next tiers, or produce >= 1% of total income
+    // Always keep candidates that unlock new tiers, gatekeepers to next tiers, milestone targets (< 100 roots & <= 10% wallet), or produce >= 1% of total income
     const highImpactCandidates = candidates.filter(c => {
-      if (c.isNewUnlock || c.isGatekeeper) return true;
+      if (c.isNewUnlock || c.isGatekeeper || c.isMilestoneTarget) return true;
       if (totalRate <= 50) return true;
       return c.shareOfTotal >= 0.01 || c.marginalGain >= 0.01;
     });
@@ -343,11 +346,12 @@ export function evaluateAutoBuy(
     }
 
     // 4. SMART ACCELERATION:
-    // If waiting for a monster target (>= 50%) or a 5-minute stepping stone:
-    // Check if there is an affordable booster with fast payback (< 35% of wait time) to speed up reaching the target
+    // If waiting for a major target (>= 20%) or a stepping stone:
+    // Check if there is an affordable booster with fast payback (< 35% of wait time) or a pocket milestone (< 100 roots @ <= 5% wallet)
     const affordableCandidates = evaluatedPool.filter(c => c.waitSec === 0);
 
-    if (affordableCandidates.length > 0 && ultimateTarget.waitSec > 15) {
+    if (affordableCandidates.length > 0 && ultimateTarget.waitSec > 10) {
+      // 4.1 Check for quick payback boosters
       const quickBoosters = affordableCandidates.filter(c => {
         const paybackSec = c.cost / Math.max(0.01, c.value);
         return paybackSec < ultimateTarget.waitSec * 0.35 && (c.shareOfTotal >= 0.03 || c.marginalGain >= 0.03);
@@ -361,6 +365,17 @@ export function evaluateAutoBuy(
         const booster = quickBoosters[0];
         booster.apply();
         currentNutrients -= booster.cost;
+        executedAny = true;
+        continue;
+      }
+
+      // 4.2 Pocket Milestone Stepping Stones: if candidate is < 100 roots and costs <= 5% of current balance, scoop it up!
+      const pocketMilestones = affordableCandidates.filter(c => c.isMilestoneTarget && c.cost <= currentNutrients * 0.05);
+      if (pocketMilestones.length > 0) {
+        pocketMilestones.sort((a, b) => a.cost - b.cost); // buy cheapest first
+        const milestone = pocketMilestones[0];
+        milestone.apply();
+        currentNutrients -= milestone.cost;
         executedAny = true;
         continue;
       }
