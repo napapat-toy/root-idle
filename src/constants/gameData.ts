@@ -1,7 +1,7 @@
 import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
 import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 
-export const GAME_VERSION = '1.7.0';
+export const GAME_VERSION = '1.8.0';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
