@@ -30,6 +30,7 @@ import {
   OFFLINE_CAP_HOURS,
   offlineCapCost,
   offlineCapMaxed,
+  passiveRateCost,
   PASSIVE_RATE_COST,
   SKIN_COST,
   starterCultureCost,
@@ -269,7 +270,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   isEn
                     ? `Immediately gain +10 Fine Roots and guarantee ${sLvl * 10 + 10} roots upon every future Prestige`
                     : `ได้รากฝอยฟรีทันที +10 ต้น (ใช้ได้เลยรอบนี้) และการันตี ${sLvl * 10 + 10} ต้นทุกครั้งที่หว่านใหม่ต่อจากนี้`,
-                  (lvl) => Math.ceil(15 * Math.pow(1.5, lvl)),
+                  starterCultureCost,
                   sLvl,
                   onBuyStarterCulture
                 );
@@ -283,7 +284,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   isEn
                     ? `Increases Eternal Seeds gained upon Prestige by +5% (Currently +${gLvl * 5}%)`
                     : `เพิ่มเมล็ดนิรันดร์ที่ได้รับตอน Prestige ครั้งต่อไปอีก 5% (ตอนนี้ +${gLvl * 5}%)`,
-                  (lvl) => Math.ceil(20 * Math.pow(1.6, lvl)),
+                  goldenSeedCost,
                   gLvl,
                   onBuyGoldenSeed
                 );
@@ -297,7 +298,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   isEn
                     ? `Permanent +1% global production rate bonus across the entire garden (Currently +${pr}%)`
                     : `เพิ่มเรทรวมทั้งฟาร์มแบบถาวรอีก 1% ไม่จำกัดจำนวนครั้ง (ตอนนี้ +${pr}%)`,
-                  () => PASSIVE_RATE_COST,
+                  passiveRateCost,
                   pr,
                   onBuyPassiveRate
                 );
@@ -500,7 +501,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   isEn
                     ? `Increases reward gains from floating events by +20% (Currently +${ebLevel * 20}%)`
                     : `เพิ่มผลตอบแทนของกล่องสมบัติ/บัฟ/โชคดี ที่ได้จากการคลิกอีเว้นอีก 20% (ตอนนี้ +${ebLevel * 20}%)`,
-                  (lvl) => Math.ceil(25 * Math.pow(1.55, lvl)),
+                  eventBonusCost,
                   ebLevel,
                   onBuyEventBonus
                 );
@@ -549,7 +550,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   isEn
                     ? `Stacks Lucky Clover (×777) multiplier — Currently ×${lmLevel + 1}, next level ×${lmLevel + 2}`
                     : `ทบตัวคูณของบัฟโชคดี (×777) เพิ่มอีกชั้น — ตอนนี้ ×${lmLevel + 1} ต่อไปเป็น ×${lmLevel + 2}`,
-                  (lvl) => 3000 * (lvl + 1),
+                  luckyMagnitudeCost,
                   lmLevel,
                   onBuyLuckyMagnitude
                 );
@@ -564,7 +565,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   isEn
                     ? `Extends Lucky Clover duration (+1s/level) — Currently ${curSecs}s (Cap: 60s)`
                     : `ยืดเวลาบัฟโชคดี (+1 วิ/เลเวล) — ตอนนี้ ${curSecs} วิ (สูงสุด 60 วิ)`,
-                  (lvl) => Math.ceil(100 * Math.pow(1.12, lvl)),
+                  luckyDurationCost,
                   ldLevel,
                   onBuyLuckyDuration,
                   LUCKY_DURATION_MAX_LEVEL

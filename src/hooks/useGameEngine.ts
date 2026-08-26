@@ -52,6 +52,7 @@ import {
   MODULE_DEFS,
   offlineCapCost,
   offlineCapMaxed,
+  passiveRateCost,
   PASSIVE_RATE_COST,
   prestigeUnlocked,
   rootSynergyCost,
@@ -241,6 +242,7 @@ export function useGameEngine() {
       owned: freshOwned,
       totalOwned: starterBonus,
       rootUpgrades: {},
+      rootSynergies: {},
       buyQty: 1,
       stats: {
         ...prev.stats,
@@ -363,7 +365,7 @@ export function useGameEngine() {
     const { count, totalCost } = calcBulkPrestigeUpgrade(
       cur.prestige.starterLevel || 0,
       cur.eternalSeeds,
-      (lvl) => Math.ceil(15 * Math.pow(1.5, lvl)),
+      starterCultureCost,
       amount || 1
     );
     if (count <= 0) return;
@@ -381,7 +383,7 @@ export function useGameEngine() {
     const { count, totalCost } = calcBulkPrestigeUpgrade(
       cur.prestige.goldenLevel || 0,
       cur.eternalSeeds,
-      (lvl) => Math.ceil(20 * Math.pow(1.6, lvl)),
+      goldenSeedCost,
       amount || 1
     );
     if (count <= 0) return;
@@ -394,25 +396,19 @@ export function useGameEngine() {
 
   const buyPassiveRate = useCallback((amount?: number | 'max') => {
     const cur = stateRef.current;
-    if (cur.eternalSeeds < PASSIVE_RATE_COST) return;
-
-    let levelsToBuy = 1;
-    if (amount === 'max') {
-      levelsToBuy = Math.floor(cur.eternalSeeds / PASSIVE_RATE_COST);
-    } else if (typeof amount === 'number' && amount > 1) {
-      const maxPossible = Math.floor(cur.eternalSeeds / PASSIVE_RATE_COST);
-      levelsToBuy = Math.min(amount, maxPossible);
-    }
-
-    if (levelsToBuy <= 0) return;
-    const totalCost = levelsToBuy * PASSIVE_RATE_COST;
-
+    const { count, totalCost } = calcBulkPrestigeUpgrade(
+      cur.prestige.passiveRateLevel || 0,
+      cur.eternalSeeds,
+      passiveRateCost,
+      amount || 1
+    );
+    if (count <= 0) return;
     setState(prev => ({
       ...prev,
       eternalSeeds: prev.eternalSeeds - totalCost,
       prestige: {
         ...prev.prestige,
-        passiveRateLevel: (prev.prestige.passiveRateLevel || 0) + levelsToBuy,
+        passiveRateLevel: (prev.prestige.passiveRateLevel || 0) + count,
       },
     }));
   }, []);
@@ -537,7 +533,7 @@ export function useGameEngine() {
     const { count, totalCost } = calcBulkPrestigeUpgrade(
       cur.prestige.eventBonusLevel || 0,
       cur.eternalSeeds,
-      (lvl) => Math.ceil(25 * Math.pow(1.55, lvl)),
+      eventBonusCost,
       amount || 1
     );
     if (count <= 0) return;
@@ -577,7 +573,7 @@ export function useGameEngine() {
     const { count, totalCost } = calcBulkPrestigeUpgrade(
       cur.prestige.luckyMagnitudeLevel || 0,
       cur.eternalSeeds,
-      (lvl) => 3000 * (lvl + 1),
+      luckyMagnitudeCost,
       amount || 1
     );
     if (count <= 0) return;
@@ -594,7 +590,7 @@ export function useGameEngine() {
     const { count, totalCost } = calcBulkPrestigeUpgrade(
       cur.prestige.luckyDurationLevel || 0,
       cur.eternalSeeds,
-      (lvl) => Math.ceil(100 * Math.pow(1.12, lvl)),
+      luckyDurationCost,
       amount || 1,
       LUCKY_DURATION_MAX_LEVEL
     );

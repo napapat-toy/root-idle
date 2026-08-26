@@ -292,12 +292,19 @@ export function calcPrestigeSeeds(state: GameState): number {
   return Math.max(0, Math.floor(base * bonus));
 }
 
-export function starterCultureCost(state: GameState): number {
-  return Math.ceil(15 * Math.pow(1.5, state.prestige.starterLevel || 0));
+export function starterCultureCost(stateOrLevel: GameState | number): number {
+  const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.starterLevel || 0);
+  return Math.min(1000, 25 * (lvl + 1));
 }
 
-export function goldenSeedCost(state: GameState): number {
-  return Math.ceil(20 * Math.pow(1.6, state.prestige.goldenLevel || 0));
+export function goldenSeedCost(stateOrLevel: GameState | number): number {
+  const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.goldenLevel || 0);
+  return 500 * (lvl + 1);
+}
+
+export function passiveRateCost(stateOrLevel: GameState | number): number {
+  const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.passiveRateLevel || 0);
+  return 100 * (lvl + 1);
 }
 
 export function offlineCapMaxed(state: GameState): boolean {
@@ -308,12 +315,14 @@ export function offlineCapCost(state: GameState): number {
   return state.prestige.offlineCapLevel === 0 ? 80 : 220;
 }
 
-export function eventBonusCost(state: GameState): number {
-  return Math.ceil(25 * Math.pow(1.55, state.prestige.eventBonusLevel || 0));
+export function eventBonusCost(stateOrLevel: GameState | number): number {
+  const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.eventBonusLevel || 0);
+  return 250 * (lvl + 1);
 }
 
-export function eventDurationCost(state: GameState): number {
-  return Math.ceil(20 * Math.pow(1.5, state.prestige.eventDurationLevel || 0));
+export function eventDurationCost(stateOrLevel: GameState | number): number {
+  const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.eventDurationLevel || 0);
+  return 200 * (lvl + 1);
 }
 
 export function eventBonusMult(state: GameState): number {
@@ -328,13 +337,14 @@ export function eventDurationMult(state: GameState): number {
   return 1 + (state.prestige.eventDurationLevel || 0) * 0.15;
 }
 
-export function luckyMagnitudeCost(state: GameState): number {
-  return 3000 * ((state.prestige.luckyMagnitudeLevel || 0) + 1);
+export function luckyMagnitudeCost(stateOrLevel: GameState | number): number {
+  const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.luckyMagnitudeLevel || 0);
+  return 50000 * (lvl + 1);
 }
 
-export function luckyDurationCost(state: GameState): number {
-  const level = state.prestige.luckyDurationLevel || 0;
-  return Math.ceil(100 * Math.pow(1.12, level));
+export function luckyDurationCost(stateOrLevel: GameState | number): number {
+  const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.luckyDurationLevel || 0);
+  return 1000 * (lvl + 1);
 }
 
 export function luckyMagnitudeExtra(state: GameState): number {
@@ -361,8 +371,9 @@ export function luckyChancePct(state: GameState): number {
   return Math.min(LUCKY_CHANCE_MAX, LUCKY_CHANCE_BASE + (state.prestige.luckyChanceLevel || 0) * LUCKY_CHANCE_STEP);
 }
 
-export function luckyChanceCost(state: GameState): number {
-  return 500 * ((state.prestige.luckyChanceLevel || 0) + 1);
+export function luckyChanceCost(stateOrLevel: GameState | number): number {
+  const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.luckyChanceLevel || 0);
+  return 1000 * (lvl + 1);
 }
 
 export function currentOfflineCapSeconds(state: GameState): number {
