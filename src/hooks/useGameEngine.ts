@@ -95,6 +95,12 @@ export function useGameEngine() {
   const activeLuckyBuffRef = useRef<ActiveBuff | null>(activeLuckyBuff);
   activeLuckyBuffRef.current = activeLuckyBuff;
 
+  // Event timers & single-source-of-truth claim protection
+  const eventTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const activeEventExpireRef = useRef<NodeJS.Timeout | null>(null);
+  const autoEventClaimRef = useRef<NodeJS.Timeout | null>(null);
+  const claimedEventIdsRef = useRef<Set<number>>(new Set());
+
   // Rate calculation
   const currentBuffMultiplier = useCallback(() => {
     let mult = 1;
@@ -292,8 +298,18 @@ export function useGameEngine() {
     }));
   }, []);
 
-  // Event trigger & claim
+  // Event trigger & claim (Single Source of Truth)
   const claimEvent = useCallback((ev: GameEventItem) => {
+    // 1. Verify event has not already been claimed (prevents race condition / double-claiming)
+    if (claimedEventIdsRef.current.has(ev.id)) return;
+    claimedEventIdsRef.current.add(ev.id);
+
+    // 2. Clear auto-claim timer if manual click claimed it first
+    if (autoEventClaimRef.current) {
+      clearTimeout(autoEventClaimRef.current);
+      autoEventClaimRef.current = null;
+    }
+
     const cur = stateRef.current;
     const bonusMult = eventBonusMult(cur);
     const durationMult = eventDurationMult(cur);
@@ -789,10 +805,6 @@ export function useGameEngine() {
   }, [doPrestige, showFloatingText, totalRate]);
 
   // Random event scheduler (105-155s interval)
-  const eventTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const activeEventExpireRef = useRef<NodeJS.Timeout | null>(null);
-  const autoEventClaimRef = useRef<NodeJS.Timeout | null>(null);
-
   const scheduleNextEvent = useCallback(() => {
     if (eventTimerRef.current) clearTimeout(eventTimerRef.current);
 
@@ -813,16 +825,19 @@ export function useGameEngine() {
       const newEv: GameEventItem = { id, type, left, top };
       setActiveEvents([newEv]);
 
-      // Auto-event prestige perk
+      // Auto-event prestige perk: verify event is still active & unclaimed before claiming
       if (cur.prestige.autoEvent && cur.prestige.autoEventEnabled) {
         autoEventClaimRef.current = setTimeout(() => {
-          claimEvent(newEv);
+          if (!claimedEventIdsRef.current.has(id)) {
+            claimEvent(newEv);
+          }
         }, 1200 + Math.random() * 1500);
       }
 
       // Expire after 12s if not clicked
       activeEventExpireRef.current = setTimeout(() => {
         setActiveEvents(prev => prev.filter(e => e.id !== id));
+        claimedEventIdsRef.current.delete(id);
         scheduleNextEvent();
       }, 12000);
     }, delay);
