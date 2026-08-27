@@ -190,6 +190,7 @@ export default function Home() {
         isOpen={prestigeModalOpen}
         state={state}
         onClose={() => setPrestigeModalOpen(false)}
+        onOpenWardrobe={() => setWardrobeModalOpen(true)}
         onConfirmPrestige={doPrestige}
         onBuyStarterCulture={buyStarterCulture}
         onBuyGoldenSeed={buyGoldenSeed}

@@ -30,18 +30,16 @@ import {
   offlineCapCost,
   offlineCapMaxed,
   passiveRateCost,
-  SKIN_COSTS,
   SKIN_DEFS,
   SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
-  UI_THEME_COSTS,
   UI_THEME_DEFS,
   UI_THEME_PRESTIGE_KEYS,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { ConfirmModal } from './ConfirmModal';
-import { t, SKIN_NAMES, UI_THEME_NAMES } from '@/lib/i18n';
+import { t } from '@/lib/i18n';
 
 interface PrestigeModalProps {
   isOpen: boolean;
@@ -69,6 +67,7 @@ interface PrestigeModalProps {
   onBuyOfflineCapUpgrade: () => void;
   onBuySkin: (skinId: SkinId) => void;
   onBuyUITheme: (themeId: UIThemeId) => void;
+  onOpenWardrobe?: () => void;
 }
 
 export const PrestigeModal: React.FC<PrestigeModalProps> = ({
@@ -76,6 +75,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   state,
   onClose,
   onConfirmPrestige,
+  onOpenWardrobe,
   onBuyStarterCulture,
   onBuyGoldenSeed,
   onBuyPassiveRate,
@@ -598,177 +598,59 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                 );
               })()}
 
-              {/* Tier Headers and Skin Cards */}
-              {(['starter', 'mid', 'luxury'] as const).map(tier => {
-                const tierTitle =
-                  tier === 'starter'
-                    ? (isEn ? '🟢 Starter Tier Themes (100 – 500 🌌)' : '🟢 สกินระดับเริ่มต้น (100 – 500 🌌)')
-                    : tier === 'mid'
-                    ? (isEn ? '🟡 Mid-Tier Themes (5,000 – 50,000 🌌)' : '🟡 สกินระดับกลาง (5,000 – 50,000 🌌)')
-                    : (isEn ? '🟣 Luxury Endgame Themes (250,000 – 1,000,000 🌌)' : '🟣 สกินระดับหรูหรา (250,000 – 1,000,000 🌌)');
-
-                const skinsInTier = SKIN_DEFS.filter(s => s.tier === tier && s.id !== 'none');
-
-                return (
-                  <React.Fragment key={tier}>
-                    <div style={{
-                      fontSize: '11px',
-                      fontWeight: '700',
-                      letterSpacing: '0.05em',
-                      color: tier === 'starter' ? '#8fd17a' : tier === 'mid' ? '#f59e0b' : '#c084fc',
-                      margin: '12px 0 6px',
-                      paddingBottom: '2px',
-                      borderBottom: '1px dashed rgba(255,255,255,0.08)'
-                    }}>
-                      {tierTitle}
-                    </div>
-
-                    {skinsInTier.map(sDef => {
-                      const id = sDef.id;
-                      const prestigeKey = SKIN_PRESTIGE_KEYS[id];
-                      const isOwned = prestigeKey ? !!state.prestige[prestigeKey as keyof typeof state.prestige] : false;
-                      const cost = SKIN_COSTS[id];
-                      const currentLang = (state.lang || 'th') as Language;
-                      const name = SKIN_NAMES[id]?.[currentLang] || sDef.name;
-                      const desc =
-                        id === 'rainbow'
-                          ? (isEn ? 'Colors branches distinctly based on root module species' : 'แยกสีรากตามชนิดโมดูลที่ซื้อ สดใสหลากสีสัน (Module Spectrum)')
-                          : id === 'sakura'
-                          ? (isEn ? 'Midnight Kyoto sakura grove with dusky rose petals and soft cream tips' : 'บรรยากาศสวนซากุระยามค่ำคืน โทนสเลทชาร์โคลและกลีบชมพูซากุระหม่น')
-                          : id === 'cafe'
-                          ? (isEn ? 'Cozy cafe vibes blending roasted cocoa, matcha green, and silky cream' : 'กลิ่นอายมัทฉะตัดกับช็อกโกแลตเข้มข้น โทนโกโก้ มัทฉะอุจิ และครีมนม')
-                          : id === 'autumn'
-                          ? (isEn ? 'Kyoto autumn foliage with burnt terracotta, golden amber, and crimson leaves' : 'ฤดูใบไม้ร่วงในเกียวโต โทนส้มอิฐเทอราคอตตา ทองอำพัน และแดงเมเปิ้ล')
-                          : id === 'ocean'
-                          ? (isEn ? 'Deep abyss bioluminescence with glowing seafoam teal and radiant aqua' : 'โลกใต้ทะเลลึกเรืองแสง โทนเขียวอมฟ้าก้นสมุทรและเทอร์ควอยซ์พรายน้ำ')
-                          : id === 'frost'
-                          ? (isEn ? 'Glacial frost crystal roots transitioning from ice blue to pure white' : 'รากไม้คริสตัลน้ำแข็งขั้วโลก โทนฟ้าไอซ์บลูอ่อนและขาวหิมะบริสุทธิ์')
-                          : id === 'sunset'
-                          ? (isEn ? 'Golden hour twilight with sunset peach, dusk rose, and amber horizon' : 'แสงแดดสีทองยามเย็น โทนม่วงทไวไลท์ ส้มพีช และกุหลาบดัสก์')
-                          : id === 'sameorigin'
-                          ? (isEn ? 'Branches inherit the distinct color family of their respective parent root' : 'แตกสีกิ่งย่อยตามตระกูลรากแก้วต้นทาง คุมโทนกิ่งหลักอย่างลงตัว')
-                          : id === 'mystic'
-                          ? (isEn ? 'Enchanted fairy grove with moonlight lilac and glowing magical spores' : 'ป่าเทพนิยายแฟนตาซี โทนลาเวนเดอร์แสงจันทร์และสปอร์เรืองแสง')
-                          : id === 'cyberpunk'
-                          ? (isEn ? 'High-contrast midnight cyber theme with glowing neon cyan and electric purple' : 'นีออนล้ำยุคยามค่ำคืน โทนดำสนิทตัดกับนีออนไซยานและม่วงอิเล็กทริก')
-                          : id === 'grayscale'
-                          ? (isEn ? 'Monochromatic black-and-white theme transitioning from charcoal to silver' : 'โทนขาวดำคลาสสิก ไล่เฉดจากชาร์โคลสู่เงินสลัว สไตล์มินิมอล')
-                          : id === 'gradient'
-                          ? (isEn ? 'Lush emerald rainforest gradient smoothly transitioning to tender tips' : 'เขียวมรกตป่าฝนเขียวขจี ไล่จากเข้มที่ลำต้นไปอ่อนที่ปลายราก')
-                          : id === 'nebula'
-                          ? (isEn ? 'Deep space cosmic nebula with starlight violet, galactic blue, and pulsar pink' : 'ล่องลอยในห้วงอวกาศ โทนม่วงมิดไนท์ ละอองเนบิวลา และประกายดาว')
-                          : id === 'imperial'
-                          ? (isEn ? 'Imperial golden relic with obsidian stone and shimmering pure royal gold' : 'วิหารทองคำจักรพรรดิ โทนหินภูเขาไฟออบซิเดียนตัดกับทองคำบริสุทธิ์')
-                          : '';
-
-                      return (
-                        <React.Fragment key={id}>
-                          {renderItem(
-                            name,
-                            isOwned ? (isEn ? 'Unlocked ✓' : 'ปลดล็อกแล้ว ✓') : '',
-                            desc,
-                            isOwned ? '—' : `${fmtInt(cost)} 🌌`,
-                            () => onBuySkin(id),
-                            !isOwned && seeds < cost,
-                            isOwned
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Section: UI Themes (High-End & Challenging Tiers) */}
-          <div className="prestige-section">
-            <div className="prestige-section-title">
-              🎨 {isEn ? 'UI Visual Themes (Full Interface Transformation)' : 'ธีมหน้าต่าง UI (เปลี่ยนบรรยากาศทั้งหน้าจอ)'}
-            </div>
-            <div className="prestige-section-desc">
-              {isEn
-                ? 'High-end aesthetic upgrades that transform the whole UI palette, cards, buttons, borders, and ambient glow.'
-                : 'อัปเกรดระดับสูงที่เปลี่ยนโทนสีหน้าต่าง UI แผงการ์ด ปุ่มกด ขอบ และแสงเรืองแสงทั้งหน้าจออย่างสมบูรณ์แบบ'}
-            </div>
-            <div className="prestige-shop-grid">
-              {(['starter', 'mid', 'luxury'] as const).map(tier => {
-                const themesInTier = UI_THEME_DEFS.filter(tDef => tDef.tier === tier && !tDef.always);
-                if (themesInTier.length === 0) return null;
-
-                const tierTitle =
-                  tier === 'starter'
-                    ? (isEn ? '🟢 Tier 1: Nature & Atmosphere (5K - 25K 🌌)' : '🟢 ระดับ 1: บรรยากาศธรรมชาติ & คาเฟ่ (5K - 25K 🌌)')
-                    : tier === 'mid'
-                    ? (isEn ? '🟡 Tier 2: Deep Elements & Wonder (100K - 500K 🌌)' : '🟡 ระดับ 2: ธาตุล้ำลึก & มหัศจรรย์ (100K - 500K 🌌)')
-                    : (isEn ? '🟣 Tier 3: Cosmic & Imperial Luxury (1M - 10M 🌌)' : '🟣 ระดับ 3: มหาจักรวาล & ราชันย์ (1M - 10M 🌌)');
-
-                return (
-                  <React.Fragment key={`ui-tier-${tier}`}>
-                    <div style={{
-                      gridColumn: '1 / -1',
-                      fontSize: '11px',
-                      fontWeight: '700',
-                      letterSpacing: '0.05em',
-                      color: tier === 'starter' ? '#8fd17a' : tier === 'mid' ? '#f59e0b' : '#c084fc',
-                      margin: '12px 0 6px',
-                      paddingBottom: '2px',
-                      borderBottom: '1px dashed rgba(255,255,255,0.08)'
-                    }}>
-                      {tierTitle}
-                    </div>
-
-                    {themesInTier.map(tDef => {
-                      const id = tDef.id;
-                      const prestigeKey = UI_THEME_PRESTIGE_KEYS[id];
-                      const isOwned = prestigeKey ? !!state.prestige[prestigeKey as keyof typeof state.prestige] : false;
-                      const cost = UI_THEME_COSTS[id];
-                      const currentLang = (state.lang || 'th') as Language;
-                      const name = UI_THEME_NAMES[id]?.[currentLang] || tDef.name;
-                      const desc =
-                        id === 'sakura'
-                          ? (isEn ? 'Midnight ink-black background with delicate sakura pink accents and wine borders' : 'พื้นหลังหมึกดำมิดไนท์ ตัดกับขอบไวน์กุหลาบและแสงสีชมพูซากุระ')
-                          : id === 'cafe'
-                          ? (isEn ? 'Rich dark cocoa panels with cozy matcha green buttons and creamy milk highlights' : 'แผงการ์ดดาร์กโกโก้อบอุ่น ปุ่มเขียวมัทฉะอุจิ และไฮไลต์ครีมนม')
-                          : id === 'autumn'
-                          ? (isEn ? 'Warm charcoal slate with burnt terracotta borders and golden amber glow' : 'ชาร์โคลอุ่น ตัดกับขอบส้มอิฐเทอราคอตตาและแสงทองอำพัน')
-                          : id === 'ocean'
-                          ? (isEn ? 'Deep abyssal navy shell with radiant turquoise borders and glowing aqua buttons' : 'โทนก้นสมุทรลึก Deep Navy ขอบเทอร์ควอยซ์และปุ่มพรายน้ำเรืองแสง')
-                          : id === 'frost'
-                          ? (isEn ? 'Polar ice slate interface with crystal blue borders and frost white accents' : 'อินเทอร์เฟซน้ำแข็งขั้วโลก ขอบคริสตัลไอซ์บลู และไฮไลต์ขาวหิมะ')
-                          : id === 'sunset'
-                          ? (isEn ? 'Twilight plum panels with sunset peach borders and warm golden hour radiance' : 'แผงทไวไลท์พลัม ขอบส้มพีชยามเย็น และแสงประกายสีทองอัสดง')
-                          : id === 'mystic'
-                          ? (isEn ? 'Enchanted blackwood shell with moonlight lavender borders and fairy mint glow' : 'โทนไม้ดำป่าเวทมนตร์ ขอบลาเวนเดอร์แสงจันทร์ และแสงเรืองมิ้นต์ภูติ')
-                          : id === 'cyberpunk'
-                          ? (isEn ? 'Pure obsidian stealth dark with high-contrast electric neon cyan & purple UI' : 'ดำออบซิเดียนสนิท ตัดกับขอบนีออนไซยานและม่วงอิเล็กทริกสุดล้ำ')
-                          : id === 'grayscale'
-                          ? (isEn ? 'Ultra-clean monochromatic dark aesthetic with satin silver borders and modern slate' : 'สไตล์มินิมอลโมเดิร์น โทนชาร์โคลระดับพรีเมียมและขอบเงินซาติน')
-                          : id === 'emerald'
-                          ? (isEn ? 'Deep jungle obsidian with vibrant emerald green borders and lush leaf highlights' : 'ดำป่าลึกมรกต ขอบเขียวมรกตเจิดจรัส และแสงใบไม้ป่าฝน')
-                          : id === 'nebula'
-                          ? (isEn ? 'Midnight cosmic void with nebula purple cards, galactic blue lines, and pink starlight' : 'ห้วงอวกาศมิดไนท์ การ์ดม่วงเนบิวลา ขอบแสงดาว และประกายกาแลกซี่')
-                          : id === 'imperial'
-                          ? (isEn ? 'Imperial volcanic stone with polished royal bronze borders and pure golden glow' : 'ศิลาภูเขาไฟออบซิเดียน ขอบทองคำบรอนซ์ และแสงทองคำบริสุทธิ์')
-                          : '';
-
-                      return (
-                        <React.Fragment key={`ui-theme-${id}`}>
-                          {renderItem(
-                            name,
-                            isOwned ? (isEn ? 'Unlocked ✓' : 'ปลดล็อกแล้ว ✓') : '',
-                            desc,
-                            isOwned ? '—' : `${fmtInt(cost)} 🌌`,
-                            () => onBuyUITheme(id),
-                            !isOwned && seeds < cost,
-                            isOwned
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  </React.Fragment>
-                );
-              })}
+              {/* ===== Wardrobe & Aesthetics ===== */}
+              {renderSectionHeader(isEn ? '🎨 Cosmetics & UI Themes' : '🎨 ห้องแต่งตัว & สกินตกแต่ง')}
+              <div
+                style={{
+                  background: 'var(--bg-panel-2)',
+                  border: '1px solid var(--line-soil)',
+                  borderRadius: '12px',
+                  padding: '14px 16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  textAlign: 'left',
+                  margin: '6px 0 12px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
+                  <span style={{ fontWeight: 700, fontSize: '13.5px', color: 'var(--root-cream)' }}>
+                    🎨 {isEn ? 'Wardrobe & Visual Themes' : 'ห้องแต่งตัว & ธีมหน้าต่าง UI'}
+                  </span>
+                  <span style={{ fontSize: '11px', color: 'var(--accent-glow)', fontWeight: 700 }}>
+                    {SKIN_DEFS.filter(s => s.id === 'none' || !!state.prestige[SKIN_PRESTIGE_KEYS[s.id] as keyof typeof state.prestige]).length}/{SKIN_DEFS.length} 🌳 · {UI_THEME_DEFS.filter(t => t.id === 'classic' || !!state.prestige[UI_THEME_PRESTIGE_KEYS[t.id] as keyof typeof state.prestige]).length}/{UI_THEME_DEFS.length} 🖼️
+                  </span>
+                </div>
+                <div style={{ fontSize: '11.5px', color: 'var(--root-cream-dim)', lineHeight: 1.45 }}>
+                  {isEn
+                    ? 'Preview all 15 root skins & 13 UI color themes in real-time, customize appearance, and buy directly from the Wardrobe!'
+                    : 'ทดลองใส่สกินรากไม้ 15 แบบ และธีมหน้าต่าง UI 13 แบบได้แบบ Real-time พร้อมเลือกซื้อและสวมใส่ได้ทันทีที่ห้องแต่งตัว'}
+                </div>
+                {onOpenWardrobe && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onOpenWardrobe();
+                    }}
+                    style={{
+                      marginTop: '4px',
+                      padding: '9px 14px',
+                      background: 'var(--accent-glow)',
+                      color: '#12190d',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      fontSize: '12.5px',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                      transition: 'all 0.15s ease',
+                      textAlign: 'center',
+                    }}
+                  >
+                    🎨 {isEn ? 'Open Wardrobe (Try & Buy)' : 'เปิดห้องแต่งตัว (ลองใส่ & เลือกซื้อ)'}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

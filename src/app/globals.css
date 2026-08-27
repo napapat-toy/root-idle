@@ -873,7 +873,6 @@ svg#rootCanvas {
   border: 1px solid var(--line-soil);
   @apply rounded-[14px] p-4 sm:p-5 w-full max-w-full max-h-[calc(86dvh-20px)] overflow-y-auto overflow-x-hidden text-center shadow-[0_20px_60px_rgba(0,0,0,0.6),0_0_1px_1px_rgba(255,255,255,0.05)];
   -webkit-overflow-scrolling: touch;
-  contain: layout style;
 }
 
 .modal-close-x {
