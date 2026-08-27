@@ -262,7 +262,7 @@ export default function Home() {
       />
 
       {/* Floating Live Preview Banner */}
-      {(previewSkin || previewUITheme) && (() => {
+      {!wardrobeModalOpen && (previewSkin || previewUITheme) && (() => {
         const previewCost = previewSkin
           ? (SKIN_COSTS[previewSkin] || 0)
           : previewUITheme

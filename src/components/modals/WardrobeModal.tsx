@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GameState, Language, SkinId, UIThemeId } from '@/types/game';
 import {
   SKIN_COSTS,
@@ -32,8 +32,6 @@ interface WardrobeModalProps {
 export const WardrobeModal: React.FC<WardrobeModalProps> = ({
   isOpen,
   state,
-  previewSkin,
-  previewUITheme,
   onClose,
   onSelectSkin,
   onSelectUITheme,
@@ -45,512 +43,543 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
   onOpenPrestige,
 }) => {
   const [activeTab, setActiveTab] = useState<'skins' | 'themes'>('skins');
+  const [skinIndex, setSkinIndex] = useState(0);
+  const [themeIndex, setThemeIndex] = useState(0);
 
-  if (!isOpen) return null;
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
+  const lang: Language = state.lang || 'th';
+  const isEn = lang === 'en';
+  const tr = t(lang);
+
+  // Initialize index to currently equipped items when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      const curSkin = state.prestige.activeSkin;
+      const sIdx = SKIN_DEFS.findIndex(s => s.id === curSkin);
+      const initSIdx = sIdx !== -1 ? sIdx : 0;
+      setSkinIndex(initSIdx);
+
+      const curTheme = state.prestige.activeUITheme || 'classic';
+      const tIdx = UI_THEME_DEFS.findIndex(t => t.id === curTheme);
+      const initTIdx = tIdx !== -1 ? tIdx : 0;
+      setThemeIndex(initTIdx);
+    }
+  }, [isOpen, state.prestige.activeSkin, state.prestige.activeUITheme]);
+
+  const isSkinOwned = useCallback((id: SkinId) => {
+    if (id === 'none') return true;
+    const key = SKIN_PRESTIGE_KEYS[id];
+    return key ? !!state.prestige[key as keyof typeof state.prestige] : false;
+  }, [state.prestige]);
+
+  const isUIThemeOwned = useCallback((id: UIThemeId) => {
+    if (id === 'classic') return true;
+    const key = UI_THEME_PRESTIGE_KEYS[id];
+    return key ? !!state.prestige[key as keyof typeof state.prestige] : false;
+  }, [state.prestige]);
+
+  // Live preview current item as index shifts
+  useEffect(() => {
+    if (!isOpen) return;
+    if (activeTab === 'skins') {
+      const targetSkin = SKIN_DEFS[skinIndex]?.id;
+      if (targetSkin) onStartPreviewSkin(targetSkin);
+    } else {
+      const targetTheme = UI_THEME_DEFS[themeIndex]?.id;
+      if (targetTheme) onStartPreviewUITheme(targetTheme);
+    }
+  }, [activeTab, skinIndex, themeIndex, isOpen, onStartPreviewSkin, onStartPreviewUITheme]);
 
   const handleClose = () => {
     onClearPreview();
     onClose();
   };
 
-  const lang: Language = state.lang || 'th';
-  const isEn = lang === 'en';
-  const tr = t(lang);
+  const handlePrev = useCallback(() => {
+    if (activeTab === 'skins') {
+      setSkinIndex(prev => (prev === 0 ? SKIN_DEFS.length - 1 : prev - 1));
+    } else {
+      setThemeIndex(prev => (prev === 0 ? UI_THEME_DEFS.length - 1 : prev - 1));
+    }
+  }, [activeTab]);
 
-  const isSkinOwned = (id: SkinId) => {
-    if (id === 'none') return true;
-    const key = SKIN_PRESTIGE_KEYS[id];
-    return key ? !!state.prestige[key as keyof typeof state.prestige] : false;
+  const handleNext = useCallback(() => {
+    if (activeTab === 'skins') {
+      setSkinIndex(prev => (prev === SKIN_DEFS.length - 1 ? 0 : prev + 1));
+    } else {
+      setThemeIndex(prev => (prev === UI_THEME_DEFS.length - 1 ? 0 : prev + 1));
+    }
+  }, [activeTab]);
+
+  // Keyboard navigation Left / Right
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        handlePrev();
+      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        handleNext();
+      } else if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, handlePrev, handleNext]);
+
+  // Touch Swipe Handlers for mobile gestures
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
   };
 
-  const isUIThemeOwned = (id: UIThemeId) => {
-    if (id === 'classic') return true;
-    const key = UI_THEME_PRESTIGE_KEYS[id];
-    return key ? !!state.prestige[key as keyof typeof state.prestige] : false;
+  const onTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
   };
+
+  const onTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 45) {
+      handleNext(); // swipe left -> next
+    } else if (diff < -45) {
+      handlePrev(); // swipe right -> prev
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
+  if (!isOpen) return null;
 
   const skinDescriptions: Record<SkinId, { th: string; en: string }> = {
-    none: {
-      th: 'โทนไม้ธรรมชาติคลาสสิก อบอุ่น เรียบง่ายสไตล์เซน',
-      en: 'Classic natural wooden roots, warm and rustic zen tone',
-    },
-    rainbow: {
-      th: 'แยกสีรากตามชนิดโมดูลที่ซื้อ สดใสหลากสีสัน (Module Spectrum)',
-      en: 'Colors branches distinctly based on root module species',
-    },
-    sakura: {
-      th: 'บรรยากาศสวนซากุระยามค่ำคืน โทนสเลทชาร์โคลและกลีบชมพูซากุระหม่น',
-      en: 'Midnight Kyoto sakura grove with dusky rose petals and soft cream tips',
-    },
-    cafe: {
-      th: 'กลิ่นอายมัทฉะตัดกับช็อกโกแลตเข้มข้น โทนโกโก้ มัทฉะอุจิ และครีมนม',
-      en: 'Cozy cafe vibes blending roasted cocoa, matcha green, and silky cream',
-    },
-    autumn: {
-      th: 'ฤดูใบไม้ร่วงในเกียวโต โทนส้มอิฐเทอราคอตตา ทองอำพัน และแดงเมเปิ้ล',
-      en: 'Kyoto autumn foliage with burnt terracotta, golden amber, and crimson leaves',
-    },
-    ocean: {
-      th: 'โลกใต้ทะเลลึกเรืองแสง โทนเขียวอมฟ้าก้นสมุทรและเทอร์ควอยซ์พรายน้ำ',
-      en: 'Deep abyss bioluminescence with glowing seafoam teal and radiant aqua',
-    },
-    frost: {
-      th: 'รากไม้คริสตัลน้ำแข็งขั้วโลก โทนฟ้าไอซ์บลูอ่อนและขาวหิมะบริสุทธิ์',
-      en: 'Glacial frost crystal roots transitioning from ice blue to pure white',
-    },
-    sunset: {
-      th: 'แสงแดดสีทองยามเย็น โทนม่วงทไวไลท์ ส้มพีช และกุหลาบดัสก์',
-      en: 'Golden hour twilight with sunset peach, dusk rose, and amber horizon',
-    },
-    sameorigin: {
-      th: 'แตกสีกิ่งย่อยตามตระกูลรากแก้วต้นทาง คุมโทนกิ่งหลักอย่างลงตัว',
-      en: 'Branches inherit the distinct color family of their respective parent root',
-    },
-    mystic: {
-      th: 'ป่าเทพนิยายแฟนตาซี โทนลาเวนเดอร์แสงจันทร์และสปอร์เรืองแสง',
-      en: 'Enchanted fairy grove with moonlight lilac and glowing magical spores',
-    },
-    cyberpunk: {
-      th: 'นีออนล้ำยุคยามค่ำคืน โทนดำสนิทตัดกับนีออนไซยานและม่วงอิเล็กทริก',
-      en: 'High-contrast midnight cyber theme with glowing neon cyan and electric purple',
-    },
-    grayscale: {
-      th: 'โทนขาวดำคลาสสิก ไล่เฉดจากชาร์โคลสู่เงินสลัว สไตล์มินิมอล',
-      en: 'Monochromatic black-and-white theme transitioning from charcoal to silver',
-    },
-    gradient: {
-      th: 'เขียวมรกตป่าฝนเขียวขจี ไล่จากเข้มที่ลำต้นไปอ่อนที่ปลายราก',
-      en: 'Lush emerald rainforest gradient smoothly transitioning to tender tips',
-    },
-    nebula: {
-      th: 'ล่องลอยในห้วงอวกาศ โทนม่วงมิดไนท์ ละอองเนบิวลา และประกายดาว',
-      en: 'Deep space cosmic nebula with starlight violet, galactic blue, and pulsar pink',
-    },
-    imperial: {
-      th: 'วิหารทองคำจักรพรรดิ โทนหินภูเขาไฟออบซิเดียนตัดกับทองคำบริสุทธิ์',
-      en: 'Imperial golden relic with obsidian stone and shimmering pure royal gold',
-    },
+    none: { th: 'โทนไม้ธรรมชาติคลาสสิก อบอุ่น เรียบง่ายสไตล์เซน', en: 'Classic natural wooden roots, warm and rustic zen tone' },
+    rainbow: { th: 'แยกสีรากตามชนิดโมดูลที่ซื้อ สดใสหลากสีสัน (Spectrum)', en: 'Colors branches distinctly based on root module species' },
+    sakura: { th: 'บรรยากาศสวนซากุระยามค่ำคืน โทนกลีบชมพูซากุระหม่น', en: 'Midnight Kyoto sakura grove with dusky rose petals' },
+    cafe: { th: 'กลิ่นอายมัทฉะตัดกับช็อกโกแลตเข้มข้น โทนโกโก้ & มัทฉะอุจิ', en: 'Cozy cafe vibes blending roasted cocoa and matcha green' },
+    autumn: { th: 'ฤดูใบไม้ร่วงในเกียวโต โทนส้มอิฐเทอราคอตตาและทองอำพัน', en: 'Kyoto autumn foliage with burnt terracotta and golden amber' },
+    ocean: { th: 'โลกใต้ทะเลลึกเรืองแสง โทนเขียวอมฟ้าและเทอร์ควอยซ์พรายน้ำ', en: 'Deep abyss bioluminescence with glowing seafoam teal' },
+    frost: { th: 'รากไม้คริสตัลน้ำแข็งขั้วโลก โทนฟ้าไอซ์บลูและขาวหิมะบริสุทธิ์', en: 'Glacial frost crystal roots transitioning to pure white' },
+    sunset: { th: 'แสงแดดสีทองยามเย็น โทนม่วงทไวไลท์ ส้มพีช และทองอัสดง', en: 'Golden hour twilight with sunset peach and amber horizon' },
+    sameorigin: { th: 'แตกสีกิ่งย่อยตามตระกูลรากแก้วต้นทาง คุมโทนกิ่งหลัก', en: 'Branches inherit the distinct color family of parent root' },
+    mystic: { th: 'ป่าเทพนิยายแฟนตาซี โทนลาเวนเดอร์แสงจันทร์และสปอร์เรืองแสง', en: 'Enchanted fairy grove with moonlight lilac and glowing spores' },
+    cyberpunk: { th: 'นีออนล้ำยุคยามค่ำคืน โทนดำสนิทตัดกับนีออนไซยานและม่วง', en: 'High-contrast midnight cyber theme with neon cyan & purple' },
+    grayscale: { th: 'โทนขาวดำคลาสสิก ไล่เฉดจากชาร์โคลสู่เงินสลัว สไตล์มินิมอล', en: 'Monochromatic dark theme from charcoal to satin silver' },
+    gradient: { th: 'เขียวมรกตป่าฝนเขียวขจี ไล่จากเข้มที่ลำต้นไปอ่อนที่ปลายราก', en: 'Lush emerald rainforest gradient smoothly transitioning' },
+    nebula: { th: 'ล่องลอยในห้วงอวกาศ โทนม่วงมิดไนท์ ละอองเนบิวลา และแสงดาว', en: 'Deep space cosmic nebula with starlight violet & galactic blue' },
+    imperial: { th: 'วิหารทองคำจักรพรรดิ โทนหินภูเขาไฟตัดกับทองคำบริสุทธิ์', en: 'Imperial golden relic with obsidian stone and royal gold' },
   };
 
   const uiThemeDescriptions: Record<UIThemeId, { th: string; en: string }> = {
-    classic: {
-      th: 'หน้าต่างดินธรรมชาติคลาสสิก น้ำตาลดินอบอุ่น ครีมวานิลลา และเขียวมอสส์',
-      en: 'Classic earthy soil windows with vanilla cream and gentle moss green accents',
-    },
-    sakura: {
-      th: 'พื้นหลังหมึกดำมิดไนท์ ตัดกับขอบไวน์กุหลาบและแสงสีชมพูซากุระ',
-      en: 'Midnight ink-black background with delicate sakura pink accents and wine borders',
-    },
-    cafe: {
-      th: 'แผงการ์ดดาร์กโกโก้อบอุ่น ปุ่มเขียวมัทฉะอุจิ และไฮไลต์ครีมนม',
-      en: 'Rich dark cocoa panels with cozy matcha green buttons and creamy milk highlights',
-    },
-    autumn: {
-      th: 'ชาร์โคลอุ่น ตัดกับขอบส้มอิฐเทอราคอตตาและแสงทองอำพัน',
-      en: 'Warm charcoal slate with burnt terracotta borders and golden amber glow',
-    },
-    ocean: {
-      th: 'โทนก้นสมุทรลึก Deep Navy ขอบเทอร์ควอยซ์และปุ่มพรายน้ำเรืองแสง',
-      en: 'Deep abyssal navy shell with radiant turquoise borders and glowing aqua buttons',
-    },
-    frost: {
-      th: 'อินเทอร์เฟซน้ำแข็งขั้วโลก ขอบคริสตัลไอซ์บลู และไฮไลต์ขาวหิมะ',
-      en: 'Polar ice slate interface with crystal blue borders and frost white accents',
-    },
-    sunset: {
-      th: 'แผงทไวไลท์พลัม ขอบส้มพีชยามเย็น และแสงประกายสีทองอัสดง',
-      en: 'Twilight plum panels with sunset peach borders and warm golden hour radiance',
-    },
-    mystic: {
-      th: 'โทนไม้ดำป่าเวทมนตร์ ขอบลาเวนเดอร์แสงจันทร์ และแสงเรืองมิ้นต์ภูติ',
-      en: 'Enchanted blackwood shell with moonlight lavender borders and fairy mint glow',
-    },
-    cyberpunk: {
-      th: 'ดำออบซิเดียนสนิท ตัดกับขอบนีออนไซยานและม่วงอิเล็กทริกสุดล้ำ',
-      en: 'Pure obsidian stealth dark with high-contrast electric neon cyan & purple UI',
-    },
-    grayscale: {
-      th: 'สไตล์มินิมอลโมเดิร์น โทนชาร์โคลระดับพรีเมียมและขอบเงินซาติน',
-      en: 'Ultra-clean monochromatic dark aesthetic with satin silver borders and modern slate',
-    },
-    emerald: {
-      th: 'ดำป่าลึกมรกต ขอบเขียวมรกตเจิดจรัส และแสงใบไม้ป่าฝน',
-      en: 'Deep jungle obsidian with vibrant emerald green borders and lush leaf highlights',
-    },
-    nebula: {
-      th: 'ห้วงอวกาศมิดไนท์ การ์ดม่วงเนบิวลา ขอบแสงดาว และประกายกาแลกซี่',
-      en: 'Midnight cosmic void with nebula purple cards, galactic blue lines, and pink starlight',
-    },
-    imperial: {
-      th: 'ศิลาภูเขาไฟออบซิเดียน ขอบทองคำบรอนซ์ และแสงทองคำบริสุทธิ์',
-      en: 'Imperial volcanic stone with polished royal bronze borders and pure golden glow',
-    },
+    classic: { th: 'หน้าต่างดินธรรมชาติ น้ำตาลดินอบอุ่น ครีม และเขียวมอสส์', en: 'Classic earthy soil windows with vanilla cream accents' },
+    sakura: { th: 'พื้นหลังหมึกดำมิดไนท์ ตัดกับขอบไวน์กุหลาบและแสงชมพูซากุระ', en: 'Midnight ink-black shell with delicate sakura pink accents' },
+    cafe: { th: 'แผงการ์ดดาร์กโกโก้อบอุ่น ปุ่มเขียวมัทฉะอุจิ และไฮไลต์ครีมนม', en: 'Rich dark cocoa panels with cozy matcha green buttons' },
+    autumn: { th: 'ชาร์โคลอุ่น ตัดกับขอบส้มอิฐเทอราคอตตาและแสงทองอำพัน', en: 'Warm charcoal slate with burnt terracotta borders and amber glow' },
+    ocean: { th: 'โทนก้นสมุทรลึก Deep Navy ขอบเทอร์ควอยซ์และปุ่มเรืองแสง', en: 'Deep abyssal navy shell with radiant turquoise borders' },
+    frost: { th: 'อินเทอร์เฟซน้ำแข็งขั้วโลก ขอบคริสตัลไอซ์บลู และขาวหิมะ', en: 'Polar ice slate interface with crystal blue borders' },
+    sunset: { th: 'แผงทไวไลท์พลัม ขอบส้มพีชยามเย็น และแสงทองอัสดง', en: 'Twilight plum panels with sunset peach borders & golden radiance' },
+    mystic: { th: 'โทนไม้ดำป่าเวทมนตร์ ขอบลาเวนเดอร์ และแสงเรืองมิ้นต์ภูติ', en: 'Enchanted blackwood shell with moonlight lavender borders' },
+    cyberpunk: { th: 'ดำออบซิเดียนสนิท ตัดกับขอบนีออนไซยานและม่วงอิเล็กทริก', en: 'Pure obsidian dark with high-contrast electric cyan & purple' },
+    grayscale: { th: 'สไตล์มินิมอลโมเดิร์น โทนชาร์โคลพรีเมียมและขอบเงินซาติน', en: 'Ultra-clean monochromatic aesthetic with satin silver borders' },
+    emerald: { th: 'ดำป่าลึกมรกต ขอบเขียวมรกตเจิดจรัส และแสงใบไม้ป่าฝน', en: 'Deep jungle obsidian with vibrant emerald green borders' },
+    nebula: { th: 'ห้วงอวกาศมิดไนท์ การ์ดม่วงเนบิวลา ขอบแสงดาว และประกายกาแลกซี่', en: 'Midnight cosmic void with nebula purple cards and starlight' },
+    imperial: { th: 'ศิลาภูเขาไฟออบซิเดียน ขอบทองคำบรอนซ์ และแสงทองคำบริสุทธิ์', en: 'Imperial volcanic stone with polished royal bronze borders' },
   };
 
-  return (
-    <div className="offline-backdrop" onClick={handleClose}>
-      <div
-        className="modal-wrapper wardrobe-modal-wrapper"
-        style={{ maxWidth: '640px', width: '92vw', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}
-        onClick={e => e.stopPropagation()}
-      >
-        <button className="modal-close-x" onClick={handleClose} aria-label={tr.close}>
-          &times;
-        </button>
+  const skinSwatches: Record<SkinId, string[]> = {
+    none: ['#8B5A2B', '#A0522D', '#CD853F', '#DEB887'],
+    rainbow: ['#e08a8a', '#e0bb8a', '#8ae09b', '#8ab8e0', '#b78cf0'],
+    sakura: ['#2a2228', '#b35d7f', '#f4a6bf', '#fff0f5'],
+    cafe: ['#2b1e16', '#4a6741', '#8ca36f', '#f5ebd9'],
+    autumn: ['#3b1e08', '#a44200', '#d4731f', '#f5b041'],
+    ocean: ['#071e2c', '#0d5c75', '#14b8a6', '#67e8f9'],
+    frost: ['#0c2538', '#2563eb', '#60a5fa', '#e0f2fe'],
+    sunset: ['#241228', '#9333ea', '#f43f5e', '#fbbf24'],
+    sameorigin: ['#4b5563', '#10b981', '#06b6d4', '#f59e0b'],
+    mystic: ['#181028', '#7c3aed', '#a855f7', '#a7f3d0'],
+    cyberpunk: ['#080811', '#06b6d4', '#ec4899', '#38bdf8'],
+    grayscale: ['#18181b', '#52525b', '#a1a1aa', '#f4f4f5'],
+    gradient: ['#062c19', '#059669', '#34d399', '#a7f3d0'],
+    nebula: ['#0b0819', '#6366f1', '#ec4899', '#e0e7ff'],
+    imperial: ['#181408', '#b45309', '#f59e0b', '#fef08a'],
+  };
 
+  const themeSwatches: Record<UIThemeId, string[]> = {
+    classic: ['#140e0a', '#1e1510', '#8b5a2b', '#f5ebd9'],
+    sakura: ['#10121a', '#1e1422', '#db2777', '#fbcfe8'],
+    cafe: ['#140f0c', '#201814', '#15803d', '#fef3c7'],
+    autumn: ['#150e09', '#241710', '#c2410c', '#fef3c7'],
+    ocean: ['#051017', '#0a1d29', '#0891b2', '#cffafe'],
+    frost: ['#070f1a', '#0f1f33', '#0284c7', '#e0f2fe'],
+    sunset: ['#130a17', '#221128', '#c026d3', '#fef08a'],
+    mystic: ['#0d091a', '#18122c', '#9333ea', '#ccfbf1'],
+    cyberpunk: ['#07070b', '#10101a', '#06b6d4', '#f472b6'],
+    grayscale: ['#09090b', '#18181b', '#71717a', '#f4f4f5'],
+    emerald: ['#04120a', '#082114', '#059669', '#a7f3d0'],
+    nebula: ['#080714', '#120f26', '#4f46e5', '#f472b6'],
+    imperial: ['#100f0c', '#1b1812', '#b45309', '#fef3c7'],
+  };
+
+  // Current active item data
+  const currentSkinDef = SKIN_DEFS[skinIndex] || SKIN_DEFS[0];
+  const currentSkinId = currentSkinDef.id;
+  const isCurSkinOwned = isSkinOwned(currentSkinId);
+  const isCurSkinEquipped = state.prestige.activeSkin === currentSkinId;
+  const currentSkinCost = SKIN_COSTS[currentSkinId] || 0;
+  const currentSkinName = SKIN_NAMES[currentSkinId]?.[lang] || currentSkinDef.name;
+  const currentSkinDesc = skinDescriptions[currentSkinId]?.[lang] || '';
+  const currentSkinColors = skinSwatches[currentSkinId] || [];
+
+  const currentThemeDef = UI_THEME_DEFS[themeIndex] || UI_THEME_DEFS[0];
+  const currentThemeId = currentThemeDef.id;
+  const isCurThemeOwned = isUIThemeOwned(currentThemeId);
+  const isCurThemeEquipped = (state.prestige.activeUITheme || 'classic') === currentThemeId;
+  const currentThemeCost = UI_THEME_COSTS[currentThemeId] || 0;
+  const currentThemeName = UI_THEME_NAMES[currentThemeId]?.[lang] || currentThemeDef.name;
+  const currentThemeDesc = uiThemeDescriptions[currentThemeId]?.[lang] || '';
+  const currentThemeColors = themeSwatches[currentThemeId] || [];
+
+  const isCurrentTabSkins = activeTab === 'skins';
+  const curName = isCurrentTabSkins ? currentSkinName : currentThemeName;
+  const curDesc = isCurrentTabSkins ? currentSkinDesc : currentThemeDesc;
+  const curColors = isCurrentTabSkins ? currentSkinColors : currentThemeColors;
+  const curOwned = isCurrentTabSkins ? isCurSkinOwned : isCurThemeOwned;
+  const curEquipped = isCurrentTabSkins ? isCurSkinEquipped : isCurThemeEquipped;
+  const curCost = isCurrentTabSkins ? currentSkinCost : currentThemeCost;
+  const curIndex = isCurrentTabSkins ? skinIndex : themeIndex;
+  const totalCount = isCurrentTabSkins ? SKIN_DEFS.length : UI_THEME_DEFS.length;
+  const canAfford = state.eternalSeeds >= curCost;
+
+  return (
+    <div
+      className="offline-backdrop"
+      onClick={handleClose}
+      style={{
+        background: 'rgba(0, 0, 0, 0.45)',
+        backdropFilter: 'blur(6px)',
+        alignItems: 'flex-end',
+        paddingBottom: 'max(20px, env(safe-area-inset-bottom))',
+      }}
+    >
+      <div
+        className="modal-wrapper"
+        onClick={e => e.stopPropagation()}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        style={{
+          width: 'min(94vw, 440px)',
+          background: 'rgba(20, 15, 12, 0.88)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid var(--line-soil)',
+          borderRadius: '20px',
+          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7), 0 0 24px rgba(0, 0, 0, 0.4)',
+          padding: '16px 18px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          animation: 'modalPopIn 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        {/* Top Bar: Title & Close Button */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '16px' }}>🎨</span>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--root-cream)' }}>
+              {tr.wardrobeTitle}
+            </span>
+          </div>
+
+          <button
+            onClick={handleClose}
+            style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: 'none',
+              color: 'var(--root-cream-dim)',
+              fontSize: '16px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.15s ease',
+            }}
+            title={tr.close}
+          >
+            &times;
+          </button>
+        </div>
+
+        {/* Tab Switcher Pills */}
         <div
-          className="offline-modal wardrobe-modal-content"
           style={{
             display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            maxHeight: '85vh',
-            padding: '20px',
-            background: 'var(--bg-panel)',
-            border: '1px solid var(--line-soil)',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 1px 1px rgba(255,255,255,0.05)',
+            background: 'rgba(0, 0, 0, 0.35)',
+            borderRadius: '10px',
+            padding: '3px',
+            gap: '4px',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
           }}
         >
-          {/* Header Title */}
-          <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 4px', color: 'var(--root-cream)' }}>
-              🎨 {tr.wardrobeTitle}
-            </h2>
-            <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>
-              {isEn
-                ? 'Customize your root tree appearance and entire UI color theme independently.'
-                : 'ปรับแต่งสกินรากไม้ และเปลี่ยนโทนสีหน้าต่าง UI ได้อย่างอิสระตามสไตล์คุณ'}
+          <button
+            onClick={() => setActiveTab('skins')}
+            style={{
+              flex: 1,
+              padding: '6px 10px',
+              borderRadius: '8px',
+              border: 'none',
+              fontWeight: 600,
+              fontSize: '12px',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              background: isCurrentTabSkins ? 'var(--accent-glow)' : 'transparent',
+              color: isCurrentTabSkins ? '#12190d' : 'var(--root-cream)',
+            }}
+          >
+            {tr.tabRootSkins} ({SKIN_DEFS.filter(s => isSkinOwned(s.id)).length}/{SKIN_DEFS.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('themes')}
+            style={{
+              flex: 1,
+              padding: '6px 10px',
+              borderRadius: '8px',
+              border: 'none',
+              fontWeight: 600,
+              fontSize: '12px',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              background: !isCurrentTabSkins ? 'var(--accent-glow)' : 'transparent',
+              color: !isCurrentTabSkins ? '#12190d' : 'var(--root-cream)',
+            }}
+          >
+            {tr.tabUIThemes} ({UI_THEME_DEFS.filter(t => isUIThemeOwned(t.id)).length}/{UI_THEME_DEFS.length})
+          </button>
+        </div>
+
+        {/* Carousel Stepper Bar */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid var(--line-soil)',
+            borderRadius: '14px',
+            padding: '8px 10px',
+            gap: '8px',
+          }}
+        >
+          <button
+            onClick={handlePrev}
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '10px',
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: 'var(--root-cream)',
+              fontSize: '15px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.15s ease',
+              userSelect: 'none',
+            }}
+            aria-label="Previous Item"
+          >
+            ◀
+          </button>
+
+          <div style={{ flex: 1, textAlign: 'center', minWidth: 0 }}>
+            <div style={{ fontSize: '10px', color: 'var(--root-cream-dim)', fontVariantNumeric: 'tabular-nums' }}>
+              {curIndex + 1} / {totalCount}
+            </div>
+            <div
+              style={{
+                fontSize: '15px',
+                fontWeight: 700,
+                color: 'var(--root-cream)',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {curName}
             </div>
           </div>
 
-          {/* Tab Switcher */}
-          <div
+          <button
+            onClick={handleNext}
             style={{
-              display: 'flex',
-              background: 'var(--bg-panel-2)',
+              width: '36px',
+              height: '36px',
               borderRadius: '10px',
-              padding: '4px',
-              gap: '6px',
-              marginBottom: '16px',
-              border: '1px solid var(--line-soil)',
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: 'var(--root-cream)',
+              fontSize: '15px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.15s ease',
+              userSelect: 'none',
+            }}
+            aria-label="Next Item"
+          >
+            ▶
+          </button>
+        </div>
+
+        {/* Color Palette Dots & Description */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textAlign: 'center' }}>
+          {/* Swatches */}
+          <div style={{ display: 'flex', gap: '6px' }}>
+            {curColors.map((col, idx) => (
+              <div
+                key={idx}
+                style={{
+                  width: '14px',
+                  height: '14px',
+                  borderRadius: '50%',
+                  backgroundColor: col,
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                }}
+              />
+            ))}
+          </div>
+
+          <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', lineHeight: 1.4, minHeight: '32px' }}>
+            {curDesc}
+          </div>
+        </div>
+
+        {/* Action Button Strip */}
+        <div style={{ display: 'flex', gap: '8px', marginTop: '2px' }}>
+          {curEquipped ? (
+            <div
+              style={{
+                flex: 1,
+                padding: '10px',
+                borderRadius: '12px',
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid var(--accent-glow-dim)',
+                color: 'var(--accent-glow)',
+                fontWeight: 700,
+                fontSize: '13px',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+              }}
+            >
+              <span>✓</span>
+              <span>{tr.equippedBadge}</span>
+            </div>
+          ) : curOwned ? (
+            <button
+              onClick={() => {
+                if (isCurrentTabSkins) {
+                  onSelectSkin(currentSkinId);
+                } else {
+                  onSelectUITheme(currentThemeId);
+                }
+                onClearPreview();
+                onClose();
+              }}
+              style={{
+                flex: 1,
+                padding: '10px',
+                borderRadius: '12px',
+                background: 'var(--accent-glow)',
+                color: '#12190d',
+                border: 'none',
+                fontWeight: 700,
+                fontSize: '13px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              ✅ {isEn ? 'Equip This' : 'สวมใส่อันนี้'}
+            </button>
+          ) : canAfford ? (
+            <button
+              onClick={() => {
+                if (isCurrentTabSkins) {
+                  onBuySkin(currentSkinId, true);
+                } else {
+                  onBuyUITheme(currentThemeId, true);
+                }
+                onClearPreview();
+                onClose();
+              }}
+              style={{
+                flex: 1,
+                padding: '10px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                color: '#ffffff',
+                border: 'none',
+                fontWeight: 700,
+                fontSize: '13px',
+                cursor: 'pointer',
+                boxShadow: '0 0 14px rgba(16, 185, 129, 0.5)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              🛒 {fmtInt(curCost)} 🌌 {isEn ? 'Buy & Equip' : 'ซื้อ & สวมใส่'}
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                handleClose();
+                onOpenPrestige();
+              }}
+              style={{
+                flex: 1,
+                padding: '10px',
+                borderRadius: '12px',
+                background: 'rgba(192, 132, 252, 0.15)',
+                border: '1px solid rgba(192, 132, 252, 0.35)',
+                color: '#c084fc',
+                fontWeight: 700,
+                fontSize: '12px',
+                cursor: 'pointer',
+              }}
+              title={isEn ? `Need ${fmtInt(curCost - state.eternalSeeds)} more seeds` : `ยังขาดอีก ${fmtInt(curCost - state.eternalSeeds)} เมล็ด`}
+            >
+              🔒 {fmtInt(curCost)} 🌌 {isEn ? 'Unlock in Prestige' : 'ปลดล็อกในร้าน Prestige'}
+            </button>
+          )}
+
+          <button
+            onClick={handleClose}
+            style={{
+              padding: '10px 16px',
+              borderRadius: '12px',
+              background: 'rgba(255, 255, 255, 0.08)',
+              color: 'var(--root-cream-dim)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              fontWeight: 600,
+              fontSize: '13px',
+              cursor: 'pointer',
             }}
           >
-            <button
-              onClick={() => setActiveTab('skins')}
-              style={{
-                flex: 1,
-                padding: '8px 12px',
-                borderRadius: '8px',
-                border: 'none',
-                fontWeight: 600,
-                fontSize: '13px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                background: activeTab === 'skins' ? 'var(--accent-glow)' : 'transparent',
-                color: activeTab === 'skins' ? '#12190d' : 'var(--root-cream)',
-              }}
-            >
-              {tr.tabRootSkins} ({SKIN_DEFS.filter(s => isSkinOwned(s.id)).length}/{SKIN_DEFS.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('themes')}
-              style={{
-                flex: 1,
-                padding: '8px 12px',
-                borderRadius: '8px',
-                border: 'none',
-                fontWeight: 600,
-                fontSize: '13px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                background: activeTab === 'themes' ? 'var(--accent-glow)' : 'transparent',
-                color: activeTab === 'themes' ? '#12190d' : 'var(--root-cream)',
-              }}
-            >
-              {tr.tabUIThemes} ({UI_THEME_DEFS.filter(t => isUIThemeOwned(t.id)).length}/{UI_THEME_DEFS.length})
-            </button>
-          </div>
+            {isEn ? '✕ Close' : '✕ ปิด'}
+          </button>
+        </div>
 
-          {/* Tab Content List */}
-          <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {activeTab === 'skins' && (
-              <>
-                {SKIN_DEFS.map(sDef => {
-                  const id = sDef.id;
-                  const owned = isSkinOwned(id);
-                  const active = state.prestige.activeSkin === id;
-                  const isPreviewing = previewSkin === id;
-                  const cost = SKIN_COSTS[id] || 0;
-                  const name = SKIN_NAMES[id]?.[lang] || sDef.name;
-                  const desc = skinDescriptions[id]?.[lang] || '';
-
-                  return (
-                    <div
-                      key={`wardrobe-skin-${id}`}
-                      className={`prestige-item ${!owned ? 'disabled' : ''} ${active ? 'skin-active' : ''}`}
-                      style={{
-                        padding: '10px 14px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '6px',
-                        borderColor: isPreviewing ? '#38bdf8' : active ? 'var(--accent-glow)' : undefined,
-                        boxShadow: isPreviewing ? '0 0 10px rgba(56, 189, 248, 0.3)' : undefined,
-                      }}
-                    >
-                      <div className="p-top" style={{ marginBottom: 0, flexWrap: 'wrap', gap: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                          <span style={{ fontWeight: 600, fontSize: '14px' }}>{name}</span>
-                          {active && (
-                            <span style={{ fontSize: '11px', color: 'var(--accent-glow)', fontWeight: 700 }}>
-                              {tr.equippedBadge}
-                            </span>
-                          )}
-                          {isPreviewing && (
-                            <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 700 }}>
-                              ✨ {isEn ? 'Previewing' : 'กำลังลอง'}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Action buttons */}
-                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                          {owned ? (
-                            !active && (
-                              <button
-                                onClick={() => onSelectSkin(id)}
-                                style={{
-                                  padding: '4px 10px',
-                                  fontSize: '11px',
-                                  borderRadius: '6px',
-                                  background: 'var(--accent-glow-dim)',
-                                  color: '#12190d',
-                                  fontWeight: 700,
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                }}
-                              >
-                                {tr.equipBtn}
-                              </button>
-                            )
-                          ) : (
-                            <>
-                              <button
-                                onClick={() => onStartPreviewSkin(id)}
-                                style={{
-                                  padding: '4px 8px',
-                                  fontSize: '11px',
-                                  borderRadius: '6px',
-                                  background: isPreviewing ? 'rgba(56, 189, 248, 0.4)' : 'rgba(56, 189, 248, 0.2)',
-                                  color: '#38bdf8',
-                                  border: '1px solid rgba(56, 189, 248, 0.5)',
-                                  fontWeight: 600,
-                                  cursor: 'pointer',
-                                }}
-                              >
-                                {tr.tryPreviewBtn}
-                              </button>
-                              {state.eternalSeeds >= cost ? (
-                                <button
-                                  onClick={() => onBuySkin(id, true)}
-                                  style={{
-                                    padding: '4px 10px',
-                                    fontSize: '11px',
-                                    borderRadius: '6px',
-                                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                                    color: '#ffffff',
-                                    border: 'none',
-                                    fontWeight: 700,
-                                    cursor: 'pointer',
-                                    boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)',
-                                  }}
-                                >
-                                  🛒 {fmtInt(cost)} 🌌 {isEn ? 'Buy' : 'ซื้อ'}
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => {
-                                    handleClose();
-                                    onOpenPrestige();
-                                  }}
-                                  style={{
-                                    padding: '4px 8px',
-                                    fontSize: '11px',
-                                    borderRadius: '6px',
-                                    background: 'var(--bg-panel-2)',
-                                    color: '#c084fc',
-                                    border: '1px solid rgba(192, 132, 252, 0.3)',
-                                    fontWeight: 600,
-                                    cursor: 'pointer',
-                                  }}
-                                  title={isEn ? `Need ${fmtInt(cost - state.eternalSeeds)} more seeds` : `ยังขาดอีก ${fmtInt(cost - state.eternalSeeds)} เมล็ด`}
-                                >
-                                  🔒 {fmtInt(cost)} 🌌
-                                </button>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </div>
-
-                      {desc && (
-                        <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', lineHeight: 1.4 }}>
-                          {desc}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </>
-            )}
-
-            {activeTab === 'themes' && (
-              <>
-                {UI_THEME_DEFS.map(tDef => {
-                  const id = tDef.id;
-                  const owned = isUIThemeOwned(id);
-                  const active = (state.prestige.activeUITheme || 'classic') === id;
-                  const isPreviewing = previewUITheme === id;
-                  const cost = UI_THEME_COSTS[id] || 0;
-                  const name = UI_THEME_NAMES[id]?.[lang] || tDef.name;
-                  const desc = uiThemeDescriptions[id]?.[lang] || '';
-
-                  return (
-                    <div
-                      key={`wardrobe-theme-${id}`}
-                      className={`prestige-item ${!owned ? 'disabled' : ''} ${active ? 'skin-active' : ''}`}
-                      style={{
-                        padding: '10px 14px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '6px',
-                        borderColor: isPreviewing ? '#38bdf8' : active ? 'var(--accent-glow)' : undefined,
-                        boxShadow: isPreviewing ? '0 0 10px rgba(56, 189, 248, 0.3)' : undefined,
-                      }}
-                    >
-                      <div className="p-top" style={{ marginBottom: 0, flexWrap: 'wrap', gap: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                          <span style={{ fontWeight: 600, fontSize: '14px' }}>{name}</span>
-                          {active && (
-                            <span style={{ fontSize: '11px', color: 'var(--accent-glow)', fontWeight: 700 }}>
-                              {tr.equippedBadge}
-                            </span>
-                          )}
-                          {isPreviewing && (
-                            <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 700 }}>
-                              ✨ {isEn ? 'Previewing' : 'กำลังลอง'}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Action buttons */}
-                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                          {owned ? (
-                            !active && (
-                              <button
-                                onClick={() => onSelectUITheme(id)}
-                                style={{
-                                  padding: '4px 10px',
-                                  fontSize: '11px',
-                                  borderRadius: '6px',
-                                  background: 'var(--accent-glow-dim)',
-                                  color: '#12190d',
-                                  fontWeight: 700,
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                }}
-                              >
-                                {tr.equipBtn}
-                              </button>
-                            )
-                          ) : (
-                            <>
-                              <button
-                                onClick={() => onStartPreviewUITheme(id)}
-                                style={{
-                                  padding: '4px 8px',
-                                  fontSize: '11px',
-                                  borderRadius: '6px',
-                                  background: isPreviewing ? 'rgba(56, 189, 248, 0.4)' : 'rgba(56, 189, 248, 0.2)',
-                                  color: '#38bdf8',
-                                  border: '1px solid rgba(56, 189, 248, 0.5)',
-                                  fontWeight: 600,
-                                  cursor: 'pointer',
-                                }}
-                              >
-                                {tr.tryPreviewBtn}
-                              </button>
-                              {state.eternalSeeds >= cost ? (
-                                <button
-                                  onClick={() => onBuyUITheme(id, true)}
-                                  style={{
-                                    padding: '4px 10px',
-                                    fontSize: '11px',
-                                    borderRadius: '6px',
-                                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                                    color: '#ffffff',
-                                    border: 'none',
-                                    fontWeight: 700,
-                                    cursor: 'pointer',
-                                    boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)',
-                                  }}
-                                >
-                                  🛒 {fmtInt(cost)} 🌌 {isEn ? 'Buy' : 'ซื้อ'}
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => {
-                                    handleClose();
-                                    onOpenPrestige();
-                                  }}
-                                  style={{
-                                    padding: '4px 8px',
-                                    fontSize: '11px',
-                                    borderRadius: '6px',
-                                    background: 'var(--bg-panel-2)',
-                                    color: '#c084fc',
-                                    border: '1px solid rgba(192, 132, 252, 0.3)',
-                                    fontWeight: 600,
-                                    cursor: 'pointer',
-                                  }}
-                                  title={isEn ? `Need ${fmtInt(cost - state.eternalSeeds)} more seeds` : `ยังขาดอีก ${fmtInt(cost - state.eternalSeeds)} เมล็ด`}
-                                >
-                                  🔒 {fmtInt(cost)} 🌌
-                                </button>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </div>
-
-                      {desc && (
-                        <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', lineHeight: 1.4 }}>
-                          {desc}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </>
-            )}
-          </div>
-
-          {/* Modal Footer */}
-          <div style={{ marginTop: '14px', textAlign: 'center' }}>
-            <button
-              onClick={handleClose}
-              style={{
-                padding: '8px 24px',
-                borderRadius: '8px',
-                background: 'var(--bg-panel-2)',
-                color: 'var(--root-cream)',
-                border: '1px solid var(--line-soil)',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              {tr.close}
-            </button>
-          </div>
+        {/* Mobile Swipe Hint */}
+        <div style={{ textAlign: 'center', fontSize: '10px', color: 'rgba(255, 255, 255, 0.35)' }}>
+          {isEn ? '👈 Swipe or use Arrow keys to preview 👉' : '👈 ปัดหน้าจอ หรือกดปุ่มลูกศรเพื่อลองชุด 👉'}
         </div>
       </div>
     </div>
