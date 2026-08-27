@@ -3,9 +3,16 @@ import { MODULE_COLOR_MAP } from '@/constants/gameData';
 
 export function deriveLog(owned: Record<string, number>): string[] {
   const ids = Object.keys(MODULE_COLOR_MAP);
-  const counts = ids.map(id => owned[id] || 0);
+  const rawCounts = ids.map(id => owned[id] || 0);
+  const rawTotal = rawCounts.reduce((a, b) => a + b, 0);
+  if (rawTotal === 0) return [];
+
+  // Downsample to max 1200 visual branches for snappy 60fps performance
+  const scale = rawTotal > 1200 ? 1200 / rawTotal : 1;
+  const counts = rawCounts.map(c => Math.max(c > 0 ? 1 : 0, Math.round(c * scale)));
   const total = counts.reduce((a, b) => a + b, 0);
   if (total === 0) return [];
+
   const acc = counts.map(() => 0);
   const log: string[] = [];
 

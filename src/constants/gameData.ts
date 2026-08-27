@@ -1,7 +1,7 @@
 import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
 import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 
-export const GAME_VERSION = '1.8.3';
+export const GAME_VERSION = '1.8.4';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
@@ -311,9 +311,11 @@ export function prestigeUnlocked(state: GameState): boolean {
 }
 
 export function calcPrestigeSeeds(state: GameState): number {
+  if (!Number.isFinite(state.runEarned) || state.runEarned <= 0) return 0;
   const base = Math.floor(Math.cbrt(state.runEarned / SEED_DIVIDER));
   const bonus = 1 + (state.prestige.goldenLevel || 0) * 0.05;
-  return Math.max(0, Math.floor(base * bonus));
+  const result = Math.floor(base * bonus);
+  return Number.isFinite(result) ? Math.max(0, result) : 1e12;
 }
 
 export function starterCultureCost(stateOrLevel: GameState | number): number {
@@ -428,11 +430,12 @@ export function calcBulkPrestigeUpgrade(
   let count = 0;
   let totalCost = 0;
   let lvl = currentLevel;
-  const targetCount = qty === 'max' ? Infinity : qty;
+  const targetCount = qty === 'max' ? 1000 : Math.min(1000, qty);
+  const effectiveSeeds = Number.isFinite(seeds) ? seeds : 1e12;
 
   while (count < targetCount && lvl < maxLevel) {
     const nextCost = costFn(lvl);
-    if (totalCost + nextCost > seeds) break;
+    if (totalCost + nextCost > effectiveSeeds) break;
     totalCost += nextCost;
     count++;
     lvl++;
