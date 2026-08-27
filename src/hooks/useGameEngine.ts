@@ -9,6 +9,7 @@ import {
   GameState,
   Language,
   SkinId,
+  UIThemeId,
 } from '@/types/game';
 import type { AchievementDef } from '@/types/achievements';
 import { ACHIEVEMENTS } from '@/constants/achievementsData';
@@ -57,6 +58,9 @@ import {
   SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
+  UI_THEME_COSTS,
+  UI_THEME_ORDER,
+  UI_THEME_PRESTIGE_KEYS,
 } from '@/constants/gameData';
 import { buildBranchesFromLog, deriveLog } from '@/lib/treeGenerator';
 import { evaluateAutoBuy, getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
@@ -285,6 +289,34 @@ export function useGameEngine() {
     setState(prev => ({
       ...prev,
       prestige: { ...prev.prestige, activeSkin: id },
+    }));
+  }, []);
+
+  // UI Themes
+  const ownedUIThemeList = useCallback((prestige = stateRef.current.prestige) => {
+    return UI_THEME_ORDER.filter(id => {
+      if (id === 'classic') return true;
+      const key = UI_THEME_PRESTIGE_KEYS[id];
+      return key ? !!prestige[key as keyof typeof prestige] : false;
+    });
+  }, []);
+
+  const toggleUITheme = useCallback(() => {
+    const owned = ownedUIThemeList();
+    if (owned.length <= 1) return;
+    const cur = stateRef.current.prestige.activeUITheme || 'classic';
+    const curIdx = owned.indexOf(cur);
+    const nextIdx = (curIdx === -1 ? 0 : curIdx + 1) % owned.length;
+    setState(prev => ({
+      ...prev,
+      prestige: { ...prev.prestige, activeUITheme: owned[nextIdx] },
+    }));
+  }, [ownedUIThemeList]);
+
+  const setUITheme = useCallback((id: UIThemeId) => {
+    setState(prev => ({
+      ...prev,
+      prestige: { ...prev.prestige, activeUITheme: id },
     }));
   }, []);
 
@@ -635,6 +667,19 @@ export function useGameEngine() {
     }));
   }, []);
 
+  const buyUITheme = useCallback((id: UIThemeId) => {
+    const cur = stateRef.current;
+    const cost = UI_THEME_COSTS[id] || 0;
+    const prestigeKey = UI_THEME_PRESTIGE_KEYS[id];
+    if (!prestigeKey || cost <= 0) return;
+    if (cur.prestige[prestigeKey as keyof typeof cur.prestige] || cur.eternalSeeds < cost) return;
+    setState(prev => ({
+      ...prev,
+      eternalSeeds: prev.eternalSeeds - cost,
+      prestige: { ...prev.prestige, [prestigeKey]: true },
+    }));
+  }, []);
+
   // Save / Load actions
   const importSaveCode = useCallback((code: string) => {
     const payload = decodeSave(code);
@@ -907,6 +952,10 @@ export function useGameEngine() {
     doHardReset,
     toggleSkin,
     setSkin,
+    ownedUIThemeList,
+    toggleUITheme,
+    setUITheme,
+    buyUITheme,
     buyStarterCulture,
     buyGoldenSeed,
     buyPassiveRate,

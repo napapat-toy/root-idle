@@ -1,4 +1,4 @@
-import { Language, SkinId } from '@/types/game';
+import { Language, SkinId, UIThemeId } from '@/types/game';
 import { AchievementCategory } from '@/types/achievements';
 
 export interface LocalizedModule {
@@ -146,6 +146,22 @@ export const SKIN_NAMES: Record<SkinId, Record<Language, string>> = {
   gradient: { th: '🍃 เขียวมรกตป่าฝน (Emerald Lush)', en: '🍃 Emerald Rainforest' },
   nebula: { th: '🌌 มิติเนบิวลาอวกาศ (Cosmic Nebula)', en: '🌌 Cosmic Nebula' },
   imperial: { th: '🪙 มรดกทองคำราชันย์ (Imperial Gold)', en: '🪙 Imperial Gold' },
+};
+
+export const UI_THEME_NAMES: Record<UIThemeId, Record<Language, string>> = {
+  classic: { th: '🪵 ดินธรรมชาติคลาสสิก (Classic Soil)', en: '🪵 Classic Earth Soil' },
+  sakura: { th: '🌸 ซากุระราตรี (Midnight Sakura)', en: '🌸 Midnight Sakura' },
+  cafe: { th: '☕ คาเฟ่มัทฉะ & โกโก้ (Matcha Cafe)', en: '☕ Cozy Matcha Cafe' },
+  autumn: { th: '🍂 ใบไม้เปลี่ยนสีเกียวโต (Autumn Kyoto)', en: '🍂 Autumn Kyoto' },
+  ocean: { th: '🌊 ห้วงสมุทรลึกเรืองแสง (Abyssal Ocean)', en: '🌊 Abyssal Bioluminescence' },
+  frost: { th: '❄️ มหานทีเยือกแข็ง (Glacial Frost)', en: '❄️ Glacial Frost' },
+  sunset: { th: '🏜️ อาทิตย์อัสดงโกลเด้นอาวร์ (Sunset Dunes)', en: '🏜️ Sunset Dunes' },
+  mystic: { th: '🔮 ป่ามนตราแดนภูติ (Mystic Grove)', en: '🔮 Mystic Fairy Grove' },
+  cyberpunk: { th: '⚡ ไซเบอร์พังก์นีออนราตรี (Cyberpunk)', en: '⚡ Cyberpunk Midnight' },
+  grayscale: { th: '⚫ ขาวดำมินิมอลโมเดิร์น (Monochrome)', en: '⚫ Monochrome Slate' },
+  emerald: { th: '🍃 เขียวมรกตป่าฝน (Emerald Rainforest)', en: '🍃 Emerald Rainforest' },
+  nebula: { th: '🌌 มิติเนบิวลาอวกาศ (Cosmic Nebula)', en: '🌌 Cosmic Nebula' },
+  imperial: { th: '🪙 ศิลาทองคำราชันย์ (Imperial Gold)', en: '🪙 Imperial Gold & Obsidian' },
 };
 
 export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, LocalizedAchievement>> = {

@@ -15,6 +15,21 @@ export type SkinId =
   | 'nebula'
   | 'imperial';
 
+export type UIThemeId =
+  | 'classic'
+  | 'sakura'
+  | 'cafe'
+  | 'autumn'
+  | 'ocean'
+  | 'frost'
+  | 'sunset'
+  | 'mystic'
+  | 'cyberpunk'
+  | 'grayscale'
+  | 'emerald'
+  | 'nebula'
+  | 'imperial';
+
 export interface ModuleDef {
   id: string;
   name: string;
@@ -51,6 +66,19 @@ export interface PrestigeState {
   skinNebula?: boolean;
   skinImperial?: boolean;
   activeSkin: SkinId;
+  themeSakura?: boolean;
+  themeCafe?: boolean;
+  themeAutumn?: boolean;
+  themeOcean?: boolean;
+  themeFrost?: boolean;
+  themeSunset?: boolean;
+  themeMystic?: boolean;
+  themeCyberpunk?: boolean;
+  themeGrayscale?: boolean;
+  themeEmerald?: boolean;
+  themeNebula?: boolean;
+  themeImperial?: boolean;
+  activeUITheme: UIThemeId;
   autoReset: boolean;
   autoResetEnabled: boolean;
   autoResetThreshold: number;

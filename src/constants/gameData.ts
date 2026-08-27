@@ -1,7 +1,7 @@
-import { GameState, Language, ModuleDef, PrestigeState, SkinId } from '@/types/game';
+import { GameState, Language, ModuleDef, PrestigeState, SkinId, UIThemeId } from '@/types/game';
 import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 
-export const GAME_VERSION = '1.9.0';
+export const GAME_VERSION = '1.10.0';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
@@ -142,6 +142,73 @@ export const SKIN_CYCLE_ORDER: SkinId[] = [
   'imperial',
 ];
 
+export const UI_THEME_COSTS: Record<UIThemeId, number> = {
+  classic: 0,
+  // 🟢 Tier 1: บรรยากาศธรรมชาติ & คาเฟ่ (5,000 – 25,000 🌌)
+  sakura: 5000,
+  cafe: 10000,
+  autumn: 25000,
+  // 🟡 Tier 2: ธาตุล้ำลึก & มหัศจรรย์ (100,000 – 500,000 🌌)
+  ocean: 100000,
+  frost: 200000,
+  sunset: 350000,
+  mystic: 500000,
+  // 🟣 Tier 3: มหาจักรวาล & ราชันย์ (1,000,000 – 10,000,000 🌌)
+  cyberpunk: 1000000,
+  grayscale: 2500000,
+  emerald: 5000000,
+  nebula: 10000000,
+  imperial: 10000000,
+};
+
+export const UI_THEME_PRESTIGE_KEYS: Record<UIThemeId, keyof PrestigeState | null> = {
+  classic: null,
+  sakura: 'themeSakura',
+  cafe: 'themeCafe',
+  autumn: 'themeAutumn',
+  ocean: 'themeOcean',
+  frost: 'themeFrost',
+  sunset: 'themeSunset',
+  mystic: 'themeMystic',
+  cyberpunk: 'themeCyberpunk',
+  grayscale: 'themeGrayscale',
+  emerald: 'themeEmerald',
+  nebula: 'themeNebula',
+  imperial: 'themeImperial',
+};
+
+export const UI_THEME_DEFS: Array<{ id: UIThemeId; name: string; tier: 'starter' | 'mid' | 'luxury'; always?: boolean }> = [
+  { id: 'classic', name: '🪵 ดินธรรมชาติคลาสสิก', tier: 'starter', always: true },
+  { id: 'sakura', name: '🌸 ซากุระราตรี', tier: 'starter' },
+  { id: 'cafe', name: '☕ คาเฟ่มัทฉะ & โกโก้', tier: 'starter' },
+  { id: 'autumn', name: '🍂 ใบไม้เปลี่ยนสีเกียวโต', tier: 'starter' },
+  { id: 'ocean', name: '🌊 ห้วงสมุทรลึกเรืองแสง', tier: 'mid' },
+  { id: 'frost', name: '❄️ มหานทีเยือกแข็ง', tier: 'mid' },
+  { id: 'sunset', name: '🏜️ อาทิตย์อัสดงโกลเด้นอาวร์', tier: 'mid' },
+  { id: 'mystic', name: '🔮 ป่ามนตราแดนภูติ', tier: 'mid' },
+  { id: 'cyberpunk', name: '⚡ ไซเบอร์พังก์นีออนราตรี', tier: 'luxury' },
+  { id: 'grayscale', name: '⚫ ขาวดำมินิมอลโมเดิร์น', tier: 'luxury' },
+  { id: 'emerald', name: '🍃 เขียวมรกตป่าฝน', tier: 'luxury' },
+  { id: 'nebula', name: '🌌 มิติเนบิวลาอวกาศ', tier: 'luxury' },
+  { id: 'imperial', name: '🪙 ศิลาทองคำราชันย์', tier: 'luxury' },
+];
+
+export const UI_THEME_ORDER: UIThemeId[] = [
+  'classic',
+  'sakura',
+  'cafe',
+  'autumn',
+  'ocean',
+  'frost',
+  'sunset',
+  'mystic',
+  'cyberpunk',
+  'grayscale',
+  'emerald',
+  'nebula',
+  'imperial',
+];
+
 export function createFreshState(): GameState {
   const s: GameState = {
     nutrients: 0,
@@ -178,6 +245,19 @@ export function createFreshState(): GameState {
       skinNebula: false,
       skinImperial: false,
       activeSkin: 'none',
+      themeSakura: false,
+      themeCafe: false,
+      themeAutumn: false,
+      themeOcean: false,
+      themeFrost: false,
+      themeSunset: false,
+      themeMystic: false,
+      themeCyberpunk: false,
+      themeGrayscale: false,
+      themeEmerald: false,
+      themeNebula: false,
+      themeImperial: false,
+      activeUITheme: 'classic',
       autoReset: false,
       autoResetEnabled: false,
       autoResetThreshold: 0,

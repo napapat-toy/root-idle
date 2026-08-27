@@ -62,6 +62,8 @@ export default function Home() {
     buyLuckyDuration,
     buyOfflineCapUpgrade,
     buySkin,
+    buyUITheme,
+    setUITheme,
     importSaveCode,
     exportSaveCode,
     saveSlotAction,
@@ -88,8 +90,10 @@ export default function Home() {
     );
   }
 
+  const currentUITheme = state.prestige.activeUITheme || 'classic';
+
   return (
-    <div className="app">
+    <div className="app" data-ui-theme={currentUITheme}>
       <Header
         nutrients={state.nutrients}
         totalRate={totalRate}
@@ -168,6 +172,7 @@ export default function Home() {
         onBuyLuckyDuration={buyLuckyDuration}
         onBuyOfflineCapUpgrade={buyOfflineCapUpgrade}
         onBuySkin={buySkin}
+        onBuyUITheme={buyUITheme}
       />
 
       {/* Achievements modal */}
@@ -190,6 +195,7 @@ export default function Home() {
         state={state}
         onClose={() => setOptionsModalOpen(false)}
         onSelectSkin={setSkin}
+        onSelectUITheme={setUITheme}
         onExport={exportSaveCode}
         onImport={importSaveCode}
         onSaveSlot={saveSlotAction}

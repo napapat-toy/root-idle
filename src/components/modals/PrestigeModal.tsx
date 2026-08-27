@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AutoRootMode, GameState, Language, SkinId } from '@/types/game';
+import { AutoRootMode, GameState, Language, SkinId, UIThemeId } from '@/types/game';
 import { getActiveAutoRootMode } from '@/lib/autoBuyer';
 import {
   AUTO_EVENT_COST,
@@ -35,10 +35,13 @@ import {
   SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
+  UI_THEME_COSTS,
+  UI_THEME_DEFS,
+  UI_THEME_PRESTIGE_KEYS,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { ConfirmModal } from './ConfirmModal';
-import { t, SKIN_NAMES } from '@/lib/i18n';
+import { t, SKIN_NAMES, UI_THEME_NAMES } from '@/lib/i18n';
 
 interface PrestigeModalProps {
   isOpen: boolean;
@@ -65,6 +68,7 @@ interface PrestigeModalProps {
   onBuyLuckyDuration: (amount?: number | 'max') => void;
   onBuyOfflineCapUpgrade: () => void;
   onBuySkin: (skinId: SkinId) => void;
+  onBuyUITheme: (themeId: UIThemeId) => void;
 }
 
 export const PrestigeModal: React.FC<PrestigeModalProps> = ({
@@ -92,6 +96,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   onBuyLuckyDuration,
   onBuyOfflineCapUpgrade,
   onBuySkin,
+  onBuyUITheme,
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -664,6 +669,97 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                             desc,
                             isOwned ? '—' : `${fmtInt(cost)} 🌌`,
                             () => onBuySkin(id),
+                            !isOwned && seeds < cost,
+                            isOwned
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Section: UI Themes (High-End & Challenging Tiers) */}
+          <div className="prestige-section">
+            <div className="prestige-section-title">
+              🎨 {isEn ? 'UI Visual Themes (Full Interface Transformation)' : 'ธีมหน้าต่าง UI (เปลี่ยนบรรยากาศทั้งหน้าจอ)'}
+            </div>
+            <div className="prestige-section-desc">
+              {isEn
+                ? 'High-end aesthetic upgrades that transform the whole UI palette, cards, buttons, borders, and ambient glow.'
+                : 'อัปเกรดระดับสูงที่เปลี่ยนโทนสีหน้าต่าง UI แผงการ์ด ปุ่มกด ขอบ และแสงเรืองแสงทั้งหน้าจออย่างสมบูรณ์แบบ'}
+            </div>
+            <div className="prestige-shop-grid">
+              {(['starter', 'mid', 'luxury'] as const).map(tier => {
+                const themesInTier = UI_THEME_DEFS.filter(tDef => tDef.tier === tier && !tDef.always);
+                if (themesInTier.length === 0) return null;
+
+                const tierTitle =
+                  tier === 'starter'
+                    ? (isEn ? '🟢 Tier 1: Nature & Atmosphere (5K - 25K 🌌)' : '🟢 ระดับ 1: บรรยากาศธรรมชาติ & คาเฟ่ (5K - 25K 🌌)')
+                    : tier === 'mid'
+                    ? (isEn ? '🟡 Tier 2: Deep Elements & Wonder (100K - 500K 🌌)' : '🟡 ระดับ 2: ธาตุล้ำลึก & มหัศจรรย์ (100K - 500K 🌌)')
+                    : (isEn ? '🟣 Tier 3: Cosmic & Imperial Luxury (1M - 10M 🌌)' : '🟣 ระดับ 3: มหาจักรวาล & ราชันย์ (1M - 10M 🌌)');
+
+                return (
+                  <React.Fragment key={`ui-tier-${tier}`}>
+                    <div style={{
+                      gridColumn: '1 / -1',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      letterSpacing: '0.05em',
+                      color: tier === 'starter' ? '#8fd17a' : tier === 'mid' ? '#f59e0b' : '#c084fc',
+                      margin: '12px 0 6px',
+                      paddingBottom: '2px',
+                      borderBottom: '1px dashed rgba(255,255,255,0.08)'
+                    }}>
+                      {tierTitle}
+                    </div>
+
+                    {themesInTier.map(tDef => {
+                      const id = tDef.id;
+                      const prestigeKey = UI_THEME_PRESTIGE_KEYS[id];
+                      const isOwned = prestigeKey ? !!state.prestige[prestigeKey as keyof typeof state.prestige] : false;
+                      const cost = UI_THEME_COSTS[id];
+                      const currentLang = (state.lang || 'th') as Language;
+                      const name = UI_THEME_NAMES[id]?.[currentLang] || tDef.name;
+                      const desc =
+                        id === 'sakura'
+                          ? (isEn ? 'Midnight ink-black background with delicate sakura pink accents and wine borders' : 'พื้นหลังหมึกดำมิดไนท์ ตัดกับขอบไวน์กุหลาบและแสงสีชมพูซากุระ')
+                          : id === 'cafe'
+                          ? (isEn ? 'Rich dark cocoa panels with cozy matcha green buttons and creamy milk highlights' : 'แผงการ์ดดาร์กโกโก้อบอุ่น ปุ่มเขียวมัทฉะอุจิ และไฮไลต์ครีมนม')
+                          : id === 'autumn'
+                          ? (isEn ? 'Warm charcoal slate with burnt terracotta borders and golden amber glow' : 'ชาร์โคลอุ่น ตัดกับขอบส้มอิฐเทอราคอตตาและแสงทองอำพัน')
+                          : id === 'ocean'
+                          ? (isEn ? 'Deep abyssal navy shell with radiant turquoise borders and glowing aqua buttons' : 'โทนก้นสมุทรลึก Deep Navy ขอบเทอร์ควอยซ์และปุ่มพรายน้ำเรืองแสง')
+                          : id === 'frost'
+                          ? (isEn ? 'Polar ice slate interface with crystal blue borders and frost white accents' : 'อินเทอร์เฟซน้ำแข็งขั้วโลก ขอบคริสตัลไอซ์บลู และไฮไลต์ขาวหิมะ')
+                          : id === 'sunset'
+                          ? (isEn ? 'Twilight plum panels with sunset peach borders and warm golden hour radiance' : 'แผงทไวไลท์พลัม ขอบส้มพีชยามเย็น และแสงประกายสีทองอัสดง')
+                          : id === 'mystic'
+                          ? (isEn ? 'Enchanted blackwood shell with moonlight lavender borders and fairy mint glow' : 'โทนไม้ดำป่าเวทมนตร์ ขอบลาเวนเดอร์แสงจันทร์ และแสงเรืองมิ้นต์ภูติ')
+                          : id === 'cyberpunk'
+                          ? (isEn ? 'Pure obsidian stealth dark with high-contrast electric neon cyan & purple UI' : 'ดำออบซิเดียนสนิท ตัดกับขอบนีออนไซยานและม่วงอิเล็กทริกสุดล้ำ')
+                          : id === 'grayscale'
+                          ? (isEn ? 'Ultra-clean monochromatic dark aesthetic with satin silver borders and modern slate' : 'สไตล์มินิมอลโมเดิร์น โทนชาร์โคลระดับพรีเมียมและขอบเงินซาติน')
+                          : id === 'emerald'
+                          ? (isEn ? 'Deep jungle obsidian with vibrant emerald green borders and lush leaf highlights' : 'ดำป่าลึกมรกต ขอบเขียวมรกตเจิดจรัส และแสงใบไม้ป่าฝน')
+                          : id === 'nebula'
+                          ? (isEn ? 'Midnight cosmic void with nebula purple cards, galactic blue lines, and pink starlight' : 'ห้วงอวกาศมิดไนท์ การ์ดม่วงเนบิวลา ขอบแสงดาว และประกายกาแลกซี่')
+                          : id === 'imperial'
+                          ? (isEn ? 'Imperial volcanic stone with polished royal bronze borders and pure golden glow' : 'ศิลาภูเขาไฟออบซิเดียน ขอบทองคำบรอนซ์ และแสงทองคำบริสุทธิ์')
+                          : '';
+
+                      return (
+                        <React.Fragment key={`ui-theme-${id}`}>
+                          {renderItem(
+                            name,
+                            isOwned ? (isEn ? 'Unlocked ✓' : 'ปลดล็อกแล้ว ✓') : '',
+                            desc,
+                            isOwned ? '—' : `${fmtInt(cost)} 🌌`,
+                            () => onBuyUITheme(id),
                             !isOwned && seeds < cost,
                             isOwned
                           )}
