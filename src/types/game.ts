@@ -1,4 +1,19 @@
-export type SkinId = 'none' | 'rainbow' | 'sameorigin' | 'grayscale' | 'gradient';
+export type SkinId =
+  | 'none'
+  | 'rainbow'
+  | 'sakura'
+  | 'cafe'
+  | 'autumn'
+  | 'ocean'
+  | 'frost'
+  | 'sunset'
+  | 'sameorigin'
+  | 'mystic'
+  | 'cyberpunk'
+  | 'grayscale'
+  | 'gradient'
+  | 'nebula'
+  | 'imperial';
 
 export interface ModuleDef {
   id: string;
@@ -22,9 +37,19 @@ export interface PrestigeState {
   goldenLevel: number;
   auraRoots: boolean;
   auraRootsEnabled?: boolean;
+  skinSakura?: boolean;
+  skinCafe?: boolean;
+  skinAutumn?: boolean;
+  skinOcean?: boolean;
+  skinFrost?: boolean;
+  skinSunset?: boolean;
   skinSameOrigin: boolean;
+  skinMystic?: boolean;
+  skinCyberpunk?: boolean;
   skinGrayscale: boolean;
   skinGradient: boolean;
+  skinNebula?: boolean;
+  skinImperial?: boolean;
   activeSkin: SkinId;
   autoReset: boolean;
   autoResetEnabled: boolean;

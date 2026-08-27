@@ -4,18 +4,15 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   ActiveBuff,
   AutoRootMode,
-  Branch,
   FloatingTextItem,
   GameEventItem,
   GameState,
   Language,
-  SaveSlotMeta,
   SkinId,
 } from '@/types/game';
-import { AchievementDef } from '@/types/achievements';
+import type { AchievementDef } from '@/types/achievements';
 import { ACHIEVEMENTS } from '@/constants/achievementsData';
 import {
-  AURA_ROOTS_COST,
   AUTO_EVENT_COST,
   AUTO_RESET_COST,
   AUTO_RESET_MIN_SEEDS,
@@ -26,20 +23,16 @@ import {
   bulkCostFor,
   calcBulkPrestigeUpgrade,
   calcPrestigeSeeds,
-  costFor,
   createFreshState,
   currentOfflineCapSeconds,
   echoCost,
   echoUnlockedFor,
-  effectiveRate,
   eventBonusCost,
   eventBonusMult,
   eventDurationCost,
   eventDurationMaxed,
   eventDurationMult,
   goldenSeedCost,
-  LUCKY_CHANCE_MAX,
-  LUCKY_CHANCE_STEP,
   luckyChanceCost,
   luckyChanceMaxed,
   luckyChancePct,
@@ -54,16 +47,14 @@ import {
   offlineCapCost,
   offlineCapMaxed,
   passiveRateCost,
-  PASSIVE_RATE_COST,
   prestigeUnlocked,
   rootSynergyCost,
   rootSynergyUnlocked,
   rootUpgradeCost,
-  rootUpgradeIsMilestone,
-  rootUpgradeLevelMult,
   rootUpgradeRequireOwned,
-  SKIN_COST,
+  SKIN_COSTS,
   SKIN_CYCLE_ORDER,
+  SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
 } from '@/constants/gameData';
@@ -273,11 +264,8 @@ export function useGameEngine() {
   const ownedSkinList = useCallback((prestige = stateRef.current.prestige) => {
     return SKIN_CYCLE_ORDER.filter(id => {
       if (id === 'none') return true;
-      if (id === 'rainbow') return prestige.auraRoots;
-      if (id === 'sameorigin') return prestige.skinSameOrigin;
-      if (id === 'grayscale') return prestige.skinGrayscale;
-      if (id === 'gradient') return prestige.skinGradient;
-      return false;
+      const key = SKIN_PRESTIGE_KEYS[id];
+      return key ? !!prestige[key as keyof typeof prestige] : false;
     });
   }, []);
 
@@ -634,23 +622,16 @@ export function useGameEngine() {
     }));
   }, []);
 
-  const buyAuraRoots = useCallback(() => {
+  const buySkin = useCallback((id: SkinId) => {
     const cur = stateRef.current;
-    if (cur.prestige.auraRoots || cur.eternalSeeds < AURA_ROOTS_COST) return;
+    const cost = SKIN_COSTS[id] || 0;
+    const prestigeKey = SKIN_PRESTIGE_KEYS[id];
+    if (!prestigeKey || cost <= 0) return;
+    if (cur.prestige[prestigeKey as keyof typeof cur.prestige] || cur.eternalSeeds < cost) return;
     setState(prev => ({
       ...prev,
-      eternalSeeds: prev.eternalSeeds - AURA_ROOTS_COST,
-      prestige: { ...prev.prestige, auraRoots: true },
-    }));
-  }, []);
-
-  const buySkin = useCallback((skinKey: 'skinSameOrigin' | 'skinGrayscale' | 'skinGradient') => {
-    const cur = stateRef.current;
-    if (cur.prestige[skinKey] || cur.eternalSeeds < SKIN_COST) return;
-    setState(prev => ({
-      ...prev,
-      eternalSeeds: prev.eternalSeeds - SKIN_COST,
-      prestige: { ...prev.prestige, [skinKey]: true },
+      eternalSeeds: prev.eternalSeeds - cost,
+      prestige: { ...prev.prestige, [prestigeKey]: true },
     }));
   }, []);
 
@@ -946,7 +927,6 @@ export function useGameEngine() {
     buyLuckyMagnitude,
     buyLuckyDuration,
     buyOfflineCapUpgrade,
-    buyAuraRoots,
     buySkin,
     importSaveCode,
     exportSaveCode,

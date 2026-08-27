@@ -1,13 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AutoRootMode, GameState, Language } from '@/types/game';
+import { AutoRootMode, GameState, Language, SkinId } from '@/types/game';
 import { getActiveAutoRootMode } from '@/lib/autoBuyer';
 import {
-  AURA_ROOTS_COST,
   AUTO_EVENT_COST,
   AUTO_RESET_COST,
-  AUTO_RESET_MIN_SEEDS,
   AUTO_ROOT_ALL_COST,
   AUTO_ROOT_COST,
   AUTO_ROOT_SMART_COST,
@@ -23,8 +21,6 @@ import {
   luckyChanceMaxed,
   luckyChancePct,
   luckyDurationCost,
-  luckyDurationExtra,
-  luckyDurationMaxed,
   LUCKY_DURATION_BASE,
   LUCKY_DURATION_MAX,
   LUCKY_DURATION_MAX_LEVEL,
@@ -34,14 +30,15 @@ import {
   offlineCapCost,
   offlineCapMaxed,
   passiveRateCost,
-  PASSIVE_RATE_COST,
-  SKIN_COST,
+  SKIN_COSTS,
+  SKIN_DEFS,
+  SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { ConfirmModal } from './ConfirmModal';
-import { t } from '@/lib/i18n';
+import { t, SKIN_NAMES } from '@/lib/i18n';
 
 interface PrestigeModalProps {
   isOpen: boolean;
@@ -67,8 +64,7 @@ interface PrestigeModalProps {
   onBuyLuckyMagnitude: (amount?: number | 'max') => void;
   onBuyLuckyDuration: (amount?: number | 'max') => void;
   onBuyOfflineCapUpgrade: () => void;
-  onBuyAuraRoots: () => void;
-  onBuySkin: (skinKey: 'skinSameOrigin' | 'skinGrayscale' | 'skinGradient') => void;
+  onBuySkin: (skinId: SkinId) => void;
 }
 
 export const PrestigeModal: React.FC<PrestigeModalProps> = ({
@@ -95,7 +91,6 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   onBuyLuckyMagnitude,
   onBuyLuckyDuration,
   onBuyOfflineCapUpgrade,
-  onBuyAuraRoots,
   onBuySkin,
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -598,65 +593,86 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                 );
               })()}
 
-              {(() => {
-                const auraOwned = state.prestige.auraRoots;
-                return renderItem(
-                  isEn ? '🌈 Skin: Rainbow & Gold' : '🌈 สกิน: รุ้ง/ทอง',
-                  auraOwned ? (isEn ? 'Unlocked ✓' : 'ปลดล็อกแล้ว ✓') : '',
-                  isEn
-                    ? 'Infuses root tips and trunks with luminous prismatic rainbow & golden gradients'
-                    : 'เปลี่ยนสีรากทั้งต้นเป็นโทนทอง/รุ้งพิเศษถาวร (cosmetic ล้วนๆ ไม่กระทบเกมเพลย์)',
-                  auraOwned ? '—' : `${AURA_ROOTS_COST} 🌌`,
-                  onBuyAuraRoots,
-                  !auraOwned && seeds < AURA_ROOTS_COST,
-                  auraOwned
-                );
-              })()}
+              {/* Tier Headers and Skin Cards */}
+              {(['starter', 'mid', 'luxury'] as const).map(tier => {
+                const tierTitle =
+                  tier === 'starter'
+                    ? (isEn ? '🟢 Starter Tier Themes (100 – 500 🌌)' : '🟢 สกินระดับเริ่มต้น (100 – 500 🌌)')
+                    : tier === 'mid'
+                    ? (isEn ? '🟡 Mid-Tier Themes (5,000 – 50,000 🌌)' : '🟡 สกินระดับกลาง (5,000 – 50,000 🌌)')
+                    : (isEn ? '🟣 Luxury Endgame Themes (250,000 – 1,000,000 🌌)' : '🟣 สกินระดับหรูหรา (250,000 – 1,000,000 🌌)');
 
-              {(() => {
-                const soOwned = state.prestige.skinSameOrigin;
-                return renderItem(
-                  isEn ? '🌿 Skin: Same Origin' : '🌿 สกิน: รากเดียวกัน',
-                  soOwned ? (isEn ? 'Unlocked ✓' : 'ปลดล็อกแล้ว ✓') : '',
-                  isEn
-                    ? 'Branches inherit the distinct color family of their respective primary trunk taproot'
-                    : 'แต่ละกิ่งใหญ่ที่แยกจากลำต้นจะมีสีของตัวเอง แล้วกิ่งย่อยที่แตกออกมาทีหลังยังคงสีตระกูลเดียวกับต้นทาง',
-                  soOwned ? '—' : `${fmtInt(SKIN_COST)} 🌌`,
-                  () => onBuySkin('skinSameOrigin'),
-                  !soOwned && seeds < SKIN_COST,
-                  soOwned
-                );
-              })()}
+                const skinsInTier = SKIN_DEFS.filter(s => s.tier === tier && s.id !== 'none');
 
-              {(() => {
-                const gsOwned = state.prestige.skinGrayscale;
-                return renderItem(
-                  isEn ? '⚫ Skin: Monochromatic Dark' : '⚫ สกิน: ขาวดำ',
-                  gsOwned ? (isEn ? 'Unlocked ✓' : 'ปลดล็อกแล้ว ✓') : '',
-                  isEn
-                    ? 'Monochromatic black-and-white theme, transitioning from deep charcoal to pale silver'
-                    : 'รากทั้งต้นเป็นโทนขาวดำ เข้มใกล้ลำต้น อ่อนลงที่ปลายราก',
-                  gsOwned ? '—' : `${fmtInt(SKIN_COST)} 🌌`,
-                  () => onBuySkin('skinGrayscale'),
-                  !gsOwned && seeds < SKIN_COST,
-                  gsOwned
-                );
-              })()}
+                return (
+                  <React.Fragment key={tier}>
+                    <div style={{
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      letterSpacing: '0.05em',
+                      color: tier === 'starter' ? '#8fd17a' : tier === 'mid' ? '#f59e0b' : '#c084fc',
+                      margin: '12px 0 6px',
+                      paddingBottom: '2px',
+                      borderBottom: '1px dashed rgba(255,255,255,0.08)'
+                    }}>
+                      {tierTitle}
+                    </div>
 
-              {(() => {
-                const gdOwned = state.prestige.skinGradient;
-                return renderItem(
-                  isEn ? '🍃 Skin: Forest Emerald Gradient' : '🍃 สกิน: ไล่เข้ม-อ่อน',
-                  gdOwned ? (isEn ? 'Unlocked ✓' : 'ปลดล็อกแล้ว ✓') : '',
-                  isEn
-                    ? 'Uniform lush green palette transitioning smoothly from dense bark down to delicate tender tips'
-                    : 'โทนสีเขียวเดียว ไล่จากเข้มที่ลำต้นไปอ่อนที่ปลายราก',
-                  gdOwned ? '—' : `${fmtInt(SKIN_COST)} 🌌`,
-                  () => onBuySkin('skinGradient'),
-                  !gdOwned && seeds < SKIN_COST,
-                  gdOwned
+                    {skinsInTier.map(sDef => {
+                      const id = sDef.id;
+                      const prestigeKey = SKIN_PRESTIGE_KEYS[id];
+                      const isOwned = prestigeKey ? !!state.prestige[prestigeKey as keyof typeof state.prestige] : false;
+                      const cost = SKIN_COSTS[id];
+                      const currentLang = (state.lang || 'th') as Language;
+                      const name = SKIN_NAMES[id]?.[currentLang] || sDef.name;
+                      const desc =
+                        id === 'rainbow'
+                          ? (isEn ? 'Colors branches distinctly based on root module species' : 'แยกสีรากตามชนิดโมดูลที่ซื้อ สดใสหลากสีสัน (Module Spectrum)')
+                          : id === 'sakura'
+                          ? (isEn ? 'Midnight Kyoto sakura grove with dusky rose petals and soft cream tips' : 'บรรยากาศสวนซากุระยามค่ำคืน โทนสเลทชาร์โคลและกลีบชมพูซากุระหม่น')
+                          : id === 'cafe'
+                          ? (isEn ? 'Cozy cafe vibes blending roasted cocoa, matcha green, and silky cream' : 'กลิ่นอายมัทฉะตัดกับช็อกโกแลตเข้มข้น โทนโกโก้ มัทฉะอุจิ และครีมนม')
+                          : id === 'autumn'
+                          ? (isEn ? 'Kyoto autumn foliage with burnt terracotta, golden amber, and crimson leaves' : 'ฤดูใบไม้ร่วงในเกียวโต โทนส้มอิฐเทอราคอตตา ทองอำพัน และแดงเมเปิ้ล')
+                          : id === 'ocean'
+                          ? (isEn ? 'Deep abyss bioluminescence with glowing seafoam teal and radiant aqua' : 'โลกใต้ทะเลลึกเรืองแสง โทนเขียวอมฟ้าก้นสมุทรและเทอร์ควอยซ์พรายน้ำ')
+                          : id === 'frost'
+                          ? (isEn ? 'Glacial frost crystal roots transitioning from ice blue to pure white' : 'รากไม้คริสตัลน้ำแข็งขั้วโลก โทนฟ้าไอซ์บลูอ่อนและขาวหิมะบริสุทธิ์')
+                          : id === 'sunset'
+                          ? (isEn ? 'Golden hour twilight with sunset peach, dusk rose, and amber horizon' : 'แสงแดดสีทองยามเย็น โทนม่วงทไวไลท์ ส้มพีช และกุหลาบดัสก์')
+                          : id === 'sameorigin'
+                          ? (isEn ? 'Branches inherit the distinct color family of their respective parent root' : 'แตกสีกิ่งย่อยตามตระกูลรากแก้วต้นทาง คุมโทนกิ่งหลักอย่างลงตัว')
+                          : id === 'mystic'
+                          ? (isEn ? 'Enchanted fairy grove with moonlight lilac and glowing magical spores' : 'ป่าเทพนิยายแฟนตาซี โทนลาเวนเดอร์แสงจันทร์และสปอร์เรืองแสง')
+                          : id === 'cyberpunk'
+                          ? (isEn ? 'High-contrast midnight cyber theme with glowing neon cyan and electric purple' : 'นีออนล้ำยุคยามค่ำคืน โทนดำสนิทตัดกับนีออนไซยานและม่วงอิเล็กทริก')
+                          : id === 'grayscale'
+                          ? (isEn ? 'Monochromatic black-and-white theme transitioning from charcoal to silver' : 'โทนขาวดำคลาสสิก ไล่เฉดจากชาร์โคลสู่เงินสลัว สไตล์มินิมอล')
+                          : id === 'gradient'
+                          ? (isEn ? 'Lush emerald rainforest gradient smoothly transitioning to tender tips' : 'เขียวมรกตป่าฝนเขียวขจี ไล่จากเข้มที่ลำต้นไปอ่อนที่ปลายราก')
+                          : id === 'nebula'
+                          ? (isEn ? 'Deep space cosmic nebula with starlight violet, galactic blue, and pulsar pink' : 'ล่องลอยในห้วงอวกาศ โทนม่วงมิดไนท์ ละอองเนบิวลา และประกายดาว')
+                          : id === 'imperial'
+                          ? (isEn ? 'Imperial golden relic with obsidian stone and shimmering pure royal gold' : 'วิหารทองคำจักรพรรดิ โทนหินภูเขาไฟออบซิเดียนตัดกับทองคำบริสุทธิ์')
+                          : '';
+
+                      return (
+                        <React.Fragment key={id}>
+                          {renderItem(
+                            name,
+                            isOwned ? (isEn ? 'Unlocked ✓' : 'ปลดล็อกแล้ว ✓') : '',
+                            desc,
+                            isOwned ? '—' : `${fmtInt(cost)} 🌌`,
+                            () => onBuySkin(id),
+                            !isOwned && seeds < cost,
+                            isOwned
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </React.Fragment>
                 );
-              })()}
+              })}
             </div>
           </div>
         </div>

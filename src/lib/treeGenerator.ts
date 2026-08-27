@@ -197,42 +197,127 @@ export function findLineageRoot(branches: Branch[], i: number, targetDepth: numb
 
 export function getBranchColor(branches: Branch[], b: Branch, i: number, skin: SkinId): string {
   if (i === 0) {
-    // Trunk base color
+    // Trunk base color by skin
     if (skin === 'rainbow') return '#dcd4c0';
-    if (skin === 'grayscale') return '#d8d8d8';
-    if (skin === 'gradient') return '#ffd76a';
+    if (skin === 'sakura') return '#2b1f28';
+    if (skin === 'cafe') return '#2a1b14';
+    if (skin === 'autumn') return '#341a12';
+    if (skin === 'ocean') return '#0a1a24';
+    if (skin === 'frost') return '#14202c';
+    if (skin === 'sunset') return '#2a1522';
     if (skin === 'sameorigin') return '#e8dcc8';
+    if (skin === 'mystic') return '#181e18';
+    if (skin === 'cyberpunk') return '#0e0e16';
+    if (skin === 'grayscale') return '#d8d8d8';
+    if (skin === 'gradient') return '#1e3825';
+    if (skin === 'nebula') return '#140f28';
+    if (skin === 'imperial') return '#241b10';
     return '#523820'; // Default rich dark wood
   }
 
-  // 1. Default (none): Rich natural wood gradient (dark wood -> warm amber -> golden wood tips)
+  // 1. Default (none): Natural wood gradient (dark wood -> warm amber -> golden wood tips)
   if (skin === 'none') {
     const light = 26 + Math.min(b.depth, 14) * 3.8;
     return `hsl(28, 44%, ${light}%)`;
   }
 
-  // 2. rainbow (renamed to "แยกตามชนิดราก / Module Spectrum"): uses MODULE_COLOR_MAP
+  // 2. rainbow (Module Spectrum): uses MODULE_COLOR_MAP
   if (skin === 'rainbow') {
     return (b.moduleId && MODULE_COLOR_MAP[b.moduleId]) || '#eadfc7';
   }
 
-  // 3. grayscale: Monochrome slate
-  if (skin === 'grayscale') {
-    const light = 25 + Math.min(b.depth, 12) * 5;
-    return `hsl(0, 0%, ${light}%)`;
+  // 3. sakura (🌸 ซากุระราตรี): Charcoal to dusky rose & soft petal cream
+  if (skin === 'sakura') {
+    const hue = 338 + ((i * 13) % 18);
+    const light = 42 + Math.min(b.depth, 12) * 4.4;
+    return `hsl(${hue}, 70%, ${light}%)`;
   }
 
-  // 4. gradient: Chromatic Rainbow Spectrum
-  if (skin === 'gradient') {
-    return `hsl(${(i * 47) % 360}, 75%, 68%)`;
+  // 4. cafe (☕ คาเฟ่มัทฉะ): Roasted cocoa into uji matcha & silky cream
+  if (skin === 'cafe') {
+    const isCream = (i * 7) % 5 === 0;
+    const hue = isCream ? 42 : (82 + ((i * 11) % 16));
+    const sat = isCream ? 65 : 55;
+    const light = 34 + Math.min(b.depth, 12) * 4.2;
+    return `hsl(${hue}, ${sat}%, ${light}%)`;
   }
 
-  // 5. sameorigin: Group by major fork at depth 2 with golden-ratio hue spacing
+  // 5. autumn (🍂 ใบไม้เปลี่ยนสี): Terracotta, warm amber & crimson maple
+  if (skin === 'autumn') {
+    const hue = (i % 3 === 0 ? 352 : (18 + ((i * 23) % 30))) % 360;
+    const light = 38 + Math.min(b.depth, 12) * 3.8;
+    return `hsl(${hue}, 78%, ${light}%)`;
+  }
+
+  // 6. ocean (🌊 ห้วงสมุทรลึก): Bioluminescent deep teal & glowing aqua
+  if (skin === 'ocean') {
+    const hue = 168 + ((i * 19) % 28);
+    const light = 36 + Math.min(b.depth, 12) * 4.5;
+    return `hsl(${hue}, 82%, ${light}%)`;
+  }
+
+  // 7. frost (❄️ มหานทีเยือกแข็ง): Glacial frost ice blue to crystal white
+  if (skin === 'frost') {
+    const hue = 198 + ((i * 17) % 16);
+    const light = 44 + Math.min(b.depth, 12) * 4.2;
+    return `hsl(${hue}, 68%, ${light}%)`;
+  }
+
+  // 8. sunset (🏜️ อาทิตย์อัสดง): Twilight dusk plum, warm peach & golden hour glow
+  if (skin === 'sunset') {
+    const hue = (330 + ((i * 29) % 65)) % 360;
+    const light = 42 + Math.min(b.depth, 12) * 3.8;
+    return `hsl(${hue}, 78%, ${light}%)`;
+  }
+
+  // 9. sameorigin (🌿 รากเดียวกัน): Group by major fork at depth 2 with golden-ratio hue spacing
   if (skin === 'sameorigin') {
     const rootIdx = findLineageRoot(branches, i, 2);
     const hue = (rootIdx * 137.5 + 30) % 360;
     const light = 50 + Math.min(b.depth, 10) * 2.5;
     return `hsl(${hue}, 68%, ${light}%)`;
+  }
+
+  // 10. mystic (🔮 ป่ามนตราแดนภูติ): Moonlight lilac & spore glow neon
+  if (skin === 'mystic') {
+    const isSpore = i % 2 === 0;
+    const hue = isSpore ? 142 + ((i * 13) % 20) : 275 + ((i * 17) % 25);
+    const light = 44 + Math.min(b.depth, 12) * 4.0;
+    return `hsl(${hue}, 76%, ${light}%)`;
+  }
+
+  // 11. cyberpunk (⚡ ไซเบอร์พังก์): High-contrast synth cyan & electric magenta
+  if (skin === 'cyberpunk') {
+    const hue = i % 2 === 0 ? 186 : 295;
+    const light = 48 + Math.min(b.depth, 10) * 3.5;
+    return `hsl(${hue}, 95%, ${light}%)`;
+  }
+
+  // 12. grayscale (⚫ ขาวดำ): Monochrome silver slate
+  if (skin === 'grayscale') {
+    const light = 25 + Math.min(b.depth, 12) * 5;
+    return `hsl(0, 0%, ${light}%)`;
+  }
+
+  // 13. gradient (🍃 เขียวมรกต): Lush emerald rainforest gradient
+  if (skin === 'gradient') {
+    const hue = 145 + ((i * 7) % 18);
+    const light = 28 + Math.min(b.depth, 12) * 4.2;
+    return `hsl(${hue}, 65%, ${light}%)`;
+  }
+
+  // 14. nebula (🌌 มิติเนบิวลา): Cosmic violet, nebula cyan & starlight lavender
+  if (skin === 'nebula') {
+    const hue = 220 + ((i * 37) % 95);
+    const light = 45 + Math.min(b.depth, 12) * 4.0;
+    return `hsl(${hue}, 85%, ${light}%)`;
+  }
+
+  // 15. imperial (🪙 มรดกทองคำ): Obsidian base to royal imperial gold
+  if (skin === 'imperial') {
+    const hue = 42 + Math.sin(i * 1.5) * 6;
+    const light = 38 + Math.min(b.depth, 12) * 4.5;
+    return `hsl(${hue}, 88%, ${light}%)`;
   }
 
   return '#eadfc7';

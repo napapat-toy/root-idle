@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AutoRootMode, GameState, Language, SaveSlotMeta, SkinId } from '@/types/game';
-import { GAME_VERSION, SAVE_SLOT_COUNT, SKIN_DEFS } from '@/constants/gameData';
+import { GAME_VERSION, SAVE_SLOT_COUNT, SKIN_DEFS, SKIN_PRESTIGE_KEYS } from '@/constants/gameData';
 import { decodeSave, getSlotMeta } from '@/lib/storage';
 import { fmt, fmtInt, formatDuration } from '@/lib/formatters';
 import { getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
@@ -88,11 +88,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
 
   const isSkinOwned = (id: SkinId) => {
     if (id === 'none') return true;
-    if (id === 'rainbow') return state.prestige.auraRoots;
-    if (id === 'sameorigin') return state.prestige.skinSameOrigin;
-    if (id === 'grayscale') return state.prestige.skinGrayscale;
-    if (id === 'gradient') return state.prestige.skinGradient;
-    return false;
+    const prestigeKey = SKIN_PRESTIGE_KEYS[id];
+    return prestigeKey ? !!state.prestige[prestigeKey as keyof typeof state.prestige] : false;
   };
 
   const handleExportClick = () => {

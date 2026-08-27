@@ -37,15 +37,45 @@ const TrunkBase: React.FC<{ totalOwned: number; activeSkin: SkinId }> = React.me
   if (activeSkin === 'rainbow') {
     barkFill = '#dcd4c0';
     barkStroke = '#a99a80';
+  } else if (activeSkin === 'sakura') {
+    barkFill = '#2b1f28';
+    barkStroke = '#1c131a';
+  } else if (activeSkin === 'cafe') {
+    barkFill = '#2a1b14';
+    barkStroke = '#1a0f0a';
+  } else if (activeSkin === 'autumn') {
+    barkFill = '#341a12';
+    barkStroke = '#220e08';
+  } else if (activeSkin === 'ocean') {
+    barkFill = '#0a1a24';
+    barkStroke = '#040d13';
+  } else if (activeSkin === 'frost') {
+    barkFill = '#14202c';
+    barkStroke = '#0a131b';
+  } else if (activeSkin === 'sunset') {
+    barkFill = '#2a1522';
+    barkStroke = '#190a14';
+  } else if (activeSkin === 'sameorigin') {
+    barkFill = '#dcd4c0';
+    barkStroke = '#a99a80';
+  } else if (activeSkin === 'mystic') {
+    barkFill = '#181e18';
+    barkStroke = '#0c120c';
+  } else if (activeSkin === 'cyberpunk') {
+    barkFill = '#0e0e16';
+    barkStroke = '#05050a';
   } else if (activeSkin === 'grayscale') {
     barkFill = '#666666';
     barkStroke = '#333333';
   } else if (activeSkin === 'gradient') {
-    barkFill = '#b78cf0';
-    barkStroke = '#8a68b8';
-  } else if (activeSkin === 'sameorigin') {
-    barkFill = '#dcd4c0';
-    barkStroke = '#a99a80';
+    barkFill = '#1e3825';
+    barkStroke = '#102215';
+  } else if (activeSkin === 'nebula') {
+    barkFill = '#140f28';
+    barkStroke = '#090615';
+  } else if (activeSkin === 'imperial') {
+    barkFill = '#241b10';
+    barkStroke = '#130d06';
   }
 
   const left = 250 - width / 2;

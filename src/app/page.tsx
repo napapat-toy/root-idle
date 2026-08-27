@@ -61,7 +61,6 @@ export default function Home() {
     buyLuckyMagnitude,
     buyLuckyDuration,
     buyOfflineCapUpgrade,
-    buyAuraRoots,
     buySkin,
     importSaveCode,
     exportSaveCode,
@@ -168,7 +167,6 @@ export default function Home() {
         onBuyLuckyMagnitude={buyLuckyMagnitude}
         onBuyLuckyDuration={buyLuckyDuration}
         onBuyOfflineCapUpgrade={buyOfflineCapUpgrade}
-        onBuyAuraRoots={buyAuraRoots}
         onBuySkin={buySkin}
       />
 

@@ -131,11 +131,21 @@ export const CATEGORY_NAMES: Record<AchievementCategory, Record<Language, string
 };
 
 export const SKIN_NAMES: Record<SkinId, Record<Language, string>> = {
-  none: { th: '🪵 ไม้ธรรมชาติ (ไล่เข้ม-อ่อน)', en: '🪵 Natural Wood (Gradient)' },
+  none: { th: '🪵 ไม้ธรรมชาติ (คลาสสิก)', en: '🪵 Natural Wood (Classic)' },
   rainbow: { th: '🌱 แยกตามชนิดราก (Module Spectrum)', en: '🌱 Root Species (Module Spectrum)' },
+  sakura: { th: '🌸 ซากุระราตรี (Midnight Sakura)', en: '🌸 Midnight Sakura' },
+  cafe: { th: '☕ คาเฟ่มัทฉะ (Matcha Cafe)', en: '☕ Matcha Cafe' },
+  autumn: { th: '🍂 ใบไม้เปลี่ยนสี (Autumn Kyoto)', en: '🍂 Autumn Kyoto' },
+  ocean: { th: '🌊 ห้วงสมุทรลึก (Abyssal Ocean)', en: '🌊 Abyssal Ocean' },
+  frost: { th: '❄️ มหานทีเยือกแข็ง (Glacial Frost)', en: '❄️ Glacial Frost' },
+  sunset: { th: '🏜️ อาทิตย์อัสดง (Sunset Dunes)', en: '🏜️ Sunset Dunes' },
   sameorigin: { th: '🌿 แยกตามแขนงต้นกำเนิด', en: '🌿 Lineage Ancestry' },
-  grayscale: { th: '⚫ ขาวดำโมโนโครม', en: '⚫ Monochrome Slate' },
-  gradient: { th: '🌈 สายรุ้งนีออนเรืองแสง', en: '🌈 Chromatic Rainbow' },
+  mystic: { th: '🔮 ป่ามนตราแดนภูติ (Mystic Grove)', en: '🔮 Mystic Grove' },
+  cyberpunk: { th: '⚡ ไซเบอร์พังก์ดาร์ก (Cyberpunk)', en: '⚡ Cyberpunk' },
+  grayscale: { th: '⚫ ขาวดำโมโนโครม (Monochrome)', en: '⚫ Monochrome Slate' },
+  gradient: { th: '🍃 เขียวมรกตป่าฝน (Emerald Lush)', en: '🍃 Emerald Rainforest' },
+  nebula: { th: '🌌 มิติเนบิวลาอวกาศ (Cosmic Nebula)', en: '🌌 Cosmic Nebula' },
+  imperial: { th: '🪙 มรดกทองคำราชันย์ (Imperial Gold)', en: '🪙 Imperial Gold' },
 };
 
 export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, LocalizedAchievement>> = {

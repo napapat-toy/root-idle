@@ -1,7 +1,7 @@
-import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
+import { GameState, Language, ModuleDef, PrestigeState, SkinId } from '@/types/game';
 import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 
-export const GAME_VERSION = '1.8.6';
+export const GAME_VERSION = '1.9.0';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
@@ -33,8 +33,7 @@ export const PASSIVE_RATE_COST = 100;
 export const AUTO_ROOT_COST = 50;
 export const AUTO_ROOT_SMART_COST = 180;
 export const AUTO_ROOT_ALL_COST = 500;
-export const AURA_ROOTS_COST = 100; // Cheap starter skin (100 seeds)
-export const SKIN_COST = 1000000; // High-tier luxury skins (1,000,000 seeds / 1M)
+export const AURA_ROOTS_COST = 100; // Starter skin (100 seeds)
 export const AUTO_RESET_COST = 10000;
 export const AUTO_RESET_MIN_SEEDS = 3;
 export const AUTO_EVENT_COST = 1000;
@@ -68,15 +67,80 @@ export const MODULE_COLOR_MAP: Record<string, string> = Object.fromEntries(
   MODULE_DEFS.map(m => [m.id, m.color])
 );
 
-export const SKIN_DEFS: Array<{ id: SkinId; name: string; always?: boolean }> = [
-  { id: 'none', name: 'ปกติ (ไม่มีสกิน)', always: true },
-  { id: 'rainbow', name: '🌈 รุ้ง/ทอง' },
-  { id: 'sameorigin', name: '🌿 รากเดียวกัน' },
-  { id: 'grayscale', name: '⚫ ขาวดำ' },
-  { id: 'gradient', name: '🍃 ไล่เข้ม-อ่อน' }
+export const SKIN_COSTS: Record<SkinId, number> = {
+  none: 0,
+  // 🟢 Starter Tier (100 - 500 Seeds)
+  rainbow: 100,
+  sakura: 250,
+  cafe: 500,
+  // 🟡 Mid-Tier (5,000 - 50,000 Seeds)
+  autumn: 5000,
+  ocean: 15000,
+  frost: 30000,
+  sunset: 50000,
+  sameorigin: 50000,
+  // 🟣 Luxury / Endgame Tier (250,000 - 1,000,000 Seeds)
+  mystic: 250000,
+  cyberpunk: 500000,
+  grayscale: 500000,
+  gradient: 750000,
+  nebula: 1000000,
+  imperial: 1000000,
+};
+
+export const SKIN_PRESTIGE_KEYS: Record<SkinId, keyof PrestigeState | null> = {
+  none: null,
+  rainbow: 'auraRoots',
+  sakura: 'skinSakura',
+  cafe: 'skinCafe',
+  autumn: 'skinAutumn',
+  ocean: 'skinOcean',
+  frost: 'skinFrost',
+  sunset: 'skinSunset',
+  sameorigin: 'skinSameOrigin',
+  mystic: 'skinMystic',
+  cyberpunk: 'skinCyberpunk',
+  grayscale: 'skinGrayscale',
+  gradient: 'skinGradient',
+  nebula: 'skinNebula',
+  imperial: 'skinImperial',
+};
+
+export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid' | 'luxury'; always?: boolean }> = [
+  { id: 'none', name: 'ปกติ (ไม่มีสกิน)', tier: 'starter', always: true },
+  { id: 'rainbow', name: '🌈 รุ้ง/ทอง', tier: 'starter' },
+  { id: 'sakura', name: '🌸 ซากุระราตรี', tier: 'starter' },
+  { id: 'cafe', name: '☕ คาเฟ่มัทฉะ', tier: 'starter' },
+  { id: 'autumn', name: '🍂 ใบไม้เปลี่ยนสี', tier: 'mid' },
+  { id: 'ocean', name: '🌊 ห้วงสมุทรลึก', tier: 'mid' },
+  { id: 'frost', name: '❄️ มหานทีเยือกแข็ง', tier: 'mid' },
+  { id: 'sunset', name: '🏜️ อาทิตย์อัสดง', tier: 'mid' },
+  { id: 'sameorigin', name: '🌿 รากเดียวกัน', tier: 'mid' },
+  { id: 'mystic', name: '🔮 ป่ามนตราแดนภูติ', tier: 'luxury' },
+  { id: 'cyberpunk', name: '⚡ ไซเบอร์พังก์', tier: 'luxury' },
+  { id: 'grayscale', name: '⚫ ขาวดำ', tier: 'luxury' },
+  { id: 'gradient', name: '🍃 เขียวมรกต', tier: 'luxury' },
+  { id: 'nebula', name: '🌌 มิติเนบิวลา', tier: 'luxury' },
+  { id: 'imperial', name: '🪙 มรดกทองคำ', tier: 'luxury' },
 ];
 
-export const SKIN_CYCLE_ORDER: SkinId[] = ['none', 'rainbow', 'sameorigin', 'grayscale', 'gradient'];
+export const SKIN_CYCLE_ORDER: SkinId[] = [
+  'none',
+  'rainbow',
+  'sakura',
+  'cafe',
+  'autumn',
+  'ocean',
+  'frost',
+  'sunset',
+  'sameorigin',
+  'mystic',
+  'cyberpunk',
+  'grayscale',
+  'gradient',
+  'nebula',
+  'imperial',
+];
 
 export function createFreshState(): GameState {
   const s: GameState = {
@@ -100,9 +164,19 @@ export function createFreshState(): GameState {
       autoRootAll: false,
       goldenLevel: 0,
       auraRoots: false,
+      skinSakura: false,
+      skinCafe: false,
+      skinAutumn: false,
+      skinOcean: false,
+      skinFrost: false,
+      skinSunset: false,
       skinSameOrigin: false,
+      skinMystic: false,
+      skinCyberpunk: false,
       skinGrayscale: false,
       skinGradient: false,
+      skinNebula: false,
+      skinImperial: false,
       activeSkin: 'none',
       autoReset: false,
       autoResetEnabled: false,
