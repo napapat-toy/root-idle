@@ -255,8 +255,9 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
       className="offline-backdrop"
       onClick={handleClose}
       style={{
-        background: 'rgba(0, 0, 0, 0.45)',
-        backdropFilter: 'blur(6px)',
+        background: 'rgba(0, 0, 0, 0.15)',
+        backdropFilter: 'none',
+        WebkitBackdropFilter: 'none',
         alignItems: 'flex-end',
         paddingBottom: 'max(20px, env(safe-area-inset-bottom))',
       }}
@@ -269,13 +270,11 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
         onTouchEnd={onTouchEnd}
         style={{
           width: 'min(94vw, 440px)',
-          background: 'rgba(20, 15, 12, 0.88)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid var(--line-soil)',
-          borderRadius: '20px',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7), 0 0 24px rgba(0, 0, 0, 0.4)',
-          padding: '16px 18px',
+          background: 'var(--bg-panel)',
+          border: '1.5px solid var(--accent-glow-dim)',
+          borderRadius: '22px',
+          boxShadow: '0 25px 65px rgba(0, 0, 0, 0.85), 0 0 1px 1px rgba(255, 255, 255, 0.12), 0 0 24px rgba(0, 0, 0, 0.5)',
+          padding: '18px 20px',
           display: 'flex',
           flexDirection: 'column',
           gap: '12px',
@@ -285,8 +284,8 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
         {/* Top Bar: Title & Close Button */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '16px' }}>🎨</span>
-            <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--root-cream)' }}>
+            <span style={{ fontSize: '18px' }}>🎨</span>
+            <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--root-cream)' }}>
               {tr.wardrobeTitle}
             </span>
           </div>
@@ -294,13 +293,13 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
           <button
             onClick={handleClose}
             style={{
-              width: '28px',
-              height: '28px',
+              width: '30px',
+              height: '30px',
               borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: 'none',
-              color: 'var(--root-cream-dim)',
-              fontSize: '16px',
+              background: 'var(--bg-panel-2)',
+              border: '1px solid var(--line-soil)',
+              color: 'var(--root-cream)',
+              fontSize: '18px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -317,21 +316,21 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
         <div
           style={{
             display: 'flex',
-            background: 'rgba(0, 0, 0, 0.35)',
-            borderRadius: '10px',
-            padding: '3px',
+            background: 'var(--bg-panel-2)',
+            borderRadius: '12px',
+            padding: '4px',
             gap: '4px',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            border: '1px solid var(--line-soil)',
           }}
         >
           <button
             onClick={() => setActiveTab('skins')}
             style={{
               flex: 1,
-              padding: '6px 10px',
-              borderRadius: '8px',
+              padding: '7px 10px',
+              borderRadius: '9px',
               border: 'none',
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: '12px',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
@@ -345,10 +344,10 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
             onClick={() => setActiveTab('themes')}
             style={{
               flex: 1,
-              padding: '6px 10px',
-              borderRadius: '8px',
+              padding: '7px 10px',
+              borderRadius: '9px',
               border: 'none',
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: '12px',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
@@ -366,23 +365,24 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'rgba(255, 255, 255, 0.04)',
+            background: 'var(--bg-panel-2)',
             border: '1px solid var(--line-soil)',
-            borderRadius: '14px',
-            padding: '8px 10px',
-            gap: '8px',
+            borderRadius: '16px',
+            padding: '10px 12px',
+            gap: '10px',
+            boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.3)',
           }}
         >
           <button
             onClick={handlePrev}
             style={{
-              width: '36px',
-              height: '36px',
+              width: '38px',
+              height: '38px',
               borderRadius: '10px',
-              background: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'var(--bg-panel)',
+              border: '1px solid var(--line-soil)',
               color: 'var(--root-cream)',
-              fontSize: '15px',
+              fontSize: '16px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -396,12 +396,12 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
           </button>
 
           <div style={{ flex: 1, textAlign: 'center', minWidth: 0 }}>
-            <div style={{ fontSize: '10px', color: 'var(--root-cream-dim)', fontVariantNumeric: 'tabular-nums' }}>
+            <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>
               {curIndex + 1} / {totalCount}
             </div>
             <div
               style={{
-                fontSize: '15px',
+                fontSize: '16px',
                 fontWeight: 700,
                 color: 'var(--root-cream)',
                 whiteSpace: 'nowrap',
@@ -416,13 +416,13 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
           <button
             onClick={handleNext}
             style={{
-              width: '36px',
-              height: '36px',
+              width: '38px',
+              height: '38px',
               borderRadius: '10px',
-              background: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'var(--bg-panel)',
+              border: '1px solid var(--line-soil)',
               color: 'var(--root-cream)',
-              fontSize: '15px',
+              fontSize: '16px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -439,23 +439,23 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
         {/* Color Palette Dots & Description */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textAlign: 'center' }}>
           {/* Swatches */}
-          <div style={{ display: 'flex', gap: '6px' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             {curColors.map((col, idx) => (
               <div
                 key={idx}
                 style={{
-                  width: '14px',
-                  height: '14px',
+                  width: '16px',
+                  height: '16px',
                   borderRadius: '50%',
                   backgroundColor: col,
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                  border: '2px solid rgba(255, 255, 255, 0.4)',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
                 }}
               />
             ))}
           </div>
 
-          <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', lineHeight: 1.4, minHeight: '32px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)', lineHeight: 1.4, minHeight: '34px' }}>
             {curDesc}
           </div>
         </div>

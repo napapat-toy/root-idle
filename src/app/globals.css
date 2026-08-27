@@ -6,21 +6,21 @@
    ========================================================================== */
 
 @theme {
-  --color-soil-deep: #160f0a;
-  --color-soil-panel: #20160f;
-  --color-soil-panel-2: #2a1c12;
-  --color-soil-line: #3a2a1c;
+  --color-soil-deep: var(--bg-deep);
+  --color-soil-panel: var(--bg-panel);
+  --color-soil-panel-2: var(--bg-panel-2);
+  --color-soil-line: var(--line-soil);
   
-  --color-root-cream: #eadfc7;
-  --color-root-cream-dim: #a99a80;
+  --color-root-cream: var(--root-cream);
+  --color-root-cream-dim: var(--root-cream-dim);
   
-  --color-accent-glow: #b7e08a;
-  --color-accent-glow-dim: #7ea35c;
-  --color-accent-amber: #e0a94a;
+  --color-accent-glow: var(--accent-glow);
+  --color-accent-glow-dim: var(--accent-glow-dim);
+  --color-accent-amber: var(--accent-amber);
   
-  --color-prestige-accent: #b78cf0;
-  --color-prestige-accent-dim: #8a68b8;
-  --color-prestige-bg: #1c1526;
+  --color-prestige-accent: var(--prestige-accent);
+  --color-prestige-accent-dim: var(--prestige-accent-dim);
+  --color-prestige-bg: var(--prestige-bg);
 }
 
 :root, [data-ui-theme="classic"] {
@@ -428,12 +428,13 @@ h1 span {
    ========================================================================== */
 
 .stage {
-  background: linear-gradient(180deg, #2c1c12 0%, #1e130a 25%, #120a05 60%, #040201 100%);
+  background: linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 25%, var(--bg-deep) 60%, #030305 100%);
   border: 1px solid var(--line-soil);
   box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.65);
   @apply rounded-[14px] relative overflow-hidden flex-1 min-h-115 lg:min-h-130 h-full;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  transition: background 0.4s ease, border-color 0.3s ease;
 }
 
 .stage::-webkit-scrollbar {
@@ -581,7 +582,10 @@ svg#rootCanvas {
    ========================================================================== */
 
 .upgrade-store-container {
-  @apply bg-[rgba(26,18,12,0.85)] border border-soil-line rounded-xl p-2.5 flex flex-col gap-2 mb-1.5 shadow-[inset_0_2px_6px_rgba(0,0,0,0.4)] relative z-30;
+  background: var(--bg-panel);
+  border: 1px solid var(--line-soil);
+  @apply rounded-xl p-2.5 flex flex-col gap-2 mb-1.5 shadow-[inset_0_2px_6px_rgba(0,0,0,0.4)] relative z-30;
+  transition: background-color 0.4s ease, border-color 0.3s ease;
 }
 
 .upgrade-store-header {

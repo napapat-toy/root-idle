@@ -97,6 +97,12 @@ export default function Home() {
     setMounted(true);
   }, []);
 
+  React.useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-ui-theme', effectiveUITheme);
+    }
+  }, [effectiveUITheme]);
+
   if (!mounted) {
     return (
       <div className="app" style={{ opacity: 0 }}>
