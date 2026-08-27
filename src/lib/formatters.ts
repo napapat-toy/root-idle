@@ -1,14 +1,18 @@
 import { Language } from '@/types/game';
 
 export function fmt(n: number): string {
+  if (!Number.isFinite(n)) return '∞';
   if (n < 0) return '0.00';
   if (n < 1000) return n.toFixed(n < 10 ? 2 : 1);
-  const units = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
+  const units = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'UDc', 'DDc', 'TDc', 'QaDc', 'QiDc'];
   let u = -1;
   let val = n;
   while (val >= 1000 && u < units.length - 1) {
     val /= 1000;
     u++;
+  }
+  if (val >= 1000) {
+    return n.toExponential(2);
   }
   return val.toFixed(2) + units[u];
 }
