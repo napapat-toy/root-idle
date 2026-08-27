@@ -1,7 +1,7 @@
 import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
 import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 
-export const GAME_VERSION = '1.8.2';
+export const GAME_VERSION = '1.8.3';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
@@ -247,14 +247,36 @@ export function globalRateMultiplier(state: GameState): number {
   return 1 + totalGlobalBonusPercent(state) * 0.01;
 }
 
+export const MILESTONE_THRESHOLDS = [
+  10, 25, 50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000,
+];
+
+export function moduleMilestonesCountFor(count: number): number {
+  let milestones = 0;
+  for (let i = 0; i < MILESTONE_THRESHOLDS.length; i++) {
+    if (count >= MILESTONE_THRESHOLDS[i]) {
+      milestones++;
+    } else {
+      break;
+    }
+  }
+  return milestones;
+}
+
 export function moduleMilestoneMultiplier(count: number): number {
-  return Math.pow(2.0, Math.floor(count / 10));
+  const steps = moduleMilestonesCountFor(count);
+  if (steps === 0) return 1;
+  let mult = Math.pow(2, steps);
+  if (count >= 1000) {
+    mult *= 2;
+  }
+  return mult;
 }
 
 export function totalMilestonesCount(state: GameState): number {
   let count = 0;
   MODULE_DEFS.forEach(m => {
-    count += Math.floor((state.owned[m.id] || 0) / 10);
+    count += moduleMilestonesCountFor(state.owned[m.id] || 0);
   });
   return count;
 }

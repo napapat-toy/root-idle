@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Language, ModuleDef } from '@/types/game';
-import { bulkCostFor, moduleMilestoneMultiplier } from '@/constants/gameData';
+import { bulkCostFor, moduleMilestoneMultiplier, moduleMilestonesCountFor } from '@/constants/gameData';
 import { fmt } from '@/lib/formatters';
 import { MODULE_TRANSLATIONS } from '@/lib/i18n';
 
@@ -39,6 +39,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = React.memo(({
   const cost = bulkCostFor(def, owned, qty);
   const affordable = nutrients >= cost;
   const isEn = lang === 'en';
+  const milestoneCount = moduleMilestonesCountFor(owned);
 
   const localized = MODULE_TRANSLATIONS[def.id]?.[lang] || {
     name: def.name,
@@ -96,7 +97,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = React.memo(({
         </div>
         {owned >= 10 && (
           <div className="mh-row">
-            <span>{isEn ? 'Milestone Bonus' : 'โบนัสไมล์สโตน (x10)'}</span>
+            <span>{isEn ? `Milestone (×${milestoneCount})` : `โบนัสไมล์สโตน (×${milestoneCount})`}</span>
             <b className="mh-ru" style={{ color: '#ffd76a' }}>
               ×{moduleMilestoneMultiplier(owned).toFixed(1)}
             </b>
