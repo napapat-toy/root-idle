@@ -49,6 +49,7 @@ import {
   luckyDurationSeconds,
   luckyMagnitudeCost,
   luckyMagnitudeExtra,
+  LUCKY_MAGNITUDE_MAX_LEVEL,
   MODULE_DEFS,
   offlineCapCost,
   offlineCapMaxed,
@@ -383,7 +384,8 @@ export function useGameEngine() {
       cur.prestige.starterLevel || 0,
       cur.eternalSeeds,
       starterCultureCost,
-      amount || 1
+      amount || 1,
+      STARTER_CULTURE_MAX_LEVEL
     );
     if (count <= 0) return;
     setState(prev => ({
@@ -591,7 +593,8 @@ export function useGameEngine() {
       cur.prestige.luckyMagnitudeLevel || 0,
       cur.eternalSeeds,
       luckyMagnitudeCost,
-      amount || 1
+      amount || 1,
+      LUCKY_MAGNITUDE_MAX_LEVEL
     );
     if (count <= 0) return;
     setState(prev => ({

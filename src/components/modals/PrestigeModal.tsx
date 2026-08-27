@@ -28,6 +28,7 @@ import {
   LUCKY_DURATION_BASE,
   LUCKY_DURATION_MAX,
   LUCKY_DURATION_MAX_LEVEL,
+  LUCKY_MAGNITUDE_MAX_LEVEL,
   luckyMagnitudeCost,
   OFFLINE_CAP_HOURS,
   offlineCapCost,
@@ -552,11 +553,12 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   isEn ? '🍀 Lucky Magnitude Multiplier' : '🍀 โชคดีทวีคูณ',
                   isEn ? `Lv.${lmLevel} (×${lmLevel + 1})` : `เลเวล ${lmLevel} (×${lmLevel + 1})`,
                   isEn
-                    ? `Stacks Lucky Clover (×777) multiplier — Currently ×${lmLevel + 1}, next level ×${lmLevel + 2}`
-                    : `ทบตัวคูณของบัฟโชคดี (×777) เพิ่มอีกชั้น — ตอนนี้ ×${lmLevel + 1} ต่อไปเป็น ×${lmLevel + 2}`,
+                    ? `Stacks Lucky Clover (×777) multiplier — Currently ×${lmLevel + 1}, next level ×${lmLevel + 2} (Cap: ×10)`
+                    : `ทบตัวคูณของบัฟโชคดี (×777) เพิ่มอีกชั้น — ตอนนี้ ×${lmLevel + 1} ต่อไปเป็น ×${lmLevel + 2} (สูงสุด ×10)`,
                   luckyMagnitudeCost,
                   lmLevel,
-                  onBuyLuckyMagnitude
+                  onBuyLuckyMagnitude,
+                  LUCKY_MAGNITUDE_MAX_LEVEL
                 );
               })()}
 
@@ -619,7 +621,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   isEn
                     ? 'Branches inherit the distinct color family of their respective primary trunk taproot'
                     : 'แต่ละกิ่งใหญ่ที่แยกจากลำต้นจะมีสีของตัวเอง แล้วกิ่งย่อยที่แตกออกมาทีหลังยังคงสีตระกูลเดียวกับต้นทาง',
-                  soOwned ? '—' : `${SKIN_COST} 🌌`,
+                  soOwned ? '—' : `${fmtInt(SKIN_COST)} 🌌`,
                   () => onBuySkin('skinSameOrigin'),
                   !soOwned && seeds < SKIN_COST,
                   soOwned
@@ -634,7 +636,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   isEn
                     ? 'Monochromatic black-and-white theme, transitioning from deep charcoal to pale silver'
                     : 'รากทั้งต้นเป็นโทนขาวดำ เข้มใกล้ลำต้น อ่อนลงที่ปลายราก',
-                  gsOwned ? '—' : `${SKIN_COST} 🌌`,
+                  gsOwned ? '—' : `${fmtInt(SKIN_COST)} 🌌`,
                   () => onBuySkin('skinGrayscale'),
                   !gsOwned && seeds < SKIN_COST,
                   gsOwned
@@ -649,7 +651,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   isEn
                     ? 'Uniform lush green palette transitioning smoothly from dense bark down to delicate tender tips'
                     : 'โทนสีเขียวเดียว ไล่จากเข้มที่ลำต้นไปอ่อนที่ปลายราก',
-                  gdOwned ? '—' : `${SKIN_COST} 🌌`,
+                  gdOwned ? '—' : `${fmtInt(SKIN_COST)} 🌌`,
                   () => onBuySkin('skinGradient'),
                   !gdOwned && seeds < SKIN_COST,
                   gdOwned

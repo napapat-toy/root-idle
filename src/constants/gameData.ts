@@ -1,7 +1,7 @@
 import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
 import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 
-export const GAME_VERSION = '1.8.5';
+export const GAME_VERSION = '1.8.6';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
@@ -33,12 +33,13 @@ export const PASSIVE_RATE_COST = 100;
 export const AUTO_ROOT_COST = 50;
 export const AUTO_ROOT_SMART_COST = 180;
 export const AUTO_ROOT_ALL_COST = 500;
-export const AURA_ROOTS_COST = 100;
-export const SKIN_COST = 100;
+export const AURA_ROOTS_COST = 100; // Cheap starter skin (100 seeds)
+export const SKIN_COST = 1000000; // High-tier luxury skins (1,000,000 seeds / 1M)
 export const AUTO_RESET_COST = 10000;
 export const AUTO_RESET_MIN_SEEDS = 3;
 export const AUTO_EVENT_COST = 1000;
 export const SAVE_SLOT_COUNT = 5;
+export const LUCKY_MAGNITUDE_MAX_LEVEL = 9; // Lv.9 = x10 max lucky multiplier cap
 
 export const MODULE_DEFS: ModuleDef[] = [
   { id: 'fine',        name: 'รากฝอย',                  desc: 'รากเล็กจิ๋วที่แทรกดินหาความชื้น',             baseCost: 10,              costMult: 1.150, rate: 0.6,          color: '#eadfc7' },
