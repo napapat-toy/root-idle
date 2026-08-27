@@ -474,10 +474,12 @@ export const UI_TEXTS = {
     
     // Top Actions
     prestigeBtn: 'Prestige',
+    wardrobeBtn: 'ตกแต่ง',
     statsTooltip: 'สถิติ & บันทึกการเติบโตของฉัน',
     achievementsTooltip: 'เหรียญความสำเร็จ: ปลดล็อกแล้ว {count} อัน (+{count}% เรต)',
     skinsTooltip: 'สกินปัจจุบัน: {name} (กดเพื่อเปลี่ยน)',
-    optionsTooltip: 'ตัวเลือก & สกิน & บันทึก',
+    wardrobeTooltip: 'ห้องแต่งตัว: เลือกสกินรากไม้ & ธีมหน้าต่าง UI',
+    optionsTooltip: 'ตัวเลือก & การตั้งค่า & บันทึก',
     langToggleTooltip: 'เปลี่ยนภาษา / Switch Language (TH / EN)',
     autoOff: 'Auto ปิด',
     autoCheapest: 'ถูกสุด',
@@ -485,6 +487,18 @@ export const UI_TEXTS = {
     autoAll: 'ทั้งหมด',
     autoEvent: 'Event',
     autoReset: 'Reset',
+    
+    // Wardrobe & Cosmetics Modal
+    wardrobeTitle: 'ห้องแต่งตัว & การตกแต่ง (Wardrobe)',
+    tabRootSkins: '🌳 สกินรากไม้',
+    tabUIThemes: '🖼️ ธีมหน้าต่าง UI',
+    equipBtn: 'สวมใส่',
+    equippedBadge: '✓ ใช้อยู่',
+    tryPreviewBtn: '👁️ ลองใส่ดู',
+    previewingBanner: '✨ กำลังทดลอง: {name}',
+    exitPreviewBtn: '✕ ยกเลิกพรีวิว',
+    buyInShopBtn: '🛒 ไปซื้อที่ร้าน Prestige',
+    lockedInShop: '🔒 ปลดล็อกในร้าน Prestige ({cost} 🌌)',
     
     // Shop Panel
     modulesTitle: 'รากเสริม',
@@ -599,10 +613,12 @@ export const UI_TEXTS = {
     
     // Top Actions
     prestigeBtn: 'Prestige',
+    wardrobeBtn: 'Wardrobe',
     statsTooltip: 'My Statistics & Growth Journey',
     achievementsTooltip: 'Achievements: Unlocked {count} (+{count}% Global Rate)',
     skinsTooltip: 'Current Skin: {name} (Click to toggle)',
-    optionsTooltip: 'Options, Skins & Save Slots',
+    wardrobeTooltip: 'Wardrobe: Customize Root Skins & UI Themes',
+    optionsTooltip: 'Options, Settings & Save Slots',
     langToggleTooltip: 'Switch Language / เปลี่ยนภาษา (EN / TH)',
     autoOff: 'Auto OFF',
     autoCheapest: 'Cheapest',
@@ -610,6 +626,18 @@ export const UI_TEXTS = {
     autoAll: 'All',
     autoEvent: 'Event',
     autoReset: 'Reset',
+    
+    // Wardrobe & Cosmetics Modal
+    wardrobeTitle: 'Wardrobe & Cosmetics',
+    tabRootSkins: '🌳 Root Skins',
+    tabUIThemes: '🖼️ UI Themes',
+    equipBtn: 'Equip',
+    equippedBadge: '✓ Equipped',
+    tryPreviewBtn: '👁️ Try Preview',
+    previewingBanner: '✨ Previewing: {name}',
+    exitPreviewBtn: '✕ Exit Preview',
+    buyInShopBtn: '🛒 Buy in Prestige Shop',
+    lockedInShop: '🔒 Unlock in Prestige Shop ({cost} 🌌)',
     
     // Shop Panel
     modulesTitle: 'Root Modules',

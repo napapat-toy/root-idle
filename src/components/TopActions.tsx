@@ -11,6 +11,7 @@ interface TopActionsProps {
   onOpenOptions: () => void;
   onOpenAchievements?: () => void;
   onOpenStats?: () => void;
+  onOpenWardrobe?: () => void;
 }
 
 export const TopActions: React.FC<TopActionsProps> = React.memo(({
@@ -19,6 +20,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onOpenOptions,
   onOpenAchievements,
   onOpenStats,
+  onOpenWardrobe,
 }) => {
   const lang: Language = state.lang || 'th';
   const tr = t(lang);
@@ -40,6 +42,16 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
       </div>
 
       <div className="utility-btn-group">
+        {onOpenWardrobe && (
+          <button
+            className="utility-icon-btn"
+            onClick={onOpenWardrobe}
+            title={tr.wardrobeTooltip}
+          >
+            🎨
+          </button>
+        )}
+
         {onOpenStats && (
           <button
             className="utility-icon-btn"

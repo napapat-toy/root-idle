@@ -1,20 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AutoRootMode, GameState, Language, SaveSlotMeta, SkinId, UIThemeId } from '@/types/game';
-import { GAME_VERSION, SAVE_SLOT_COUNT, SKIN_DEFS, SKIN_PRESTIGE_KEYS, UI_THEME_DEFS, UI_THEME_PRESTIGE_KEYS } from '@/constants/gameData';
+import { AutoRootMode, GameState, Language, SaveSlotMeta } from '@/types/game';
+import { GAME_VERSION, SAVE_SLOT_COUNT } from '@/constants/gameData';
 import { decodeSave, getSlotMeta } from '@/lib/storage';
 import { fmt, fmtInt, formatDuration } from '@/lib/formatters';
 import { getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
 import { ConfirmModal } from './ConfirmModal';
-import { MODULE_TRANSLATIONS, SKIN_NAMES, UI_THEME_NAMES, t } from '@/lib/i18n';
+import { MODULE_TRANSLATIONS, t } from '@/lib/i18n';
 
 interface OptionsModalProps {
   isOpen: boolean;
   state: GameState;
   onClose: () => void;
-  onSelectSkin: (id: SkinId) => void;
-  onSelectUITheme?: (id: UIThemeId) => void;
   onExport: () => string;
   onImport: (code: string) => void;
   onSaveSlot: (slot: number) => void;
@@ -33,8 +31,6 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   isOpen,
   state,
   onClose,
-  onSelectSkin,
-  onSelectUITheme,
   onExport,
   onImport,
   onSaveSlot,
@@ -87,18 +83,6 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   }, [isOpen]);
 
   if (!isOpen) return null;
-
-  const isSkinOwned = (id: SkinId) => {
-    if (id === 'none') return true;
-    const prestigeKey = SKIN_PRESTIGE_KEYS[id];
-    return prestigeKey ? !!state.prestige[prestigeKey as keyof typeof state.prestige] : false;
-  };
-
-  const isUIThemeOwned = (id: UIThemeId) => {
-    if (id === 'classic') return true;
-    const prestigeKey = UI_THEME_PRESTIGE_KEYS[id];
-    return prestigeKey ? !!state.prestige[prestigeKey as keyof typeof state.prestige] : false;
-  };
 
   const handleExportClick = () => {
     const code = onExport();
@@ -396,61 +380,6 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                     </div>
                   </>
                 )}
-
-                {/* Skins */}
-                <div className="panel-title" style={{ margin: '16px 0 8px', textAlign: 'left' }}>
-                  {tr.skinPickerTitle}
-                </div>
-                <div style={{ textAlign: 'left' }}>
-                  {SKIN_DEFS.map(sd => {
-                    const owned = isSkinOwned(sd.id);
-                    const active = state.prestige.activeSkin === sd.id;
-                    const localizedSkinName = SKIN_NAMES[sd.id]?.[lang] || sd.name;
-
-                    return (
-                      <div
-                        key={sd.id}
-                        onClick={owned && !active ? () => onSelectSkin(sd.id) : undefined}
-                        className={`prestige-item ${!owned ? 'disabled' : ''} ${
-                          active ? 'skin-active' : ''
-                        }`}
-                      >
-                        <div className="p-top">
-                          <span>{localizedSkinName}</span>
-                          <span>{active ? (isEn ? '✓ Equipped' : '✓ ใช้อยู่') : owned ? '' : (isEn ? '🔒 Locked' : '🔒 ยังไม่ปลดล็อก')}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* UI Themes */}
-                <div className="panel-title" style={{ margin: '16px 0 8px', textAlign: 'left' }}>
-                  🎨 {isEn ? 'UI Visual Theme (Interface)' : 'ธีมหน้าต่าง UI (อินเทอร์เฟซ)'}
-                </div>
-                <div style={{ textAlign: 'left' }}>
-                  {UI_THEME_DEFS.map(td => {
-                    const owned = isUIThemeOwned(td.id);
-                    const active = (state.prestige.activeUITheme || 'classic') === td.id;
-                    const currentLang = (state.lang || 'th') as Language;
-                    const localizedThemeName = UI_THEME_NAMES[td.id]?.[currentLang] || td.name;
-
-                    return (
-                      <div
-                        key={td.id}
-                        onClick={owned && !active && onSelectUITheme ? () => onSelectUITheme(td.id) : undefined}
-                        className={`prestige-item ${!owned ? 'disabled' : ''} ${
-                          active ? 'skin-active' : ''
-                        }`}
-                      >
-                        <div className="p-top">
-                          <span>{localizedThemeName}</span>
-                          <span>{active ? (isEn ? '✓ Active' : '✓ ใช้อยู่') : owned ? '' : (isEn ? '🔒 Locked' : '🔒 ยังไม่ปลดล็อก')}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
 
                 {/* Export / Import */}
                 <div className="panel-title" style={{ margin: '16px 0 8px', textAlign: 'left' }}>

@@ -83,6 +83,8 @@ export function useGameEngine() {
   const [activeEvents, setActiveEvents] = useState<GameEventItem[]>([]);
   const [floatingTexts, setFloatingTexts] = useState<FloatingTextItem[]>([]);
   const [offlineModal, setOfflineModal] = useState<{ gain: number; dt: number } | null>(null);
+  const [previewSkin, setPreviewSkin] = useState<SkinId | null>(null);
+  const [previewUITheme, setPreviewUITheme] = useState<UIThemeId | null>(null);
 
   const stateRef = useRef<GameState>(state);
   stateRef.current = state;
@@ -318,6 +320,20 @@ export function useGameEngine() {
       ...prev,
       prestige: { ...prev.prestige, activeUITheme: id },
     }));
+  }, []);
+
+  // Live Cosmetics Preview
+  const startPreviewSkin = useCallback((id: SkinId | null) => {
+    setPreviewSkin(id);
+  }, []);
+
+  const startPreviewUITheme = useCallback((id: UIThemeId | null) => {
+    setPreviewUITheme(id);
+  }, []);
+
+  const clearPreview = useCallback(() => {
+    setPreviewSkin(null);
+    setPreviewUITheme(null);
   }, []);
 
   // Event trigger & claim (Single Source of Truth)
@@ -654,7 +670,7 @@ export function useGameEngine() {
     }));
   }, []);
 
-  const buySkin = useCallback((id: SkinId) => {
+  const buySkin = useCallback((id: SkinId, autoEquip = false) => {
     const cur = stateRef.current;
     const cost = SKIN_COSTS[id] || 0;
     const prestigeKey = SKIN_PRESTIGE_KEYS[id];
@@ -663,11 +679,18 @@ export function useGameEngine() {
     setState(prev => ({
       ...prev,
       eternalSeeds: prev.eternalSeeds - cost,
-      prestige: { ...prev.prestige, [prestigeKey]: true },
+      prestige: {
+        ...prev.prestige,
+        [prestigeKey]: true,
+        ...(autoEquip ? { activeSkin: id } : {}),
+      },
     }));
+    if (autoEquip) {
+      setPreviewSkin(null);
+    }
   }, []);
 
-  const buyUITheme = useCallback((id: UIThemeId) => {
+  const buyUITheme = useCallback((id: UIThemeId, autoEquip = false) => {
     const cur = stateRef.current;
     const cost = UI_THEME_COSTS[id] || 0;
     const prestigeKey = UI_THEME_PRESTIGE_KEYS[id];
@@ -676,8 +699,15 @@ export function useGameEngine() {
     setState(prev => ({
       ...prev,
       eternalSeeds: prev.eternalSeeds - cost,
-      prestige: { ...prev.prestige, [prestigeKey]: true },
+      prestige: {
+        ...prev.prestige,
+        [prestigeKey]: true,
+        ...(autoEquip ? { activeUITheme: id } : {}),
+      },
     }));
+    if (autoEquip) {
+      setPreviewUITheme(null);
+    }
   }, []);
 
   // Save / Load actions
@@ -956,6 +986,13 @@ export function useGameEngine() {
     toggleUITheme,
     setUITheme,
     buyUITheme,
+    previewSkin,
+    previewUITheme,
+    effectiveSkin: previewSkin || state.prestige.activeSkin,
+    effectiveUITheme: previewUITheme || state.prestige.activeUITheme || 'classic',
+    startPreviewSkin,
+    startPreviewUITheme,
+    clearPreview,
     buyStarterCulture,
     buyGoldenSeed,
     buyPassiveRate,

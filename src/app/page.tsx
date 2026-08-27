@@ -14,6 +14,11 @@ import { StatsModal } from '@/components/modals/StatsModal';
 import { AutoResetConfigModal } from '@/components/modals/AutoResetConfigModal';
 import { AchievementToast } from '@/components/AchievementToast';
 
+import { WardrobeModal } from '@/components/modals/WardrobeModal';
+import { SKIN_COSTS, UI_THEME_COSTS } from '@/constants/gameData';
+import { fmtInt } from '@/lib/formatters';
+import { SKIN_NAMES, UI_THEME_NAMES } from '@/lib/i18n';
+
 export default function Home() {
   const {
     state,
@@ -41,6 +46,17 @@ export default function Home() {
     doHardReset,
     toggleSkin,
     setSkin,
+    ownedUIThemeList,
+    toggleUITheme,
+    setUITheme,
+    buyUITheme,
+    previewSkin,
+    previewUITheme,
+    effectiveSkin,
+    effectiveUITheme,
+    startPreviewSkin,
+    startPreviewUITheme,
+    clearPreview,
     buyStarterCulture,
     buyGoldenSeed,
     buyPassiveRate,
@@ -62,8 +78,6 @@ export default function Home() {
     buyLuckyDuration,
     buyOfflineCapUpgrade,
     buySkin,
-    buyUITheme,
-    setUITheme,
     importSaveCode,
     exportSaveCode,
     saveSlotAction,
@@ -75,6 +89,7 @@ export default function Home() {
   const [optionsModalOpen, setOptionsModalOpen] = useState(false);
   const [achievementsModalOpen, setAchievementsModalOpen] = useState(false);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
+  const [wardrobeModalOpen, setWardrobeModalOpen] = useState(false);
   const [autoResetModalOpen, setAutoResetModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -90,10 +105,10 @@ export default function Home() {
     );
   }
 
-  const currentUITheme = state.prestige.activeUITheme || 'classic';
+  const isEn = lang === 'en';
 
   return (
-    <div className="app" data-ui-theme={currentUITheme}>
+    <div className="app" data-ui-theme={effectiveUITheme}>
       <Header
         nutrients={state.nutrients}
         totalRate={totalRate}
@@ -105,6 +120,7 @@ export default function Home() {
         <TopActions
           state={state}
           onOpenPrestige={() => setPrestigeModalOpen(true)}
+          onOpenWardrobe={() => setWardrobeModalOpen(true)}
           onOpenOptions={() => setOptionsModalOpen(true)}
           onOpenAchievements={() => setAchievementsModalOpen(true)}
           onOpenStats={() => setStatsModalOpen(true)}
@@ -114,7 +130,7 @@ export default function Home() {
           totalOwned={state.totalOwned}
           branches={branches}
           maxY={maxY}
-          activeSkin={state.prestige.activeSkin}
+          activeSkin={effectiveSkin}
           activeBuff={activeBuff}
           activeLuckyBuff={activeLuckyBuff}
           activeEvents={activeEvents}
@@ -145,6 +161,23 @@ export default function Home() {
           onClaim={claimOffline}
         />
       )}
+
+      {/* Wardrobe Modal */}
+      <WardrobeModal
+        isOpen={wardrobeModalOpen}
+        state={state}
+        previewSkin={previewSkin}
+        previewUITheme={previewUITheme}
+        onClose={() => setWardrobeModalOpen(false)}
+        onSelectSkin={setSkin}
+        onSelectUITheme={setUITheme}
+        onBuySkin={buySkin}
+        onBuyUITheme={buyUITheme}
+        onStartPreviewSkin={startPreviewSkin}
+        onStartPreviewUITheme={startPreviewUITheme}
+        onClearPreview={clearPreview}
+        onOpenPrestige={() => setPrestigeModalOpen(true)}
+      />
 
       {/* Prestige modal */}
       <PrestigeModal
@@ -194,8 +227,6 @@ export default function Home() {
         isOpen={optionsModalOpen}
         state={state}
         onClose={() => setOptionsModalOpen(false)}
-        onSelectSkin={setSkin}
-        onSelectUITheme={setUITheme}
         onExport={exportSaveCode}
         onImport={importSaveCode}
         onSaveSlot={saveSlotAction}
@@ -229,6 +260,115 @@ export default function Home() {
         lang={lang}
         onDismiss={dismissAchievementToast}
       />
+
+      {/* Floating Live Preview Banner */}
+      {(previewSkin || previewUITheme) && (() => {
+        const previewCost = previewSkin
+          ? (SKIN_COSTS[previewSkin] || 0)
+          : previewUITheme
+          ? (UI_THEME_COSTS[previewUITheme] || 0)
+          : 0;
+        const canAfford = state.eternalSeeds >= previewCost;
+
+        return (
+          <div
+            style={{
+              position: 'fixed',
+              bottom: '24px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 9999,
+              background: 'rgba(15, 23, 42, 0.94)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(56, 189, 248, 0.5)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 16px rgba(56, 189, 248, 0.25)',
+              borderRadius: '999px',
+              padding: '8px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '14px',
+              color: '#f8fafc',
+              fontSize: '13px',
+              fontWeight: 600,
+              maxWidth: '92vw',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#38bdf8' }}>✨</span>
+              <span>
+                {previewSkin
+                  ? (isEn ? `Previewing Root Skin: ${SKIN_NAMES[previewSkin]?.[lang]}` : `กำลังทดลองสกินราก: ${SKIN_NAMES[previewSkin]?.[lang]}`)
+                  : (isEn ? `Previewing UI Theme: ${UI_THEME_NAMES[previewUITheme!]?.[lang]}` : `กำลังทดลองธีมหน้าต่าง: ${UI_THEME_NAMES[previewUITheme!]?.[lang]}`)}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button
+                onClick={clearPreview}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '999px',
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  color: '#f8fafc',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                }}
+              >
+                {isEn ? '✕ Exit' : '✕ ยกเลิก'}
+              </button>
+
+              {canAfford ? (
+                <button
+                  onClick={() => {
+                    if (previewSkin) {
+                      buySkin(previewSkin, true);
+                    } else if (previewUITheme) {
+                      buyUITheme(previewUITheme, true);
+                    }
+                  }}
+                  style={{
+                    padding: '5px 14px',
+                    borderRadius: '999px',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: '#ffffff',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    boxShadow: '0 0 10px rgba(16, 185, 129, 0.5)',
+                  }}
+                >
+                  🛒 {fmtInt(previewCost)} 🌌 {isEn ? 'Buy & Keep' : 'ซื้อเลย & สวมใส่'}
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    clearPreview();
+                    setPrestigeModalOpen(true);
+                  }}
+                  style={{
+                    padding: '5px 14px',
+                    borderRadius: '999px',
+                    background: 'var(--bg-panel-2)',
+                    color: '#c084fc',
+                    border: '1px solid rgba(192, 132, 252, 0.3)',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                  }}
+                  title={isEn ? `Need ${fmtInt(previewCost - state.eternalSeeds)} more seeds` : `ยังขาดอีก ${fmtInt(previewCost - state.eternalSeeds)} เมล็ด`}
+                >
+                  🔒 {fmtInt(previewCost)} 🌌 {isEn ? 'Prestige Shop' : 'ร้าน Prestige'}
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
