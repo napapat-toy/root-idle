@@ -285,8 +285,8 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
                         boxShadow: isPreviewing ? '0 0 10px rgba(56, 189, 248, 0.3)' : undefined,
                       }}
                     >
-                      <div className="p-top" style={{ marginBottom: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div className="p-top" style={{ marginBottom: 0, flexWrap: 'wrap', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                           <span style={{ fontWeight: 600, fontSize: '14px' }}>{name}</span>
                           {active && (
                             <span style={{ fontSize: '11px', color: 'var(--accent-glow)', fontWeight: 700 }}>
@@ -415,8 +415,8 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
                         boxShadow: isPreviewing ? '0 0 10px rgba(56, 189, 248, 0.3)' : undefined,
                       }}
                     >
-                      <div className="p-top" style={{ marginBottom: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div className="p-top" style={{ marginBottom: 0, flexWrap: 'wrap', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                           <span style={{ fontWeight: 600, fontSize: '14px' }}>{name}</span>
                           {active && (
                             <span style={{ fontSize: '11px', color: 'var(--accent-glow)', fontWeight: 700 }}>
