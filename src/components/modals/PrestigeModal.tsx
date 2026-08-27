@@ -35,6 +35,7 @@ import {
   passiveRateCost,
   PASSIVE_RATE_COST,
   SKIN_COST,
+  STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
@@ -274,7 +275,8 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                     : `ได้รากฝอยฟรีทันที +10 ต้น (ใช้ได้เลยรอบนี้) และการันตี ${sLvl * 10 + 10} ต้นทุกครั้งที่หว่านใหม่ต่อจากนี้`,
                   starterCultureCost,
                   sLvl,
-                  onBuyStarterCulture
+                  onBuyStarterCulture,
+                  STARTER_CULTURE_MAX_LEVEL
                 );
               })()}
 

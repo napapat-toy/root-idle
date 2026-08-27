@@ -63,6 +63,7 @@ import {
   rootUpgradeRequireOwned,
   SKIN_COST,
   SKIN_CYCLE_ORDER,
+  STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
 } from '@/constants/gameData';
 import { buildBranchesFromLog, deriveLog } from '@/lib/treeGenerator';
@@ -229,7 +230,7 @@ export function useGameEngine() {
     const gained = calcPrestigeSeeds(cur);
     if (gained <= 0 && cur.eternalSeeds === 0) return 0;
 
-    const starterBonus = Math.min(250, (cur.prestige.starterLevel || 0) * 10);
+    const starterBonus = Math.min(STARTER_CULTURE_MAX_LEVEL * 10, (cur.prestige.starterLevel || 0) * 10);
     const freshOwned: Record<string, number> = {};
     MODULE_DEFS.forEach(d => { freshOwned[d.id] = 0; });
     if (starterBonus > 0) {

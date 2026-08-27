@@ -1,7 +1,7 @@
 import { GameState, Language, ModuleDef, SkinId } from '@/types/game';
 import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 
-export const GAME_VERSION = '1.8.4';
+export const GAME_VERSION = '1.8.5';
 
 export const BASE_RATE = 0.15;
 export const SEED = 918273;
@@ -317,6 +317,8 @@ export function calcPrestigeSeeds(state: GameState): number {
   const result = Math.floor(base * bonus);
   return Number.isFinite(result) ? Math.max(0, result) : 1e12;
 }
+
+export const STARTER_CULTURE_MAX_LEVEL = 50; // Max 500 starter roots upon Prestige
 
 export function starterCultureCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.starterLevel || 0);
