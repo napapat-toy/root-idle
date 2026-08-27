@@ -190,7 +190,7 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
   return (
     <div className="offline-backdrop" onClick={handleClose}>
       <div
-        className="modal-wrapper"
+        className="modal-wrapper wardrobe-modal-wrapper"
         style={{ maxWidth: '640px', width: '92vw', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}
         onClick={e => e.stopPropagation()}
       >
@@ -198,7 +198,19 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
           &times;
         </button>
 
-        <div className="generic-modal" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '20px' }}>
+        <div
+          className="offline-modal wardrobe-modal-content"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            maxHeight: '85vh',
+            padding: '20px',
+            background: 'var(--bg-panel)',
+            border: '1px solid var(--line-soil)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 1px 1px rgba(255,255,255,0.05)',
+          }}
+        >
           {/* Header Title */}
           <div style={{ textAlign: 'center', marginBottom: '16px' }}>
             <h2 style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 4px', color: 'var(--root-cream)' }}>

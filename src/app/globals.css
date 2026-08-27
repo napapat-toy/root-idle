@@ -858,6 +858,7 @@ svg#rootCanvas {
 
 .modal-wrapper.achievements-modal-wrapper { max-width: 580px; }
 .modal-wrapper.stats-modal-wrapper { max-width: 640px; }
+.modal-wrapper.wardrobe-modal-wrapper { max-width: 640px; }
 .modal-wrapper.prestige-modal-wrapper { max-width: 480px; }
 .modal-wrapper.options-modal-wrapper { max-width: 460px; }
 .modal-wrapper.offline-modal-wrapper,
