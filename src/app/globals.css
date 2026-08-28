@@ -567,10 +567,6 @@ svg#rootCanvas {
     border-radius: 6px;
   }
   #shopList::-webkit-scrollbar-thumb:hover { background: var(--accent-glow-dim); }
-  #shopList .qty-bar {
-    @apply sticky top-0 pb-2 z-20;
-    background: linear-gradient(180deg, var(--bg-deep) 80%, transparent);
-  }
 }
 
 .qty-bar {

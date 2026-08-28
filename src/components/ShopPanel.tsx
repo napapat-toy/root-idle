@@ -207,143 +207,143 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
     <div className="panel">
       <div className="panel-title">{tr.modulesTitle}</div>
 
-      <div id="shopList">
-        {/* Quantity selector */}
-        <div className="qty-bar">
-          {BUY_QTY_OPTIONS.map(q => (
-            <button
-              key={q}
-              onClick={() => onSetBuyQty(q)}
-              className={`qty-btn ${q === state.buyQty ? 'active' : ''}`}
-            >
-              x{q}
-            </button>
-          ))}
-        </div>
+      {/* Quantity selector */}
+      <div className="qty-bar">
+        {BUY_QTY_OPTIONS.map(q => (
+          <button
+            key={q}
+            onClick={() => onSetBuyQty(q)}
+            className={`qty-btn ${q === state.buyQty ? 'active' : ''}`}
+          >
+            x{q}
+          </button>
+        ))}
+      </div>
 
-        {/* Cookie Clicker Style Compact Upgrade Store Shelf */}
-        {hasUpgradesOrEchoes && (
-          <div className="upgrade-store-container">
-            <div className="upgrade-store-header">
-              <span>{isEn ? '⚡ Upgrades, Echoes & Networks' : '⚡ อัพเกรด, สะท้อน & เครือข่ายราก'}</span>
-              <span className="upgrade-store-count">
-                {unlockedUpgradeIds.length + unlockedEchoIds.length + unlockedSynergyIds.length}
-              </span>
-            </div>
-
-            <div className="upgrade-store-grid">
-              {/* Root Upgrades Tiles */}
-              {unlockedUpgradeIds.map(id => {
-                const def = MODULE_DEFS.find(m => m.id === id)!;
-                const level = state.rootUpgrades[id] || 0;
-                const nextLevel = level + 1;
-                const req = rootUpgradeRequireOwned(nextLevel);
-                const owned = state.owned[id] || 0;
-                const isMilestone = rootUpgradeIsMilestone(nextLevel);
-                const cost = rootUpgradeCost(def, nextLevel);
-                const reqMet = owned >= req;
-                const affordable = state.nutrients >= cost;
-                const canBuy = reqMet && affordable;
-                const isHovered = hoveredTile?.type === 'ru' && hoveredTile?.id === id;
-
-                return (
-                  <div
-                    key={`ru-${id}`}
-                    onClick={canBuy ? () => onBuyRootUpgrade(id) : undefined}
-                    onMouseEnter={() => setHoveredTile({ type: 'ru', id })}
-                    onMouseLeave={() => setHoveredTile(null)}
-                    className={`upgrade-tile rootupgrade ${isMilestone ? 'milestone' : ''} ${!canBuy ? 'disabled' : ''} ${isHovered ? 'active-hover' : ''}`}
-                    style={{ borderColor: def.color }}
-                  >
-                    <div className="upgrade-tile-icon" style={{ color: def.color }}>
-                      {isMilestone ? '⭐' : '⚡'}
-                    </div>
-                    <div className="upgrade-tile-badge">
-                      {level === 0 ? 'NEW' : `Lv.${level}`}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Echo Tiles */}
-              {unlockedEchoIds.map(id => {
-                const def = MODULE_DEFS.find(m => m.id === id)!;
-                const echoes = state.echoes[id] || 0;
-                const cost = echoCost(state, def, totalRate);
-                const affordable = state.nutrients >= cost;
-                const isHovered = hoveredTile?.type === 'echo' && hoveredTile?.id === id;
-
-                return (
-                  <div
-                    key={`echo-${id}`}
-                    onClick={affordable ? () => onBuyEcho(id) : undefined}
-                    onMouseEnter={() => setHoveredTile({ type: 'echo', id })}
-                    onMouseLeave={() => setHoveredTile(null)}
-                    className={`upgrade-tile echo ${!affordable ? 'disabled' : ''} ${isHovered ? 'active-hover' : ''}`}
-                    style={{ borderColor: def.color }}
-                  >
-                    <div className="upgrade-tile-icon" style={{ color: def.color }}>
-                      ✨
-                    </div>
-                    <div className="upgrade-tile-badge">
-                      {echoes === 0 ? 'NEW' : `×${echoes}`}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Root Synergy Tiles (Unlocked at 50 units) */}
-              {unlockedSynergyIds.map(id => {
-                const def = MODULE_DEFS.find(m => m.id === id)!;
-                const isOwned = !!state.rootSynergies?.[id];
-                const cost = rootSynergyCost(def);
-                const affordable = state.nutrients >= cost;
-                const canBuy = !isOwned && affordable;
-                const isHovered = hoveredTile?.type === 'syn' && hoveredTile?.id === id;
-                const bonusPct = speciesSynergyBonusPct(state, id);
-
-                return (
-                  <div
-                    key={`syn-${id}`}
-                    onClick={canBuy ? () => onBuyRootSynergy(id) : undefined}
-                    onMouseEnter={() => setHoveredTile({ type: 'syn', id })}
-                    onMouseLeave={() => setHoveredTile(null)}
-                    className={`upgrade-tile synergy ${isOwned ? 'active-owned' : !affordable ? 'disabled' : ''} ${isHovered ? 'active-hover' : ''}`}
-                    style={{ borderColor: isOwned ? '#38bdf8' : def.color }}
-                  >
-                    <div className="upgrade-tile-icon" style={{ color: isOwned ? '#38bdf8' : def.color }}>
-                      🌐
-                    </div>
-                    <div className="upgrade-tile-badge" style={{ color: isOwned ? '#38bdf8' : '#eadfc7' }}>
-                      {isOwned ? `+${bonusPct}%` : '50+'}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Dedicated Floating Full-Width Preview Card (Zero Layout Shift) */}
-            {previewDetails && (
-              <div
-                className="upgrade-shelf-preview-card"
-                style={{ borderLeft: `3px solid ${previewDetails.color}` }}
-              >
-                <div className="uth-header" style={{ color: previewDetails.color }}>
-                  {previewDetails.icon} {previewDetails.title}
-                </div>
-                <div className="uth-desc">{previewDetails.desc}</div>
-                {previewDetails.reqText && (
-                  <div className="uth-req">{previewDetails.reqText}</div>
-                )}
-                <div className="uth-bottom">
-                  <span className="uth-cost">{previewDetails.costText}</span>
-                  <span className="uth-mult">{previewDetails.multText}</span>
-                </div>
-              </div>
-            )}
+      {/* Cookie Clicker Style Compact Upgrade Store Shelf */}
+      {hasUpgradesOrEchoes && (
+        <div className="upgrade-store-container">
+          <div className="upgrade-store-header">
+            <span>{isEn ? '⚡ Upgrades, Echoes & Networks' : '⚡ อัพเกรด, สะท้อน & เครือข่ายราก'}</span>
+            <span className="upgrade-store-count">
+              {unlockedUpgradeIds.length + unlockedEchoIds.length + unlockedSynergyIds.length}
+            </span>
           </div>
-        )}
 
+          <div className="upgrade-store-grid">
+            {/* Root Upgrades Tiles */}
+            {unlockedUpgradeIds.map(id => {
+              const def = MODULE_DEFS.find(m => m.id === id)!;
+              const level = state.rootUpgrades[id] || 0;
+              const nextLevel = level + 1;
+              const req = rootUpgradeRequireOwned(nextLevel);
+              const owned = state.owned[id] || 0;
+              const isMilestone = rootUpgradeIsMilestone(nextLevel);
+              const cost = rootUpgradeCost(def, nextLevel);
+              const reqMet = owned >= req;
+              const affordable = state.nutrients >= cost;
+              const canBuy = reqMet && affordable;
+              const isHovered = hoveredTile?.type === 'ru' && hoveredTile?.id === id;
+
+              return (
+                <div
+                  key={`ru-${id}`}
+                  onClick={canBuy ? () => onBuyRootUpgrade(id) : undefined}
+                  onMouseEnter={() => setHoveredTile({ type: 'ru', id })}
+                  onMouseLeave={() => setHoveredTile(null)}
+                  className={`upgrade-tile rootupgrade ${isMilestone ? 'milestone' : ''} ${!canBuy ? 'disabled' : ''} ${isHovered ? 'active-hover' : ''}`}
+                  style={{ borderColor: def.color }}
+                >
+                  <div className="upgrade-tile-icon" style={{ color: def.color }}>
+                    {isMilestone ? '⭐' : '⚡'}
+                  </div>
+                  <div className="upgrade-tile-badge">
+                    {level === 0 ? 'NEW' : `Lv.${level}`}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Echo Tiles */}
+            {unlockedEchoIds.map(id => {
+              const def = MODULE_DEFS.find(m => m.id === id)!;
+              const echoes = state.echoes[id] || 0;
+              const cost = echoCost(state, def, totalRate);
+              const affordable = state.nutrients >= cost;
+              const isHovered = hoveredTile?.type === 'echo' && hoveredTile?.id === id;
+
+              return (
+                <div
+                  key={`echo-${id}`}
+                  onClick={affordable ? () => onBuyEcho(id) : undefined}
+                  onMouseEnter={() => setHoveredTile({ type: 'echo', id })}
+                  onMouseLeave={() => setHoveredTile(null)}
+                  className={`upgrade-tile echo ${!affordable ? 'disabled' : ''} ${isHovered ? 'active-hover' : ''}`}
+                  style={{ borderColor: def.color }}
+                >
+                  <div className="upgrade-tile-icon" style={{ color: def.color }}>
+                    ✨
+                  </div>
+                  <div className="upgrade-tile-badge">
+                    {echoes === 0 ? 'NEW' : `×${echoes}`}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Root Synergy Tiles (Unlocked at 50 units) */}
+            {unlockedSynergyIds.map(id => {
+              const def = MODULE_DEFS.find(m => m.id === id)!;
+              const isOwned = !!state.rootSynergies?.[id];
+              const cost = rootSynergyCost(def);
+              const affordable = state.nutrients >= cost;
+              const canBuy = !isOwned && affordable;
+              const isHovered = hoveredTile?.type === 'syn' && hoveredTile?.id === id;
+              const bonusPct = speciesSynergyBonusPct(state, id);
+
+              return (
+                <div
+                  key={`syn-${id}`}
+                  onClick={canBuy ? () => onBuyRootSynergy(id) : undefined}
+                  onMouseEnter={() => setHoveredTile({ type: 'syn', id })}
+                  onMouseLeave={() => setHoveredTile(null)}
+                  className={`upgrade-tile synergy ${isOwned ? 'active-owned' : !affordable ? 'disabled' : ''} ${isHovered ? 'active-hover' : ''}`}
+                  style={{ borderColor: isOwned ? '#38bdf8' : def.color }}
+                >
+                  <div className="upgrade-tile-icon" style={{ color: isOwned ? '#38bdf8' : def.color }}>
+                    🌐
+                  </div>
+                  <div className="upgrade-tile-badge" style={{ color: isOwned ? '#38bdf8' : '#eadfc7' }}>
+                    {isOwned ? `+${bonusPct}%` : '50+'}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Dedicated Floating Full-Width Preview Card (Zero Layout Shift) */}
+          {previewDetails && (
+            <div
+              className="upgrade-shelf-preview-card"
+              style={{ borderLeft: `3px solid ${previewDetails.color}` }}
+            >
+              <div className="uth-header" style={{ color: previewDetails.color }}>
+                {previewDetails.icon} {previewDetails.title}
+              </div>
+              <div className="uth-desc">{previewDetails.desc}</div>
+              {previewDetails.reqText && (
+                <div className="uth-req">{previewDetails.reqText}</div>
+              )}
+              <div className="uth-bottom">
+                <span className="uth-cost">{previewDetails.costText}</span>
+                <span className="uth-mult">{previewDetails.multText}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div id="shopList">
         {/* Base Module Cards Header */}
         <div className="panel-subtitle-row">
           <span>{isEn ? '🌿 Root Species' : '🌿 รากเสริม'}</span>
