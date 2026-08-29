@@ -229,6 +229,10 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'จักรพรรดิแห่งพฤกษาอนันต์', desc: 'มีรากต้นไม้โลก (Yggdrasil) อย่างน้อย 50 ต้น' },
     en: { title: 'Emperor of Yggdrasil', desc: 'Possess at least 50 Yggdrasil Roots' },
   },
+  apex_root_100: {
+    th: { title: 'อิกดราซิลค้ำจุนทุกมิติ', desc: 'มีรากต้นไม้โลก (Yggdrasil) อย่างน้อย 100 ต้น' },
+    en: { title: 'Cosmic Yggdrasil Domain', desc: 'Possess at least 100 Yggdrasil Roots' },
+  },
   upgrade_1: {
     th: { title: 'อัพเกรดรากขั้นแรก', desc: 'อัพเกรดรากเสริมชนิดใดก็ได้แตะเลเวล 1' },
     en: { title: 'First Evolution', desc: 'Upgrade any root module to Level 1' },
@@ -314,6 +318,26 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'ขุมพลังไร้ที่สิ้นสุด', desc: 'สะสมสารอาหารครบ 1Oc (Octillion)' },
     en: { title: 'Octillion Horizon', desc: 'Accumulate 1 Octillion (1Oc) nutrients' },
   },
+  nutrients_1no: {
+    th: { title: 'มหาพิภพไร้ขอบเขต', desc: 'สะสมสารอาหารครบ 1No (Nonillion)' },
+    en: { title: 'Nonillion Realm', desc: 'Accumulate 1 Nonillion (1No) nutrients' },
+  },
+  nutrients_1dc: {
+    th: { title: 'แก่นสารอาหารจักรวาล', desc: 'สะสมสารอาหารครบ 1Dc (Decillion)' },
+    en: { title: 'Decillion Cosmic Core', desc: 'Accumulate 1 Decillion (1Dc) nutrients' },
+  },
+  nutrients_1udc: {
+    th: { title: 'มหาสมุทรพลังงานอนันต์', desc: 'สะสมสารอาหารครบ 1UDc (Undecillion)' },
+    en: { title: 'Undecillion Energy Sea', desc: 'Accumulate 1 Undecillion (1UDc) nutrients' },
+  },
+  nutrients_1qadc: {
+    th: { title: 'พฤกษากลืนมิติเวลา', desc: 'สะสมสารอาหารครบ 1QaDc (Quattuordecillion)' },
+    en: { title: 'Spacetime Devourer', desc: 'Accumulate 1 Quattuordecillion (1QaDc) nutrients' },
+  },
+  nutrients_1vg: {
+    th: { title: 'ผู้สร้างจักรวาลปฐมกาล', desc: 'สะสมสารอาหารครบ 1Vg (Vigintillion)' },
+    en: { title: 'Primordial Demiurge', desc: 'Accumulate 1 Vigintillion (1Vg) nutrients' },
+  },
   rate_10k: {
     th: { title: 'เร่งฝีเท้า', desc: 'ผลิตสารอาหารเกิน 10,000 / วินาที' },
     en: { title: 'Picking Up Speed', desc: 'Produce over 10,000 nutrients / sec' },
@@ -345,6 +369,18 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
   rate_1sp: {
     th: { title: 'อัตราการเติบโตระดับดาราจักร', desc: 'ผลิตสารอาหารเกิน 1Sp / วินาที' },
     en: { title: 'Septillion Hyperdrive', desc: 'Produce over 1 Septillion nutrients / sec' },
+  },
+  rate_1oc: {
+    th: { title: 'การระเบิดแห่งบิ๊กแบง', desc: 'ผลิตสารอาหารเกิน 1Oc / วินาที' },
+    en: { title: 'Big Bang Burst', desc: 'Produce over 1 Octillion nutrients / sec' },
+  },
+  rate_1no: {
+    th: { title: 'อัตราเร่งแห่งเอกภพ', desc: 'ผลิตสารอาหารเกิน 1No / วินาที' },
+    en: { title: 'Universal Acceleration', desc: 'Produce over 1 Nonillion nutrients / sec' },
+  },
+  rate_1dc: {
+    th: { title: 'มหาพฤกษาเหนือจักรวาล', desc: 'ผลิตสารอาหารเกิน 1Dc / วินาที' },
+    en: { title: 'Trans-Cosmic Canopy', desc: 'Produce over 1 Decillion nutrients / sec' },
   },
 
   prestige_1: {
