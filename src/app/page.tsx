@@ -16,6 +16,7 @@ import { AchievementToast } from '@/components/AchievementToast';
 
 import { WardrobeModal } from '@/components/modals/WardrobeModal';
 import { RelicsModal } from '@/components/modals/RelicsModal';
+import { AutomationModal } from '@/components/modals/AutomationModal';
 import { SKIN_COSTS, UI_THEME_COSTS } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { SKIN_NAMES, UI_THEME_NAMES } from '@/lib/i18n';
@@ -96,6 +97,7 @@ export default function Home() {
   const [statsModalOpen, setStatsModalOpen] = useState(false);
   const [wardrobeModalOpen, setWardrobeModalOpen] = useState(false);
   const [relicsModalOpen, setRelicsModalOpen] = useState(false);
+  const [automationModalOpen, setAutomationModalOpen] = useState(false);
   const [autoResetModalOpen, setAutoResetModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -134,6 +136,7 @@ export default function Home() {
           onOpenPrestige={() => setPrestigeModalOpen(true)}
           onOpenWardrobe={() => setWardrobeModalOpen(true)}
           onOpenRelics={() => setRelicsModalOpen(true)}
+          onOpenAutomation={() => setAutomationModalOpen(true)}
           onOpenOptions={() => setOptionsModalOpen(true)}
           onOpenAchievements={() => setAchievementsModalOpen(true)}
           onOpenStats={() => setStatsModalOpen(true)}
@@ -262,6 +265,13 @@ export default function Home() {
         onDeleteSlot={deleteSlotAction}
         onHardReset={doHardReset}
         onSetLanguage={setLanguage}
+      />
+
+      {/* Automation Control Modal */}
+      <AutomationModal
+        isOpen={automationModalOpen}
+        state={state}
+        onClose={() => setAutomationModalOpen(false)}
         onToggleAutoRoot={toggleAutoRoot}
         onSetAutoRootMode={setAutoRootMode}
         onToggleAutoEvent={toggleAutoEvent}

@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AutoRootMode, GameState, Language, SaveSlotMeta } from '@/types/game';
+import { GameState, Language, SaveSlotMeta } from '@/types/game';
 import { GAME_VERSION, SAVE_SLOT_COUNT } from '@/constants/gameData';
 import { decodeSave, getSlotMeta } from '@/lib/storage';
 import { fmt, fmtInt, formatDuration } from '@/lib/formatters';
-import { getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
 import { ConfirmModal } from './ConfirmModal';
 import { MODULE_TRANSLATIONS, t } from '@/lib/i18n';
 
@@ -20,11 +19,6 @@ interface OptionsModalProps {
   onDeleteSlot: (slot: number) => void;
   onHardReset: () => void;
   onSetLanguage?: (lang: Language) => void;
-  onToggleAutoRoot?: () => void;
-  onSetAutoRootMode?: (mode: AutoRootMode) => void;
-  onToggleAutoEvent?: () => void;
-  onToggleAutoReset?: () => void;
-  onOpenAutoResetConfig?: () => void;
 }
 
 export const OptionsModal: React.FC<OptionsModalProps> = ({
@@ -38,11 +32,6 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   onDeleteSlot,
   onHardReset,
   onSetLanguage,
-  onToggleAutoRoot,
-  onSetAutoRootMode,
-  onToggleAutoEvent,
-  onToggleAutoReset,
-  onOpenAutoResetConfig,
 }) => {
   const [subModal, setSubModal] = useState<'none' | 'export' | 'import'>('none');
   const [exportCode, setExportCode] = useState('');
@@ -204,9 +193,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
     });
   };
 
-  const hasAnyAuto = state.prestige.autoRoot || state.prestige.autoEvent || state.prestige.autoReset;
-  const availableAutoModes = getAvailableAutoRootModes(state);
-  const activeAutoMode = getActiveAutoRootMode(state);
+  const [activeTab, setActiveTab] = useState<'saves' | 'settings'>('saves');
 
   return (
     <>
@@ -222,284 +209,234 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 <div className="icon">⚙️</div>
                 <h2>{tr.optionsTitle}</h2>
 
-                {/* Language Selection */}
-                {onSetLanguage && (
-                  <>
-                    <div className="panel-title" style={{ margin: '12px 0 8px', textAlign: 'left' }}>
-                      {tr.langSelectorTitle}
-                    </div>
-                    <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
-                      <button
-                        onClick={() => onSetLanguage('th')}
-                        style={{
-                          flex: 1,
-                          padding: '8px',
-                          borderRadius: '8px',
-                          background: lang === 'th' ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
-                          color: lang === 'th' ? '#12190d' : 'var(--root-cream)',
-                          borderColor: lang === 'th' ? 'var(--accent-glow)' : 'var(--line-soil)',
-                          fontWeight: lang === 'th' ? 700 : 500,
-                        }}
-                      >
-                        🇹🇭 ภาษาไทย (TH)
-                      </button>
-                      <button
-                        onClick={() => onSetLanguage('en')}
-                        style={{
-                          flex: 1,
-                          padding: '8px',
-                          borderRadius: '8px',
-                          background: lang === 'en' ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
-                          color: lang === 'en' ? '#12190d' : 'var(--root-cream)',
-                          borderColor: lang === 'en' ? 'var(--accent-glow)' : 'var(--line-soil)',
-                          fontWeight: lang === 'en' ? 700 : 500,
-                        }}
-                      >
-                        🇬🇧 English (EN)
-                      </button>
-                    </div>
-                  </>
-                )}
-
-                {/* Automation Toggles */}
-                {hasAnyAuto && (
-                  <>
-                    <div className="panel-title" style={{ margin: '12px 0 8px', textAlign: 'left' }}>
-                      {tr.automationTogglesTitle}
-                    </div>
-                    <div style={{ textAlign: 'left' }}>
-                      {state.prestige.autoRoot && (
-                        <div className={`prestige-item ${!state.prestige.autoRootEnabled ? 'toggled-off' : ''}`}>
-                          <div
-                            className="p-top"
-                            style={{ cursor: 'pointer' }}
-                            onClick={onToggleAutoRoot}
-                          >
-                            <span>🤖 {isEn ? 'Auto Root Buyer' : 'ออโต้ซื้อราก'}</span>
-                            <span>{state.prestige.autoRootEnabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}</span>
-                          </div>
-                          <div className="p-desc" style={{ marginBottom: '8px' }}>
-                            {state.prestige.autoRootEnabled
-                              ? (isEn ? 'Running autonomously (Click header to toggle)' : 'กำลังทำงานอัตโนมัติ (คลิกข้อความด้านบนเพื่อเปิด/ปิด)')
-                              : (isEn ? 'Disabled (Click header to enable)' : 'ปิดอยู่ (คลิกข้อความด้านบนเพื่อเปิดทำงาน)')}
-                          </div>
-
-                          {/* Mode Selector */}
-                          {availableAutoModes.length > 1 && onSetAutoRootMode && (
-                            <div>
-                              <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', marginBottom: '4px' }}>
-                                {isEn ? 'Select Intelligence Tier:' : 'เลือกระดับการทำงาน:'}
-                              </div>
-                              <div style={{ display: 'flex', gap: '4px' }}>
-                                {availableAutoModes.map(m => {
-                                  const isActive = activeAutoMode === m && state.prestige.autoRootEnabled;
-                                  const titles: Record<AutoRootMode, string> = {
-                                    basic: tr.autoCheapest,
-                                    smart: tr.autoSmart,
-                                    all: tr.autoAll,
-                                  };
-                                  return (
-                                    <button
-                                      key={m}
-                                      onClick={e => {
-                                        e.stopPropagation();
-                                        onSetAutoRootMode(m);
-                                      }}
-                                      style={{
-                                        flex: 1,
-                                        padding: '4px 6px',
-                                        fontSize: '11px',
-                                        background: isActive ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
-                                        color: isActive ? '#12190d' : 'var(--root-cream-dim)',
-                                        borderColor: isActive ? 'var(--accent-glow-dim)' : 'var(--line-soil)',
-                                        borderRadius: '6px',
-                                      }}
-                                    >
-                                      {titles[m]}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {state.prestige.autoEvent && onToggleAutoEvent && (
-                        <div
-                          onClick={onToggleAutoEvent}
-                          className={`prestige-item ${!state.prestige.autoEventEnabled ? 'toggled-off' : ''}`}
-                        >
-                          <div className="p-top">
-                            <span>🎯 {isEn ? 'Auto Event Clicker' : 'ออโต้อีเว้น'}</span>
-                            <span>{state.prestige.autoEventEnabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}</span>
-                          </div>
-                          <div className="p-desc">
-                            {state.prestige.autoEventEnabled
-                              ? (isEn ? 'Collecting floating events (Click to toggle)' : 'กำลังกดเก็บอีเว้นให้อัตโนมัติ (คลิกเพื่อปิดชั่วคราว)')
-                              : (isEn ? 'Disabled (Click to enable)' : 'ปิดอยู่ (คลิกเพื่อเปิดทำงาน)')}
-                          </div>
-                        </div>
-                      )}
-
-                      {state.prestige.autoReset && (
-                        <div className={`prestige-item ${!state.prestige.autoResetEnabled ? 'toggled-off' : ''}`}>
-                          <div className="p-top">
-                            <span>🔁 {isEn ? 'Auto Re-sow (Prestige)' : 'ออโต้หว่านใหม่'}</span>
-                            <span style={{ color: state.prestige.autoResetEnabled ? 'var(--prestige-accent)' : 'var(--root-cream-dim)' }}>
-                              {state.prestige.autoResetEnabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}
-                            </span>
-                          </div>
-                          <div className="p-desc">
-                            {state.prestige.autoResetEnabled
-                              ? (isEn
-                                ? `Triggers automatically when reaching ≥${fmtInt(state.prestige.autoResetThreshold || 1000)} Eternal Seeds.`
-                                : `หว่านใหม่อัตโนมัติทันทีที่สะสมได้ครบตามเป้าหมาย (≥${fmtInt(state.prestige.autoResetThreshold || 1000)} เมล็ด)`)
-                              : (isEn ? 'Disabled' : 'ปิดอยู่')}
-                          </div>
-                          <div className="auto-cfg-actions">
-                            <button
-                              type="button"
-                              className="auto-cfg-btn"
-                              onClick={() => {
-                                if (onOpenAutoResetConfig) onOpenAutoResetConfig();
-                              }}
-                            >
-                              ⚙️ {isEn ? `Edit Target (≥${fmtInt(state.prestige.autoResetThreshold || 1000)})` : `ตั้งค่าเป้าหมาย (≥${fmtInt(state.prestige.autoResetThreshold || 1000)} เมล็ด)`}
-                            </button>
-                            <button
-                              type="button"
-                              className={`auto-cfg-btn ${state.prestige.autoResetEnabled ? 'toggle-on' : 'toggle-off'}`}
-                              onClick={onToggleAutoReset}
-                            >
-                              {state.prestige.autoResetEnabled ? (isEn ? 'Turn OFF' : 'ปิดการทำงาน') : (isEn ? 'Turn ON' : 'เปิดการทำงาน')}
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-
-                {/* Export / Import */}
-                <div className="panel-title" style={{ margin: '16px 0 8px', textAlign: 'left' }}>
-                  {tr.exportImportTitle}
-                </div>
-                <div className="modal-actions" style={{ marginBottom: '14px' }}>
-                  <button onClick={handleExportClick}>📤 {isEn ? 'Export Save Code' : 'Export โค้ดเซฟ'}</button>
+                {/* Tab Switcher */}
+                <div
+                  style={{
+                    display: 'flex',
+                    background: 'var(--bg-panel-2)',
+                    borderRadius: '10px',
+                    padding: '3px',
+                    gap: '4px',
+                    border: '1px solid var(--line-soil)',
+                    marginBottom: '14px',
+                  }}
+                >
                   <button
-                    onClick={() => {
-                      setImportCode('');
-                      setImportError('');
-                      setSubModal('import');
+                    onClick={() => setActiveTab('saves')}
+                    style={{
+                      flex: 1,
+                      padding: '8px',
+                      borderRadius: '7px',
+                      border: 'none',
+                      fontWeight: 600,
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      background: activeTab === 'saves' ? 'var(--accent-glow)' : 'transparent',
+                      color: activeTab === 'saves' ? '#12190d' : 'var(--root-cream)',
                     }}
                   >
-                    📥 {isEn ? 'Import Save Code' : 'Import โค้ดเซฟ'}
+                    💾 {isEn ? 'Save Data' : 'ข้อมูลเซฟ'}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('settings')}
+                    style={{
+                      flex: 1,
+                      padding: '8px',
+                      borderRadius: '7px',
+                      border: 'none',
+                      fontWeight: 600,
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      background: activeTab === 'settings' ? 'var(--accent-glow)' : 'transparent',
+                      color: activeTab === 'settings' ? '#12190d' : 'var(--root-cream)',
+                    }}
+                  >
+                    ⚙️ {isEn ? 'Settings' : 'การตั้งค่าทั่วไป'}
                   </button>
                 </div>
 
-                {/* Save Slots */}
-                <div className="panel-title" style={{ margin: '16px 0 8px', textAlign: 'left' }}>
-                  {tr.saveSlotsTitle}
-                </div>
-                <div style={{ textAlign: 'left' }}>
-                  {Array.from({ length: SAVE_SLOT_COUNT }, (_, i) => i + 1).map(slot => {
-                    const meta = slotsMeta[slot];
-                    const dateString = meta
-                      ? new Date(meta.savedAt).toLocaleString(isEn ? 'en-US' : 'th-TH', {
-                          dateStyle: 'short',
-                          timeStyle: 'short',
-                        })
-                      : '';
-                    const playTimeText = meta?.totalPlayTimeSeconds && meta.totalPlayTimeSeconds > 0
-                      ? formatDuration(meta.totalPlayTimeSeconds, lang)
-                      : null;
-                    const highestName = meta?.highestModuleId
-                      ? (MODULE_TRANSLATIONS[meta.highestModuleId]?.[lang]?.name || meta.highestModuleId)
-                      : null;
-                    const nutrientText = meta?.nutrients !== undefined ? fmt(meta.nutrients) : null;
-                    const lifetimeNutrientsText = meta?.lifetimeNutrients && meta.lifetimeNutrients > (meta.nutrients || 0)
-                      ? fmt(meta.lifetimeNutrients)
-                      : null;
-                    const pendingText = meta?.pendingSeeds && meta.pendingSeeds > 0
-                      ? ` (+${fmtInt(meta.pendingSeeds)} ${isEn ? 'pending' : 'รอรับ ✨'})`
-                      : '';
-                    const lifetimeSeedsText = meta?.lifetimeSeeds && meta.lifetimeSeeds > (meta.seeds || 0)
-                      ? fmtInt(meta.lifetimeSeeds)
-                      : null;
+                {/* TAB 1: SAVES */}
+                {activeTab === 'saves' && (
+                  <>
+                    {/* Export / Import */}
+                    <div className="panel-title" style={{ margin: '8px 0 8px', textAlign: 'left' }}>
+                      {tr.exportImportTitle}
+                    </div>
+                    <div className="modal-actions" style={{ marginBottom: '14px' }}>
+                      <button onClick={handleExportClick}>📤 {isEn ? 'Export Save Code' : 'Export โค้ดเซฟ'}</button>
+                      <button
+                        onClick={() => {
+                          setImportCode('');
+                          setImportError('');
+                          setSubModal('import');
+                        }}
+                      >
+                        📥 {isEn ? 'Import Save Code' : 'Import โค้ดเซฟ'}
+                      </button>
+                    </div>
 
-                    return (
-                      <div key={slot} className="prestige-item slot-item">
-                        <div className="p-top">
-                          <span>{isEn ? `Slot ${slot}` : `ช่อง ${slot}`}</span>
-                          {meta && (
-                            <span style={{ fontSize: '11px', color: 'var(--root-cream-dim)', fontWeight: 400 }}>
-                              {playTimeText ? `⏱️ ${playTimeText} · ` : ''}{dateString}
-                            </span>
-                          )}
-                        </div>
-                        <div className="p-desc" style={{ marginTop: '4px', lineHeight: 1.5 }}>
-                          {meta ? (
-                            <>
-                              {nutrientText && (
-                                <div>
-                                  🌱 <b style={{ color: 'var(--accent-amber)' }}>{nutrientText}</b> {isEn ? 'nutrients' : 'สารอาหาร'}
-                                  {lifetimeNutrientsText && (
-                                    <span style={{ color: 'var(--root-cream-dim)', fontSize: '10.5px' }}>
-                                      {' '}({isEn ? 'lifetime' : 'สะสม'} {lifetimeNutrientsText})
-                                    </span>
-                                  )}
-                                  {highestName && <span> · {highestName} ({fmtInt(meta.totalOwned || 0)} {isEn ? 'roots' : 'ต้น'})</span>}
-                                </div>
+                    {/* Save Slots */}
+                    <div className="panel-title" style={{ margin: '16px 0 8px', textAlign: 'left' }}>
+                      {tr.saveSlotsTitle}
+                    </div>
+                    <div style={{ textAlign: 'left' }}>
+                      {Array.from({ length: SAVE_SLOT_COUNT }, (_, i) => i + 1).map(slot => {
+                        const meta = slotsMeta[slot];
+                        const dateString = meta
+                          ? new Date(meta.savedAt).toLocaleString(isEn ? 'en-US' : 'th-TH', {
+                              dateStyle: 'short',
+                              timeStyle: 'short',
+                            })
+                          : '';
+                        const playTimeText = meta?.totalPlayTimeSeconds && meta.totalPlayTimeSeconds > 0
+                          ? formatDuration(meta.totalPlayTimeSeconds, lang)
+                          : null;
+                        const highestName = meta?.highestModuleId
+                          ? (MODULE_TRANSLATIONS[meta.highestModuleId]?.[lang]?.name || meta.highestModuleId)
+                          : null;
+                        const nutrientText = meta?.nutrients !== undefined ? fmt(meta.nutrients) : null;
+                        const lifetimeNutrientsText = meta?.lifetimeNutrients && meta.lifetimeNutrients > (meta.nutrients || 0)
+                          ? fmt(meta.lifetimeNutrients)
+                          : null;
+                        const pendingText = meta?.pendingSeeds && meta.pendingSeeds > 0
+                          ? ` (+${fmtInt(meta.pendingSeeds)} ${isEn ? 'pending' : 'รอรับ ✨'})`
+                          : '';
+                        const lifetimeSeedsText = meta?.lifetimeSeeds && meta.lifetimeSeeds > (meta.seeds || 0)
+                          ? fmtInt(meta.lifetimeSeeds)
+                          : null;
+
+                        return (
+                          <div key={slot} className="prestige-item slot-item">
+                            <div className="p-top">
+                              <span>{isEn ? `Slot ${slot}` : `ช่อง ${slot}`}</span>
+                              {meta && (
+                                <span style={{ fontSize: '11px', color: 'var(--root-cream-dim)', fontWeight: 400 }}>
+                                  {playTimeText ? `⏱️ ${playTimeText} · ` : ''}{dateString}
+                                </span>
                               )}
-                              <div style={{ color: 'var(--prestige-accent)' }}>
-                                🌌 <b>{fmtInt(meta.seeds || 0)}</b> {isEn ? 'Seeds' : 'เมล็ดนิรันดร์'}
-                                {pendingText && <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>{pendingText}</span>}
-                                {lifetimeSeedsText && (
-                                  <span style={{ color: '#ffd76a', fontSize: '10.5px' }}>
-                                    {' '}· {isEn ? 'all-time' : 'ตลอดกาล'} {lifetimeSeedsText}
-                                  </span>
-                                )}
-                                {meta.prestigeCount !== undefined && meta.prestigeCount > 0 && (
-                                  <span style={{ color: 'var(--root-cream-dim)' }}> · Prestige ×{meta.prestigeCount}</span>
-                                )}
-                              </div>
-                            </>
-                          ) : (
-                            <span style={{ opacity: 0.6 }}>{tr.emptySlot}</span>
-                          )}
+                            </div>
+                            <div className="p-desc" style={{ marginTop: '4px', lineHeight: 1.5 }}>
+                              {meta ? (
+                                <>
+                                  {nutrientText && (
+                                    <div>
+                                      🌱 <b style={{ color: 'var(--accent-amber)' }}>{nutrientText}</b> {isEn ? 'nutrients' : 'สารอาหาร'}
+                                      {lifetimeNutrientsText && (
+                                        <span style={{ color: 'var(--root-cream-dim)', fontSize: '10.5px' }}>
+                                          {' '}({isEn ? 'lifetime' : 'สะสม'} {lifetimeNutrientsText})
+                                        </span>
+                                      )}
+                                      {highestName && <span> · {highestName} ({fmtInt(meta.totalOwned || 0)} {isEn ? 'roots' : 'ต้น'})</span>}
+                                    </div>
+                                  )}
+                                  <div style={{ color: 'var(--prestige-accent)' }}>
+                                    🌌 <b>{fmtInt(meta.seeds || 0)}</b> {isEn ? 'Seeds' : 'เมล็ดนิรันดร์'}
+                                    {pendingText && <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>{pendingText}</span>}
+                                    {lifetimeSeedsText && (
+                                      <span style={{ color: '#ffd76a', fontSize: '10.5px' }}>
+                                        {' '}· {isEn ? 'all-time' : 'ตลอดกาล'} {lifetimeSeedsText}
+                                      </span>
+                                    )}
+                                    {meta.prestigeCount !== undefined && meta.prestigeCount > 0 && (
+                                      <span style={{ color: 'var(--root-cream-dim)' }}> · Prestige ×{meta.prestigeCount}</span>
+                                    )}
+                                  </div>
+                                </>
+                              ) : (
+                                <span style={{ opacity: 0.6 }}>{tr.emptySlot}</span>
+                              )}
+                            </div>
+                            <div className="modal-actions">
+                              <button onClick={() => handleSaveSlot(slot)}>{tr.save}</button>
+                              {meta && (
+                                <>
+                                  <button className="secondary" onClick={() => handleLoadSlot(slot)}>
+                                    {tr.load}
+                                  </button>
+                                  <button
+                                    className="secondary danger-inline"
+                                    onClick={() => handleDeleteSlot(slot)}
+                                  >
+                                    {tr.delete}
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Danger zone */}
+                    <div
+                      className="panel-title"
+                      style={{ margin: '18px 0 8px', textAlign: 'left', color: '#e08a8a' }}
+                    >
+                      {tr.dangerZoneTitle}
+                    </div>
+                    <button className="danger-btn" onClick={handleHardResetClick}>
+                      {tr.hardResetBtn}
+                    </button>
+                  </>
+                )}
+
+                {/* TAB 2: SETTINGS */}
+                {activeTab === 'settings' && (
+                  <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    {/* Language Selection */}
+                    {onSetLanguage && (
+                      <div>
+                        <div className="panel-title" style={{ margin: '8px 0 8px' }}>
+                          {tr.langSelectorTitle}
                         </div>
-                        <div className="modal-actions">
-                          <button onClick={() => handleSaveSlot(slot)}>{tr.save}</button>
-                          {meta && (
-                            <>
-                              <button className="secondary" onClick={() => handleLoadSlot(slot)}>
-                                {tr.load}
-                              </button>
-                              <button
-                                className="secondary danger-inline"
-                                onClick={() => handleDeleteSlot(slot)}
-                              >
-                                {tr.delete}
-                              </button>
-                            </>
-                          )}
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            onClick={() => onSetLanguage('th')}
+                            style={{
+                              flex: 1,
+                              padding: '10px',
+                              borderRadius: '8px',
+                              background: lang === 'th' ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
+                              color: lang === 'th' ? '#12190d' : 'var(--root-cream)',
+                              borderColor: lang === 'th' ? 'var(--accent-glow)' : 'var(--line-soil)',
+                              fontWeight: lang === 'th' ? 700 : 500,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            🇹🇭 ภาษาไทย (TH)
+                          </button>
+                          <button
+                            onClick={() => onSetLanguage('en')}
+                            style={{
+                              flex: 1,
+                              padding: '10px',
+                              borderRadius: '8px',
+                              background: lang === 'en' ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
+                              color: lang === 'en' ? '#12190d' : 'var(--root-cream)',
+                              borderColor: lang === 'en' ? 'var(--accent-glow)' : 'var(--line-soil)',
+                              fontWeight: lang === 'en' ? 700 : 500,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            🇬🇧 English (EN)
+                          </button>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
+                    )}
 
-                {/* Danger zone */}
-                <div
-                  className="panel-title"
-                  style={{ margin: '18px 0 8px', textAlign: 'left', color: '#e08a8a' }}
-                >
-                  {tr.dangerZoneTitle}
-                </div>
-                <button className="danger-btn" onClick={handleHardResetClick}>
-                  {tr.hardResetBtn}
-                </button>
+                    {/* App & Audio Info */}
+                    <div style={{ background: 'var(--bg-panel-2)', border: '1px solid var(--line-soil)', borderRadius: '10px', padding: '12px', marginTop: '10px' }}>
+                      <div style={{ fontWeight: 700, fontSize: '12.5px', color: 'var(--root-cream)', marginBottom: '4px' }}>
+                        🌿 {isEn ? 'About Root Idle' : 'เกี่ยวกับเกม Root Idle'}
+                      </div>
+                      <div style={{ fontSize: '11.5px', color: 'var(--root-cream-dim)', lineHeight: 1.5 }}>
+                        {isEn
+                          ? 'A tranquil, atmospheric incremental idle tree growth experience. Designed to be completely silent and peaceful.'
+                          : 'เกมจำลองการเติบโตของเครือข่ายรากไม้ใต้พิภพ ออกแบบให้เล่นได้อย่างสงบ ผ่อนคลาย และไร้เสียงรบกวน 100%'}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div style={{ marginTop: '22px', textAlign: 'center', fontSize: '11px', color: 'var(--root-cream-dim)', opacity: 0.5, letterSpacing: '0.06em' }}>
                   Root Idle · v{GAME_VERSION}

@@ -14,6 +14,7 @@ interface TopActionsProps {
   onOpenStats?: () => void;
   onOpenWardrobe?: () => void;
   onOpenRelics?: () => void;
+  onOpenAutomation?: () => void;
 }
 
 export const TopActions: React.FC<TopActionsProps> = React.memo(({
@@ -24,6 +25,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onOpenStats,
   onOpenWardrobe,
   onOpenRelics,
+  onOpenAutomation,
 }) => {
   const lang: Language = state.lang || 'th';
   const tr = t(lang);
@@ -34,6 +36,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   const showPrestigeBtn = canPrestige || hasPrestigeShop;
 
   const unlockedAchCount = state.achievements?.length || 0;
+  const hasAnyAuto = state.prestige.autoRoot || state.prestige.autoEvent || state.prestige.autoReset;
 
   return (
     <div className="top-actions-row">
@@ -55,6 +58,30 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
       </div>
 
       <div className="utility-btn-group">
+        {hasAnyAuto && onOpenAutomation && (
+          <button
+            className="utility-icon-btn"
+            onClick={onOpenAutomation}
+            title={lang === 'en' ? 'Automation Control Hub' : 'ศูนย์ควบคุมระบบอัตโนมัติ'}
+            style={{ position: 'relative' }}
+          >
+            🤖
+            {(state.prestige.autoRootEnabled || state.prestige.autoEventEnabled || state.prestige.autoResetEnabled) && (
+              <span
+                style={{
+                  position: 'absolute',
+                  top: '-2px',
+                  right: '-2px',
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: 'var(--accent-glow)',
+                  boxShadow: '0 0 6px var(--accent-glow)',
+                }}
+              />
+            )}
+          </button>
+        )}
         {onOpenRelics && (
           <button
             className="utility-icon-btn"
