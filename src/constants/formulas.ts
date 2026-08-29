@@ -123,13 +123,12 @@ export function rootUpgradeLevelMult(level: number): number {
   return rootUpgradeIsMilestone(level) ? ROOT_UPGRADE_MILESTONE_MULT : ROOT_UPGRADE_NORMAL_MULT;
 }
 
-export function rootUpgradeEquivUnits(level: number): number {
-  const req = rootUpgradeRequireOwned(level);
-  return Math.max(1, Math.min(3, Math.round(req * 0.2)));
+export function rootUpgradeEquivUnits(_level: number): number {
+  return 1;
 }
 
 export function rootUpgradeCost(def: ModuleDef, level: number): number {
-  return bulkCostFor(def, rootUpgradeRequireOwned(level), rootUpgradeEquivUnits(level));
+  return costFor(def, rootUpgradeRequireOwned(level));
 }
 
 export function rootUpgradeMultiplier(state: GameState, moduleId: string): number {

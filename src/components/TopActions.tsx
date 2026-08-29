@@ -3,6 +3,7 @@
 import React from 'react';
 import { GameState, Language } from '@/types/game';
 import { calcPrestigeSeeds, prestigeUnlocked } from '@/constants/gameData';
+import { fmtInt } from '@/lib/formatters';
 import { t } from '@/lib/i18n';
 
 interface TopActionsProps {
@@ -25,7 +26,8 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   const lang: Language = state.lang || 'th';
   const tr = t(lang);
 
-  const canPrestige = prestigeUnlocked(state) && calcPrestigeSeeds(state) > 0;
+  const pendingSeeds = calcPrestigeSeeds(state);
+  const canPrestige = prestigeUnlocked(state) && pendingSeeds > 0;
   const hasPrestigeShop = state.eternalSeeds > 0;
   const showPrestigeBtn = canPrestige || hasPrestigeShop;
 
@@ -35,8 +37,17 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
     <div className="top-actions-row">
       <div className="top-actions-left">
         {showPrestigeBtn && (
-          <button className="prestige-mini-btn" onClick={onOpenPrestige}>
+          <button
+            className={`prestige-mini-btn ${pendingSeeds >= 10 ? 'ready-pulse' : ''}`}
+            onClick={onOpenPrestige}
+            style={pendingSeeds >= 10 ? { borderColor: 'rgba(251, 191, 36, 0.6)', background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(245, 158, 11, 0.2))' } : undefined}
+          >
             🌌 <span className="action-btn-text">{tr.prestigeBtn}</span>
+            {pendingSeeds > 0 && (
+              <span style={{ color: '#ffd76a', fontWeight: 700, marginLeft: '5px', fontSize: '11px' }}>
+                (+{fmtInt(pendingSeeds)} 🌰)
+              </span>
+            )}
           </button>
         )}
       </div>
