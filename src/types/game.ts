@@ -38,6 +38,7 @@ export interface ModuleDef {
   costMult: number;
   rate: number;
   color: string;
+  icon?: string;
 }
 
 export type AutoRootMode = 'basic' | 'smart' | 'all';

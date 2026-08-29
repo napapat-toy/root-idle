@@ -68,7 +68,10 @@ export const ModuleCard: React.FC<ModuleCardProps> = React.memo(({
     >
       <div className="module-body">
         <div className="module-top">
-          <span className="module-name">{localized.name}</span>
+          <span className="module-name">
+            {def.icon && <span style={{ marginRight: '6px' }}>{def.icon}</span>}
+            {localized.name}
+          </span>
           <span className="module-owned">×{owned}</span>
         </div>
 
