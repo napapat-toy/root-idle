@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   ActiveBuff,
   AutoRootMode,
+  BiomeId,
   FloatingTextItem,
   GameEventItem,
   GameState,
@@ -58,6 +59,9 @@ import {
   SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
+  starterRootsCount,
+  RELIC_DEFS,
+  hasRelic,
   UI_THEME_COSTS,
   UI_THEME_ORDER,
   UI_THEME_PRESTIGE_KEYS,
@@ -228,7 +232,7 @@ export function useGameEngine() {
     const gained = calcPrestigeSeeds(cur);
     if (gained <= 0 && cur.eternalSeeds === 0) return 0;
 
-    const starterBonus = Math.min(STARTER_CULTURE_MAX_LEVEL * 10, (cur.prestige.starterLevel || 0) * 10);
+    const starterBonus = Math.min(1000, starterRootsCount(cur));
     const freshOwned: Record<string, number> = {};
     MODULE_DEFS.forEach(d => { freshOwned[d.id] = 0; });
     if (starterBonus > 0) {
@@ -747,6 +751,71 @@ export function useGameEngine() {
     });
   }, []);
 
+  // Relics & Biomes
+  const claimUnearthedRelic = useCallback((relicId?: string) => {
+    const cur = stateRef.current;
+    const targetId = relicId || cur.unclaimedRelicId;
+    if (!targetId) return;
+    const def = RELIC_DEFS.find(r => r.id === targetId);
+    if (!def) return;
+    const isEn = cur.lang === 'en';
+
+    setState(prev => ({
+      ...prev,
+      relics: { ...prev.relics, [targetId]: true },
+      unclaimedRelicId: null,
+    }));
+
+    showFloatingText(
+      200,
+      140,
+      isEn ? `🏺 Unearthed: ${def.name}!` : `🏺 ค้นพบโบราณวัตถุ: ${def.name}!`,
+      def.color || '#ffd76a'
+    );
+  }, [showFloatingText]);
+
+  const excavateRelic = useCallback((relicId: string) => {
+    const cur = stateRef.current;
+    const def = RELIC_DEFS.find(r => r.id === relicId);
+    if (!def || cur.relics?.[relicId] || cur.nutrients < def.baseCost) return;
+    const isEn = cur.lang === 'en';
+
+    setState(prev => ({
+      ...prev,
+      nutrients: prev.nutrients - def.baseCost,
+      relics: { ...prev.relics, [relicId]: true },
+    }));
+
+    showFloatingText(
+      200,
+      140,
+      isEn ? `⛏️ Excavated: ${def.name}!` : `⛏️ ขุดค้นสำเร็จ: ${def.name}!`,
+      def.color || '#ffd76a'
+    );
+  }, [showFloatingText]);
+
+  const setActiveBiome = useCallback((biomeId: BiomeId) => {
+    setState(prev => ({
+      ...prev,
+      activeBiome: biomeId,
+    }));
+  }, []);
+
+  const onWaterCanvas = useCallback((x: number, y: number) => {
+    const cur = stateRef.current;
+    const isMagma = hasRelic(cur, 'magmastone');
+    if (isMagma) {
+      const rate = totalRate();
+      const burstGain = Math.max(1, rate * 0.05);
+      setState(prev => ({
+        ...prev,
+        nutrients: prev.nutrients + burstGain,
+        runEarned: prev.runEarned + burstGain,
+      }));
+      showFloatingText(x, y, `🔥 +${fmt(burstGain)}`, '#ef4444');
+    }
+  }, [showFloatingText, totalRate]);
+
   const toggleLanguage = useCallback(() => {
     setState(prev => {
       const nextLang: Language = prev.lang === 'en' ? 'th' : 'en';
@@ -954,6 +1023,38 @@ export function useGameEngine() {
     return () => clearInterval(interval);
   }, [totalRate, dismissAchievementToast]);
 
+  // Relic unearth check & Auto-claim loop (every 10s)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const cur = stateRef.current;
+
+      // 1. Auto-claim pending unearthed relic if Auto-Root is active
+      if (cur.unclaimedRelicId && cur.prestige.autoRoot && cur.prestige.autoRootEnabled) {
+        claimUnearthedRelic(cur.unclaimedRelicId);
+        return;
+      }
+
+      // 2. Chance to unearth an eligible relic if none is currently waiting on canvas
+      if (!cur.unclaimedRelicId) {
+        const eligible = RELIC_DEFS.filter(r => {
+          if (cur.relics?.[r.id]) return false;
+          if (!r.minModuleReq) return true;
+          return (cur.owned[r.minModuleReq] || 0) >= 1;
+        });
+
+        if (eligible.length > 0 && Math.random() < 0.12) {
+          const picked = eligible[Math.floor(Math.random() * eligible.length)];
+          setState(prev => ({
+            ...prev,
+            unclaimedRelicId: picked.id,
+          }));
+        }
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [claimUnearthedRelic]);
+
   return {
     state,
     lang: state.lang || 'th',
@@ -1014,6 +1115,11 @@ export function useGameEngine() {
     buyLuckyDuration,
     buyOfflineCapUpgrade,
     buySkin,
+    // Relic & Biome methods
+    claimUnearthedRelic,
+    excavateRelic,
+    setActiveBiome,
+    onWaterCanvas,
     importSaveCode,
     exportSaveCode,
     saveSlotAction,

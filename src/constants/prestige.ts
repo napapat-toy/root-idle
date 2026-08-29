@@ -121,11 +121,18 @@ export function luckyChanceCost(stateOrLevel: GameState | number): number {
   return 1000 * (lvl + 1);
 }
 
+import { relicStarterRootsBonus } from './relics';
+
+export function starterRootsCount(state: GameState): number {
+  return (state.prestige.starterLevel || 0) * 10 + relicStarterRootsBonus(state);
+}
+
 export function calcPrestigeSeeds(state: GameState): number {
   if (!Number.isFinite(state.runEarned) || state.runEarned <= 0) return 0;
   const base = Math.floor(Math.cbrt(state.runEarned / SEED_DIVIDER));
   const bonus = 1 + (state.prestige.goldenLevel || 0) * 0.05;
-  const result = Math.floor(base * bonus);
+  const biomeBonus = state.activeBiome === 'sunken_ruins' ? 1.20 : 1.0;
+  const result = Math.floor(base * bonus * biomeBonus);
   return Number.isFinite(result) ? Math.max(0, result) : 1e12;
 }
 

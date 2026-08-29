@@ -13,6 +13,7 @@ interface TopActionsProps {
   onOpenAchievements?: () => void;
   onOpenStats?: () => void;
   onOpenWardrobe?: () => void;
+  onOpenRelics?: () => void;
 }
 
 export const TopActions: React.FC<TopActionsProps> = React.memo(({
@@ -22,6 +23,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onOpenAchievements,
   onOpenStats,
   onOpenWardrobe,
+  onOpenRelics,
 }) => {
   const lang: Language = state.lang || 'th';
   const tr = t(lang);
@@ -53,6 +55,31 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
       </div>
 
       <div className="utility-btn-group">
+        {onOpenRelics && (
+          <button
+            className="utility-icon-btn"
+            onClick={onOpenRelics}
+            title={lang === 'en' ? 'Subterranean Museum & Biomes' : 'พิพิธภัณฑ์โบราณวัตถุ & ชีวนิเวศ'}
+            style={{ position: 'relative' }}
+          >
+            🏺
+            {state.unclaimedRelicId && (
+              <span
+                style={{
+                  position: 'absolute',
+                  top: '-2px',
+                  right: '-2px',
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: '#f59e0b',
+                  boxShadow: '0 0 6px #f59e0b',
+                }}
+              />
+            )}
+          </button>
+        )}
+
         {onOpenWardrobe && (
           <button
             className="utility-icon-btn"

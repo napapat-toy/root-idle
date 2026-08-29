@@ -15,6 +15,7 @@ import { AutoResetConfigModal } from '@/components/modals/AutoResetConfigModal';
 import { AchievementToast } from '@/components/AchievementToast';
 
 import { WardrobeModal } from '@/components/modals/WardrobeModal';
+import { RelicsModal } from '@/components/modals/RelicsModal';
 import { SKIN_COSTS, UI_THEME_COSTS } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { SKIN_NAMES, UI_THEME_NAMES } from '@/lib/i18n';
@@ -78,6 +79,10 @@ export default function Home() {
     buyLuckyDuration,
     buyOfflineCapUpgrade,
     buySkin,
+    claimUnearthedRelic,
+    excavateRelic,
+    setActiveBiome,
+    onWaterCanvas,
     importSaveCode,
     exportSaveCode,
     saveSlotAction,
@@ -90,6 +95,7 @@ export default function Home() {
   const [achievementsModalOpen, setAchievementsModalOpen] = useState(false);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
   const [wardrobeModalOpen, setWardrobeModalOpen] = useState(false);
+  const [relicsModalOpen, setRelicsModalOpen] = useState(false);
   const [autoResetModalOpen, setAutoResetModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -127,6 +133,7 @@ export default function Home() {
           state={state}
           onOpenPrestige={() => setPrestigeModalOpen(true)}
           onOpenWardrobe={() => setWardrobeModalOpen(true)}
+          onOpenRelics={() => setRelicsModalOpen(true)}
           onOpenOptions={() => setOptionsModalOpen(true)}
           onOpenAchievements={() => setAchievementsModalOpen(true)}
           onOpenStats={() => setStatsModalOpen(true)}
@@ -141,8 +148,12 @@ export default function Home() {
           activeLuckyBuff={activeLuckyBuff}
           activeEvents={activeEvents}
           floatingTexts={floatingTexts}
+          unclaimedRelicId={state.unclaimedRelicId}
+          activeBiome={state.activeBiome}
           lang={lang}
           onClaimEvent={claimEvent}
+          onClaimUnearthedRelic={claimUnearthedRelic}
+          onWaterCanvas={onWaterCanvas}
         />
       </div>
 
@@ -184,6 +195,16 @@ export default function Home() {
         onClearPreview={clearPreview}
         onOpenPrestige={() => setPrestigeModalOpen(true)}
       />
+
+      {/* Relics & Biomes Museum Modal */}
+      {relicsModalOpen && (
+        <RelicsModal
+          state={state}
+          onClose={() => setRelicsModalOpen(false)}
+          onExcavateRelic={excavateRelic}
+          onSelectBiome={setActiveBiome}
+        />
+      )}
 
       {/* Prestige modal */}
       <PrestigeModal

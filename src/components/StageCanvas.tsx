@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { ActiveBuff, Branch, FloatingTextItem, GameEventItem, Language, SkinId } from '@/types/game';
+import { ActiveBuff, BiomeId, Branch, FloatingTextItem, GameEventItem, Language, SkinId } from '@/types/game';
 import { getBranchColor } from '@/lib/treeGenerator';
-import { stageName } from '@/constants/gameData';
+import { BIOME_DEFS, RELIC_DEFS, stageName } from '@/constants/gameData';
 import { fmtMultiplier } from '@/lib/formatters';
 
 interface StageCanvasProps {
@@ -15,8 +15,12 @@ interface StageCanvasProps {
   activeLuckyBuff: ActiveBuff | null;
   activeEvents: GameEventItem[];
   floatingTexts: FloatingTextItem[];
+  unclaimedRelicId?: string | null;
+  activeBiome?: BiomeId;
   lang?: Language;
   onClaimEvent: (event: GameEventItem) => void;
+  onClaimUnearthedRelic?: (relicId: string) => void;
+  onWaterCanvas?: (x: number, y: number) => void;
 }
 
 interface RootTreeSvgProps {
@@ -209,11 +213,24 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
   activeLuckyBuff,
   activeEvents,
   floatingTexts,
+  unclaimedRelicId,
+  activeBiome = 'topsoil',
   lang = 'th',
   onClaimEvent,
+  onClaimUnearthedRelic,
+  onWaterCanvas,
 }) => {
   const targetH = Math.max(480, maxY + 24);
   const isEn = lang === 'en';
+
+  const currentBiome = useMemo(() => {
+    return BIOME_DEFS.find(b => b.id === activeBiome) || BIOME_DEFS[0];
+  }, [activeBiome]);
+
+  const unclaimedRelic = useMemo(() => {
+    if (!unclaimedRelicId) return null;
+    return RELIC_DEFS.find(r => r.id === unclaimedRelicId) || null;
+  }, [unclaimedRelicId]);
 
   const buffBadges: string[] = [];
   const now = Date.now();
@@ -226,8 +243,25 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
     buffBadges.push(`🍀 ×${fmtMultiplier(activeLuckyBuff.multiplier)} (${remain}${isEn ? 's' : 'วิ'})`);
   }
 
+  const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (onWaterCanvas) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      onWaterCanvas(x, y);
+    }
+  };
+
   return (
-    <div className="stage" id="stageBox">
+    <div
+      className="stage"
+      id="stageBox"
+      onClick={handleCanvasClick}
+      style={{
+        background: currentBiome.bgGradient,
+        transition: 'background 0.5s ease',
+      }}
+    >
       {/* Sticky topbar */}
       <div className="stage-topbar">
         <div className="stage-label" id="stageLabel">
@@ -248,6 +282,45 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
         totalOwned={totalOwned}
       />
 
+      {/* Unearthed Relic Node (Persistent until claimed) */}
+      {unclaimedRelic && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onClaimUnearthedRelic?.(unclaimedRelic.id);
+          }}
+          className="unearthed-relic-node"
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: `${Math.min(targetH - 90, 260)}px`,
+            transform: 'translateX(-50%)',
+            background: `radial-gradient(circle, ${unclaimedRelic.color}35 0%, rgba(20,15,10,0.92) 75%)`,
+            border: `2px solid ${unclaimedRelic.color}`,
+            borderRadius: '16px',
+            padding: '10px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            cursor: 'pointer',
+            boxShadow: `0 0 24px ${unclaimedRelic.color}66`,
+            animation: 'pulse 2s infinite ease-in-out',
+            zIndex: 30,
+          }}
+          title={isEn ? `Click to Claim: ${unclaimedRelic.name}` : `คลิกเพื่อเก็บโบราณวัตถุ: ${unclaimedRelic.name}`}
+        >
+          <span style={{ fontSize: '26px' }}>{unclaimedRelic.icon}</span>
+          <div style={{ textAlign: 'left' }}>
+            <div style={{ fontSize: '11px', color: '#ffd76a', fontWeight: 700 }}>
+              {isEn ? '✨ Unearthed Relic!' : '✨ ขุดพบโบราณวัตถุ!'}
+            </div>
+            <div style={{ fontSize: '13px', color: '#ffffff', fontWeight: 700 }}>
+              {unclaimedRelic.name}
+            </div>
+          </div>
+        </button>
+      )}
+
       {/* Clickable Floating Events */}
       {activeEvents.map(ev => {
         const isLucky = ev.type === 'lucky';
@@ -256,7 +329,10 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
         return (
           <button
             key={ev.id}
-            onClick={() => onClaimEvent(ev)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClaimEvent(ev);
+            }}
             style={{ left: `${ev.left}px`, top: `${ev.top}px` }}
             className={`game-event ${isLucky ? 'lucky' : ''}`}
           >

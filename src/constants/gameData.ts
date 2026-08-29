@@ -7,4 +7,5 @@ export * from './modules';
 export * from './cosmetics';
 export * from './prestige';
 export * from './formulas';
+export * from './relics';
 export * from './achievementsData';

@@ -28,6 +28,9 @@ export function createFreshState(): GameState {
     rootUpgrades: {},
     echoes: {},
     rootSynergies: {},
+    relics: {},
+    unclaimedRelicId: null,
+    activeBiome: 'topsoil',
     buyQty: 1,
     lockGapBackfilled: false,
     totalPlayTimeSeconds: 0,
@@ -139,6 +142,13 @@ export function rootUpgradeMultiplier(state: GameState, moduleId: string): numbe
 }
 
 // Echoes
+import {
+  relicRateBonusMultiplier,
+  relicSynergyBonusPerUnit,
+  relicEchoBonusPerEcho,
+  biomeActiveRateMultiplier,
+} from './relics';
+
 export function totalEchoCount(state: GameState): number {
   let s = 0;
   MODULE_DEFS.forEach(d => { s += (state.echoes[d.id] || 0); });
@@ -146,7 +156,7 @@ export function totalEchoCount(state: GameState): number {
 }
 
 export function echoBonusPct(state: GameState): number {
-  return totalEchoCount(state);
+  return totalEchoCount(state) * relicEchoBonusPerEcho(state);
 }
 
 export function globalEchoMultiplier(state: GameState): number {
@@ -185,7 +195,8 @@ export function rootSynergyCost(def: ModuleDef): number {
 
 export function speciesSynergyBonusPct(state: GameState, moduleId: string): number {
   if (!state.rootSynergies?.[moduleId]) return 0;
-  return Number(((state.owned[moduleId] || 0) * ROOT_SYNERGY_PCT_PER_UNIT).toFixed(1));
+  const pctPerUnit = relicSynergyBonusPerUnit(state);
+  return Number(((state.owned[moduleId] || 0) * pctPerUnit).toFixed(2));
 }
 
 export function totalSynergyBonusPct(state: GameState): number {
@@ -193,6 +204,9 @@ export function totalSynergyBonusPct(state: GameState): number {
   MODULE_DEFS.forEach(d => {
     s += speciesSynergyBonusPct(state, d.id);
   });
+  if (state.activeBiome === 'myco_abyss') {
+    s *= 1.25;
+  }
   return Number(s.toFixed(1));
 }
 
@@ -205,15 +219,25 @@ export function totalGlobalBonusPercent(state: GameState): number {
 }
 
 export function globalRateMultiplier(state: GameState): number {
-  return 1 + totalGlobalBonusPercent(state) * 0.01;
+  return (1 + totalGlobalBonusPercent(state) * 0.01) * relicRateBonusMultiplier(state) * biomeActiveRateMultiplier(state);
 }
 
 export function effectiveRate(state: GameState, def: ModuleDef, targetCount?: number): number {
   const count = targetCount !== undefined ? targetCount : (state.owned[def.id] || 0);
+  let ruMult = rootUpgradeMultiplier(state, def.id);
+  if (state.activeBiome === 'magma_mantle') {
+    ruMult *= 1.20;
+  }
+  let biomeEarlyBoost = 1;
+  if (state.activeBiome === 'topsoil' && ['fine', 'nodule', 'myco', 'core', 'vine'].includes(def.id)) {
+    biomeEarlyBoost = 1.20;
+  }
+
   return (
     def.rate *
+    biomeEarlyBoost *
     moduleMilestoneMultiplier(count) *
-    rootUpgradeMultiplier(state, def.id) *
+    ruMult *
     globalRateMultiplier(state)
   );
 }

@@ -1,0 +1,273 @@
+import { BiomeDef, GameState, RelicDef } from '@/types/game';
+
+export const RELIC_DEFS: RelicDef[] = [
+  {
+    id: 'amber',
+    name: 'อำพันดึกดำบรรพ์',
+    icon: '琥',
+    desc: 'ยางไม้โบราณที่ผนึกหยดน้ำค้างล้านปี เก็บรักษาความชุ่มชื้นของผืนป่าแรกกำเนิด',
+    stratum: 'ชั้นดินบน (Topsoil Layer)',
+    depthMeters: 50,
+    effectDesc: '+10% เรทการผลิตรากทุกชนิด',
+    baseCost: 1_000_000_000, // 1B
+    minModuleReq: 'core',
+    color: '#f59e0b',
+  },
+  {
+    id: 'geode',
+    name: 'จีโอดคริสตัลโบราณ',
+    icon: '💎',
+    desc: 'โพรงหินผลึกเรืองแสงที่สะท้อนแสงออโรร่าใต้พิภพ นำพาโชคลาภแห่งผืนดิน',
+    stratum: 'ชั้นผลึกแร่ (Mineral Strata)',
+    depthMeters: 200,
+    effectDesc: '+25% ความถี่และขนาดของ Lucky Event',
+    baseCost: 50_000_000_000, // 50B
+    minModuleReq: 'eternal',
+    color: '#38bdf8',
+  },
+  {
+    id: 'chronolith',
+    name: 'ศิลาบันทึกกาลเวลา',
+    icon: '⏳',
+    desc: 'ฟอสซิลหินที่จดจำการไหลผ่านของกาลเวลาใต้แผ่นเปลือกโลกนับยุคสมัย',
+    stratum: 'ชั้นหินดึกดำบรรพ์ (Ancient Bedrock)',
+    depthMeters: 500,
+    effectDesc: '+3 ชม. เวลาออฟไลน์สูงสุด & +20% ประสิทธิภาพออฟไลน์',
+    baseCost: 1_000_000_000_000, // 1T
+    minModuleReq: 'nexus',
+    color: '#a855f7',
+  },
+  {
+    id: 'mycocore',
+    name: 'ฟอสซิลไมคอร์ไรซาบรรพกาล',
+    icon: '🍄',
+    desc: 'แก่นสปอร์บรรพบุรุษเชื้อราที่สร้างเครือข่ายเชื่อมโยงรากไม้ทั้งผืนโลก',
+    stratum: 'ชั้นสายใยโบราณ (Mycorrhizal Deep)',
+    depthMeters: 1200,
+    effectDesc: 'เครือข่ายราก (Synergies) ให้ผลผลิตเพิ่มเป็น +0.15%/ต้น (เดิม +0.10%)',
+    baseCost: 25_000_000_000_000, // 25T
+    minModuleReq: 'crystal',
+    color: '#4ade80',
+  },
+  {
+    id: 'crown',
+    name: 'มงกุฎพฤกษาปฐมกาล',
+    icon: '🏵️',
+    desc: 'กิ่งก้านที่กลายเป็นหินของต้นไม้ต้นแรกของโลก เปล่งพลังสะท้อนอันไร้ขอบเขต',
+    stratum: 'ชั้นแก่นรากโบราณ (Ancient Taproot)',
+    depthMeters: 3000,
+    effectDesc: 'สะท้อนราก (Echoes) ให้ผลผลิตเพิ่มเป็น +1.5%/อัน (เดิม +1.0%)',
+    baseCost: 500_000_000_000_000, // 500T
+    minModuleReq: 'throne',
+    color: '#fbbf24',
+  },
+  {
+    id: 'magmastone',
+    name: 'ศิลาแก่นเพลิงพิภพ',
+    icon: '🌋',
+    desc: 'ผลึกหินภูเขาไฟที่กักเก็บความร้อนใต้พิภพ มอบพลังขับเคลื่อนมหาศาลเมื่อสัมผัสน้ำ',
+    stratum: 'ชั้นแมกมาหลอมเหลว (Mantle Depths)',
+    depthMeters: 7500,
+    effectDesc: 'เมื่อคลิกรดน้ำ ปล่อยคลื่นความร้อนมอบสารอาหารระเบิดทันที +5% ของเรทรวม',
+    baseCost: 15_000_000_000_000_000, // 15Qa
+    minModuleReq: 'magma',
+    color: '#ef4444',
+  },
+  {
+    id: 'aquifer',
+    name: 'ไข่มุกตาน้ำบาดาลลึก',
+    icon: '🌊',
+    desc: 'หยดน้ำบริสุทธิ์กลั่นตัวจากความดันล้านบรรยากาศใต้โลก หล่อเลี้ยงรากลึก',
+    stratum: 'ชั้นธารน้ำบาดาล (Abyssal Aquifer)',
+    depthMeters: 15000,
+    effectDesc: '+25% ผลผลิตสารอาหารจากความชุ่มชื้นผิวดินตลอดเวลา',
+    baseCost: 500_000_000_000_000_000, // 500Qa
+    minModuleReq: 'void',
+    color: '#06b6d4',
+  },
+  {
+    id: 'meteorite',
+    name: 'อุกกาบาตฝังใต้พิภพ',
+    icon: '🪐',
+    desc: 'สะเก็ดดาวจากนอกระบบสุริยะที่ถูกรากดูดซับแร่ธาตุอวกาศเข้าสู่ลำต้น',
+    stratum: 'ชั้นรอยแยกมิติ (Dimensional Rift)',
+    depthMeters: 35000,
+    effectDesc: '+30% สารอาหารที่ได้รับจากทุกแหล่ง',
+    baseCost: 18_000_000_000_000_000_000, // 18Sx
+    minModuleReq: 'astral',
+    color: '#818cf8',
+  },
+  {
+    id: 'ruintablet',
+    name: 'แผ่นจารึกอารยธรรมใต้ดิน',
+    icon: '🏛️',
+    desc: 'ศิลาจารึกอักขระโบราณ สอนวิธีการเร่งการเจริญเติบโตของรากในทุกวัฏจักร',
+    stratum: 'ชั้นซากนครสาบสูญ (Forgotten Vault)',
+    depthMeters: 70000,
+    effectDesc: 'เริ่มต้นรอบหว่านใหม่ด้วยรากโบนัส +25 ต้นฟรีทันที',
+    baseCost: 700_000_000_000_000_000_000, // 700Sx
+    minModuleReq: 'chronos',
+    color: '#e879f9',
+  },
+  {
+    id: 'gaiacore',
+    name: 'หัวใจแห่งไกอา',
+    icon: '👑',
+    desc: 'แก่นกลางของจิตวิญญาณแห่งโลก เมื่อค้นพบจะปลุกพลังโบราณวัตถุทุกชิ้นให้ทวีคูณเป็น 2 เท่า!',
+    stratum: 'แก่นโลกปฐมกาล (Core of Gaia)',
+    depthMeters: 100000,
+    effectDesc: '⭐ บูสต์พลังของโบราณวัตถุทุกชิ้นขึ้นเป็น 2 เท่า!',
+    baseCost: 30_000_000_000_000_000_000_000, // 30Sp
+    minModuleReq: 'singularity',
+    color: '#facc15',
+  },
+];
+
+export const BIOME_DEFS: BiomeDef[] = [
+  {
+    id: 'topsoil',
+    name: 'ป่าผิวดินคลาสสิก',
+    desc: 'ชั้นดินป่าอุดมสมบูรณ์ แหล่งกำเนิดรากแรกแย้ม',
+    icon: '🌲',
+    bgGradient: 'radial-gradient(ellipse at 50% 20%, #201a14 0%, #15100c 60%, #0d0a08 100%)',
+    particleType: 'leaves',
+    particleColor: 'rgba(143, 209, 122, 0.4)',
+    ambientBonusDesc: '+20% เรทการผลิตรากเริ่มต้น 5 ชนิดแรก',
+    relicRequiredCount: 0,
+  },
+  {
+    id: 'myco_abyss',
+    name: 'หุบเหวเห็ดราเรืองแสง',
+    desc: 'หุบเหวลึกที่ส่องสว่างด้วยละอองสปอร์ชีวภาพของไมคอร์ไรซา',
+    icon: '🍄',
+    bgGradient: 'radial-gradient(ellipse at 50% 30%, #152218 0%, #0d160f 60%, #060a07 100%)',
+    particleType: 'spores',
+    particleColor: 'rgba(74, 222, 128, 0.5)',
+    ambientBonusDesc: '+25% โบนัสจากเครือข่ายราก (Synergies)',
+    relicRequiredCount: 2,
+  },
+  {
+    id: 'crystal_caverns',
+    name: 'ถ้ำผลึกคริสตัลใต้พิภพ',
+    desc: 'ถ้ำที่ประดับด้วยผลึกแร่สะท้อนแสงหลากสีระยิบระยับ',
+    icon: '💎',
+    bgGradient: 'radial-gradient(ellipse at 50% 30%, #12202b 0%, #0b151e 60%, #050a0f 100%)',
+    particleType: 'crystals',
+    particleColor: 'rgba(56, 189, 248, 0.5)',
+    ambientBonusDesc: '+35% โอกาสและขนาดรางวัล Lucky Event',
+    relicRequiredCount: 4,
+  },
+  {
+    id: 'magma_mantle',
+    name: 'แก่นหินหลอมเหลวแมกมา',
+    desc: 'ชั้นหินหลอมเหลวใต้แผ่นเปลือกโลก แหล่งพลังงานความร้อนบรรพกาล',
+    icon: '🌋',
+    bgGradient: 'radial-gradient(ellipse at 50% 30%, #29120e 0%, #1c0b08 60%, #0e0504 100%)',
+    particleType: 'embers',
+    particleColor: 'rgba(239, 68, 68, 0.55)',
+    ambientBonusDesc: '+20% โบนัสจากการอัปเกรดราก (Root Upgrades)',
+    relicRequiredCount: 6,
+  },
+  {
+    id: 'sunken_ruins',
+    name: 'ซากนครใต้พิภพโบราณ',
+    desc: 'ร่องรอยอารยธรรมโบราณที่สาบสูญ เต็มไปด้วยอักขระเวทมนตร์',
+    icon: '🏛️',
+    bgGradient: 'radial-gradient(ellipse at 50% 30%, #201328 0%, #150c1b 60%, #09040d 100%)',
+    particleType: 'runes',
+    particleColor: 'rgba(232, 121, 249, 0.5)',
+    ambientBonusDesc: '+20% เมล็ดพันธุ์นิรันดร์เมื่อหว่านใหม่ (Prestige)',
+    relicRequiredCount: 8,
+  },
+  {
+    id: 'gaia_sanctum',
+    name: 'วิหารแห่งไกอา',
+    desc: 'แก่นกลางของดวงดาว สถานที่สถิตของพลังงานชีวิตนิรันดร์',
+    icon: '🌌',
+    bgGradient: 'radial-gradient(ellipse at 50% 30%, #2b2410 0%, #1c1709 60%, #0c0a03 100%)',
+    particleType: 'stardust',
+    particleColor: 'rgba(250, 204, 21, 0.6)',
+    ambientBonusDesc: '+30% เรทการผลิตสารอาหารทั้งหมดในฟาร์ม',
+    relicRequiredCount: 10,
+  },
+];
+
+// Helper functions for Relic & Biome bonuses
+
+export function hasRelic(state: GameState, relicId: string): boolean {
+  return !!state.relics?.[relicId];
+}
+
+export function relicsCount(state: GameState): number {
+  if (!state.relics) return 0;
+  return Object.values(state.relics).filter(Boolean).length;
+}
+
+export function isMasterRelicActive(state: GameState): boolean {
+  return hasRelic(state, 'gaiacore');
+}
+
+export function relicMult(state: GameState, relicId: string): number {
+  if (!hasRelic(state, relicId)) return 0;
+  // Heart of Gaia doubles all relic bonuses (except itself)
+  return isMasterRelicActive(state) && relicId !== 'gaiacore' ? 2 : 1;
+}
+
+export function relicRateBonusMultiplier(state: GameState): number {
+  let mult = 1;
+  const amberMult = relicMult(state, 'amber');
+  if (amberMult > 0) mult *= (1 + 0.10 * amberMult);
+
+  const aquiferMult = relicMult(state, 'aquifer');
+  if (aquiferMult > 0) mult *= (1 + 0.25 * aquiferMult);
+
+  const meteoriteMult = relicMult(state, 'meteorite');
+  if (meteoriteMult > 0) mult *= (1 + 0.30 * meteoriteMult);
+
+  return mult;
+}
+
+export function relicLuckyMultiplier(state: GameState): number {
+  const m = relicMult(state, 'geode');
+  return m > 0 ? (1 + 0.25 * m) : 1;
+}
+
+export function relicOfflineBonus(state: GameState): { extraHours: number; effMultiplier: number } {
+  const m = relicMult(state, 'chronolith');
+  if (m === 0) return { extraHours: 0, effMultiplier: 1 };
+  return {
+    extraHours: 3 * m,
+    effMultiplier: 1 + 0.20 * m,
+  };
+}
+
+export function relicSynergyBonusPerUnit(state: GameState): number {
+  const m = relicMult(state, 'mycocore');
+  // Base is 0.10%. With Mycocore it becomes 0.15% (or 0.20% with Gaia)
+  return m > 0 ? (0.10 + 0.05 * m) : 0.10;
+}
+
+export function relicEchoBonusPerEcho(state: GameState): number {
+  const m = relicMult(state, 'crown');
+  // Base is 1%. With Crown it becomes 1.5% (or 2.0% with Gaia)
+  return m > 0 ? (1.0 + 0.5 * m) : 1.0;
+}
+
+export function relicStarterRootsBonus(state: GameState): number {
+  const m = relicMult(state, 'ruintablet');
+  return m * 25;
+}
+
+export function biomeActiveRateMultiplier(state: GameState): number {
+  const biome = state.activeBiome || 'topsoil';
+  if (biome === 'gaia_sanctum') return 1.30;
+  return 1.0;
+}
+
+export function nextUnownedRelic(state: GameState): RelicDef | null {
+  return RELIC_DEFS.find(r => !hasRelic(state, r.id)) || null;
+}
+
+export function unexcavatedAffordableRelics(state: GameState): RelicDef[] {
+  return RELIC_DEFS.filter(r => !hasRelic(state, r.id) && state.nutrients >= r.baseCost);
+}

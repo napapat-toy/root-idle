@@ -104,6 +104,39 @@ export interface GameStats {
   totalNutrientsEarnedLifetime?: number;
 }
 
+export type BiomeId =
+  | 'topsoil'
+  | 'myco_abyss'
+  | 'crystal_caverns'
+  | 'magma_mantle'
+  | 'sunken_ruins'
+  | 'gaia_sanctum';
+
+export interface BiomeDef {
+  id: BiomeId;
+  name: string;
+  desc: string;
+  icon: string;
+  bgGradient: string;
+  particleType: 'spores' | 'crystals' | 'embers' | 'runes' | 'stardust' | 'leaves';
+  particleColor: string;
+  ambientBonusDesc: string;
+  relicRequiredCount: number;
+}
+
+export interface RelicDef {
+  id: string;
+  name: string;
+  icon: string;
+  desc: string;
+  stratum: string; // Layer / Depth
+  depthMeters: number;
+  effectDesc: string;
+  baseCost: number;
+  minModuleReq?: string;
+  color: string;
+}
+
 export type Language = 'th' | 'en';
 
 export interface GameState {
@@ -113,6 +146,9 @@ export interface GameState {
   rootUpgrades: Record<string, number>; // moduleId -> level
   echoes: Record<string, number>;      // moduleId -> level
   rootSynergies: Record<string, boolean>; // moduleId -> owned
+  relics: Record<string, boolean>;     // relicId -> owned
+  unclaimedRelicId: string | null;     // spawned relic waiting to be collected on screen
+  activeBiome: BiomeId;
   buyQty: number;
   lockGapBackfilled: boolean;
   totalPlayTimeSeconds: number;
@@ -184,6 +220,8 @@ export interface SavePayload {
   re?: number;
   es?: number;
   p?: Partial<PrestigeState>;
+  rel?: Record<string, boolean>;
+  bm?: BiomeId;
   pt?: number;
   rpt?: number;
   rle?: Array<[number, number]>;
