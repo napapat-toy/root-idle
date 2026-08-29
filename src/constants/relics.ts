@@ -69,7 +69,7 @@ export const RELIC_DEFS: RelicDef[] = [
     stratum: 'ชั้นแมกมาหลอมเหลว (Mantle Depths)',
     depthMeters: 7500,
     effectDesc: 'เมื่อคลิกรดน้ำ ปล่อยคลื่นความร้อนมอบสารอาหารระเบิดทันที +5% ของเรทรวม',
-    baseCost: 15_000_000_000_000_000, // 15Qa
+    baseCost: 10_000_000_000_000_000, // 10Qa
     minModuleReq: 'magma',
     color: '#ef4444',
   },
@@ -81,7 +81,7 @@ export const RELIC_DEFS: RelicDef[] = [
     stratum: 'ชั้นธารน้ำบาดาล (Abyssal Aquifer)',
     depthMeters: 15000,
     effectDesc: '+25% ผลผลิตสารอาหารจากความชุ่มชื้นผิวดินตลอดเวลา',
-    baseCost: 500_000_000_000_000_000, // 500Qa
+    baseCost: 350_000_000_000_000_000, // 350Qa
     minModuleReq: 'void',
     color: '#06b6d4',
   },
@@ -93,7 +93,7 @@ export const RELIC_DEFS: RelicDef[] = [
     stratum: 'ชั้นรอยแยกมิติ (Dimensional Rift)',
     depthMeters: 35000,
     effectDesc: '+30% สารอาหารที่ได้รับจากทุกแหล่ง',
-    baseCost: 18_000_000_000_000_000_000, // 18Sx
+    baseCost: 15_000_000_000_000_000_000, // 15Sx
     minModuleReq: 'astral',
     color: '#818cf8',
   },
@@ -105,7 +105,7 @@ export const RELIC_DEFS: RelicDef[] = [
     stratum: 'ชั้นซากนครสาบสูญ (Forgotten Vault)',
     depthMeters: 70000,
     effectDesc: 'เริ่มต้นรอบหว่านใหม่ด้วยรากโบนัส +25 ต้นฟรีทันที',
-    baseCost: 700_000_000_000_000_000_000, // 700Sx
+    baseCost: 800_000_000_000_000_000_000, // 800Sx
     minModuleReq: 'chronos',
     color: '#e879f9',
   },
@@ -117,7 +117,7 @@ export const RELIC_DEFS: RelicDef[] = [
     stratum: 'แก่นโลกปฐมกาล (Core of Gaia)',
     depthMeters: 100000,
     effectDesc: '⭐ บูสต์พลังของโบราณวัตถุทุกชิ้นขึ้นเป็น 2 เท่า!',
-    baseCost: 30_000_000_000_000_000_000_000, // 30Sp
+    baseCost: 50_000_000_000_000_000_000_000, // 50Sp
     minModuleReq: 'singularity',
     color: '#facc15',
   },
