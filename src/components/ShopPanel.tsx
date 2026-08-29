@@ -159,8 +159,8 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
       const owned = state.owned[def.id] || 0;
       const isMilestone = rootUpgradeIsMilestone(nextLevel);
       const multText = isMilestone
-        ? isEn ? '×2.00 (Milestone!)' : '×2.00 (หลักชัย!)'
-        : `+30% (×${rootUpgradeLevelMult(nextLevel).toFixed(2)})`;
+        ? isEn ? '×3.00 (Milestone!)' : '×3.00 (หลักชัย!)'
+        : `+100% (×${rootUpgradeLevelMult(nextLevel).toFixed(2)})`;
       const cost = rootUpgradeCost(def, nextLevel);
       const reqMet = owned >= req;
       const affordable = state.nutrients >= cost;

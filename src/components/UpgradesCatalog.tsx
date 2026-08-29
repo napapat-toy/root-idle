@@ -216,7 +216,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
         {(activeTab === 'all' || activeTab === 'ru') && unlockedUpgradeIds.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div className="panel-subtitle-row">
-              <span>⚡ {isEn ? 'Species Upgrades' : 'อัปเกรดตามชนิดราก (+30% / ×2.00)'}</span>
+              <span>⚡ {isEn ? 'Species Upgrades (+100% / ×3.00)' : 'อัปเกรดตามชนิดราก (+100% / ×3.00)'}</span>
             </div>
             {unlockedUpgradeIds.map(id => {
               const def = MODULE_DEFS.find(m => m.id === id)!;
@@ -230,7 +230,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
               const affordable = state.nutrients >= cost;
               const canBuy = reqMet && affordable;
               const localizedName = MODULE_TRANSLATIONS[def.id]?.[lang]?.name || def.name;
-              const multText = isMilestone ? '×2.00 (Milestone)' : `+30% (×${rootUpgradeLevelMult(nextLevel).toFixed(2)})`;
+              const multText = isMilestone ? '×3.00 (Milestone)' : `+100% (×${rootUpgradeLevelMult(nextLevel).toFixed(2)})`;
 
               return (
                 <div

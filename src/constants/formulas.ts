@@ -8,9 +8,9 @@ export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
 
-export const ROOT_UPGRADE_MILESTONE_MULT = 2.0;
-export const ROOT_UPGRADE_NORMAL_MULT = 1.3;
-export const ROOT_UPGRADE_DISCOUNT = 0.55;
+export const ROOT_UPGRADE_MILESTONE_MULT = 3.0;
+export const ROOT_UPGRADE_NORMAL_MULT = 2.0;
+export const ROOT_UPGRADE_DISCOUNT = 0.40;
 
 export const ECHO_REQUIRE_OWNED = 20;
 export const ECHO_BASE_SECONDS = 200;
@@ -125,8 +125,7 @@ export function rootUpgradeLevelMult(level: number): number {
 
 export function rootUpgradeEquivUnits(level: number): number {
   const req = rootUpgradeRequireOwned(level);
-  const benefitFraction = rootUpgradeLevelMult(level) - 1;
-  return Math.max(1, Math.round(req * benefitFraction * ROOT_UPGRADE_DISCOUNT));
+  return Math.max(1, Math.min(3, Math.round(req * 0.2)));
 }
 
 export function rootUpgradeCost(def: ModuleDef, level: number): number {
