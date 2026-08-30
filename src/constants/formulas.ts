@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.17.1';
+export const GAME_VERSION = '1.18.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -132,8 +132,8 @@ export function rootUpgradeEquivUnits(_level: number): number {
 
 export function rootUpgradeCost(def: ModuleDef, level: number): number {
   const reqOwned = rootUpgradeRequireOwned(level);
-  // Upgrade cost is equivalent to buying 5 additional roots at the requirement threshold
-  return bulkCostFor(def, reqOwned, 5);
+  // Upgrade cost is ~1.6x of single root cost, making it cheaper than the next tier root
+  return Math.ceil(costFor(def, reqOwned) * 1.6);
 }
 
 export function rootUpgradeMultiplier(state: GameState, moduleId: string): number {
