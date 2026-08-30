@@ -96,7 +96,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 </div>
                 <div className="stats-row">
                   <span className="stats-label">{tr.statGrowthStage}:</span>
-                  <span className="stats-value highlight">{stageName(state.totalOwned, lang)}</span>
+                  <span className="stats-value highlight">{stageName(state, lang)}</span>
                 </div>
                 <div className="stats-row">
                   <span className="stats-label">{tr.statMaxOffline}:</span>

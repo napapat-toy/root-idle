@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.24.1';
+export const GAME_VERSION = '1.24.2';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -402,6 +402,10 @@ export function getSubterraneanDepthInfo(
   };
 }
 
-export function stageName(totalOwned: number, lang: Language = 'th'): string {
-  return getSubterraneanDepthInfo(totalOwned, 0, lang).stageName;
+export function stageName(stateOrTotalOwned: GameState | number, lang: Language = 'th'): string {
+  if (typeof stateOrTotalOwned === 'object') {
+    const highest = getHighestOwnedRootIndex(stateOrTotalOwned);
+    return getSubterraneanDepthInfo(stateOrTotalOwned.totalOwned, highest, lang).stageName;
+  }
+  return getSubterraneanDepthInfo(stateOrTotalOwned, 0, lang).stageName;
 }
