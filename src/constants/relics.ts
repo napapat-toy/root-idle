@@ -1,11 +1,11 @@
 import { BiomeDef, GameState, RelicDef, RelicRarity } from '@/types/game';
 
-export const RELIC_RARITY_INFO: Record<RelicRarity, { name: string; enName: string; color: string; badgeBg: string }> = {
-  common: { name: 'ทั่วไป', enName: 'Common', color: '#4ade80', badgeBg: 'rgba(74, 222, 128, 0.15)' },
-  rare: { name: 'หายาก', enName: 'Rare', color: '#38bdf8', badgeBg: 'rgba(56, 189, 248, 0.15)' },
-  epic: { name: 'มหากาพย์', enName: 'Epic', color: '#c084fc', badgeBg: 'rgba(192, 132, 252, 0.15)' },
-  legendary: { name: 'ตำนาน', enName: 'Legendary', color: '#fbbf24', badgeBg: 'rgba(251, 191, 36, 0.15)' },
-  mythic: { name: 'สิ่งศักดิ์สิทธิ์', enName: 'Mythic', color: '#f43f5e', badgeBg: 'rgba(244, 63, 94, 0.2)' },
+export const RELIC_RARITY_INFO: Record<RelicRarity, { name: string; enName: string; color: string; badgeBg: string; icon: string }> = {
+  common: { name: 'ทั่วไป', enName: 'Common', color: '#4ade80', badgeBg: 'rgba(74, 222, 128, 0.15)', icon: '🟢' },
+  rare: { name: 'หายาก', enName: 'Rare', color: '#38bdf8', badgeBg: 'rgba(56, 189, 248, 0.15)', icon: '🔵' },
+  epic: { name: 'มหากาพย์', enName: 'Epic', color: '#c084fc', badgeBg: 'rgba(192, 132, 252, 0.15)', icon: '🟣' },
+  legendary: { name: 'ตำนาน', enName: 'Legendary', color: '#fbbf24', badgeBg: 'rgba(251, 191, 36, 0.15)', icon: '🟡' },
+  mythic: { name: 'สิ่งศักดิ์สิทธิ์', enName: 'Mythic', color: '#f43f5e', badgeBg: 'rgba(244, 63, 94, 0.2)', icon: '👑' },
 };
 
 export const RELIC_DEFS: RelicDef[] = [

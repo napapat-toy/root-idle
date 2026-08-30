@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { BiomeId, GameState, Language } from '@/types/game';
+import { BiomeId, GameState, Language, RelicDef } from '@/types/game';
 import {
   BIOME_DEFS,
   RELIC_DEFS,
@@ -11,29 +11,33 @@ import {
   relicMult,
   relicsCount,
 } from '@/constants/gameData';
-import { fmt } from '@/lib/formatters';
 
 interface RelicsModalProps {
   state: GameState;
   onClose: () => void;
-  onExcavateRelic: (id: string) => void;
   onSelectBiome: (biomeId: BiomeId) => void;
+  onExcavateRelic?: (id: string) => void;
 }
 
 export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
   state,
   onClose,
-  onExcavateRelic,
   onSelectBiome,
 }) => {
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
   const [activeTab, setActiveTab] = useState<'relics' | 'biomes'>('relics');
+  const [selectedRelicId, setSelectedRelicId] = useState<string>(RELIC_DEFS[0].id);
 
   const ownedCount = relicsCount(state);
   const totalCount = RELIC_DEFS.length;
   const masterActive = isMasterRelicActive(state);
   const activeBiome = state.activeBiome || 'topsoil';
+
+  const selectedRelic: RelicDef = RELIC_DEFS.find(r => r.id === selectedRelicId) || RELIC_DEFS[0];
+  const isSelectedOwned = hasRelic(state, selectedRelic.id);
+  const selectedRarityInfo = RELIC_RARITY_INFO[selectedRelic.rarity];
+  const selectedMult = relicMult(state, selectedRelic.id);
 
   return (
     <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 1100 }}>
@@ -41,9 +45,9 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
         className="modal-content"
         onClick={e => e.stopPropagation()}
         style={{
-          maxWidth: '560px',
+          maxWidth: '540px',
           width: '94vw',
-          maxHeight: '88vh',
+          maxHeight: '90vh',
           display: 'flex',
           flexDirection: 'column',
           background: 'var(--bg-panel)',
@@ -107,7 +111,7 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
               color: activeTab === 'relics' ? '#12190d' : 'var(--root-cream)',
             }}
           >
-            🏺 {isEn ? 'Ancient Relics' : 'โบราณวัตถุ'} ({ownedCount}/{totalCount})
+            🏺 {isEn ? 'Ancient Relics' : 'ตู้โชว์โบราณวัตถุ'} ({ownedCount}/{totalCount})
           </button>
           <button
             onClick={() => setActiveTab('biomes')}
@@ -128,161 +132,261 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
         </div>
 
         {/* Scrollable Container */}
-        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {activeTab === 'relics' && (
             <>
-              {/* Master Relic Banner */}
+              {/* Discovery Guidance Banner */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid var(--line-soil)',
+                  borderRadius: '10px',
+                  padding: '8px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '11.5px',
+                  color: 'var(--root-cream-dim)',
+                  lineHeight: '1.4',
+                }}
+              >
+                <span style={{ fontSize: '16px' }}>⛏️</span>
+                <span>
+                  {isEn
+                    ? 'Relics are unearthed serendipitously as roots spread deep (~40-50 min), or have a 20% chance on Lucky Jackpot!'
+                    : 'โบราณวัตถุจะสุ่มพบในดินใต้พิภพขณะรากเติบโต (~40-50 นาที) หรือมีโอกาสพบ 20% เมื่อหมุนได้ Lucky Jackpot!'}
+                </span>
+              </div>
+
+              {/* Master Relic Gaia Banner if active */}
               {masterActive && (
                 <div
                   style={{
                     background: 'linear-gradient(135deg, rgba(250, 204, 21, 0.2), rgba(245, 158, 11, 0.1))',
                     border: '1px solid #facc15',
                     borderRadius: '10px',
-                    padding: '10px 14px',
+                    padding: '8px 12px',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '10px',
                     color: '#facc15',
-                    fontSize: '12px',
+                    fontSize: '11.5px',
                     fontWeight: 600,
                   }}
                 >
-                  <span style={{ fontSize: '20px' }}>👑</span>
+                  <span style={{ fontSize: '18px' }}>👑</span>
                   <div>
                     <div style={{ fontWeight: 700 }}>
                       {isEn ? 'Heart of Gaia Resonance Active!' : 'พลังจิตวิญญาณแห่งไกอาตื่นรู้!'}
                     </div>
-                    <div style={{ fontSize: '11px', opacity: 0.9 }}>
+                    <div style={{ fontSize: '10.5px', opacity: 0.9 }}>
                       {isEn
-                        ? 'All other relic passive bonuses are doubled (×2.00) permanently!'
+                        ? 'All relic passive bonuses are doubled (×2.00) permanently!'
                         : 'พลังของโบราณวัตถุทุกชิ้นทำงานทวีคูณเป็น 2 เท่าถาวร!'}
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Relics Pedestals Grid */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {/* Square Pedestal Showcase Grid (5 columns) */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, 1fr)',
+                  gap: '8px',
+                }}
+              >
                 {RELIC_DEFS.map(relic => {
                   const isOwned = hasRelic(state, relic.id);
-                  const canAfford = state.nutrients >= relic.baseCost;
-                  const mult = relicMult(state, relic.id);
-
+                  const isSelected = relic.id === selectedRelicId;
                   const rarityInfo = RELIC_RARITY_INFO[relic.rarity];
 
                   return (
-                    <div
+                    <button
                       key={relic.id}
+                      onClick={() => setSelectedRelicId(relic.id)}
                       style={{
-                        background: isOwned
-                          ? `linear-gradient(135deg, var(--bg-panel-2) 0%, ${relic.color}15 100%)`
-                          : 'var(--bg-panel-2)',
-                        border: isOwned ? `1px solid ${relic.color}88` : '1px solid var(--line-soil)',
-                        borderLeft: `4px solid ${isOwned ? relic.color : rarityInfo.color}`,
-                        borderRadius: '12px',
-                        padding: '12px 14px',
+                        aspectRatio: '1 / 1',
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '12px',
-                        transition: 'all 0.2s ease',
+                        justifyContent: 'center',
+                        position: 'relative',
+                        padding: '6px 4px',
+                        borderRadius: '12px',
+                        background: isOwned
+                          ? `linear-gradient(135deg, var(--bg-panel-2) 0%, ${relic.color}22 100%)`
+                          : 'var(--bg-panel-2)',
+                        border: isSelected
+                          ? `2px solid ${isOwned ? relic.color : rarityInfo.color}`
+                          : isOwned
+                          ? `1px solid ${relic.color}66`
+                          : '1px solid var(--line-soil)',
+                        boxShadow: isSelected
+                          ? `0 0 14px ${isOwned ? relic.color : rarityInfo.color}55`
+                          : isOwned
+                          ? `0 0 8px ${relic.color}22`
+                          : 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                        outline: 'none',
                       }}
                     >
-                      {/* Left: Icon Pedestal */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
-                        <div
-                          style={{
-                            width: '46px',
-                            height: '46px',
-                            borderRadius: '12px',
-                            background: isOwned ? `${relic.color}25` : 'rgba(255,255,255,0.03)',
-                            border: `1px solid ${isOwned ? relic.color : 'rgba(255,255,255,0.1)'}`,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '22px',
-                            flexShrink: 0,
-                            boxShadow: isOwned ? `0 0 12px ${relic.color}33` : 'none',
-                          }}
-                        >
-                          {isOwned ? relic.icon : '❓'}
-                        </div>
+                      {/* Top Rarity Pip */}
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: '4px',
+                          right: '4px',
+                          fontSize: '10px',
+                          lineHeight: 1,
+                        }}
+                      >
+                        {rarityInfo.icon}
+                      </span>
 
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                            <span style={{ fontWeight: 700, fontSize: '13.5px', color: isOwned ? 'var(--root-cream)' : 'var(--root-cream-dim)' }}>
-                              {isOwned ? relic.name : (isEn ? 'Unidentified Relic' : 'โบราณวัตถุลึกลับ')}
-                            </span>
-                            <span
-                              style={{
-                                fontSize: '10.5px',
-                                color: rarityInfo.color,
-                                background: rarityInfo.badgeBg,
-                                border: `1px solid ${rarityInfo.color}55`,
-                                padding: '1px 6px',
-                                borderRadius: '4px',
-                                fontWeight: 700,
-                              }}
-                            >
-                              {isEn ? rarityInfo.enName : rarityInfo.name}
-                            </span>
-                          </div>
+                      {/* Main Icon */}
+                      <span
+                        style={{
+                          fontSize: '26px',
+                          filter: isOwned ? 'none' : 'grayscale(100%) opacity(35%)',
+                          transform: isSelected ? 'scale(1.1)' : 'scale(1)',
+                          transition: 'transform 0.15s ease',
+                        }}
+                      >
+                        {isOwned ? relic.icon : '❓'}
+                      </span>
 
-                          <div style={{ fontSize: '11px', color: isOwned ? 'var(--accent-glow)' : 'var(--root-cream-dim)', marginTop: '2px', fontWeight: 500 }}>
-                            {isOwned
-                              ? `${relic.effectDesc} ${mult > 1 ? `(×${mult} Gaia)` : ''}`
-                              : (isEn ? 'Waiting to be unearthed serendipitously or excavate now.' : 'รอสุ่มพบจากการเติบโตของราก / ขุดค้นด้วยสารอาหาร')}
-                          </div>
-
-                          {isOwned && (
-                            <div style={{ fontSize: '10.5px', color: 'var(--root-cream-dim)', marginTop: '2px', fontStyle: 'italic' }}>
-                              &ldquo;{relic.desc}&rdquo;
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Right: Action or Claimed */}
-                      <div>
-                        {isOwned ? (
-                          <div
-                            style={{
-                              padding: '5px 10px',
-                              borderRadius: '6px',
-                              background: `${relic.color}20`,
-                              border: `1px solid ${relic.color}66`,
-                              color: relic.color,
-                              fontSize: '11px',
-                              fontWeight: 700,
-                              whiteSpace: 'nowrap',
-                            }}
-                          >
-                            ✓ {isEn ? 'OWNED' : 'ครอบครอง'}
-                          </div>
-                        ) : (
-                          <button
-                            disabled={!canAfford}
-                            onClick={() => onExcavateRelic(relic.id)}
-                            style={{
-                              padding: '8px 12px',
-                              borderRadius: '8px',
-                              background: canAfford ? 'var(--accent-glow)' : 'rgba(255,255,255,0.05)',
-                              color: canAfford ? '#12190d' : 'var(--root-cream-dim)',
-                              border: 'none',
-                              fontSize: '11.5px',
-                              fontWeight: 700,
-                              cursor: canAfford ? 'pointer' : 'not-allowed',
-                              whiteSpace: 'nowrap',
-                              boxShadow: canAfford ? '0 2px 8px rgba(0,0,0,0.3)' : 'none',
-                            }}
-                          >
-                            ⛏️ {fmt(relic.baseCost)}
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                      {/* Name or Mystery label */}
+                      <span
+                        style={{
+                          fontSize: '10px',
+                          fontWeight: 600,
+                          color: isOwned ? 'var(--root-cream)' : 'var(--root-cream-dim)',
+                          marginTop: '4px',
+                          textAlign: 'center',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          maxWidth: '90%',
+                        }}
+                      >
+                        {isOwned ? relic.name : '???'}
+                      </span>
+                    </button>
                   );
                 })}
+              </div>
+
+              {/* Inspection Spotlight Detail Card */}
+              <div
+                style={{
+                  background: isSelectedOwned
+                    ? `linear-gradient(135deg, var(--bg-panel-2) 0%, ${selectedRelic.color}15 100%)`
+                    : 'var(--bg-panel-2)',
+                  border: isSelectedOwned ? `1px solid ${selectedRelic.color}88` : '1px solid var(--line-soil)',
+                  borderLeft: `5px solid ${isSelectedOwned ? selectedRelic.color : selectedRarityInfo.color}`,
+                  borderRadius: '12px',
+                  padding: '14px 16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  marginTop: '4px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div
+                      style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '10px',
+                        background: isSelectedOwned ? `${selectedRelic.color}25` : 'rgba(255,255,255,0.04)',
+                        border: `1px solid ${isSelectedOwned ? selectedRelic.color : 'rgba(255,255,255,0.1)'}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '22px',
+                        boxShadow: isSelectedOwned ? `0 0 12px ${selectedRelic.color}33` : 'none',
+                      }}
+                    >
+                      {isSelectedOwned ? selectedRelic.icon : '❓'}
+                    </div>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontWeight: 700, fontSize: '14px', color: isSelectedOwned ? 'var(--root-cream)' : 'var(--root-cream-dim)' }}>
+                          {isSelectedOwned ? selectedRelic.name : (isEn ? 'Unidentified Relic' : 'โบราณวัตถุลึกลับ')}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '10px',
+                            color: selectedRarityInfo.color,
+                            background: selectedRarityInfo.badgeBg,
+                            border: `1px solid ${selectedRarityInfo.color}55`,
+                            padding: '1px 6px',
+                            borderRadius: '4px',
+                            fontWeight: 700,
+                          }}
+                        >
+                          {selectedRarityInfo.icon} {isEn ? selectedRarityInfo.enName : selectedRarityInfo.name}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)' }}>
+                        {isEn ? `Rarity Tier: ${selectedRarityInfo.enName}` : `ระดับความหายาก: ${selectedRarityInfo.name}`}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      background: isSelectedOwned ? `${selectedRelic.color}20` : 'rgba(255,255,255,0.05)',
+                      border: `1px solid ${isSelectedOwned ? selectedRelic.color : 'rgba(255,255,255,0.1)'}`,
+                      color: isSelectedOwned ? selectedRelic.color : 'var(--root-cream-dim)',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {isSelectedOwned ? (isEn ? '✓ FOUND' : '✓ ค้นพบแล้ว') : (isEn ? '🔒 UNDISCOVERED' : '🔒 ยังไม่ค้นพบ')}
+                  </div>
+                </div>
+
+                {/* Effect Details */}
+                <div
+                  style={{
+                    background: 'rgba(0,0,0,0.2)',
+                    padding: '8px 10px',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: isSelectedOwned ? 'var(--accent-glow)' : 'var(--root-cream-dim)',
+                  }}
+                >
+                  {isSelectedOwned ? (
+                    <>
+                      ⚡ {selectedRelic.effectDesc} {selectedMult > 1 && <span style={{ color: '#facc15' }}>(×{selectedMult} Gaia Active!)</span>}
+                    </>
+                  ) : (
+                    <>
+                      🔍 {isEn ? 'Effect unknown until unearthed from the soil.' : 'คุณสมบัติจะปรากฏเมื่อขุดพบใต้พิภพ'}
+                    </>
+                  )}
+                </div>
+
+                {/* Lore or Discovery Clue */}
+                <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', fontStyle: 'italic', lineHeight: '1.4' }}>
+                  {isSelectedOwned ? (
+                    <>&ldquo;{selectedRelic.desc}&rdquo;</>
+                  ) : (
+                    <>
+                      {isEn
+                        ? '🌱 Hint: Keep roots expanding or roll Lucky Jackpots to uncover this artifact.'
+                        : '🌱 คำใบ้: ขยายรากให้ลึกและกว้าง หรือหมุน Lucky Jackpot เพื่อตามหาโบราณวัตถุชิ้นนี้'}
+                    </>
+                  )}
+                </div>
               </div>
             </>
           )}
