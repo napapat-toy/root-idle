@@ -1,7 +1,7 @@
 import { GameState } from '@/types/game';
 
 export const PRESTIGE_UNLOCK_ECHOES = 5;
-export const SEED_DIVIDER = 1000000;
+export const SEED_DIVIDER = 100000000000; // 100 Billion (1e11)
 export const SEED = 918273;
 export const OFFLINE_CAP_HOURS = [24, 48, 72];
 
