@@ -39,6 +39,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const [importCode, setImportCode] = useState('');
   const [importError, setImportError] = useState('');
   const [slotsMeta, setSlotsMeta] = useState<Record<number, SaveSlotMeta | null>>({});
+  const [activeTab, setActiveTab] = useState<'saves' | 'settings'>('saves');
 
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
@@ -192,8 +193,6 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
       },
     });
   };
-
-  const [activeTab, setActiveTab] = useState<'saves' | 'settings'>('saves');
 
   return (
     <>
