@@ -144,6 +144,7 @@ export default function Home() {
 
         <StageCanvas
           totalOwned={state.totalOwned}
+          owned={state.owned}
           branches={branches}
           maxY={maxY}
           activeSkin={effectiveSkin}

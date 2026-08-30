@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.20.0';
+export const GAME_VERSION = '1.21.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -32,7 +32,7 @@ export function createFreshState(): GameState {
     unclaimedRelicId: null,
     activeBiome: 'topsoil',
     buyQty: 1,
-    lockGapBackfilled: false,
+    lockGapBackfilled: true,
     totalPlayTimeSeconds: 0,
     runPlayTimeSeconds: 0,
     runEarned: 0,
@@ -40,46 +40,26 @@ export function createFreshState(): GameState {
     prestige: {
       starterLevel: 0,
       autoRoot: false,
-      autoRootEnabled: true,
+      autoRootEnabled: false,
+      autoRootMode: 'all',
       autoRootSmart: false,
       autoRootAll: false,
       goldenLevel: 0,
       auraRoots: false,
-      skinSakura: false,
-      skinCafe: false,
-      skinAutumn: false,
-      skinOcean: false,
-      skinFrost: false,
-      skinSunset: false,
+      auraRootsEnabled: false,
       skinSameOrigin: false,
-      skinMystic: false,
-      skinCyberpunk: false,
       skinGrayscale: false,
       skinGradient: false,
-      skinNebula: false,
-      skinImperial: false,
       activeSkin: 'none',
-      themeSakura: false,
-      themeCafe: false,
-      themeAutumn: false,
-      themeOcean: false,
-      themeFrost: false,
-      themeSunset: false,
-      themeMystic: false,
-      themeCyberpunk: false,
-      themeGrayscale: false,
-      themeEmerald: false,
-      themeNebula: false,
-      themeImperial: false,
       activeUITheme: 'classic',
       autoReset: false,
       autoResetEnabled: false,
-      autoResetThreshold: 0,
+      autoResetThreshold: 1000,
       offlineCapLevel: 0,
       eventBonusLevel: 0,
       eventDurationLevel: 0,
       autoEvent: false,
-      autoEventEnabled: true,
+      autoEventEnabled: false,
       luckyMagnitudeLevel: 0,
       luckyDurationLevel: 0,
       luckyChanceLevel: 0,
@@ -127,7 +107,7 @@ export function rootUpgradeLevelMult(level: number): number {
 }
 
 export function rootUpgradeEquivUnits(_level: number): number {
-  return 5;
+  return 2;
 }
 
 export function rootUpgradeCost(def: ModuleDef, level: number): number {
@@ -182,70 +162,85 @@ export function achievementBonusPct(state: GameState): number {
   return state.achievements.reduce((sum, id) => sum + (ACHIEVEMENT_BONUS_MAP[id] || 1), 0);
 }
 
-export function achievementRateMultiplier(state: GameState): number {
+export function achievementMultiplier(state: GameState): number {
   return 1 + achievementBonusPct(state) * 0.01;
 }
 
-// Root Synergies
+// Synergies
 export function rootSynergyUnlocked(state: GameState, moduleId: string): boolean {
-  return (state.owned[moduleId] || 0) >= ROOT_SYNERGY_REQUIRE_OWNED || !!state.rootSynergies?.[moduleId];
+  return (state.owned[moduleId] || 0) >= ROOT_SYNERGY_REQUIRE_OWNED;
 }
 
 export function rootSynergyCost(def: ModuleDef): number {
-  return bulkCostFor(def, ROOT_SYNERGY_REQUIRE_OWNED, 5);
+  return Math.ceil(def.baseCost * Math.pow(def.costMult, ROOT_SYNERGY_REQUIRE_OWNED) * 10);
 }
 
-export function speciesSynergyBonusPct(state: GameState, moduleId: string): number {
-  if (!state.rootSynergies?.[moduleId]) return 0;
-  const pctPerUnit = relicSynergyBonusPerUnit(state);
-  return Number(((state.owned[moduleId] || 0) * pctPerUnit).toFixed(2));
+export function speciesSynergyBonusPct(state: GameState, _moduleId?: string): number {
+  return relicSynergyBonusPerUnit(state);
 }
 
-export function totalSynergyBonusPct(state: GameState): number {
-  let s = 0;
-  MODULE_DEFS.forEach(d => {
-    s += speciesSynergyBonusPct(state, d.id);
-  });
-  if (state.activeBiome === 'myco_abyss') {
-    s *= 1.25;
-  }
-  return Number(s.toFixed(1));
-}
+export function totalSynergyMultiplier(state: GameState): number {
+  if (!state.rootSynergies) return 1;
+  const activeCount = Object.values(state.rootSynergies).filter(Boolean).length;
+  if (activeCount === 0) return 1;
 
-export function totalSynergiesCount(state: GameState): number {
-  return MODULE_DEFS.filter(d => !!state.rootSynergies?.[d.id]).length;
-}
-
-export function totalGlobalBonusPercent(state: GameState): number {
-  return Number((echoBonusPct(state) + prestigeBonusPct(state) + achievementBonusPct(state) + totalSynergyBonusPct(state)).toFixed(1));
-}
-
-export function globalRateMultiplier(state: GameState): number {
-  return (1 + totalGlobalBonusPercent(state) * 0.01) * relicRateBonusMultiplier(state) * biomeActiveRateMultiplier(state);
-}
-
-export function effectiveRate(state: GameState, def: ModuleDef, targetCount?: number): number {
-  const count = targetCount !== undefined ? targetCount : (state.owned[def.id] || 0);
-  let ruMult = rootUpgradeMultiplier(state, def.id);
-  if (state.activeBiome === 'magma_mantle') {
-    ruMult *= 1.20;
-  }
-  let biomeEarlyBoost = 1;
-  if (state.activeBiome === 'topsoil' && ['fine', 'nodule', 'myco', 'core', 'vine'].includes(def.id)) {
-    biomeEarlyBoost = 1.20;
-  }
-
-  return (
-    def.rate *
-    biomeEarlyBoost *
-    moduleMilestoneMultiplier(count) *
-    ruMult *
-    globalRateMultiplier(state)
-  );
+  const totalRoots = state.totalOwned || 0;
+  const bonusPerUnit = relicSynergyBonusPerUnit(state);
+  return 1 + (activeCount * totalRoots * bonusPerUnit * 0.01);
 }
 
 export function baseTotalRate(state: GameState): number {
-  let r = BASE_RATE * globalRateMultiplier(state);
+  return calculateTotalRate(state);
+}
+
+export function totalSynergiesCount(state: GameState): number {
+  if (!state.rootSynergies) return 0;
+  return Object.values(state.rootSynergies).filter(Boolean).length;
+}
+
+export function totalSynergyBonusPct(state: GameState): number {
+  return (totalSynergyMultiplier(state) - 1) * 100;
+}
+
+export function globalRateMultiplier(state: GameState): number {
+  const echoMult = globalEchoMultiplier(state);
+  const achMult = achievementMultiplier(state);
+  const synMult = totalSynergyMultiplier(state);
+  const prestigeMult = 1 + prestigeBonusPct(state) * 0.01;
+  const relicRateMult = relicRateBonusMultiplier(state);
+  const biomeMult = biomeActiveRateMultiplier(state);
+  return echoMult * achMult * synMult * prestigeMult * relicRateMult * biomeMult;
+}
+
+export function totalGlobalBonusPercent(state: GameState): number {
+  return (globalRateMultiplier(state) - 1) * 100;
+}
+
+// Effective Rates
+export function effectiveRate(state: GameState, def: ModuleDef): number {
+  const count = state.owned[def.id] || 0;
+  const milestoneMult = moduleMilestoneMultiplier(count);
+  const upgMult = rootUpgradeMultiplier(state, def.id);
+  const echoMult = globalEchoMultiplier(state);
+  const achMult = achievementMultiplier(state);
+  const synMult = totalSynergyMultiplier(state);
+  const prestigeMult = 1 + prestigeBonusPct(state) * 0.01;
+  const relicRateMult = relicRateBonusMultiplier(state);
+  const biomeMult = biomeActiveRateMultiplier(state);
+
+  return def.rate
+    * milestoneMult
+    * upgMult
+    * echoMult
+    * achMult
+    * synMult
+    * prestigeMult
+    * relicRateMult
+    * biomeMult;
+}
+
+export function calculateTotalRate(state: GameState): number {
+  let r = BASE_RATE;
   MODULE_DEFS.forEach(m => {
     r += (state.owned[m.id] || 0) * effectiveRate(state, m);
   });
@@ -256,101 +251,153 @@ export function prestigeUnlocked(state: GameState): boolean {
   return totalEchoCount(state) >= PRESTIGE_UNLOCK_ECHOES || (state.owned['throne'] || 0) >= 1;
 }
 
+// Subterranean Geological Depth Layers
 export interface SubterraneanDepthInfo {
   depthMeters: number;
   depthFormatted: string;
   stageName: string;
   layerTitle: string;
   bgGradient: string;
-  grassColor: string;
-  soilLine: string;
-  ambientGlow: string;
+  surfaceTheme: 'grass' | 'moss' | 'crystal' | 'magma' | 'void' | 'yggdrasil';
+  surfaceColor: string;
+  surfaceSubColor: string;
   layerIndex: number;
 }
 
-export function subterraneanDepthMeters(totalOwned: number, maxY: number = 0): number {
-  return Math.round(Math.max(10, totalOwned * 8.5 + (maxY > 0 ? (maxY - 200) * 0.8 : 0)));
+export function getHighestOwnedRootIndex(stateOrOwned: GameState | Record<string, number>): number {
+  const owned: Record<string, number> = 'owned' in stateOrOwned ? (stateOrOwned as GameState).owned : stateOrOwned;
+  for (let i = MODULE_DEFS.length - 1; i >= 0; i--) {
+    if ((owned[MODULE_DEFS[i].id] || 0) > 0) {
+      return i;
+    }
+  }
+  return 0;
 }
 
-export function getSubterraneanDepthInfo(totalOwned: number, maxY: number = 0, lang: Language = 'th'): SubterraneanDepthInfo {
-  const depthMeters = subterraneanDepthMeters(totalOwned, maxY);
-  const depthFormatted = depthMeters >= 1000 ? `${(depthMeters / 1000).toFixed(2)} km` : `${depthMeters} m`;
+export function subterraneanDepthMeters(totalOwned: number, highestIndex: number = 0): number {
+  const TIER_DEPTH_BASE = [
+    15,     // 0: fine (15m)
+    40,     // 1: nodule (40m)
+    80,     // 2: myco (80m)
+    160,    // 3: core (160m)
+    350,    // 4: vine (350m)
+    800,    // 5: bionode (800m)
+    1800,   // 6: eternal (1.8km)
+    3500,   // 7: nexus (3.5km)
+    7500,   // 8: crystal (7.5km)
+    15000,  // 9: heart (15km)
+    35000,  // 10: seed (35km)
+    75000,  // 11: throne (75km)
+    150000, // 12: magma (150km)
+    350000, // 13: aether (350km)
+    750000, // 14: void (750km)
+    1500000,// 15: astral (1,500km)
+    3500000,// 16: chronos (3,500km)
+    7500000,// 17: singularity (7,500km)
+    15000000,// 18: genesis (15,000km)
+    35000000,// 19: yggdrasil (35,000km)
+  ];
+
+  const baseMeters = TIER_DEPTH_BASE[Math.min(highestIndex, TIER_DEPTH_BASE.length - 1)] || 15;
+  return baseMeters + Math.round(totalOwned * 5);
+}
+
+export function getSubterraneanDepthInfo(
+  totalOwned: number,
+  highestIndexOrMaxY: number = 0,
+  lang: Language = 'th'
+): SubterraneanDepthInfo {
+  // If highestIndex is large (e.g. from maxY > 100), clamp to max tier index
+  const highestIndex = highestIndexOrMaxY > 25 ? Math.min(19, Math.floor(highestIndexOrMaxY / 50)) : highestIndexOrMaxY;
+  const depthMeters = subterraneanDepthMeters(totalOwned, highestIndex);
+  const depthFormatted = depthMeters >= 1000 ? `${(depthMeters / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })} km` : `${depthMeters} m`;
   const isEn = lang === 'en';
 
-  if (totalOwned < 15) {
+  // Layer 1: Surface Loam (T1-T4: fine, nodule, myco, core)
+  if (highestIndex < 4) {
     return {
       depthMeters,
       depthFormatted,
       stageName: isEn ? 'Surface Loam' : 'ดินร่วนชั้นบน',
       layerTitle: isEn ? `🌱 Surface Loam · ${depthFormatted}` : `🌱 ดินร่วนชั้นบน · ${depthFormatted}`,
       bgGradient: 'radial-gradient(ellipse at 50% 15%, #241c14 0%, #15100c 60%, #0a0806 100%)',
-      grassColor: '#8fd17a',
-      soilLine: '#3a2717',
-      ambientGlow: 'rgba(183, 224, 138, 0.06)',
+      surfaceTheme: 'grass',
+      surfaceColor: '#8fd17a',
+      surfaceSubColor: '#3a2717',
       layerIndex: 1,
     };
   }
-  if (totalOwned < 50) {
+
+  // Layer 2: Subterranean Bio-Forest (T5-T8: vine, bionode, eternal, nexus)
+  if (highestIndex < 8) {
     return {
       depthMeters,
       depthFormatted,
       stageName: isEn ? 'Subterranean Bio-Forest' : 'ป่าใต้ดินชีวภาพ',
       layerTitle: isEn ? `🍄 Subterranean Bio-Forest · ${depthFormatted}` : `🍄 ป่าใต้ดินชีวภาพ · ${depthFormatted}`,
       bgGradient: 'radial-gradient(ellipse at 50% 25%, #0f2316 0%, #09170e 60%, #040a06 100%)',
-      grassColor: '#4ade80',
-      soilLine: '#143d23',
-      ambientGlow: 'rgba(74, 222, 128, 0.10)',
+      surfaceTheme: 'moss',
+      surfaceColor: '#4ade80',
+      surfaceSubColor: '#143d23',
       layerIndex: 2,
     };
   }
-  if (totalOwned < 150) {
+
+  // Layer 3: Crystal Cavern (T9-T12: crystal, heart, seed, throne)
+  if (highestIndex < 12) {
     return {
       depthMeters,
       depthFormatted,
       stageName: isEn ? 'Crystal Cavern' : 'ถ้ำผลึกคริสตัล',
       layerTitle: isEn ? `💎 Crystal Cavern · ${depthFormatted}` : `💎 ถ้ำผลึกคริสตัล · ${depthFormatted}`,
       bgGradient: 'radial-gradient(ellipse at 50% 25%, #0c1e2d 0%, #07131d 60%, #03080e 100%)',
-      grassColor: '#38bdf8',
-      soilLine: '#10354f',
-      ambientGlow: 'rgba(56, 189, 248, 0.12)',
+      surfaceTheme: 'crystal',
+      surfaceColor: '#38bdf8',
+      surfaceSubColor: '#10354f',
       layerIndex: 3,
     };
   }
-  if (totalOwned < 400) {
+
+  // Layer 4: Molten Magma Mantle (T13-T15: magma, aether, void)
+  if (highestIndex < 15) {
     return {
       depthMeters,
       depthFormatted,
       stageName: isEn ? 'Molten Magma Mantle' : 'แก่นหินหลอมเหลวแมกมา',
       layerTitle: isEn ? `🔥 Molten Magma Mantle · ${depthFormatted}` : `🔥 แก่นหินแมกมา · ${depthFormatted}`,
       bgGradient: 'radial-gradient(ellipse at 50% 25%, #2a0f0a 0%, #1c0805 60%, #0c0302 100%)',
-      grassColor: '#f97316',
-      soilLine: '#4a180e',
-      ambientGlow: 'rgba(249, 115, 22, 0.14)',
+      surfaceTheme: 'magma',
+      surfaceColor: '#f97316',
+      surfaceSubColor: '#4a180e',
       layerIndex: 4,
     };
   }
-  if (totalOwned < 1000) {
+
+  // Layer 5: Astral Void Rift (T16-T18: astral, chronos, singularity)
+  if (highestIndex < 18) {
     return {
       depthMeters,
       depthFormatted,
-      stageName: isEn ? 'Aetherial Void Rift' : 'มิติไอธาตุห้วงสุญญะ',
-      layerTitle: isEn ? `🔮 Aetherial Void Rift · ${depthFormatted}` : `🔮 มิติไอธาตุห้วงสุญญะ · ${depthFormatted}`,
-      bgGradient: 'radial-gradient(ellipse at 50% 25%, #1d0c2e 0%, #12061e 60%, #08020d 100%)',
-      grassColor: '#c084fc',
-      soilLine: '#3a1357',
-      ambientGlow: 'rgba(192, 132, 252, 0.16)',
+      stageName: isEn ? 'Astral Void Rift' : 'มิติธารดวงดาวห้วงสุญญะ',
+      layerTitle: isEn ? `🔮 Astral Void Rift · ${depthFormatted}` : `🔮 มิติธารดวงดาว · ${depthFormatted}`,
+      bgGradient: 'radial-gradient(ellipse at 50% 25%, #1d0c2e 0%, #11061c 60%, #07020d 100%)',
+      surfaceTheme: 'void',
+      surfaceColor: '#c084fc',
+      surfaceSubColor: '#3a1357',
       layerIndex: 5,
     };
   }
+
+  // Layer 6: Eternal Yggdrasil Core (T19-T20: genesis, yggdrasil)
   return {
     depthMeters,
     depthFormatted,
     stageName: isEn ? 'Eternal Yggdrasil Core' : 'แก่นพฤกษาอนันต์กาล',
     layerTitle: isEn ? `🌳 Eternal Yggdrasil Core · ${depthFormatted}` : `🌳 แก่นพฤกษาอนันต์กาล · ${depthFormatted}`,
     bgGradient: 'radial-gradient(ellipse at 50% 25%, #261e0b 0%, #181206 60%, #0a0702 100%)',
-    grassColor: '#facc15',
-    soilLine: '#4d3b10',
-    ambientGlow: 'rgba(250, 204, 21, 0.18)',
+    surfaceTheme: 'yggdrasil',
+    surfaceColor: '#facc15',
+    surfaceSubColor: '#4d3b10',
     layerIndex: 6,
   };
 }
