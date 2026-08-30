@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.19.1';
+export const GAME_VERSION = '1.20.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -256,16 +256,105 @@ export function prestigeUnlocked(state: GameState): boolean {
   return totalEchoCount(state) >= PRESTIGE_UNLOCK_ECHOES || (state.owned['throne'] || 0) >= 1;
 }
 
-export function stageName(totalOwned: number, lang: Language = 'th'): string {
+export interface SubterraneanDepthInfo {
+  depthMeters: number;
+  depthFormatted: string;
+  stageName: string;
+  layerTitle: string;
+  bgGradient: string;
+  grassColor: string;
+  soilLine: string;
+  ambientGlow: string;
+  layerIndex: number;
+}
+
+export function subterraneanDepthMeters(totalOwned: number, maxY: number = 0): number {
+  return Math.round(Math.max(10, totalOwned * 8.5 + (maxY > 0 ? (maxY - 200) * 0.8 : 0)));
+}
+
+export function getSubterraneanDepthInfo(totalOwned: number, maxY: number = 0, lang: Language = 'th'): SubterraneanDepthInfo {
+  const depthMeters = subterraneanDepthMeters(totalOwned, maxY);
+  const depthFormatted = depthMeters >= 1000 ? `${(depthMeters / 1000).toFixed(2)} km` : `${depthMeters} m`;
   const isEn = lang === 'en';
-  if (totalOwned < 5) return isEn ? 'Seedling Phase' : 'ระยะเมล็ด';
-  if (totalOwned < 15) return isEn ? 'First Sprouts' : 'รากงอกแรก';
-  if (totalOwned < 35) return isEn ? 'Root Network' : 'เครือข่ายราก';
-  if (totalOwned < 70) return isEn ? 'Expansive Roots' : 'รากแผ่กว้าง';
-  if (totalOwned < 150) return isEn ? 'Underground Forest' : 'ป่าใต้ดิน';
-  if (totalOwned < 400) return isEn ? 'Root Labyrinth' : 'เขาวงกตราก';
-  if (totalOwned < 1000) return isEn ? 'Subterranean Realm' : 'อาณาจักรใต้พิภพ';
-  if (totalOwned < 2500) return isEn ? 'Primordial Energy Plane' : 'มิติพลังงานบรรพกาล';
-  if (totalOwned < 5000) return isEn ? 'Subterranean Singularity' : 'แก่นเอกภาวะใต้โลก';
-  return isEn ? 'Eternal Yggdrasil Canopy' : 'รากพฤกษาอนันต์กาล';
+
+  if (totalOwned < 15) {
+    return {
+      depthMeters,
+      depthFormatted,
+      stageName: isEn ? 'Surface Loam' : 'ดินร่วนชั้นบน',
+      layerTitle: isEn ? `🌱 Surface Loam · ${depthFormatted}` : `🌱 ดินร่วนชั้นบน · ${depthFormatted}`,
+      bgGradient: 'radial-gradient(ellipse at 50% 15%, #241c14 0%, #15100c 60%, #0a0806 100%)',
+      grassColor: '#8fd17a',
+      soilLine: '#3a2717',
+      ambientGlow: 'rgba(183, 224, 138, 0.06)',
+      layerIndex: 1,
+    };
+  }
+  if (totalOwned < 50) {
+    return {
+      depthMeters,
+      depthFormatted,
+      stageName: isEn ? 'Subterranean Bio-Forest' : 'ป่าใต้ดินชีวภาพ',
+      layerTitle: isEn ? `🍄 Subterranean Bio-Forest · ${depthFormatted}` : `🍄 ป่าใต้ดินชีวภาพ · ${depthFormatted}`,
+      bgGradient: 'radial-gradient(ellipse at 50% 25%, #0f2316 0%, #09170e 60%, #040a06 100%)',
+      grassColor: '#4ade80',
+      soilLine: '#143d23',
+      ambientGlow: 'rgba(74, 222, 128, 0.10)',
+      layerIndex: 2,
+    };
+  }
+  if (totalOwned < 150) {
+    return {
+      depthMeters,
+      depthFormatted,
+      stageName: isEn ? 'Crystal Cavern' : 'ถ้ำผลึกคริสตัล',
+      layerTitle: isEn ? `💎 Crystal Cavern · ${depthFormatted}` : `💎 ถ้ำผลึกคริสตัล · ${depthFormatted}`,
+      bgGradient: 'radial-gradient(ellipse at 50% 25%, #0c1e2d 0%, #07131d 60%, #03080e 100%)',
+      grassColor: '#38bdf8',
+      soilLine: '#10354f',
+      ambientGlow: 'rgba(56, 189, 248, 0.12)',
+      layerIndex: 3,
+    };
+  }
+  if (totalOwned < 400) {
+    return {
+      depthMeters,
+      depthFormatted,
+      stageName: isEn ? 'Molten Magma Mantle' : 'แก่นหินหลอมเหลวแมกมา',
+      layerTitle: isEn ? `🔥 Molten Magma Mantle · ${depthFormatted}` : `🔥 แก่นหินแมกมา · ${depthFormatted}`,
+      bgGradient: 'radial-gradient(ellipse at 50% 25%, #2a0f0a 0%, #1c0805 60%, #0c0302 100%)',
+      grassColor: '#f97316',
+      soilLine: '#4a180e',
+      ambientGlow: 'rgba(249, 115, 22, 0.14)',
+      layerIndex: 4,
+    };
+  }
+  if (totalOwned < 1000) {
+    return {
+      depthMeters,
+      depthFormatted,
+      stageName: isEn ? 'Aetherial Void Rift' : 'มิติไอธาตุห้วงสุญญะ',
+      layerTitle: isEn ? `🔮 Aetherial Void Rift · ${depthFormatted}` : `🔮 มิติไอธาตุห้วงสุญญะ · ${depthFormatted}`,
+      bgGradient: 'radial-gradient(ellipse at 50% 25%, #1d0c2e 0%, #12061e 60%, #08020d 100%)',
+      grassColor: '#c084fc',
+      soilLine: '#3a1357',
+      ambientGlow: 'rgba(192, 132, 252, 0.16)',
+      layerIndex: 5,
+    };
+  }
+  return {
+    depthMeters,
+    depthFormatted,
+    stageName: isEn ? 'Eternal Yggdrasil Core' : 'แก่นพฤกษาอนันต์กาล',
+    layerTitle: isEn ? `🌳 Eternal Yggdrasil Core · ${depthFormatted}` : `🌳 แก่นพฤกษาอนันต์กาล · ${depthFormatted}`,
+    bgGradient: 'radial-gradient(ellipse at 50% 25%, #261e0b 0%, #181206 60%, #0a0702 100%)',
+    grassColor: '#facc15',
+    soilLine: '#4d3b10',
+    ambientGlow: 'rgba(250, 204, 21, 0.18)',
+    layerIndex: 6,
+  };
+}
+
+export function stageName(totalOwned: number, lang: Language = 'th'): string {
+  return getSubterraneanDepthInfo(totalOwned, 0, lang).stageName;
 }

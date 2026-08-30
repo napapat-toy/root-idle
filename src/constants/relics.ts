@@ -133,13 +133,13 @@ export const RELIC_DEFS: RelicDef[] = [
 export const BIOME_DEFS: BiomeDef[] = [
   {
     id: 'topsoil',
-    name: 'ป่าผิวดินคลาสสิก',
-    desc: 'ชั้นดินป่าอุดมสมบูรณ์ แหล่งกำเนิดรากแรกแย้ม',
-    icon: '🌲',
+    name: 'การเดินทางใต้พิภพตามความลึก (Dynamic)',
+    desc: 'เปลี่ยนโทนสีและบรรยากาศฉากหลังโดยอัตโนมัติตามความลึกและการเติบโตของราก',
+    icon: '🧭',
     bgGradient: 'radial-gradient(ellipse at 50% 20%, #201a14 0%, #15100c 60%, #0d0a08 100%)',
     particleType: 'leaves',
     particleColor: 'rgba(143, 209, 122, 0.4)',
-    ambientBonusDesc: '+20% เรทการผลิตรากเริ่มต้น 5 ชนิดแรก',
+    ambientBonusDesc: 'ฉากหลังเปลี่ยนโทนสีตามชั้นความลึก 0m - 10,000m+ อัตโนมัติ',
     relicRequiredCount: 0,
   },
   {

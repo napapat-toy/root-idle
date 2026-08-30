@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import { ActiveBuff, BiomeId, Branch, FloatingTextItem, GameEventItem, Language, SkinId } from '@/types/game';
 import { getBranchColor } from '@/lib/treeGenerator';
-import { BIOME_DEFS, RELIC_DEFS, RELIC_RARITY_INFO, stageName } from '@/constants/gameData';
+import { BIOME_DEFS, RELIC_DEFS, RELIC_RARITY_INFO, getSubterraneanDepthInfo } from '@/constants/gameData';
 import { fmtMultiplier } from '@/lib/formatters';
 
 interface StageCanvasProps {
@@ -28,6 +28,8 @@ interface RootTreeSvgProps {
   targetH: number;
   activeSkin: SkinId;
   totalOwned: number;
+  grassColor?: string;
+  soilLine?: string;
 }
 
 const TrunkBase: React.FC<{ totalOwned: number; activeSkin: SkinId }> = React.memo(({ totalOwned, activeSkin }) => {
@@ -103,56 +105,59 @@ const TrunkBase: React.FC<{ totalOwned: number; activeSkin: SkinId }> = React.me
 
 TrunkBase.displayName = 'TrunkBase';
 
-/**
- * Memoized SVG Tree with Path Batching:
- * Groups thousands of branch paths by (color + width + opacity) into a few batched paths.
- * Reduces SVG DOM elements from 2,000+ to ~15, boosting late-game GPU & CPU performance.
- */
-const RootTreeSvg = React.memo<RootTreeSvgProps>(({ branches, targetH, activeSkin, totalOwned }) => {
+const RootTreeSvg: React.FC<RootTreeSvgProps> = React.memo(({
+  branches,
+  targetH,
+  activeSkin,
+  totalOwned,
+  grassColor = '#8fd17a',
+  soilLine = '#3a2717',
+}) => {
   const batchedGroups = useMemo(() => {
-    const map = new Map<string, { d: string; color: string; width: number; opacity: number }>();
+    const groups: { [key: string]: string[] } = {};
 
     for (let i = 0; i < branches.length; i++) {
       const b = branches[i];
-      if (b.depth === 0) continue; // Trunk rendered via TrunkBase component
-
+      if (b.depth === 0) continue;
       const color = getBranchColor(branches, b, i, activeSkin);
+      const width = b.width;
       const opacity = Number((0.6 + Math.max(0, 4 - b.depth) * 0.08).toFixed(2));
-      const key = `${color}_${b.width}_${opacity}`;
+      const key = `${color}_${width}_${opacity}`;
 
-      // Stable, clean root paths (zero twitching or squirming)
-      const dSegment = `M ${b.x1.toFixed(1)} ${b.y1.toFixed(1)} L ${b.x2.toFixed(1)} ${b.y2.toFixed(1)} `;
-
-      const existing = map.get(key);
-      if (existing) {
-        existing.d += dSegment;
-      } else {
-        map.set(key, { d: dSegment, color, width: b.width, opacity });
-      }
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(`M ${b.x1.toFixed(1)} ${b.y1.toFixed(1)} L ${b.x2.toFixed(1)} ${b.y2.toFixed(1)}`);
     }
-    return Array.from(map.values());
+
+    return Object.entries(groups).map(([key, dArray]) => {
+      const [color, width, opacity] = key.split('_');
+      return {
+        color,
+        width: parseFloat(width),
+        opacity: parseFloat(opacity),
+        d: dArray.join(' '),
+      };
+    });
   }, [branches, activeSkin]);
 
   return (
     <svg
-      id="rootCanvas"
+      className="root-svg"
       viewBox={`0 0 500 ${targetH}`}
       preserveAspectRatio="xMidYMin meet"
     >
       <defs>
-        {/* Soft above-ground sky glow */}
+        {/* Sky / Surface sunlight gradient */}
         <linearGradient id="surfaceSkyGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#9ee87d" stopOpacity="0.25" />
-          <stop offset="60%" stopColor="#4a6e30" stopOpacity="0.12" />
-          <stop offset="100%" stopColor="#1a110a" stopOpacity="0" />
+          <stop offset="0%" stopColor="rgba(255, 235, 170, 0.22)" />
+          <stop offset="60%" stopColor="rgba(180, 220, 140, 0.08)" />
+          <stop offset="100%" stopColor="rgba(0, 0, 0, 0)" />
         </linearGradient>
 
         {/* Grass / topsoil transition gradient */}
         <linearGradient id="grassGroundGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#7ea35c" />
-          <stop offset="35%" stopColor="#4d6e30" />
-          <stop offset="70%" stopColor="#2e381b" />
-          <stop offset="100%" stopColor="#1f150e" />
+          <stop offset="0%" stopColor={grassColor} stopOpacity="0.8" />
+          <stop offset="40%" stopColor={soilLine} stopOpacity="0.6" />
+          <stop offset="100%" stopColor="rgba(0,0,0,0)" />
         </linearGradient>
       </defs>
 
@@ -162,7 +167,7 @@ const RootTreeSvg = React.memo<RootTreeSvgProps>(({ branches, targetH, activeSki
       {/* Surface grass ground line along y=28..30 */}
       <path
         d="M 0,28 Q 60,25 125,28 T 250,27 T 375,28 T 500,26 L 500,0 L 0,0 Z"
-        fill="rgba(143, 209, 122, 0.06)"
+        fill="rgba(143, 209, 122, 0.04)"
       />
       <path
         d="M 0,29 Q 65,26 130,29.5 T 250,28.5 T 380,29.5 T 500,28 L 500,36 L 0,36 Z"
@@ -171,7 +176,7 @@ const RootTreeSvg = React.memo<RootTreeSvgProps>(({ branches, targetH, activeSki
       />
 
       {/* Grass blade tufts across ground line on both sides of the trunk */}
-      <g stroke="#8fd17a" strokeWidth="1.2" strokeLinecap="round" opacity="0.85">
+      <g stroke={grassColor} strokeWidth="1.2" strokeLinecap="round" opacity="0.85">
         <path d="M 25,28 L 22,21 M 28,28 L 31,20 M 33,28 L 38,22" />
         <path d="M 75,28 L 72,21 M 79,28 L 83,22" />
         <path d="M 130,28 L 127,21 M 134,28 L 138,19 M 139,28 L 144,22" />
@@ -223,9 +228,20 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
   const targetH = Math.max(480, maxY + 24);
   const isEn = lang === 'en';
 
+  const depthInfo = useMemo(() => {
+    return getSubterraneanDepthInfo(totalOwned, maxY, lang);
+  }, [totalOwned, maxY, lang]);
+
   const currentBiome = useMemo(() => {
     return BIOME_DEFS.find(b => b.id === activeBiome) || BIOME_DEFS[0];
   }, [activeBiome]);
+
+  const canvasBackground = useMemo(() => {
+    if (activeBiome && activeBiome !== 'topsoil') {
+      return currentBiome.bgGradient;
+    }
+    return depthInfo.bgGradient;
+  }, [activeBiome, currentBiome, depthInfo.bgGradient]);
 
   const unclaimedRelic = useMemo(() => {
     if (!unclaimedRelicId) return null;
@@ -258,14 +274,14 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       id="stageBox"
       onClick={handleCanvasClick}
       style={{
-        background: currentBiome.bgGradient,
-        transition: 'background 0.5s ease',
+        background: canvasBackground,
+        transition: 'background 1.5s ease-in-out',
       }}
     >
       {/* Sticky topbar */}
       <div className="stage-topbar">
         <div className="stage-label" id="stageLabel">
-          {stageName(totalOwned, lang)}
+          {depthInfo.layerTitle}
         </div>
         {buffBadges.length > 0 && (
           <div className="buff-badge" id="buffDisplay">
@@ -280,6 +296,8 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
         targetH={targetH}
         activeSkin={activeSkin}
         totalOwned={totalOwned}
+        grassColor={depthInfo.grassColor}
+        soilLine={depthInfo.soilLine}
       />
 
       {/* Unearthed Relic Node (Persistent until claimed) */}
