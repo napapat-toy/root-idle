@@ -5,9 +5,13 @@ import { GameState, Language, SkinId, UIThemeId } from '@/types/game';
 import {
   SKIN_COSTS,
   SKIN_DEFS,
+  SKIN_DESCRIPTIONS,
   SKIN_PRESTIGE_KEYS,
+  SKIN_SWATCHES,
+  THEME_SWATCHES,
   UI_THEME_COSTS,
   UI_THEME_DEFS,
+  UI_THEME_DESCRIPTIONS,
   UI_THEME_PRESTIGE_KEYS,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
@@ -155,80 +159,6 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
 
   if (!isOpen) return null;
 
-  const skinDescriptions: Record<SkinId, { th: string; en: string }> = {
-    none: { th: 'โทนไม้ธรรมชาติคลาสสิก อบอุ่น เรียบง่ายสไตล์เซน', en: 'Classic natural wooden roots, warm and rustic zen tone' },
-    rainbow: { th: 'แยกสีรากตามชนิดโมดูลที่ซื้อ สดใสหลากสีสัน (Spectrum)', en: 'Colors branches distinctly based on root module species' },
-    sakura: { th: 'บรรยากาศสวนซากุระยามค่ำคืน โทนกลีบชมพูซากุระหม่น', en: 'Midnight Kyoto sakura grove with dusky rose petals' },
-    cafe: { th: 'กลิ่นอายมัทฉะตัดกับช็อกโกแลตเข้มข้น โทนโกโก้ & มัทฉะอุจิ', en: 'Cozy cafe vibes blending roasted cocoa and matcha green' },
-    autumn: { th: 'ฤดูใบไม้ร่วงในเกียวโต โทนส้มอิฐเทอราคอตตาและทองอำพัน', en: 'Kyoto autumn foliage with burnt terracotta and golden amber' },
-    ocean: { th: 'โลกใต้ทะเลลึกเรืองแสง โทนเขียวอมฟ้าและเทอร์ควอยซ์พรายน้ำ', en: 'Deep abyss bioluminescence with glowing seafoam teal' },
-    frost: { th: 'รากไม้คริสตัลน้ำแข็งขั้วโลก โทนฟ้าไอซ์บลูและขาวหิมะบริสุทธิ์', en: 'Glacial frost crystal roots transitioning to pure white' },
-    sunset: { th: 'แสงแดดสีทองยามเย็น โทนม่วงทไวไลท์ ส้มพีช และทองอัสดง', en: 'Golden hour twilight with sunset peach and amber horizon' },
-    sameorigin: { th: 'แตกสีกิ่งย่อยตามตระกูลรากแก้วต้นทาง คุมโทนกิ่งหลัก', en: 'Branches inherit the distinct color family of parent root' },
-    mystic: { th: 'ป่าเทพนิยายแฟนตาซี โทนลาเวนเดอร์แสงจันทร์และสปอร์เรืองแสง', en: 'Enchanted fairy grove with moonlight lilac and glowing spores' },
-    cyberpunk: { th: 'นีออนล้ำยุคยามค่ำคืน โทนดำสนิทตัดกับนีออนไซยานและม่วง', en: 'High-contrast midnight cyber theme with neon cyan & purple' },
-    grayscale: { th: 'โทนขาวดำคลาสสิก ไล่เฉดจากชาร์โคลสู่เงินสลัว สไตล์มินิมอล', en: 'Monochromatic dark theme from charcoal to satin silver' },
-    gradient: { th: 'เขียวมรกตป่าฝนเขียวขจี ไล่จากเข้มที่ลำต้นไปอ่อนที่ปลายราก', en: 'Lush emerald rainforest gradient smoothly transitioning' },
-    nebula: { th: 'ล่องลอยในห้วงอวกาศ โทนม่วงมิดไนท์ ละอองเนบิวลา และแสงดาว', en: 'Deep space cosmic nebula with starlight violet & galactic blue' },
-    imperial: { th: 'วิหารทองคำจักรพรรดิ โทนหินภูเขาไฟตัดกับทองคำบริสุทธิ์', en: 'Imperial golden relic with obsidian stone and royal gold' },
-    drought: { th: 'เนินทรายทะเลทรายโบราณ โทนดินเผาอบอุ่นและสีทรายผุกร่อน', en: 'Ancient desert dunes with warm terracotta and weathered sand' },
-    obsidian: { th: 'หินแก้วออบซิเดียนภูเขาไฟแทรกด้วยรอยแยกธารลาวาเพลิง', en: 'Volcanic obsidian glass with glowing crimson magma fissures' },
-  };
-
-  const uiThemeDescriptions: Record<UIThemeId, { th: string; en: string }> = {
-    classic: { th: 'หน้าต่างดินธรรมชาติ น้ำตาลดินอบอุ่น ครีม และเขียวมอสส์', en: 'Classic earthy soil windows with vanilla cream accents' },
-    sakura: { th: 'พื้นหลังหมึกดำมิดไนท์ ตัดกับขอบไวน์กุหลาบและแสงชมพูซากุระ', en: 'Midnight ink-black shell with delicate sakura pink accents' },
-    cafe: { th: 'แผงการ์ดดาร์กโกโก้อบอุ่น ปุ่มเขียวมัทฉะอุจิ และไฮไลต์ครีมนม', en: 'Rich dark cocoa panels with cozy matcha green buttons' },
-    autumn: { th: 'ชาร์โคลอุ่น ตัดกับขอบส้มอิฐเทอราคอตตาและแสงทองอำพัน', en: 'Warm charcoal slate with burnt terracotta borders and amber glow' },
-    ocean: { th: 'โทนก้นสมุทรลึก Deep Navy ขอบเทอร์ควอยซ์และปุ่มเรืองแสง', en: 'Deep abyssal navy shell with radiant turquoise borders' },
-    frost: { th: 'อินเทอร์เฟซน้ำแข็งขั้วโลก ขอบคริสตัลไอซ์บลู และขาวหิมะ', en: 'Polar ice slate interface with crystal blue borders' },
-    sunset: { th: 'แผงทไวไลท์พลัม ขอบส้มพีชยามเย็น และแสงทองอัสดง', en: 'Twilight plum panels with sunset peach borders & golden radiance' },
-    mystic: { th: 'โทนไม้ดำป่าเวทมนตร์ ขอบลาเวนเดอร์ และแสงเรืองมิ้นต์ภูติ', en: 'Enchanted blackwood shell with moonlight lavender borders' },
-    cyberpunk: { th: 'ดำออบซิเดียนสนิท ตัดกับขอบนีออนไซยานและม่วงอิเล็กทริก', en: 'Pure obsidian dark with high-contrast electric cyan & purple' },
-    grayscale: { th: 'สไตล์มินิมอลโมเดิร์น โทนชาร์โคลพรีเมียมและขอบเงินซาติน', en: 'Ultra-clean monochromatic aesthetic with satin silver borders' },
-    emerald: { th: 'ดำป่าลึกมรกต ขอบเขียวมรกตเจิดจรัส และแสงใบไม้ป่าฝน', en: 'Deep jungle obsidian with vibrant emerald green borders' },
-    nebula: { th: 'ห้วงอวกาศมิดไนท์ การ์ดม่วงเนบิวลา ขอบแสงดาว และประกายกาแลกซี่', en: 'Midnight cosmic void with nebula purple cards and starlight' },
-    imperial: { th: 'ศิลาภูเขาไฟออบซิเดียน ขอบทองคำบรอนซ์ และแสงทองคำบริสุทธิ์', en: 'Imperial volcanic stone with polished royal bronze borders' },
-    void_sovereign: { th: 'มิติสุญญะมืดสนิท ตัดกับขอบนีออนคอสมิกอินดิโกและม่วงดวงดาว', en: 'Deep void dimension with radiant cosmic indigo borders' },
-  };
-
-  const skinSwatches: Record<SkinId, string[]> = {
-    none: ['#8B5A2B', '#A0522D', '#CD853F', '#DEB887'],
-    rainbow: ['#e08a8a', '#e0bb8a', '#8ae09b', '#8ab8e0', '#b78cf0'],
-    sakura: ['#2a2228', '#b35d7f', '#f4a6bf', '#fff0f5'],
-    cafe: ['#2b1e16', '#4a6741', '#8ca36f', '#f5ebd9'],
-    autumn: ['#3b1e08', '#a44200', '#d4731f', '#f5b041'],
-    ocean: ['#071e2c', '#0d5c75', '#14b8a6', '#67e8f9'],
-    frost: ['#0c2538', '#2563eb', '#60a5fa', '#e0f2fe'],
-    sunset: ['#241228', '#9333ea', '#f43f5e', '#fbbf24'],
-    sameorigin: ['#4b5563', '#10b981', '#06b6d4', '#f59e0b'],
-    mystic: ['#181028', '#7c3aed', '#a855f7', '#a7f3d0'],
-    cyberpunk: ['#080811', '#06b6d4', '#ec4899', '#38bdf8'],
-    grayscale: ['#18181b', '#52525b', '#a1a1aa', '#f4f4f5'],
-    gradient: ['#062c19', '#059669', '#34d399', '#a7f3d0'],
-    nebula: ['#0b0819', '#6366f1', '#ec4899', '#e0e7ff'],
-    imperial: ['#181408', '#b45309', '#f59e0b', '#fef08a'],
-    drought: ['#26190e', '#8c4a27', '#d97736', '#fcd34d'],
-    obsidian: ['#0a0808', '#261414', '#dc2626', '#fb923c'],
-  };
-
-  const themeSwatches: Record<UIThemeId, string[]> = {
-    classic: ['#140e0a', '#1e1510', '#8b5a2b', '#f5ebd9'],
-    sakura: ['#10121a', '#1e1422', '#db2777', '#fbcfe8'],
-    cafe: ['#140f0c', '#201814', '#15803d', '#fef3c7'],
-    autumn: ['#150e09', '#241710', '#c2410c', '#fef3c7'],
-    ocean: ['#051017', '#0a1d29', '#0891b2', '#cffafe'],
-    frost: ['#070f1a', '#0f1f33', '#0284c7', '#e0f2fe'],
-    sunset: ['#130a17', '#221128', '#c026d3', '#fef08a'],
-    mystic: ['#0d091a', '#18122c', '#9333ea', '#ccfbf1'],
-    cyberpunk: ['#07070b', '#10101a', '#06b6d4', '#f472b6'],
-    grayscale: ['#09090b', '#18181b', '#71717a', '#f4f4f5'],
-    emerald: ['#04120a', '#082114', '#059669', '#a7f3d0'],
-    nebula: ['#080714', '#120f26', '#4f46e5', '#f472b6'],
-    imperial: ['#100f0c', '#1b1812', '#b45309', '#fef3c7'],
-    void_sovereign: ['#080612', '#100d20', '#4f46e5', '#ddd6fe'],
-  };
-
   // Current active item data
   const currentSkinDef = SKIN_DEFS[skinIndex] || SKIN_DEFS[0];
   const currentSkinId = currentSkinDef.id;
@@ -236,8 +166,8 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
   const isCurSkinEquipped = state.prestige.activeSkin === currentSkinId;
   const currentSkinCost = SKIN_COSTS[currentSkinId] || 0;
   const currentSkinName = SKIN_NAMES[currentSkinId]?.[lang] || currentSkinDef.name;
-  const currentSkinDesc = skinDescriptions[currentSkinId]?.[lang] || '';
-  const currentSkinColors = skinSwatches[currentSkinId] || [];
+  const currentSkinDesc = SKIN_DESCRIPTIONS[currentSkinId]?.[lang] || '';
+  const currentSkinColors = SKIN_SWATCHES[currentSkinId] || [];
 
   const currentThemeDef = UI_THEME_DEFS[themeIndex] || UI_THEME_DEFS[0];
   const currentThemeId = currentThemeDef.id;
@@ -245,8 +175,8 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
   const isCurThemeEquipped = (state.prestige.activeUITheme || 'classic') === currentThemeId;
   const currentThemeCost = UI_THEME_COSTS[currentThemeId] || 0;
   const currentThemeName = UI_THEME_NAMES[currentThemeId]?.[lang] || currentThemeDef.name;
-  const currentThemeDesc = uiThemeDescriptions[currentThemeId]?.[lang] || '';
-  const currentThemeColors = themeSwatches[currentThemeId] || [];
+  const currentThemeDesc = UI_THEME_DESCRIPTIONS[currentThemeId]?.[lang] || '';
+  const currentThemeColors = THEME_SWATCHES[currentThemeId] || [];
 
   const isCurrentTabSkins = activeTab === 'skins';
   const curName = isCurrentTabSkins ? currentSkinName : currentThemeName;
