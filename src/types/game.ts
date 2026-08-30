@@ -13,7 +13,9 @@ export type SkinId =
   | 'grayscale'
   | 'gradient'
   | 'nebula'
-  | 'imperial';
+  | 'imperial'
+  | 'drought'
+  | 'obsidian';
 
 export type UIThemeId =
   | 'classic'
@@ -28,7 +30,8 @@ export type UIThemeId =
   | 'grayscale'
   | 'emerald'
   | 'nebula'
-  | 'imperial';
+  | 'imperial'
+  | 'void_sovereign';
 
 export interface ModuleDef {
   id: string;
@@ -138,6 +141,36 @@ export interface RelicDef {
   color: string;
 }
 
+export type TrialId = 'none' | 'arid_drought' | 'basalt_strata' | 'void_anomaly';
+
+export interface TrialDef {
+  id: TrialId;
+  name: string;
+  enName: string;
+  desc: string;
+  enDesc: string;
+  icon: string;
+  restrictionDesc: string;
+  enRestrictionDesc: string;
+  rewardDesc: string;
+  enRewardDesc: string;
+  targetYggdrasil: number;
+  skinReward?: SkinId;
+  themeReward?: UIThemeId;
+}
+
+export interface TranscendenceState {
+  count: number;
+  gaiaEssences: number;
+  totalGaiaEssencesLifetime: number;
+  primordialVigorLevel: number; // +25% base rate per level
+  soilMemoryLevel: number;      // retain 10% echoes per level (max 5 = 50%)
+  autoManagerUnlocked: boolean; // Auto-upgrades Prestige perks
+  gaiaTouchLevel: number;       // +10% lucky/event magnitude & frequency
+  activeTrial: TrialId;
+  completedTrials: Record<string, boolean>;
+}
+
 export type Language = 'th' | 'en';
 
 export interface GameState {
@@ -157,6 +190,7 @@ export interface GameState {
   runEarned: number;
   eternalSeeds: number;
   prestige: PrestigeState;
+  transcendence: TranscendenceState;
   achievements: string[];
   stats: GameStats;
   lang?: Language;
@@ -203,6 +237,8 @@ export interface SaveSlotMeta {
   nutrients?: number;
   highestModuleId?: string;
   prestigeCount?: number;
+  transcendenceCount?: number;
+  gaiaEssences?: number;
   achievementsCount?: number;
   totalPlayTimeSeconds?: number;
   lifetimeNutrients?: number;
@@ -221,6 +257,7 @@ export interface SavePayload {
   re?: number;
   es?: number;
   p?: Partial<PrestigeState>;
+  ts?: Partial<TranscendenceState>;
   rel?: Record<string, boolean>;
   bm?: BiomeId;
   pt?: number;

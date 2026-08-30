@@ -4,7 +4,7 @@
 ![React](https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=for-the-badge&logo=tailwindcss)
-![Version](https://img.shields.io/badge/version-1.11.0-orange?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.26.0-orange?style=for-the-badge)
 ![i18n](https://img.shields.io/badge/i18n-TH%20%7C%20EN-green?style=for-the-badge)
 
 **เกม Idle ปลูกรากไม้สไตล์เซน — รดน้ำ รอ และดูรากแผ่ขยายเองไปเรื่อยๆ ใต้ผืนดิน**  
@@ -22,7 +22,7 @@
 
 - 🌱 **Procedural Fractal Roots:** รากไม้เติบโตและแตกแขนงอย่างมีชีวิตชีวาตามชนิดและจำนวนรากที่คุณครอบครอง
 - 💧 **Nourish & Expand:** ดูดซึมสารอาหาร ปลูกรากเสริมหลากหลายสายพันธุ์ และค้นพบพลังอัพเกรดที่ซ่อนอยู่ใต้ผืนดิน
-- 🌌 **Prestige & Secrets:** หว่านเมล็ดพันธุ์ใหม่เพื่อรับเมล็ดนิรันดร์ ปลดล็อกพลังโบราณและระบบอัตโนมัติ
+- 🌌 **Prestige & Secrets:** หว่านเมล็ดพันธุ์ใหม่เพื่อรับเมล็ดนิรันดร์ ปลดล็อกพลังโบราณและความลับใต้พิภพที่ซ่อนอยู่
 - 🏆 **Achievements & Journey:** ค้นหาเหรียญความสำเร็จที่ซ่อนอยู่ พร้อมแดชบอร์ดบันทึกสถิติการเดินทางของคุณ
 - 🌐 **Bilingual (TH / EN):** รองรับทั้งภาษาไทยและภาษาอังกฤษ สลับได้ทันทีทุกเมื่อ
 - 📱 **Responsive Design:** ออกแบบอย่างพิถีพิถันให้เล่นได้อย่างลื่นไหลทั้งบนคอมพิวเตอร์และมือถือ

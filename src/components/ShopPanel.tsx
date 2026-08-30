@@ -13,6 +13,7 @@ import {
   rootSynergyCost,
   rootSynergyUnlocked,
   speciesSynergyBonusPct,
+  relicEchoBonusPerEcho,
   rootUpgradeCost,
   rootUpgradeIsMilestone,
   rootUpgradeLevelMult,
@@ -81,11 +82,9 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
   // Unlocked Echoes
   const unlockedEchoIds = useMemo(() => {
     return MODULE_DEFS.filter(def => {
-      const level = state.rootUpgrades[def.id] || 0;
-      const echoes = state.echoes[def.id] || 0;
-      return level >= 5 || echoes > 0;
+      return echoUnlockedFor(state, def.id) || (state.echoes[def.id] || 0) > 0;
     }).map(d => d.id);
-  }, [state.rootUpgrades, state.echoes]);
+  }, [state.rootUpgrades, state.echoes, state.owned]);
 
   // Unlocked Synergies
   const unlockedSynergyIds = useMemo(() => {
@@ -188,16 +187,18 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
       const echoes = state.echoes[def.id] || 0;
       const cost = echoCost(state, def, totalRate);
       const affordable = state.nutrients >= cost;
+      const echoBonus = relicEchoBonusPerEcho(state);
+      const echoBonusStr = Number(echoBonus.toFixed(2)).toString();
 
       return {
         icon: def.icon || '✨',
         title: isEn ? `Echo: ${localizedName}` : `สะท้อน: ${localizedName}`,
         desc: isEn
-          ? `Permanent +1% global production rate across all species even after Prestige`
-          : `เพิ่มเรทการผลิตทั้งหมด +1% ถาวรแม้หว่านใหม่`,
+          ? `Permanent +${echoBonusStr}% global production rate across all species even after Prestige`
+          : `เพิ่มเรทการผลิตทั้งหมด +${echoBonusStr}% ถาวรแม้หว่านใหม่`,
         reqText: null,
         costText: fmt(cost),
-        multText: isEn ? '+1% Global' : '+1% เรทรวม',
+        multText: isEn ? `+${echoBonusStr}% Global` : `+${echoBonusStr}% เรทรวม`,
         color: '#67e8f9',
         canBuy: affordable,
       };
@@ -207,19 +208,20 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
       const isOwned = !!state.rootSynergies?.[def.id];
       const count = state.owned[def.id] || 0;
       const bonusPct = speciesSynergyBonusPct(state, def.id);
+      const bonusPctStr = Number(bonusPct.toFixed(2)).toString();
       const totalSynBonus = (count * bonusPct).toFixed(1);
-      const cost = rootSynergyCost(def);
+      const cost = rootSynergyCost(def, state);
       const affordable = state.nutrients >= cost;
 
       return {
         icon: def.icon || '🌐',
         title: isEn ? `Network: ${localizedName}` : `เครือข่าย: ${localizedName}`,
         desc: isEn
-          ? `Each ${localizedName} grants +${bonusPct}% global yield across all roots! (Current ${count} units = +${totalSynBonus}% to entire farm)`
-          : `ราก ${localizedName} ทุกๆ 1 ต้น มอบโบนัส +${bonusPct}% ให้กับผลผลิตทั้งฟาร์ม! (ตอนนี้มี ${count} ต้น = +${totalSynBonus}% ทั้งฟาร์ม)`,
+          ? `Each ${localizedName} grants +${bonusPctStr}% global yield across all roots! (Current ${count} units = +${totalSynBonus}% to entire farm)`
+          : `ราก ${localizedName} ทุกๆ 1 ต้น มอบโบนัส +${bonusPctStr}% ให้กับผลผลิตทั้งฟาร์ม! (ตอนนี้มี ${count} ต้น = +${totalSynBonus}% ทั้งฟาร์ม)`,
         reqText: null,
         costText: isOwned ? (isEn ? 'ACTIVE' : 'เปิดใช้งานแล้ว') : fmt(cost),
-        multText: isOwned ? `+${totalSynBonus}% (${isEn ? 'Active' : 'ทำงานอยู่'})` : `+${totalSynBonus}% (+${bonusPct}%/ต้น)`,
+        multText: isOwned ? `+${totalSynBonus}% (${isEn ? 'Active' : 'ทำงานอยู่'})` : `+${totalSynBonus}% (+${bonusPctStr}%/ต้น)`,
         color: '#38bdf8',
         canBuy: !isOwned && affordable,
       };
@@ -357,7 +359,7 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
             {quickSynergyIds.map(id => {
               const def = MODULE_DEFS.find(m => m.id === id)!;
               const isOwned = !!state.rootSynergies?.[id];
-              const cost = rootSynergyCost(def);
+              const cost = rootSynergyCost(def, state);
               const affordable = state.nutrients >= cost;
               const canBuy = !isOwned && affordable;
               const isHovered = hoveredTile?.type === 'syn' && hoveredTile?.id === id;
@@ -457,6 +459,7 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
               ruMult={r.ruMult}
               echoMult={echoMult}
               lang={lang}
+              state={state}
               onBuy={onBuyModule}
             />
           );

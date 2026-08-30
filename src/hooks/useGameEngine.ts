@@ -54,6 +54,8 @@ import {
   rootSynergyUnlocked,
   rootUpgradeCost,
   rootUpgradeRequireOwned,
+  isSkinUnlocked,
+  isUIThemeUnlocked,
   SKIN_COSTS,
   SKIN_CYCLE_ORDER,
   SKIN_PRESTIGE_KEYS,
@@ -67,7 +69,20 @@ import {
   UI_THEME_COSTS,
   UI_THEME_ORDER,
   UI_THEME_PRESTIGE_KEYS,
+  calcTranscendenceEssences,
+  isTranscendenceUnlocked,
+  primordialVigorCost,
+  soilMemoryCost,
+  soilMemoryRetainPct,
+  gaiaTouchCost,
+  gaiaTouchBonusMult,
+  TRIAL_DEFS,
+  PRIMORDIAL_VIGOR_MAX_LEVEL,
+  SOIL_MEMORY_MAX_LEVEL,
+  GAIA_TOUCH_MAX_LEVEL,
+  AUTO_MANAGER_COST,
 } from '@/constants/gameData';
+import { TrialId } from '@/types/game';
 import { buildBranchesFromLog, deriveLog } from '@/lib/treeGenerator';
 import { evaluateAutoBuy, getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
 import {
@@ -213,7 +228,7 @@ export function useGameEngine() {
     const cur = stateRef.current;
     const def = MODULE_DEFS.find(m => m.id === moduleId);
     if (!def || cur.rootSynergies?.[moduleId] || !rootSynergyUnlocked(cur, moduleId)) return;
-    const cost = rootSynergyCost(def);
+    const cost = rootSynergyCost(def, cur);
     if (cur.nutrients < cost) return;
 
     setState(prev => ({
@@ -241,6 +256,16 @@ export function useGameEngine() {
       freshOwned['fine'] = starterBonus;
     }
 
+    // Soil Memory: Retain a portion of echoes upon Prestige
+    const retainPct = soilMemoryRetainPct(cur);
+    const retainedEchoes: Record<string, number> = {};
+    if (retainPct > 0 && cur.echoes) {
+      Object.entries(cur.echoes).forEach(([id, count]) => {
+        const kept = Math.floor(count * retainPct);
+        if (kept > 0) retainedEchoes[id] = kept;
+      });
+    }
+
     // Ensure at least 10 initial nutrients if auto-root is active so the first root is bought without delay
     const initialNutrients = cur.prestige.autoRoot ? 10 : 0;
 
@@ -253,6 +278,7 @@ export function useGameEngine() {
       owned: freshOwned,
       totalOwned: starterBonus,
       rootUpgrades: {},
+      echoes: retainedEchoes,
       rootSynergies: {},
       buyQty: 1,
       stats: {
@@ -265,6 +291,136 @@ export function useGameEngine() {
     return gained;
   }, []);
 
+  // Transcendence Reset (Layer 2)
+  const doTranscendence = useCallback(() => {
+    const cur = stateRef.current;
+    const gained = calcTranscendenceEssences(cur);
+    if (gained <= 0 && (cur.transcendence?.gaiaEssences || 0) === 0) return 0;
+
+    const retainPct = soilMemoryRetainPct(cur);
+    const retainedEchoes: Record<string, number> = {};
+    if (retainPct > 0 && cur.echoes) {
+      Object.entries(cur.echoes).forEach(([id, count]) => {
+        const kept = Math.floor(count * retainPct);
+        if (kept > 0) retainedEchoes[id] = kept;
+      });
+    }
+
+    const freshOwned: Record<string, number> = {};
+    MODULE_DEFS.forEach(d => { freshOwned[d.id] = 0; });
+    const initialNutrients = 10;
+
+    setState(prev => ({
+      ...prev,
+      nutrients: initialNutrients,
+      runEarned: initialNutrients,
+      runPlayTimeSeconds: 0,
+      owned: freshOwned,
+      totalOwned: 0,
+      rootUpgrades: {},
+      echoes: retainedEchoes,
+      rootSynergies: {},
+      eternalSeeds: 0,
+      buyQty: 1,
+      transcendence: {
+        ...prev.transcendence,
+        count: (prev.transcendence?.count || 0) + 1,
+        gaiaEssences: (prev.transcendence?.gaiaEssences || 0) + gained,
+        totalGaiaEssencesLifetime: (prev.transcendence?.totalGaiaEssencesLifetime || 0) + gained,
+      },
+    }));
+
+    return gained;
+  }, []);
+
+  const buyPrimordialVigor = useCallback(() => {
+    const cur = stateRef.current;
+    const lvl = cur.transcendence?.primordialVigorLevel || 0;
+    if (lvl >= PRIMORDIAL_VIGOR_MAX_LEVEL) return;
+    const cost = primordialVigorCost(lvl);
+    if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - cost,
+        primordialVigorLevel: lvl + 1,
+      },
+    }));
+  }, []);
+
+  const buySoilMemory = useCallback(() => {
+    const cur = stateRef.current;
+    const lvl = cur.transcendence?.soilMemoryLevel || 0;
+    if (lvl >= SOIL_MEMORY_MAX_LEVEL) return;
+    const cost = soilMemoryCost(lvl);
+    if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - cost,
+        soilMemoryLevel: lvl + 1,
+      },
+    }));
+  }, []);
+
+  const buyAutoManager = useCallback(() => {
+    const cur = stateRef.current;
+    if (cur.transcendence?.autoManagerUnlocked) return;
+    const cost = AUTO_MANAGER_COST;
+    if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - cost,
+        autoManagerUnlocked: true,
+      },
+    }));
+  }, []);
+
+  const buyGaiaTouch = useCallback(() => {
+    const cur = stateRef.current;
+    const lvl = cur.transcendence?.gaiaTouchLevel || 0;
+    if (lvl >= GAIA_TOUCH_MAX_LEVEL) return;
+    const cost = gaiaTouchCost(lvl);
+    if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - cost,
+        gaiaTouchLevel: lvl + 1,
+      },
+    }));
+  }, []);
+
+  const startTrial = useCallback((trialId: TrialId) => {
+    doPrestige();
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        activeTrial: trialId,
+      },
+    }));
+  }, [doPrestige]);
+
+  const abandonTrial = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        activeTrial: 'none',
+      },
+    }));
+  }, []);
+
   // Hard Reset
   const doHardReset = useCallback(() => {
     setActiveBuff(null);
@@ -273,12 +429,8 @@ export function useGameEngine() {
   }, []);
 
   // Skins
-  const ownedSkinList = useCallback((prestige = stateRef.current.prestige) => {
-    return SKIN_CYCLE_ORDER.filter(id => {
-      if (id === 'none') return true;
-      const key = SKIN_PRESTIGE_KEYS[id];
-      return key ? !!prestige[key as keyof typeof prestige] : false;
-    });
+  const ownedSkinList = useCallback(() => {
+    return SKIN_CYCLE_ORDER.filter(id => isSkinUnlocked(stateRef.current, id));
   }, []);
 
   const toggleSkin = useCallback(() => {
@@ -301,12 +453,8 @@ export function useGameEngine() {
   }, []);
 
   // UI Themes
-  const ownedUIThemeList = useCallback((prestige = stateRef.current.prestige) => {
-    return UI_THEME_ORDER.filter(id => {
-      if (id === 'classic') return true;
-      const key = UI_THEME_PRESTIGE_KEYS[id];
-      return key ? !!prestige[key as keyof typeof prestige] : false;
-    });
+  const ownedUIThemeList = useCallback(() => {
+    return UI_THEME_ORDER.filter(id => isUIThemeUnlocked(stateRef.current, id));
   }, []);
 
   const toggleUITheme = useCallback(() => {
@@ -380,7 +528,7 @@ export function useGameEngine() {
       showFloatingText(ev.left + 26, ev.top + 20, '+' + fmt(amount), '#e0a94a');
     } else if (ev.type === 'lucky') {
       const isEn = cur.lang === 'en';
-      const mult = (1 + (777 - 1) * bonusMult) * luckyMagnitudeExtra(cur);
+      const mult = (1 + (777 - 1) * bonusMult) * luckyMagnitudeExtra(cur) * gaiaTouchBonusMult(cur);
       const seconds = luckyDurationSeconds(cur);
       setActiveLuckyBuff({ multiplier: mult, expiresAt: Date.now() + seconds * 1000 });
       setState(prev => ({
@@ -923,7 +1071,7 @@ export function useGameEngine() {
   useEffect(() => {
     const interval = setInterval(() => {
       const cur = stateRef.current;
-      if (!cur.prestige.autoReset || !cur.prestige.autoResetEnabled) return;
+      if (!cur.prestige.autoReset || !cur.prestige.autoResetEnabled || cur.transcendence?.activeTrial === 'void_anomaly') return;
       if (!prestigeUnlocked(cur)) return;
       const targetThreshold = Math.max(10, cur.prestige.autoResetThreshold || AUTO_RESET_MIN_SEEDS);
       if (calcPrestigeSeeds(cur) < targetThreshold) return;
@@ -943,6 +1091,58 @@ export function useGameEngine() {
 
     return () => clearInterval(interval);
   }, [doPrestige, showFloatingText, totalRate]);
+
+  // Trial completion check (every 1s)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const cur = stateRef.current;
+      const active = cur.transcendence?.activeTrial;
+      if (active && active !== 'none') {
+        const def = TRIAL_DEFS.find(t => t.id === active);
+        if (def && (cur.owned['yggdrasil'] || 0) >= def.targetYggdrasil) {
+          const isEn = cur.lang === 'en';
+          setState(prev => ({
+            ...prev,
+            transcendence: {
+              ...prev.transcendence,
+              activeTrial: 'none',
+              completedTrials: {
+                ...prev.transcendence?.completedTrials,
+                [active]: true,
+              },
+            },
+          }));
+          showFloatingText(
+            250,
+            120,
+            isEn ? `🏆 Trial Conquered: ${def.enName}!` : `🏆 พิชิตการทดลอง: ${def.name}!`,
+            '#ffd76a'
+          );
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [showFloatingText]);
+
+  // Auto-Manager Loop (every 4s, upgrades prestige shop if affordable)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const cur = stateRef.current;
+      if (!cur.transcendence?.autoManagerUnlocked || cur.eternalSeeds < 50) return;
+
+      // Prioritize passive rate, golden seed, starter culture
+      if (cur.eternalSeeds >= passiveRateCost(cur)) {
+        buyPassiveRate(1);
+      } else if (cur.eternalSeeds >= goldenSeedCost(cur)) {
+        buyGoldenSeed(1);
+      } else if (cur.prestige.starterLevel < STARTER_CULTURE_MAX_LEVEL && cur.eternalSeeds >= starterCultureCost(cur)) {
+        buyStarterCulture(1);
+      }
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [buyPassiveRate, buyGoldenSeed, buyStarterCulture]);
 
   // Random event scheduler (105-155s interval)
   const scheduleNextEvent = useCallback(() => {
@@ -966,7 +1166,7 @@ export function useGameEngine() {
       setActiveEvents([newEv]);
 
       // Auto-event prestige perk: verify event is still active & unclaimed before claiming
-      if (cur.prestige.autoEvent && cur.prestige.autoEventEnabled) {
+      if (cur.prestige.autoEvent && cur.prestige.autoEventEnabled && cur.transcendence?.activeTrial !== 'void_anomaly') {
         autoEventClaimRef.current = setTimeout(() => {
           if (!claimedEventIdsRef.current.has(id)) {
             claimEvent(newEv);
@@ -1123,6 +1323,15 @@ export function useGameEngine() {
     buyLuckyDuration,
     buyOfflineCapUpgrade,
     buySkin,
+    // Transcendence & Trials
+    isTranscendenceUnlocked: isTranscendenceUnlocked(state),
+    doTranscendence,
+    buyPrimordialVigor,
+    buySoilMemory,
+    buyAutoManager,
+    buyGaiaTouch,
+    startTrial,
+    abandonTrial,
     // Relic & Biome methods
     claimUnearthedRelic,
     excavateRelic,

@@ -18,6 +18,7 @@ export function encodeSave(state: GameState): string {
     re: state.runEarned,
     es: state.eternalSeeds,
     p: state.prestige,
+    ts: state.transcendence,
     pt: state.totalPlayTimeSeconds,
     rpt: state.runPlayTimeSeconds,
     ach: state.achievements || [],
@@ -190,6 +191,20 @@ export function payloadToState(payload: SavePayload): GameState {
         passiveRateLevel: 0,
       },
       payload.p || {}
+    ),
+    transcendence: Object.assign(
+      {
+        count: 0,
+        gaiaEssences: 0,
+        totalGaiaEssencesLifetime: 0,
+        primordialVigorLevel: 0,
+        soilMemoryLevel: 0,
+        autoManagerUnlocked: false,
+        gaiaTouchLevel: 0,
+        activeTrial: 'none' as const,
+        completedTrials: {},
+      },
+      payload.ts || {}
     ),
     achievements: Array.isArray(payload.ach) ? payload.ach : [],
     stats: Object.assign(

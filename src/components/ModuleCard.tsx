@@ -18,6 +18,7 @@ interface ModuleCardProps {
   ruMult: number;
   echoMult: number;
   lang?: Language;
+  state?: GameState;
   onBuy: (id: string) => void;
 }
 
@@ -33,10 +34,11 @@ export const ModuleCard: React.FC<ModuleCardProps> = React.memo(({
   ruMult,
   echoMult,
   lang = 'th',
+  state,
   onBuy,
 }) => {
   const [hoverAbove, setHoverAbove] = useState(false);
-  const cost = bulkCostFor(def, owned, qty);
+  const cost = bulkCostFor(def, owned, qty, state);
   const affordable = nutrients >= cost;
   const isEn = lang === 'en';
   const milestoneCount = moduleMilestonesCountFor(owned);

@@ -76,7 +76,7 @@ export const RELIC_DEFS: RelicDef[] = [
     desc: 'แก่นสปอร์บรรพบุรุษเชื้อราที่สร้างเครือข่ายเชื่อมโยงรากไม้ทั้งผืนโลก',
     rarity: 'epic',
     dropWeight: 10,
-    effectDesc: 'เครือข่ายราก (Synergies) ให้ผลผลิตเพิ่มเป็น +0.15%/ต้น (เดิม +0.10%)',
+    effectDesc: 'เครือข่ายราก (Synergies) ให้ผลผลิตเพิ่มเป็น +0.12%/ต้น (เดิม +0.08%)',
     baseCost: 15_000_000_000_000_000, // 15Qa
     color: '#c084fc',
   },
@@ -249,12 +249,12 @@ export function relicOfflineBonus(state: GameState): { extraHours: number; effMu
 
 export function relicSynergyBonusPerUnit(state: GameState): number {
   const m = relicMult(state, 'mycocore');
-  return m > 0 ? (0.10 + 0.05 * m) : 0.10;
+  return m > 0 ? Math.round((0.08 + 0.04 * m) * 100) / 100 : 0.08;
 }
 
 export function relicEchoBonusPerEcho(state: GameState): number {
   const m = relicMult(state, 'crown');
-  return m > 0 ? (1.0 + 0.5 * m) : 1.0;
+  return m > 0 ? Math.round((1.0 + 0.5 * m) * 100) / 100 : 1.0;
 }
 
 export function relicStarterRootsBonus(state: GameState): number {

@@ -30,6 +30,8 @@ import {
   offlineCapCost,
   offlineCapMaxed,
   passiveRateCost,
+  isSkinUnlocked,
+  isUIThemeUnlocked,
   SKIN_DEFS,
   SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
@@ -618,13 +620,13 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                     🎨 {isEn ? 'Wardrobe & Visual Themes' : 'ห้องแต่งตัว & ธีมหน้าต่าง UI'}
                   </span>
                   <span style={{ fontSize: '11px', color: 'var(--accent-glow)', fontWeight: 700 }}>
-                    {SKIN_DEFS.filter(s => s.id === 'none' || !!state.prestige[SKIN_PRESTIGE_KEYS[s.id] as keyof typeof state.prestige]).length}/{SKIN_DEFS.length} 🌳 · {UI_THEME_DEFS.filter(t => t.id === 'classic' || !!state.prestige[UI_THEME_PRESTIGE_KEYS[t.id] as keyof typeof state.prestige]).length}/{UI_THEME_DEFS.length} 🖼️
+                    {SKIN_DEFS.filter(s => isSkinUnlocked(state, s.id)).length}/{SKIN_DEFS.length} 🌳 · {UI_THEME_DEFS.filter(t => isUIThemeUnlocked(state, t.id)).length}/{UI_THEME_DEFS.length} 🖼️
                   </span>
                 </div>
                 <div style={{ fontSize: '11.5px', color: 'var(--root-cream-dim)', lineHeight: 1.45 }}>
                   {isEn
-                    ? 'Preview all 15 root skins & 13 UI color themes in real-time, customize appearance, and buy directly from the Wardrobe!'
-                    : 'ทดลองใส่สกินรากไม้ 15 แบบ และธีมหน้าต่าง UI 13 แบบได้แบบ Real-time พร้อมเลือกซื้อและสวมใส่ได้ทันทีที่ห้องแต่งตัว'}
+                    ? `Preview all ${SKIN_DEFS.length} root skins & ${UI_THEME_DEFS.length} UI color themes in real-time, customize appearance, and buy directly from the Wardrobe!`
+                    : `ทดลองใส่สกินรากไม้ ${SKIN_DEFS.length} แบบ และธีมหน้าต่าง UI ${UI_THEME_DEFS.length} แบบได้แบบ Real-time พร้อมเลือกซื้อและสวมใส่ได้ทันทีที่ห้องแต่งตัว`}
                 </div>
                 {onOpenWardrobe && (
                   <button

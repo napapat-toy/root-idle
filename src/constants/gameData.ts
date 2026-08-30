@@ -9,3 +9,4 @@ export * from './prestige';
 export * from './formulas';
 export * from './relics';
 export * from './achievementsData';
+export * from './transcendence';

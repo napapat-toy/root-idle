@@ -212,6 +212,8 @@ export function getBranchColor(branches: Branch[], b: Branch, i: number, skin: S
     if (skin === 'gradient') return '#1e3825';
     if (skin === 'nebula') return '#140f28';
     if (skin === 'imperial') return '#241b10';
+    if (skin === 'drought') return '#3a2416';
+    if (skin === 'obsidian') return '#120b12';
     return '#523820'; // Default rich dark wood
   }
 
@@ -318,6 +320,21 @@ export function getBranchColor(branches: Branch[], b: Branch, i: number, skin: S
     const hue = 42 + Math.sin(i * 1.5) * 6;
     const light = 38 + Math.min(b.depth, 12) * 4.5;
     return `hsl(${hue}, 88%, ${light}%)`;
+  }
+
+  // 16. drought (🏜️ ซาฮาราโบราณ): Desert dunes amber & weathered sand tone
+  if (skin === 'drought') {
+    const hue = 32 + ((i * 19) % 15);
+    const light = 38 + Math.min(b.depth, 12) * 4.2;
+    return `hsl(${hue}, 72%, ${light}%)`;
+  }
+
+  // 17. obsidian (🌋 ออบซิเดียนเพลิง): Volcanic glass obsidian with lava cracks crimson
+  if (skin === 'obsidian') {
+    const isMagma = i % 3 === 0;
+    const hue = isMagma ? 12 : 270;
+    const light = isMagma ? (50 + Math.min(b.depth, 10) * 3) : (18 + Math.min(b.depth, 10) * 2);
+    return `hsl(${hue}, ${isMagma ? 95 : 15}%, ${light}%)`;
   }
 
   return '#eadfc7';

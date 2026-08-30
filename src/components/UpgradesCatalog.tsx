@@ -5,6 +5,8 @@ import { GameState, Language } from '@/types/game';
 import {
   MODULE_DEFS,
   echoCost,
+  relicEchoBonusPerEcho,
+  relicSynergyBonusPerUnit,
   rootSynergyCost,
   speciesSynergyBonusPct,
   rootUpgradeCost,
@@ -80,7 +82,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
     unpurchasedSynergyIds.forEach(id => {
       const def = MODULE_DEFS.find(m => m.id === id);
       if (!def) return;
-      const cost = rootSynergyCost(def);
+      const cost = rootSynergyCost(def, state);
       if (currentNutrients >= cost) {
         onBuyRootSynergy(id);
         currentNutrients -= cost;
@@ -365,7 +367,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                         </span>
                       </div>
                       <div style={{ fontSize: '11px', color: '#67e8f9', fontWeight: 600 }}>
-                        +1% {isEn ? 'Global Production' : 'เรทผลผลิตรวมถาวร'}
+                        +{Number(relicEchoBonusPerEcho(state).toFixed(2))}% {isEn ? 'Global Production' : 'เรทผลผลิตรวมถาวร'}
                       </div>
                     </div>
                   </div>
@@ -397,16 +399,17 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
         {(activeTab === 'all' || activeTab === 'syn') && unlockedSynergyIds.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div className="panel-subtitle-row">
-              <span>🌐 {isEn ? 'Mycorrhizal Networks (+0.1%/Unit Global)' : 'เครือข่ายไมคอร์ไรซา (+0.1%/ต้น)'}</span>
+              <span>🌐 {isEn ? `Mycorrhizal Networks (+${Number(relicSynergyBonusPerUnit(state).toFixed(2))}%/Unit Global)` : `เครือข่ายไมคอร์ไรซา (+${Number(relicSynergyBonusPerUnit(state).toFixed(2))}%/ต้น)`}</span>
             </div>
             {unlockedSynergyIds.map(id => {
               const def = MODULE_DEFS.find(m => m.id === id)!;
               const isOwned = !!state.rootSynergies?.[id];
-              const cost = rootSynergyCost(def);
+              const cost = rootSynergyCost(def, state);
               const affordable = state.nutrients >= cost;
               const canBuy = !isOwned && affordable;
               const count = state.owned[id] || 0;
               const bonusPct = speciesSynergyBonusPct(state, id);
+              const bonusPctStr = Number(bonusPct.toFixed(2)).toString();
               const localizedName = MODULE_TRANSLATIONS[def.id]?.[lang]?.name || def.name;
 
               return (
@@ -449,8 +452,8 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                       </div>
                       <div style={{ fontSize: '11px', color: isOwned ? '#38bdf8' : 'var(--root-cream-dim)' }}>
                         {isOwned
-                          ? (isEn ? `Active: +${(count * bonusPct).toFixed(1)}% Global (+${bonusPct}%/unit · from ${count} roots)` : `ทำงานอยู่: โบนัส +${(count * bonusPct).toFixed(1)}% ทั้งฟาร์ม (+${bonusPct}%/ต้น จาก ${count} ต้น)`)
-                          : (isEn ? `Grants +${(count * bonusPct).toFixed(1)}% Global (+${bonusPct}%/unit · from ${count} roots)` : `มอบโบนัส +${(count * bonusPct).toFixed(1)}% ทั้งฟาร์ม (+${bonusPct}%/ต้น จาก ${count} ต้น)`)}
+                          ? (isEn ? `Active: +${(count * bonusPct).toFixed(1)}% Global (+${bonusPctStr}%/unit · from ${count} roots)` : `ทำงานอยู่: โบนัส +${(count * bonusPct).toFixed(1)}% ทั้งฟาร์ม (+${bonusPctStr}%/ต้น จาก ${count} ต้น)`)
+                          : (isEn ? `Grants +${(count * bonusPct).toFixed(1)}% Global (+${bonusPctStr}%/unit · from ${count} roots)` : `มอบโบนัส +${(count * bonusPct).toFixed(1)}% ทั้งฟาร์ม (+${bonusPctStr}%/ต้น จาก ${count} ต้น)`)}
                       </div>
                     </div>
                   </div>

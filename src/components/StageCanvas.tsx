@@ -84,6 +84,12 @@ const TrunkBase: React.FC<{ totalOwned: number; activeSkin: SkinId }> = React.me
   } else if (activeSkin === 'imperial') {
     barkFill = '#241b10';
     barkStroke = '#130d06';
+  } else if (activeSkin === 'drought') {
+    barkFill = '#3a2416';
+    barkStroke = '#22140a';
+  } else if (activeSkin === 'obsidian') {
+    barkFill = '#120b12';
+    barkStroke = '#060306';
   }
 
   const left = 250 - width / 2;

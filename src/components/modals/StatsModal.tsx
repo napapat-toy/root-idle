@@ -146,6 +146,18 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                   <span className="stats-label">{tr.statLifetimeSeeds}:</span>
                   <span className="stats-value golden">{fmt(lifetimeSeeds)}</span>
                 </div>
+                {(state.transcendence?.count || 0) > 0 && (
+                  <>
+                    <div className="stats-row">
+                      <span className="stats-label">{isEn ? 'Gaia Awakenings:' : 'การตื่นรู้แห่งไกอา:'}</span>
+                      <span className="stats-value highlight" style={{ color: '#34d399' }}>{state.transcendence.count} {isEn ? 'times' : 'ครั้ง'}</span>
+                    </div>
+                    <div className="stats-row">
+                      <span className="stats-label">{isEn ? 'Gaia Essences Lifetime:' : 'ละอองชีวิตดึกดำบรรพ์สะสม:'}</span>
+                      <span className="stats-value highlight" style={{ color: '#38bdf8' }}>{fmt(state.transcendence.totalGaiaEssencesLifetime)} 🌍</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 

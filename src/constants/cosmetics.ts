@@ -21,6 +21,9 @@ export const SKIN_COSTS: Record<SkinId, number> = {
   gradient: 750000,
   nebula: 1000000,
   imperial: 1000000,
+  // 🏆 Subterranean Trials Exclusive Rewards
+  drought: 0,
+  obsidian: 0,
 };
 
 export const SKIN_PRESTIGE_KEYS: Record<SkinId, keyof PrestigeState | null> = {
@@ -39,9 +42,11 @@ export const SKIN_PRESTIGE_KEYS: Record<SkinId, keyof PrestigeState | null> = {
   gradient: 'skinGradient',
   nebula: 'skinNebula',
   imperial: 'skinImperial',
+  drought: null,
+  obsidian: null,
 };
 
-export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid' | 'luxury'; always?: boolean }> = [
+export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid' | 'luxury' | 'trial'; always?: boolean }> = [
   { id: 'none', name: 'ปกติ (ไม่มีสกิน)', tier: 'starter', always: true },
   { id: 'rainbow', name: '🌈 รุ้ง/ทอง', tier: 'starter' },
   { id: 'sakura', name: '🌸 ซากุระราตรี', tier: 'starter' },
@@ -57,6 +62,8 @@ export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid
   { id: 'gradient', name: '🍃 เขียวมรกต', tier: 'luxury' },
   { id: 'nebula', name: '🌌 มิติเนบิวลา', tier: 'luxury' },
   { id: 'imperial', name: '🪙 มรดกทองคำ', tier: 'luxury' },
+  { id: 'drought', name: '🏜️ ซาฮาราโบราณ', tier: 'trial' },
+  { id: 'obsidian', name: '🌋 ออบซิเดียนเพลิง', tier: 'trial' },
 ];
 
 export const SKIN_CYCLE_ORDER: SkinId[] = [
@@ -75,6 +82,8 @@ export const SKIN_CYCLE_ORDER: SkinId[] = [
   'gradient',
   'nebula',
   'imperial',
+  'drought',
+  'obsidian',
 ];
 
 export const UI_THEME_COSTS: Record<UIThemeId, number> = {
@@ -94,6 +103,8 @@ export const UI_THEME_COSTS: Record<UIThemeId, number> = {
   emerald: 5000000,
   nebula: 10000000,
   imperial: 10000000,
+  // 🏆 Subterranean Trials Exclusive Reward
+  void_sovereign: 0,
 };
 
 export const UI_THEME_PRESTIGE_KEYS: Record<UIThemeId, keyof PrestigeState | null> = {
@@ -110,9 +121,10 @@ export const UI_THEME_PRESTIGE_KEYS: Record<UIThemeId, keyof PrestigeState | nul
   emerald: 'themeEmerald',
   nebula: 'themeNebula',
   imperial: 'themeImperial',
+  void_sovereign: null,
 };
 
-export const UI_THEME_DEFS: Array<{ id: UIThemeId; name: string; tier: 'starter' | 'mid' | 'luxury'; always?: boolean }> = [
+export const UI_THEME_DEFS: Array<{ id: UIThemeId; name: string; tier: 'starter' | 'mid' | 'luxury' | 'trial'; always?: boolean }> = [
   { id: 'classic', name: '🪵 ดินธรรมชาติคลาสสิก', tier: 'starter', always: true },
   { id: 'sakura', name: '🌸 ซากุระราตรี', tier: 'starter' },
   { id: 'cafe', name: '☕ คาเฟ่มัทฉะ & โกโก้', tier: 'starter' },
@@ -126,6 +138,7 @@ export const UI_THEME_DEFS: Array<{ id: UIThemeId; name: string; tier: 'starter'
   { id: 'emerald', name: '🍃 เขียวมรกตป่าฝน', tier: 'luxury' },
   { id: 'nebula', name: '🌌 มิติเนบิวลาอวกาศ', tier: 'luxury' },
   { id: 'imperial', name: '🪙 ศิลาทองคำราชันย์', tier: 'luxury' },
+  { id: 'void_sovereign', name: '🌌 จอมราชันย์แห่งสุญญะ', tier: 'trial' },
 ];
 
 export const UI_THEME_ORDER: UIThemeId[] = [
@@ -142,4 +155,20 @@ export const UI_THEME_ORDER: UIThemeId[] = [
   'emerald',
   'nebula',
   'imperial',
+  'void_sovereign',
 ];
+
+export function isSkinUnlocked(state: { prestige: PrestigeState; transcendence?: { completedTrials?: Record<string, boolean> } }, id: SkinId): boolean {
+  if (id === 'none') return true;
+  if (id === 'drought') return !!state.transcendence?.completedTrials?.arid_drought;
+  if (id === 'obsidian') return !!state.transcendence?.completedTrials?.basalt_strata;
+  const key = SKIN_PRESTIGE_KEYS[id];
+  return key ? !!state.prestige[key] : false;
+}
+
+export function isUIThemeUnlocked(state: { prestige: PrestigeState; transcendence?: { completedTrials?: Record<string, boolean> } }, id: UIThemeId): boolean {
+  if (id === 'classic') return true;
+  if (id === 'void_sovereign') return !!state.transcendence?.completedTrials?.void_anomaly;
+  const key = UI_THEME_PRESTIGE_KEYS[id];
+  return key ? !!state.prestige[key] : false;
+}

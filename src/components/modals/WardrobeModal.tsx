@@ -70,15 +70,18 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
 
   const isSkinOwned = useCallback((id: SkinId) => {
     if (id === 'none') return true;
+    if (id === 'drought') return !!state.transcendence?.completedTrials?.arid_drought;
+    if (id === 'obsidian') return !!state.transcendence?.completedTrials?.basalt_strata;
     const key = SKIN_PRESTIGE_KEYS[id];
     return key ? !!state.prestige[key as keyof typeof state.prestige] : false;
-  }, [state.prestige]);
+  }, [state.prestige, state.transcendence]);
 
   const isUIThemeOwned = useCallback((id: UIThemeId) => {
     if (id === 'classic') return true;
+    if (id === 'void_sovereign') return !!state.transcendence?.completedTrials?.void_anomaly;
     const key = UI_THEME_PRESTIGE_KEYS[id];
     return key ? !!state.prestige[key as keyof typeof state.prestige] : false;
-  }, [state.prestige]);
+  }, [state.prestige, state.transcendence]);
 
   // Live preview current item as index shifts
   useEffect(() => {
@@ -168,6 +171,8 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
     gradient: { th: 'เขียวมรกตป่าฝนเขียวขจี ไล่จากเข้มที่ลำต้นไปอ่อนที่ปลายราก', en: 'Lush emerald rainforest gradient smoothly transitioning' },
     nebula: { th: 'ล่องลอยในห้วงอวกาศ โทนม่วงมิดไนท์ ละอองเนบิวลา และแสงดาว', en: 'Deep space cosmic nebula with starlight violet & galactic blue' },
     imperial: { th: 'วิหารทองคำจักรพรรดิ โทนหินภูเขาไฟตัดกับทองคำบริสุทธิ์', en: 'Imperial golden relic with obsidian stone and royal gold' },
+    drought: { th: 'เนินทรายทะเลทรายโบราณ โทนดินเผาอบอุ่นและสีทรายผุกร่อน', en: 'Ancient desert dunes with warm terracotta and weathered sand' },
+    obsidian: { th: 'หินแก้วออบซิเดียนภูเขาไฟแทรกด้วยรอยแยกธารลาวาเพลิง', en: 'Volcanic obsidian glass with glowing crimson magma fissures' },
   };
 
   const uiThemeDescriptions: Record<UIThemeId, { th: string; en: string }> = {
@@ -184,6 +189,7 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
     emerald: { th: 'ดำป่าลึกมรกต ขอบเขียวมรกตเจิดจรัส และแสงใบไม้ป่าฝน', en: 'Deep jungle obsidian with vibrant emerald green borders' },
     nebula: { th: 'ห้วงอวกาศมิดไนท์ การ์ดม่วงเนบิวลา ขอบแสงดาว และประกายกาแลกซี่', en: 'Midnight cosmic void with nebula purple cards and starlight' },
     imperial: { th: 'ศิลาภูเขาไฟออบซิเดียน ขอบทองคำบรอนซ์ และแสงทองคำบริสุทธิ์', en: 'Imperial volcanic stone with polished royal bronze borders' },
+    void_sovereign: { th: 'มิติสุญญะมืดสนิท ตัดกับขอบนีออนคอสมิกอินดิโกและม่วงดวงดาว', en: 'Deep void dimension with radiant cosmic indigo borders' },
   };
 
   const skinSwatches: Record<SkinId, string[]> = {
@@ -202,6 +208,8 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
     gradient: ['#062c19', '#059669', '#34d399', '#a7f3d0'],
     nebula: ['#0b0819', '#6366f1', '#ec4899', '#e0e7ff'],
     imperial: ['#181408', '#b45309', '#f59e0b', '#fef08a'],
+    drought: ['#26190e', '#8c4a27', '#d97736', '#fcd34d'],
+    obsidian: ['#0a0808', '#261414', '#dc2626', '#fb923c'],
   };
 
   const themeSwatches: Record<UIThemeId, string[]> = {
@@ -218,6 +226,7 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
     emerald: ['#04120a', '#082114', '#059669', '#a7f3d0'],
     nebula: ['#080714', '#120f26', '#4f46e5', '#f472b6'],
     imperial: ['#100f0c', '#1b1812', '#b45309', '#fef3c7'],
+    void_sovereign: ['#080612', '#100d20', '#4f46e5', '#ddd6fe'],
   };
 
   // Current active item data
@@ -248,7 +257,8 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
   const curCost = isCurrentTabSkins ? currentSkinCost : currentThemeCost;
   const curIndex = isCurrentTabSkins ? skinIndex : themeIndex;
   const totalCount = isCurrentTabSkins ? SKIN_DEFS.length : UI_THEME_DEFS.length;
-  const canAfford = state.eternalSeeds >= curCost;
+  const isTrialTier = isCurrentTabSkins ? currentSkinDef.tier === 'trial' : currentThemeDef.tier === 'trial';
+  const canAfford = !isTrialTier && state.eternalSeeds >= curCost;
 
   return (
     <div
@@ -510,6 +520,27 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
             >
               ✅ {isEn ? 'Equip This' : 'สวมใส่อันนี้'}
             </button>
+          ) : isTrialTier ? (
+            <div
+              style={{
+                flex: 1,
+                padding: '10px',
+                borderRadius: '12px',
+                background: 'rgba(234, 179, 8, 0.12)',
+                border: '1px solid rgba(234, 179, 8, 0.35)',
+                color: '#facc15',
+                fontWeight: 700,
+                fontSize: '12px',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+              }}
+            >
+              <span>⚔️</span>
+              <span>{isEn ? 'Subterranean Trial Reward' : 'รางวัลจากการทดลองแห่งผืนพิภพ'}</span>
+            </div>
           ) : canAfford ? (
             <button
               onClick={() => {

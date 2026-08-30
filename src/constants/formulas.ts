@@ -3,13 +3,13 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.25.1';
+export const GAME_VERSION = '1.26.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
 
-export const ROOT_UPGRADE_MILESTONE_MULT = 3.0;
-export const ROOT_UPGRADE_NORMAL_MULT = 2.0;
+export const ROOT_UPGRADE_MILESTONE_MULT = 2.5;
+export const ROOT_UPGRADE_NORMAL_MULT = 1.75;
 export const ROOT_UPGRADE_DISCOUNT = 0.40;
 
 export const ECHO_REQUIRE_OWNED = 20;
@@ -18,7 +18,7 @@ export const ECHO_COST_MULT = 4;
 export const ECHO_REQUIRE_UPGRADE_LEVEL = 3;
 
 export const ROOT_SYNERGY_REQUIRE_OWNED = 50;
-export const ROOT_SYNERGY_PCT_PER_UNIT = 0.1; // +0.1% per owned unit
+export const ROOT_SYNERGY_PCT_PER_UNIT = 0.08; // +0.08% per owned unit
 
 export function createFreshState(): GameState {
   const s: GameState = {
@@ -65,6 +65,17 @@ export function createFreshState(): GameState {
       luckyChanceLevel: 0,
       passiveRateLevel: 0,
     },
+    transcendence: {
+      count: 0,
+      gaiaEssences: 0,
+      totalGaiaEssencesLifetime: 0,
+      primordialVigorLevel: 0,
+      soilMemoryLevel: 0,
+      autoManagerUnlocked: false,
+      gaiaTouchLevel: 0,
+      activeTrial: 'none',
+      completedTrials: {},
+    },
     achievements: [],
     stats: {
       prestigeCount: 0,
@@ -82,13 +93,15 @@ export function createFreshState(): GameState {
 }
 
 // Cost calculations
-export function costFor(def: ModuleDef, ownedCount: number): number {
-  return Math.ceil(def.baseCost * Math.pow(def.costMult, ownedCount));
+export function costFor(def: ModuleDef, ownedCount: number, state?: GameState): number {
+  const trialMult = state ? trialCostMultiplier(state) : 1.0;
+  return Math.ceil(def.baseCost * Math.pow(def.costMult, ownedCount) * trialMult);
 }
 
-export function bulkCostFor(def: ModuleDef, ownedCount: number, qty: number): number {
+export function bulkCostFor(def: ModuleDef, ownedCount: number, qty: number, state?: GameState): number {
   const m = def.costMult;
-  const first = def.baseCost * Math.pow(m, ownedCount);
+  const trialMult = state ? trialCostMultiplier(state) : 1.0;
+  const first = def.baseCost * Math.pow(m, ownedCount) * trialMult;
   const total = Math.abs(m - 1) < 1e-9 ? first * qty : first * (Math.pow(m, qty) - 1) / (m - 1);
   return Math.ceil(total);
 }
@@ -130,6 +143,14 @@ import {
   relicEchoBonusPerEcho,
   biomeActiveRateMultiplier,
 } from './relics';
+import {
+  primordialVigorMult,
+  trialCompletionBonusMultiplier,
+  trialCostMultiplier,
+  trialEchoBonusMultiplier,
+  trialRateMultiplier,
+  trialSynergyBonusMultiplier,
+} from './transcendence';
 
 export function totalEchoCount(state: GameState): number {
   let s = 0;
@@ -142,7 +163,8 @@ export function echoBonusPct(state: GameState): number {
 }
 
 export function globalEchoMultiplier(state: GameState): number {
-  return 1 + echoBonusPct(state) * 0.01;
+  const trialMult = trialEchoBonusMultiplier(state);
+  return (1 + echoBonusPct(state) * 0.01) * trialMult;
 }
 
 export function echoUnlockedFor(state: GameState, moduleId: string): boolean {
@@ -171,8 +193,9 @@ export function rootSynergyUnlocked(state: GameState, moduleId: string): boolean
   return (state.owned[moduleId] || 0) >= ROOT_SYNERGY_REQUIRE_OWNED;
 }
 
-export function rootSynergyCost(def: ModuleDef): number {
-  return Math.ceil(def.baseCost * Math.pow(def.costMult, ROOT_SYNERGY_REQUIRE_OWNED) * 10);
+export function rootSynergyCost(def: ModuleDef, state?: GameState): number {
+  const trialMult = state ? trialCostMultiplier(state) : 1.0;
+  return Math.ceil(def.baseCost * Math.pow(def.costMult, ROOT_SYNERGY_REQUIRE_OWNED) * 10 * trialMult);
 }
 
 export function speciesSynergyBonusPct(state: GameState, _moduleId?: string): number {
@@ -193,7 +216,8 @@ export function totalSynergyBonusPct(state: GameState): number {
 }
 
 export function totalSynergyMultiplier(state: GameState): number {
-  return 1 + totalSynergyBonusPct(state) * 0.01;
+  const trialMult = trialSynergyBonusMultiplier(state);
+  return (1 + totalSynergyBonusPct(state) * 0.01) * trialMult;
 }
 
 export function baseTotalRate(state: GameState): number {
@@ -216,7 +240,10 @@ export function totalGlobalBonusPercent(state: GameState): number {
 }
 
 export function globalRateMultiplier(state: GameState): number {
-  return 1 + totalGlobalBonusPercent(state) * 0.01;
+  const vigor = primordialVigorMult(state);
+  const trialRate = trialRateMultiplier(state);
+  const trialBonus = trialCompletionBonusMultiplier(state);
+  return (1 + totalGlobalBonusPercent(state) * 0.01) * vigor * trialRate * trialBonus;
 }
 
 // Effective Rates

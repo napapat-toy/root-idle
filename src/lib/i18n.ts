@@ -146,6 +146,8 @@ export const SKIN_NAMES: Record<SkinId, Record<Language, string>> = {
   gradient: { th: '🍃 เขียวมรกตป่าฝน (Emerald Lush)', en: '🍃 Emerald Rainforest' },
   nebula: { th: '🌌 มิติเนบิวลาอวกาศ (Cosmic Nebula)', en: '🌌 Cosmic Nebula' },
   imperial: { th: '🪙 มรดกทองคำราชันย์ (Imperial Gold)', en: '🪙 Imperial Gold' },
+  drought: { th: '🏜️ ซาฮาราโบราณ (Ancient Drought)', en: '🏜️ Ancient Drought' },
+  obsidian: { th: '🌋 ออบซิเดียนเพลิง (Obsidian Magma)', en: '🌋 Obsidian Magma' },
 };
 
 export const UI_THEME_NAMES: Record<UIThemeId, Record<Language, string>> = {
@@ -162,6 +164,7 @@ export const UI_THEME_NAMES: Record<UIThemeId, Record<Language, string>> = {
   emerald: { th: '🍃 เขียวมรกตป่าฝน (Emerald Rainforest)', en: '🍃 Emerald Rainforest' },
   nebula: { th: '🌌 มิติเนบิวลาอวกาศ (Cosmic Nebula)', en: '🌌 Cosmic Nebula' },
   imperial: { th: '🪙 ศิลาทองคำราชันย์ (Imperial Gold)', en: '🪙 Imperial Gold & Obsidian' },
+  void_sovereign: { th: '🌌 จอมราชันย์แห่งสุญญะ (Void Sovereign)', en: '🌌 Void Sovereign' },
 };
 
 export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, LocalizedAchievement>> = {
@@ -547,7 +550,7 @@ export const UI_TEXTS = {
     echoTitle: 'สะท้อนราก: {name}',
     echoDesc: 'หล่อเลี้ยงและสะท้อนพลัง เพื่อรับโบนัสเรตรวมของทุกราก +1% ถาวร',
     echoActive: 'สะท้อนราก ×{count} (โบนัสรวม +{pct}%)',
-    echoUnlockHint: 'ต้องมี {name} 100 ต้น & เลเวล 5 ขึ้นไปเพื่อปลดล็อก',
+    echoUnlockHint: 'ต้องมี {name} 20 ต้น & เลเวล 3 ขึ้นไปเพื่อปลดล็อก',
     
     // Modals - General
     close: 'ปิด',
@@ -639,6 +642,29 @@ export const UI_TEXTS = {
     importPlaceholder: 'วางโค้ดตรงนี้',
     emptySlot: 'ว่าง',
     savedAtText: 'บันทึกเมื่อ {date} · {count} ต้น · {seeds} เมล็ด',
+
+    // Transcendence Modal (ตื่นรู้แห่งไกอา)
+    transcendenceBtn: 'ตื่นรู้แห่งไกอา',
+    transcendenceTitle: 'การตื่นรู้แห่งไกอา (Gaia Transcendence)',
+    transcendenceDesc: 'หลอมรวมพลังรากพิภพทั้งหมดเพื่อปลุกพลังจิตวิญญาณแห่งโลก รีเซ็ตรอบใหญ่เพื่อรับ "ละอองชีวิตดึกดำบรรพ์ (Gaia Essences 🌍)"',
+    gainedEssences: '+{amount} ละอองชีวิตดึกดำบรรพ์',
+    currentEssences: 'ครอบครองอยู่ {amount} ละอองชีวิต',
+    confirmTranscendBtn: 'ตื่นรู้แห่งไกอา (รีเซ็ตใหญ่)',
+    gaiaTreeTab: '🌳 ผังจิตวิญญาณไกอา',
+    trialsTab: '⚔️ การทดลองแห่งผืนพิภพ',
+    transcendPerk1Name: 'แกนพลังปฐมกาล (Primordial Vigor)',
+    transcendPerk1Desc: 'เพิ่มเรทผลิตพื้นฐานของรากทุกชนิด +25%/Lv ถาวรข้ามทุกรอบรีเซ็ต',
+    transcendPerk2Name: 'ความทรงจำของผืนดิน (Soil Memory)',
+    transcendPerk2Desc: 'คงพลังสะท้อนราก (Echoes) ไว้ 10%/Lv ทันทีเมื่อหว่านใหม่ (สูงสุด 50%)',
+    transcendPerk3Name: 'บอทวิวัฒนาการ (Auto Manager)',
+    transcendPerk3Desc: 'ระบบ Automation ช่วยซื้ออัปเกรดร้านค้า Prestige อัตโนมัติ',
+    transcendPerk4Name: 'สัมผัสแห่งไกอา (Gaia\'s Touch)',
+    transcendPerk4Desc: 'เพิ่มขนาดและผลคูณของแจ็กพอตโชคดี +30%/Lv',
+    trialActiveBadge: 'กำลังทดสอบ',
+    startTrialBtn: 'เริ่มการทดสอบ',
+    abandonTrialBtn: 'ยกเลิกการทดสอบ',
+    trialCompletedBadge: '✓ พิชิตสำเร็จ',
+    targetGoalText: 'เป้าหมาย: ปลูกรากต้นไม้โลก (Yggdrasil) ครบ {count} ต้น',
   },
   en: {
     // Header & Currency
@@ -686,7 +712,7 @@ export const UI_TEXTS = {
     echoTitle: 'Root Echo: {name}',
     echoDesc: 'Resonate with this species for a permanent +1% global production rate bonus across all roots.',
     echoActive: 'Echo ×{count} (Global Bonus +{pct}%)',
-    echoUnlockHint: 'Requires {name} ×100 & Level 5+ to unlock',
+    echoUnlockHint: 'Requires {name} ×20 & Level 3+ to unlock',
     
     // Modals - General
     close: 'Close',
@@ -778,6 +804,29 @@ export const UI_TEXTS = {
     importPlaceholder: 'Paste save code here',
     emptySlot: 'Empty',
     savedAtText: 'Saved on {date} · {count} roots · {seeds} seeds',
+
+    // Transcendence Modal (Gaia Awakening)
+    transcendenceBtn: 'Gaia Awakening',
+    transcendenceTitle: 'Gaia Transcendence',
+    transcendenceDesc: 'Channel the collective telluric energy of all root networks to awaken the planetary spirit. Perform a grand reset to earn "Gaia Essences (🌍)".',
+    gainedEssences: '+{amount} Gaia Essences',
+    currentEssences: 'Currently holding {amount} Gaia Essences',
+    confirmTranscendBtn: 'Awaken Gaia (Grand Reset)',
+    gaiaTreeTab: '🌳 Gaia Spirit Tree',
+    trialsTab: '⚔️ Subterranean Trials',
+    transcendPerk1Name: 'Primordial Vigor',
+    transcendPerk1Desc: 'Permanently increases baseline rate of all root species by +25%/Lv across all cycles',
+    transcendPerk2Name: 'Soil Memory',
+    transcendPerk2Desc: 'Retains 10%/Lv of your Root Echoes immediately upon Re-sow (max 50%)',
+    transcendPerk3Name: 'Auto Manager',
+    transcendPerk3Desc: 'Automation engine automatically purchases Prestige store upgrades',
+    transcendPerk4Name: 'Gaia\'s Touch',
+    transcendPerk4Desc: 'Increases magnitude and yield of Lucky Events by +30%/Lv',
+    trialActiveBadge: 'In Progress',
+    startTrialBtn: 'Begin Trial',
+    abandonTrialBtn: 'Abandon Trial',
+    trialCompletedBadge: '✓ Conquered',
+    targetGoalText: 'Goal: Grow {count} Yggdrasil Roots',
   },
 };
 

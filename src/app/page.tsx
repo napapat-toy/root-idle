@@ -17,6 +17,7 @@ import { AchievementToast } from '@/components/AchievementToast';
 import { WardrobeModal } from '@/components/modals/WardrobeModal';
 import { RelicsModal } from '@/components/modals/RelicsModal';
 import { AutomationModal } from '@/components/modals/AutomationModal';
+import { TranscendenceModal } from '@/components/modals/TranscendenceModal';
 import { SKIN_COSTS, UI_THEME_COSTS } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { SKIN_NAMES, UI_THEME_NAMES } from '@/lib/i18n';
@@ -80,6 +81,13 @@ export default function Home() {
     buyLuckyDuration,
     buyOfflineCapUpgrade,
     buySkin,
+    doTranscendence,
+    buyPrimordialVigor,
+    buySoilMemory,
+    buyAutoManager,
+    buyGaiaTouch,
+    startTrial,
+    abandonTrial,
     claimUnearthedRelic,
     excavateRelic,
     setActiveBiome,
@@ -92,6 +100,7 @@ export default function Home() {
   } = useGameEngine();
 
   const [prestigeModalOpen, setPrestigeModalOpen] = useState(false);
+  const [transcendenceModalOpen, setTranscendenceModalOpen] = useState(false);
   const [optionsModalOpen, setOptionsModalOpen] = useState(false);
   const [achievementsModalOpen, setAchievementsModalOpen] = useState(false);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
@@ -134,6 +143,7 @@ export default function Home() {
         <TopActions
           state={state}
           onOpenPrestige={() => setPrestigeModalOpen(true)}
+          onOpenTranscendence={() => setTranscendenceModalOpen(true)}
           onOpenWardrobe={() => setWardrobeModalOpen(true)}
           onOpenRelics={() => setRelicsModalOpen(true)}
           onOpenAutomation={() => setAutomationModalOpen(true)}
@@ -279,6 +289,21 @@ export default function Home() {
         onToggleAutoReset={toggleAutoReset}
         onOpenAutoResetConfig={() => setAutoResetModalOpen(true)}
       />
+
+      {/* Gaia Transcendence Modal */}
+      {transcendenceModalOpen && (
+        <TranscendenceModal
+          state={state}
+          onClose={() => setTranscendenceModalOpen(false)}
+          onTranscend={doTranscendence}
+          onBuyPrimordialVigor={buyPrimordialVigor}
+          onBuySoilMemory={buySoilMemory}
+          onBuyAutoManager={buyAutoManager}
+          onBuyGaiaTouch={buyGaiaTouch}
+          onStartTrial={startTrial}
+          onAbandonTrial={abandonTrial}
+        />
+      )}
 
       {/* Auto Reset Config Modal */}
       {autoResetModalOpen && (

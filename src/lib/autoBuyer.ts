@@ -9,6 +9,7 @@ import {
   MODULE_UNLOCK_REQUIRE_OWNED,
   rootSynergyCost,
   rootSynergyUnlocked,
+  speciesSynergyBonusPct,
   rootUpgradeCost,
   rootUpgradeLevelMult,
   rootUpgradeRequireOwned,
@@ -68,7 +69,7 @@ export function evaluateAutoBuy(
   totalRate: number,
   setState: React.Dispatch<React.SetStateAction<GameState>>
 ): { executed: boolean; waitingForTarget: string | null } {
-  if (!state.prestige.autoRoot || !state.prestige.autoRootEnabled) {
+  if (!state.prestige.autoRoot || !state.prestige.autoRootEnabled || state.transcendence?.activeTrial === 'void_anomaly') {
     return { executed: false, waitingForTarget: null };
   }
 
@@ -90,7 +91,7 @@ export function evaluateAutoBuy(
     MODULE_DEFS.forEach((def, i) => {
       if (i > 0 && (state.owned[MODULE_DEFS[i - 1].id] || 0) < MODULE_UNLOCK_REQUIRE_OWNED) return;
       const count = state.owned[def.id] || 0;
-      const cost = costFor(def, count);
+      const cost = costFor(def, count, state);
       const eff = effectiveRate(state, def);
       const isNewUnlock = count === 0;
       const isGatekeeper = i < MODULE_DEFS.length - 1 && count < MODULE_UNLOCK_REQUIRE_OWNED;
@@ -180,16 +181,17 @@ export function evaluateAutoBuy(
 
       MODULE_DEFS.forEach(def => {
         if (rootSynergyUnlocked(state, def.id) && !state.rootSynergies?.[def.id]) {
-          const cost = rootSynergyCost(def);
+          const cost = rootSynergyCost(def, state);
           const count = state.owned[def.id] || 0;
-          const gain = totalRate * (count * 0.001); // +0.1% per unit
+          const bonusPct = speciesSynergyBonusPct(state);
+          const gain = totalRate * (count * bonusPct * 0.01);
           candidates.push({
             type: 'synergy',
             id: def.id,
             cost,
             value: gain,
             shareOfTotal: 1.0, // Synergy buffs entire farm globally
-            marginalGain: count * 0.001,
+            marginalGain: count * bonusPct * 0.01,
             isNewUnlock: true,
             apply: () => {
               setState(prev => ({

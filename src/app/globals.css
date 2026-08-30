@@ -218,6 +218,21 @@
   --prestige-bg: #221c10;
 }
 
+[data-ui-theme="void_sovereign"] {
+  --bg-deep: #080612;
+  --bg-panel: #100d20;
+  --bg-panel-2: #181330;
+  --root-cream: #f5f3ff;
+  --root-cream-dim: #ddd6fe;
+  --accent-glow: #818cf8;
+  --accent-glow-dim: #4f46e5;
+  --accent-amber: #a78bfa;
+  --line-soil: #2d2254;
+  --prestige-accent: #6366f1;
+  --prestige-accent-dim: #4338ca;
+  --prestige-bg: #0d091e;
+}
+
 * {
   box-sizing: border-box;
 }
