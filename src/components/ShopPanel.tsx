@@ -8,6 +8,7 @@ import {
   MODULE_UNLOCK_REQUIRE_OWNED,
   baseTotalRate,
   echoCost,
+  echoUnlockedFor,
   effectiveRate,
   globalEchoMultiplier,
   rootSynergyCost,

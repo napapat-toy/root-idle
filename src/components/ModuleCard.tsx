@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Language, ModuleDef } from '@/types/game';
+import { GameState, Language, ModuleDef } from '@/types/game';
 import { bulkCostFor, moduleMilestoneMultiplier, moduleMilestonesCountFor } from '@/constants/gameData';
 import { fmt } from '@/lib/formatters';
 import { MODULE_TRANSLATIONS } from '@/lib/i18n';
