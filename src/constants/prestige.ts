@@ -1,7 +1,7 @@
 import { GameState } from '@/types/game';
 
 export const PRESTIGE_UNLOCK_ECHOES = 5;
-export const SEED_DIVIDER = 100000000000; // 100 Billion (1e11)
+export const SEED_DIVIDER = 10000000000; // 10 Billion (1e10)
 export const SEED = 918273;
 export const OFFLINE_CAP_HOURS = [24, 48, 72];
 
@@ -129,7 +129,9 @@ export function starterRootsCount(state: GameState): number {
 
 export function calcPrestigeSeeds(state: GameState): number {
   if (!Number.isFinite(state.runEarned) || state.runEarned <= 0) return 0;
-  const base = Math.floor(Math.cbrt(state.runEarned / SEED_DIVIDER));
+  if (state.runEarned < SEED_DIVIDER) return 0;
+  const ratio = state.runEarned / SEED_DIVIDER;
+  const base = Math.floor(Math.pow(ratio, 0.20) * 10);
   const bonus = 1 + (state.prestige.goldenLevel || 0) * 0.05;
   const biomeBonus = state.activeBiome === 'sunken_ruins' ? 1.20 : 1.0;
   const result = Math.floor(base * bonus * biomeBonus);
