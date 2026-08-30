@@ -6,6 +6,7 @@ import {
   GAME_VERSION,
   stageName,
   echoBonusPct,
+  totalEchoCount,
   prestigeBonusPct,
   achievementBonusPct,
   totalSynergyBonusPct,
@@ -52,12 +53,12 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
   const lifetimeNutrients = stats.totalNutrientsEarnedLifetime || (state.runEarned + (stats.prestigeCount > 0 ? state.nutrients : 0));
   const lifetimeSeeds = Math.max(stats.totalSeedsEarnedLifetime || 0, state.eternalSeeds || 0);
 
-  const echoPct = echoBonusPct(state);
-  const prestigePct = prestigeBonusPct(state);
-  const achPct = achievementBonusPct(state);
-  const synPct = totalSynergyBonusPct(state);
+  const echoPct = echoBonusPct(state).toLocaleString(undefined, { maximumFractionDigits: 1 });
+  const prestigePct = prestigeBonusPct(state).toLocaleString(undefined, { maximumFractionDigits: 1 });
+  const achPct = achievementBonusPct(state).toLocaleString(undefined, { maximumFractionDigits: 1 });
+  const synPct = totalSynergyBonusPct(state).toLocaleString(undefined, { maximumFractionDigits: 1 });
   const synCount = totalSynergiesCount(state);
-  const totalPct = totalGlobalBonusPercent(state);
+  const totalPct = totalGlobalBonusPercent(state).toLocaleString(undefined, { maximumFractionDigits: 1 });
   const globalMult = globalRateMultiplier(state);
   const milestoneCount = totalMilestonesCount(state);
 
@@ -195,15 +196,15 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 </div>
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Root Echo Bonus' : 'โบนัสสะท้อนราก'}:</span>
-                  <span className="stats-value green">+{echoPct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({echoPct} {isEn ? 'units' : 'ต้น'})</span></span>
+                  <span className="stats-value green">+{echoPct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({totalEchoCount(state)} {isEn ? 'echoes' : 'อัน'})</span></span>
                 </div>
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Prestige Passive Bonus' : 'โบนัสพลังรากนิรันดร์'}:</span>
-                  <span className="stats-value purple">+{prestigePct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({isEn ? 'Lv.' : 'เลเวล '}{prestigePct})</span></span>
+                  <span className="stats-value purple">+{prestigePct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({isEn ? 'Lv.' : 'เลเวล '}{state.prestige.passiveRateLevel || 0})</span></span>
                 </div>
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Achievement Bonus' : 'โบนัสเหรียญความสำเร็จ'}:</span>
-                  <span className="stats-value golden">+{achPct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({achPct} {isEn ? 'achievements' : 'เหรียญ'})</span></span>
+                  <span className="stats-value golden">+{achPct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({state.achievements.length} {isEn ? 'achievements' : 'เหรียญ'})</span></span>
                 </div>
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Root Networks Bonus' : 'โบนัสเครือข่ายราก (Synergies)'}:</span>
