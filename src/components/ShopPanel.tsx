@@ -207,6 +207,7 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
       const isOwned = !!state.rootSynergies?.[def.id];
       const count = state.owned[def.id] || 0;
       const bonusPct = speciesSynergyBonusPct(state, def.id);
+      const totalSynBonus = (count * bonusPct).toFixed(1);
       const cost = rootSynergyCost(def);
       const affordable = state.nutrients >= cost;
 
@@ -214,11 +215,11 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
         icon: def.icon || '🌐',
         title: isEn ? `Network: ${localizedName}` : `เครือข่าย: ${localizedName}`,
         desc: isEn
-          ? `Each ${localizedName} grants +0.1% global production across all roots! (Current ${count} units = +${(count * 0.1).toFixed(1)}%)`
-          : `ราก ${localizedName} ทุกๆ 1 ต้น มอบโบนัส +0.1% ให้กับผลผลิตทั้งฟาร์ม! (ตอนนี้มี ${count} ต้น = +${(count * 0.1).toFixed(1)}%)`,
+          ? `Each ${localizedName} grants +${bonusPct}% global yield across all roots! (Current ${count} units = +${totalSynBonus}% to entire farm)`
+          : `ราก ${localizedName} ทุกๆ 1 ต้น มอบโบนัส +${bonusPct}% ให้กับผลผลิตทั้งฟาร์ม! (ตอนนี้มี ${count} ต้น = +${totalSynBonus}% ทั้งฟาร์ม)`,
         reqText: null,
         costText: isOwned ? (isEn ? 'ACTIVE' : 'เปิดใช้งานแล้ว') : fmt(cost),
-        multText: isOwned ? `+${bonusPct}% (${isEn ? 'Active' : 'ทำงานอยู่'})` : '+0.1%/ต้น',
+        multText: isOwned ? `+${totalSynBonus}% (${isEn ? 'Active' : 'ทำงานอยู่'})` : `+${totalSynBonus}% (+${bonusPct}%/ต้น)`,
         color: '#38bdf8',
         canBuy: !isOwned && affordable,
       };
@@ -362,6 +363,9 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
               const isHovered = hoveredTile?.type === 'syn' && hoveredTile?.id === id;
               const bonusPct = speciesSynergyBonusPct(state, id);
 
+              const count = state.owned[id] || 0;
+              const totalSynBonus = (count * bonusPct).toFixed(1);
+
               return (
                 <div
                   key={`quick-syn-${id}`}
@@ -376,7 +380,7 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
                     {def.icon || '🌐'}
                   </div>
                   <div className="upgrade-tile-badge" style={{ color: isOwned ? '#38bdf8' : '#eadfc7' }}>
-                    {isOwned ? `+${bonusPct}%` : '50+'}
+                    {isOwned ? `+${totalSynBonus}%` : 'SYN'}
                   </div>
                 </div>
               );

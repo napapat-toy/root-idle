@@ -448,7 +448,9 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                         {isEn ? 'Network:' : 'เครือข่าย:'} {localizedName}
                       </div>
                       <div style={{ fontSize: '11px', color: isOwned ? '#38bdf8' : 'var(--root-cream-dim)' }}>
-                        {isOwned ? `+${bonusPct}% (${isEn ? 'Active' : 'ทำงานอยู่'})` : `+${(count * 0.1).toFixed(1)}% (+0.1%/ต้น)`}
+                        {isOwned
+                          ? (isEn ? `Active: +${(count * bonusPct).toFixed(1)}% Global (+${bonusPct}%/unit · from ${count} roots)` : `ทำงานอยู่: โบนัส +${(count * bonusPct).toFixed(1)}% ทั้งฟาร์ม (+${bonusPct}%/ต้น จาก ${count} ต้น)`)
+                          : (isEn ? `Grants +${(count * bonusPct).toFixed(1)}% Global (+${bonusPct}%/unit · from ${count} roots)` : `มอบโบนัส +${(count * bonusPct).toFixed(1)}% ทั้งฟาร์ม (+${bonusPct}%/ต้น จาก ${count} ต้น)`)}
                       </div>
                     </div>
                   </div>
