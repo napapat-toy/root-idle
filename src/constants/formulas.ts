@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.24.2';
+export const GAME_VERSION = '1.25.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -179,14 +179,21 @@ export function speciesSynergyBonusPct(state: GameState, _moduleId?: string): nu
   return relicSynergyBonusPerUnit(state);
 }
 
-export function totalSynergyMultiplier(state: GameState): number {
-  if (!state.rootSynergies) return 1;
-  const activeCount = Object.values(state.rootSynergies).filter(Boolean).length;
-  if (activeCount === 0) return 1;
-
-  const totalRoots = state.totalOwned || 0;
+export function totalSynergyBonusPct(state: GameState): number {
+  if (!state.rootSynergies) return 0;
+  let totalPct = 0;
   const bonusPerUnit = relicSynergyBonusPerUnit(state);
-  return 1 + (activeCount * totalRoots * bonusPerUnit * 0.01);
+  for (const [id, active] of Object.entries(state.rootSynergies)) {
+    if (active) {
+      const count = state.owned[id] || 0;
+      totalPct += count * bonusPerUnit;
+    }
+  }
+  return totalPct;
+}
+
+export function totalSynergyMultiplier(state: GameState): number {
+  return 1 + totalSynergyBonusPct(state) * 0.01;
 }
 
 export function baseTotalRate(state: GameState): number {
@@ -198,22 +205,18 @@ export function totalSynergiesCount(state: GameState): number {
   return Object.values(state.rootSynergies).filter(Boolean).length;
 }
 
-export function totalSynergyBonusPct(state: GameState): number {
-  return (totalSynergyMultiplier(state) - 1) * 100;
+export function totalGlobalBonusPercent(state: GameState): number {
+  const echoPct = echoBonusPct(state);
+  const achPct = achievementBonusPct(state);
+  const synPct = totalSynergyBonusPct(state);
+  const prestigePct = prestigeBonusPct(state);
+  const relicPct = (relicRateBonusMultiplier(state) - 1) * 100;
+  const biomePct = (biomeActiveRateMultiplier(state) - 1) * 100;
+  return echoPct + achPct + synPct + prestigePct + relicPct + biomePct;
 }
 
 export function globalRateMultiplier(state: GameState): number {
-  const echoMult = globalEchoMultiplier(state);
-  const achMult = achievementMultiplier(state);
-  const synMult = totalSynergyMultiplier(state);
-  const prestigeMult = 1 + prestigeBonusPct(state) * 0.01;
-  const relicRateMult = relicRateBonusMultiplier(state);
-  const biomeMult = biomeActiveRateMultiplier(state);
-  return echoMult * achMult * synMult * prestigeMult * relicRateMult * biomeMult;
-}
-
-export function totalGlobalBonusPercent(state: GameState): number {
-  return (globalRateMultiplier(state) - 1) * 100;
+  return 1 + totalGlobalBonusPercent(state) * 0.01;
 }
 
 // Effective Rates
@@ -221,22 +224,9 @@ export function effectiveRate(state: GameState, def: ModuleDef): number {
   const count = state.owned[def.id] || 0;
   const milestoneMult = moduleMilestoneMultiplier(count);
   const upgMult = rootUpgradeMultiplier(state, def.id);
-  const echoMult = globalEchoMultiplier(state);
-  const achMult = achievementMultiplier(state);
-  const synMult = totalSynergyMultiplier(state);
-  const prestigeMult = 1 + prestigeBonusPct(state) * 0.01;
-  const relicRateMult = relicRateBonusMultiplier(state);
-  const biomeMult = biomeActiveRateMultiplier(state);
+  const globalMult = globalRateMultiplier(state);
 
-  return def.rate
-    * milestoneMult
-    * upgMult
-    * echoMult
-    * achMult
-    * synMult
-    * prestigeMult
-    * relicRateMult
-    * biomeMult;
+  return def.rate * milestoneMult * upgMult * globalMult;
 }
 
 export function calculateTotalRate(state: GameState): number {
