@@ -230,7 +230,10 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
               const affordable = state.nutrients >= cost;
               const canBuy = reqMet && affordable;
               const localizedName = MODULE_TRANSLATIONS[def.id]?.[lang]?.name || def.name;
-              const multText = isMilestone ? '×3.00 (Milestone)' : `+100% (×${rootUpgradeLevelMult(nextLevel).toFixed(2)})`;
+              const mult = rootUpgradeLevelMult(nextLevel);
+              const multText = isMilestone
+                ? isEn ? `×${mult.toFixed(2)} (Milestone)` : `×${mult.toFixed(2)} (หลักชัย)`
+                : `+${Math.round((mult - 1) * 100)}% (×${mult.toFixed(2)})`;
 
               return (
                 <div

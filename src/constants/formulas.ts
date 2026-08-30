@@ -3,13 +3,13 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.21.0';
+export const GAME_VERSION = '1.22.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
 
-export const ROOT_UPGRADE_MILESTONE_MULT = 3.0;
-export const ROOT_UPGRADE_NORMAL_MULT = 2.0;
+export const ROOT_UPGRADE_MILESTONE_MULT = 2.0;
+export const ROOT_UPGRADE_NORMAL_MULT = 1.5;
 export const ROOT_UPGRADE_DISCOUNT = 0.40;
 
 export const ECHO_REQUIRE_OWNED = 20;
