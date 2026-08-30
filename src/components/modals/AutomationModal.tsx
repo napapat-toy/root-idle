@@ -37,50 +37,25 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
   const activeAutoMode = getActiveAutoRootMode(state);
 
   return (
-    <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 1100 }}>
+    <div className="offline-backdrop" onClick={onClose} style={{ zIndex: 2100 }}>
       <div
-        className="modal-content"
+        className="modal-wrapper"
         onClick={e => e.stopPropagation()}
-        style={{
-          maxWidth: '520px',
-          width: '94vw',
-          maxHeight: '88vh',
-          display: 'flex',
-          flexDirection: 'column',
-          background: 'var(--bg-panel)',
-          border: '1px solid var(--line-soil)',
-          borderRadius: '16px',
-          padding: '20px',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
-        }}
+        style={{ maxWidth: '520px', width: '100%' }}
       >
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '24px' }}>🤖</span>
-            <div>
-              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: 'var(--root-cream)' }}>
-                {isEn ? 'Automation Control Hub' : 'ศูนย์ควบคุมระบบอัตโนมัติ'}
-              </h2>
-              <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>
-                {isEn ? 'Manage autonomous bots and prestige routines' : 'จัดการสวิตช์และระดับการทำงานของระบบออโต้'}
-              </div>
-            </div>
+        <button className="modal-close-x" onClick={onClose} aria-label={tr.close}>
+          &times;
+        </button>
+
+        <div className="offline-modal generic-modal" style={{ padding: '20px 24px', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
+          {/* Header */}
+          <div className="icon" style={{ fontSize: '32px', marginBottom: '6px' }}>🤖</div>
+          <h2 style={{ marginBottom: '4px' }}>
+            {isEn ? 'Automation Control Hub' : 'ศูนย์ควบคุมระบบอัตโนมัติ'}
+          </h2>
+          <div className="away-time" style={{ marginBottom: '16px', fontSize: '12px' }}>
+            {isEn ? 'Manage autonomous bots and prestige routines' : 'จัดการสวิตช์และระดับการทำงานของระบบออโต้'}
           </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              fontSize: '20px',
-              color: 'var(--root-cream-dim)',
-              cursor: 'pointer',
-              padding: '4px 8px',
-            }}
-          >
-            ✕
-          </button>
-        </div>
 
         {/* Automation Items Container */}
         <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -226,5 +201,6 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
