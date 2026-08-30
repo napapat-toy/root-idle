@@ -62,6 +62,8 @@ import {
   starterRootsCount,
   RELIC_DEFS,
   hasRelic,
+  pickWeightedUnownedRelic,
+  unownedRelicList,
   UI_THEME_COSTS,
   UI_THEME_ORDER,
   UI_THEME_PRESTIGE_KEYS,
@@ -395,6 +397,15 @@ export function useGameEngine() {
         `🍀 ×${fmtMultiplier(mult)}`,
         '#ffd76a'
       );
+
+      // Rare serendipity: Lucky shockwave can unearth a hidden relic (20% chance)
+      if (!cur.unclaimedRelicId && Math.random() < 0.20) {
+        const unowned = unownedRelicList(cur);
+        const picked = pickWeightedUnownedRelic(unowned);
+        if (picked) {
+          setState(prev => ({ ...prev, unclaimedRelicId: picked.id }));
+        }
+      }
     } else {
       const isEn = cur.lang === 'en';
       const baseMult = 2 + Math.random() * 2;
@@ -1023,7 +1034,7 @@ export function useGameEngine() {
     return () => clearInterval(interval);
   }, [totalRate, dismissAchievementToast]);
 
-  // Relic unearth check & Auto-claim loop (every 10s)
+  // Rare ambient Relic discovery loop (checks every 60s, ~2.5% chance = ~40-50m average per ambient find)
   useEffect(() => {
     const interval = setInterval(() => {
       const cur = stateRef.current;
@@ -1034,23 +1045,20 @@ export function useGameEngine() {
         return;
       }
 
-      // 2. Chance to unearth an eligible relic if none is currently waiting on canvas
+      // 2. Rare chance to unearth an unowned relic from the soil
       if (!cur.unclaimedRelicId) {
-        const eligible = RELIC_DEFS.filter(r => {
-          if (cur.relics?.[r.id]) return false;
-          if (!r.minModuleReq) return true;
-          return (cur.owned[r.minModuleReq] || 0) >= 1;
-        });
-
-        if (eligible.length > 0 && Math.random() < 0.12) {
-          const picked = eligible[Math.floor(Math.random() * eligible.length)];
-          setState(prev => ({
-            ...prev,
-            unclaimedRelicId: picked.id,
-          }));
+        const unowned = unownedRelicList(cur);
+        if (unowned.length > 0 && Math.random() < 0.025) {
+          const picked = pickWeightedUnownedRelic(unowned);
+          if (picked) {
+            setState(prev => ({
+              ...prev,
+              unclaimedRelicId: picked.id,
+            }));
+          }
         }
       }
-    }, 10000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [claimUnearthedRelic]);

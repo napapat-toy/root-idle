@@ -124,16 +124,17 @@ export interface BiomeDef {
   relicRequiredCount: number;
 }
 
+export type RelicRarity = 'common' | 'rare' | 'epic' | 'legendary' | 'mythic';
+
 export interface RelicDef {
   id: string;
   name: string;
   icon: string;
   desc: string;
-  stratum: string; // Layer / Depth
-  depthMeters: number;
+  rarity: RelicRarity;
+  dropWeight: number;
   effectDesc: string;
   baseCost: number;
-  minModuleReq?: string;
   color: string;
 }
 

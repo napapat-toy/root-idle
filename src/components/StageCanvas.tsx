@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import { ActiveBuff, BiomeId, Branch, FloatingTextItem, GameEventItem, Language, SkinId } from '@/types/game';
 import { getBranchColor } from '@/lib/treeGenerator';
-import { BIOME_DEFS, RELIC_DEFS, stageName } from '@/constants/gameData';
+import { BIOME_DEFS, RELIC_DEFS, RELIC_RARITY_INFO, stageName } from '@/constants/gameData';
 import { fmtMultiplier } from '@/lib/formatters';
 
 interface StageCanvasProps {
@@ -295,7 +295,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
             left: '50%',
             top: `${Math.min(targetH - 90, 260)}px`,
             transform: 'translateX(-50%)',
-            background: `radial-gradient(circle, ${unclaimedRelic.color}35 0%, rgba(20,15,10,0.92) 75%)`,
+            background: `radial-gradient(circle, ${unclaimedRelic.color}35 0%, rgba(20,15,10,0.95) 75%)`,
             border: `2px solid ${unclaimedRelic.color}`,
             borderRadius: '16px',
             padding: '10px 16px',
@@ -311,8 +311,23 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
         >
           <span style={{ fontSize: '26px' }}>{unclaimedRelic.icon}</span>
           <div style={{ textAlign: 'left' }}>
-            <div style={{ fontSize: '11px', color: '#ffd76a', fontWeight: 700 }}>
-              {isEn ? '✨ Unearthed Relic!' : '✨ ขุดพบโบราณวัตถุ!'}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '11px', color: '#ffd76a', fontWeight: 700 }}>
+                {isEn ? '✨ Unearthed Relic!' : '✨ ขุดพบโบราณวัตถุ!'}
+              </span>
+              <span
+                style={{
+                  fontSize: '9.5px',
+                  color: RELIC_RARITY_INFO[unclaimedRelic.rarity].color,
+                  background: RELIC_RARITY_INFO[unclaimedRelic.rarity].badgeBg,
+                  padding: '1px 5px',
+                  borderRadius: '4px',
+                  fontWeight: 700,
+                  border: `1px solid ${RELIC_RARITY_INFO[unclaimedRelic.rarity].color}66`,
+                }}
+              >
+                {isEn ? RELIC_RARITY_INFO[unclaimedRelic.rarity].enName : RELIC_RARITY_INFO[unclaimedRelic.rarity].name}
+              </span>
             </div>
             <div style={{ fontSize: '13px', color: '#ffffff', fontWeight: 700 }}>
               {unclaimedRelic.name}

@@ -5,6 +5,7 @@ import { BiomeId, GameState, Language } from '@/types/game';
 import {
   BIOME_DEFS,
   RELIC_DEFS,
+  RELIC_RARITY_INFO,
   hasRelic,
   isMasterRelicActive,
   relicMult,
@@ -167,6 +168,8 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                   const canAfford = state.nutrients >= relic.baseCost;
                   const mult = relicMult(state, relic.id);
 
+                  const rarityInfo = RELIC_RARITY_INFO[relic.rarity];
+
                   return (
                     <div
                       key={relic.id}
@@ -175,7 +178,7 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                           ? `linear-gradient(135deg, var(--bg-panel-2) 0%, ${relic.color}15 100%)`
                           : 'var(--bg-panel-2)',
                         border: isOwned ? `1px solid ${relic.color}88` : '1px solid var(--line-soil)',
-                        borderLeft: `4px solid ${isOwned ? relic.color : 'var(--line-soil)'}`,
+                        borderLeft: `4px solid ${isOwned ? relic.color : rarityInfo.color}`,
                         borderRadius: '12px',
                         padding: '12px 14px',
                         display: 'flex',
@@ -206,21 +209,29 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                         </div>
 
                         <div style={{ minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                             <span style={{ fontWeight: 700, fontSize: '13.5px', color: isOwned ? 'var(--root-cream)' : 'var(--root-cream-dim)' }}>
-                              {isOwned ? relic.name : `${relic.stratum}`}
+                              {isOwned ? relic.name : (isEn ? 'Unidentified Relic' : 'โบราณวัตถุลึกลับ')}
                             </span>
-                            {isOwned && (
-                              <span style={{ fontSize: '10.5px', color: relic.color, background: `${relic.color}20`, padding: '1px 6px', borderRadius: '4px', fontWeight: 600 }}>
-                                {relic.depthMeters}m
-                              </span>
-                            )}
+                            <span
+                              style={{
+                                fontSize: '10.5px',
+                                color: rarityInfo.color,
+                                background: rarityInfo.badgeBg,
+                                border: `1px solid ${rarityInfo.color}55`,
+                                padding: '1px 6px',
+                                borderRadius: '4px',
+                                fontWeight: 700,
+                              }}
+                            >
+                              {isEn ? rarityInfo.enName : rarityInfo.name}
+                            </span>
                           </div>
 
                           <div style={{ fontSize: '11px', color: isOwned ? 'var(--accent-glow)' : 'var(--root-cream-dim)', marginTop: '2px', fontWeight: 500 }}>
                             {isOwned
                               ? `${relic.effectDesc} ${mult > 1 ? `(×${mult} Gaia)` : ''}`
-                              : isEn ? `Deeper subterranean stratum (${relic.depthMeters}m)` : `ชั้นดินลึก ${relic.depthMeters} เมตร`}
+                              : (isEn ? 'Waiting to be unearthed serendipitously or excavate now.' : 'รอสุ่มพบจากการเติบโตของราก / ขุดค้นด้วยสารอาหาร')}
                           </div>
 
                           {isOwned && (
