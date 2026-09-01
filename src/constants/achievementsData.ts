@@ -1,5 +1,5 @@
 import { AchievementCategoryInfo, AchievementDef } from '@/types/achievements';
-import { MODULE_DEFS } from './gameData';
+import { MODULE_DEFS } from './modules';
 
 export const ACHIEVEMENT_CATEGORIES: AchievementCategoryInfo[] = [
   { id: 'roots', name: 'การแผ่ขยายราก', icon: '🌿' },
