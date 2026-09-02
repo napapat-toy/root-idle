@@ -132,11 +132,14 @@ export type RelicRarity = 'common' | 'rare' | 'epic' | 'legendary' | 'mythic';
 export interface RelicDef {
   id: string;
   name: string;
+  enName: string;
   icon: string;
   desc: string;
+  enDesc: string;
   rarity: RelicRarity;
   dropWeight: number;
   effectDesc: string;
+  enEffectDesc: string;
   baseCost: number;
   color: string;
   maxPieces: number;

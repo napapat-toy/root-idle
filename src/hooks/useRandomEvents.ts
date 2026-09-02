@@ -121,7 +121,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
             showFloatingText(
               ev.left + 26,
               ev.top - 12,
-              isEn ? `🏺 Unearthed: ${picked.name}!` : `🏺 ขุดพบ: ${picked.name}!`,
+              isEn ? `🏺 Unearthed: ${picked.enName}!` : `🏺 ขุดพบ: ${picked.name}!`,
               picked.color || '#ffd76a'
             );
           }

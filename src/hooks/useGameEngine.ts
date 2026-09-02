@@ -47,6 +47,7 @@ import {
   saveToLocalStorage,
 } from '@/lib/storage';
 import { fmt, fmtInt } from '@/lib/formatters';
+import { MODULE_TRANSLATIONS } from '@/lib/i18n';
 
 // Sub-hooks
 import { useRandomEvents } from './useRandomEvents';
@@ -139,10 +140,11 @@ export function useGameEngine() {
 
     if (gotBonus) {
       const isEn = cur.lang === 'en';
+      const rootName = isEn ? (MODULE_TRANSLATIONS[def.id]?.en?.name || def.name) : def.name;
       randomEvents.showFloatingText(
         typeof window !== 'undefined' ? window.innerWidth / 2 : 200,
         typeof window !== 'undefined' ? window.innerHeight / 2 : 200,
-        isEn ? `🌱 Twin Sprout! (+1 Free ${def.name})` : `🌱 แตกหน่อคู่! (แถมฟรี +1 ${def.name})`,
+        isEn ? `🌱 Twin Sprout! (+1 Free ${rootName})` : `🌱 แตกหน่อคู่! (แถมฟรี +1 ${rootName})`,
         '#fbbf24'
       );
     }
@@ -387,7 +389,7 @@ export function useGameEngine() {
       200,
       140,
       isEn
-        ? `🏺 Fragment: ${def.name} (${nextCount}/${def.maxPieces})!`
+        ? `🏺 Fragment: ${def.enName} (${nextCount}/${def.maxPieces})!`
         : `🏺 ชิ้นส่วน: ${def.name} (${nextCount}/${def.maxPieces})!`,
       def.color || '#ffd76a'
     );

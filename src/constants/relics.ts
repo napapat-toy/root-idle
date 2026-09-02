@@ -21,11 +21,14 @@ export const RELIC_DEFS: RelicDef[] = [
   {
     id: 'amber',
     name: 'อำพันดึกดำบรรพ์',
+    enName: 'Primeval Amber',
     icon: '琥',
     desc: 'ยางไม้โบราณที่ผนึกหยดน้ำค้างล้านปี เสริมความมีชีวิตชีวาของเซลล์รากไม้',
+    enDesc: 'Ancient resin sealing primordial dewdrops, vitalizing subterranean root cells.',
     rarity: 'common',
     dropWeight: 50,
     effectDesc: '+0.5% เรทการผลิตรากทุกชนิดต่อชิ้น (สูงสุด +10%)',
+    enEffectDesc: '+0.5% all roots rate per piece (Max +10%)',
     baseCost: 50_000_000_000, // 50B
     color: '#4ade80',
     maxPieces: 20,
@@ -33,11 +36,14 @@ export const RELIC_DEFS: RelicDef[] = [
   {
     id: 'aquifer',
     name: 'ไข่มุกตาน้ำบาดาลลึก',
+    enName: 'Abyssal Aquifer Pearl',
     icon: '🌊',
     desc: 'หยดน้ำบริสุทธิ์กลั่นตัวจากความดันล้านบรรยากาศใต้โลก หล่อเลี้ยงรากชั้นลึก',
+    enDesc: 'Pure condensed droplet forged under extreme pressure, nourishing deep stratum roots.',
     rarity: 'common',
     dropWeight: 50,
     effectDesc: '+1.0% ผลผลิตเฉพาะรากชั้นลึกต่อชิ้น (สูงสุด +20%)',
+    enEffectDesc: '+1.0% deep roots rate per piece (Max +20%)',
     baseCost: 200_000_000_000, // 200B
     color: '#2dd4bf',
     maxPieces: 20,
@@ -47,11 +53,14 @@ export const RELIC_DEFS: RelicDef[] = [
   {
     id: 'geode',
     name: 'จีโอดคริสตัลโบราณ',
+    enName: 'Ancient Crystal Geode',
     icon: '💎',
     desc: 'โพรงหินผลึกเรืองแสงที่สะท้อนแสงออโรร่าใต้พิภพ ดึงดูดสารอาหารบริสุทธิ์',
+    enDesc: 'Luminescent crystal cavity channeling auroral refraction to gather rich nutrients.',
     rarity: 'rare',
     dropWeight: 20,
     effectDesc: '+2.0% สารอาหารที่ได้รับจากลูกแก้วเหตุการณ์ต่อชิ้น (สูงสุด +20%)',
+    enEffectDesc: '+2.0% event orb nutrients per piece (Max +20%)',
     baseCost: 5_000_000_000_000, // 5T
     color: '#38bdf8',
     maxPieces: 10,
@@ -59,11 +68,14 @@ export const RELIC_DEFS: RelicDef[] = [
   {
     id: 'chronolith',
     name: 'ศิลาบันทึกกาลเวลา',
+    enName: 'Chronolith of Aeons',
     icon: '⏳',
     desc: 'ฟอสซิลหินที่จดจำการไหลผ่านของกาลเวลาใต้แผ่นเปลือกโลกนับยุคสมัย',
+    enDesc: 'Fossilized strata recording the slow passage of time beneath tectonic plates.',
     rarity: 'rare',
     dropWeight: 20,
     effectDesc: '+15 นาทีเวลาออฟไลน์ & +1.0% ประสิทธิภาพต่อชิ้น (สูงสุด +2.5 ชม. & +10%)',
+    enEffectDesc: '+15m offline cap & +1.0% offline efficiency per piece (Max +2.5h & +10%)',
     baseCost: 50_000_000_000_000, // 50T
     color: '#60a5fa',
     maxPieces: 10,
@@ -71,11 +83,14 @@ export const RELIC_DEFS: RelicDef[] = [
   {
     id: 'magmastone',
     name: 'ศิลาแก่นเพลิงพิภพ',
+    enName: 'Magmatic Corestone',
     icon: '🌋',
     desc: 'ผลึกหินภูเขาไฟที่กักเก็บความร้อนใต้พิภพ ปลดปล่อยพลังงานเมื่อถูกกระตุ้น',
+    enDesc: 'Volcanic crystal storing geothermal energy, releasing instant burst upon stimulation.',
     rarity: 'rare',
     dropWeight: 20,
     effectDesc: 'คลิกหน้าจอรากมอบสารอาหารทันที 0.05% ของเรทต่อวินาที (สูงสุด 0.5%)',
+    enEffectDesc: 'Root clicks grant 0.05% of rate/sec instantly per piece (Max 0.5%)',
     baseCost: 500_000_000_000_000, // 500T
     color: '#f97316',
     maxPieces: 10,
@@ -85,11 +100,14 @@ export const RELIC_DEFS: RelicDef[] = [
   {
     id: 'mycocore',
     name: 'ฟอสซิลไมคอร์ไรซาบรรพกาล',
+    enName: 'Primordial Mycocore',
     icon: '🍄',
     desc: 'แก่นสปอร์บรรพบุรุษเชื้อราที่สร้างเครือข่ายเชื่อมโยงรากไม้ทั้งผืนโลก',
+    enDesc: 'Ancestral fungal spore mass weaving expansive planetary root communication.',
     rarity: 'epic',
     dropWeight: 8,
     effectDesc: 'เครือข่ายราก (Synergies) ให้ผลผลิตเพิ่มขึ้น +0.005%/ต้น ต่อชิ้น (สูงสุด +0.025%)',
+    enEffectDesc: 'Root Synergies yield +0.005%/unit per piece (Max +0.025%)',
     baseCost: 15_000_000_000_000_000, // 15Qa
     color: '#c084fc',
     maxPieces: 5,
@@ -97,11 +115,14 @@ export const RELIC_DEFS: RelicDef[] = [
   {
     id: 'crown',
     name: 'มงกุฎพฤกษาปฐมกาล',
+    enName: 'Crown of the First Tree',
     icon: '🏵️',
     desc: 'กิ่งก้านที่กลายเป็นหินของต้นไม้ต้นแรกของโลก เปล่งพลังสะท้อนอันไร้ขอบเขต',
+    enDesc: 'Petrified crown boughs of the genesis tree, radiating timeless harmonic resonance.',
     rarity: 'epic',
     dropWeight: 8,
     effectDesc: 'สะท้อนราก (Echoes) ให้ตัวคูณเพิ่มขึ้น +0.2%/อัน ต่อชิ้น (สูงสุด +1.0%)',
+    enEffectDesc: 'Root Echoes grant +0.2% multiplier per level per piece (Max +1.0%)',
     baseCost: 150_000_000_000_000_000, // 150Qa
     color: '#a855f7',
     maxPieces: 5,
@@ -109,11 +130,14 @@ export const RELIC_DEFS: RelicDef[] = [
   {
     id: 'meteorite',
     name: 'อุกกาบาตฝังใต้พิภพ',
+    enName: 'Subterranean Meteorite',
     icon: '🪐',
     desc: 'สะเก็ดดาวจากนอกระบบสุริยะที่ถูกรากดูดซับแร่ธาตุอวกาศเข้าสู่ลำต้น',
+    enDesc: 'Extraterrestrial meteorite core infusing roots with rare cosmic minerals.',
     rarity: 'epic',
     dropWeight: 8,
     effectDesc: '+1.0% ตัวคูณสารอาหารทั้งหมดต่อชิ้น (สูงสุด +5.0% Multiplier)',
+    enEffectDesc: '+1.0% global nutrient multiplier per piece (Max +5.0% Multiplier)',
     baseCost: 5_000_000_000_000_000_000, // 5Sx
     color: '#e879f9',
     maxPieces: 5,
@@ -123,11 +147,14 @@ export const RELIC_DEFS: RelicDef[] = [
   {
     id: 'ruintablet',
     name: 'แผ่นจารึกอารยธรรมใต้ดิน',
+    enName: 'Ancient Ruin Tablet',
     icon: '🏛️',
     desc: 'ศิลาจารึกอักขระโบราณ บันทึกศาสตร์การเพาะปลูกและแตกหน่อของพฤกษาบรรพกาล',
+    enDesc: 'Ancient inscribed tablet revealing esoteric agricultural wisdom and twin sprouting.',
     rarity: 'legendary',
     dropWeight: 2,
     effectDesc: 'เมื่อซื้อราก มีโอกาส +5% ต่อชิ้นที่จะแตกหน่อแถมรากฟรี +1 ต้น (สูงสุด 15%)',
+    enEffectDesc: 'Purchasing roots has +5% chance/piece to sprout +1 free bonus root (Max 15%)',
     baseCost: 100_000_000_000_000_000_000, // 100Sx
     color: '#fbbf24',
     maxPieces: 3,
@@ -137,11 +164,14 @@ export const RELIC_DEFS: RelicDef[] = [
   {
     id: 'gaiacore',
     name: 'หัวใจแห่งไกอา',
+    enName: 'Heart of Gaia',
     icon: '👑',
     desc: 'แก่นกลางของจิตวิญญาณแห่งโลก เมื่อค้นพบจะปลุกพลังโบราณวัตถุทุกชิ้นให้ทวีคูณเป็น 2 เท่า!',
+    enDesc: 'Core spirit of the living Earth. Awakens and doubles (×2) all relic piece bonuses!',
     rarity: 'mythic',
     dropWeight: 0.5,
     effectDesc: '⭐ บูสต์พลังของชิ้นส่วนโบราณวัตถุทุกชิ้นขึ้นเป็น 2 เท่าถาวร!',
+    enEffectDesc: '⭐ Permanently doubles (×2) the effects of all relic pieces!',
     baseCost: 10_000_000_000_000_000_000_000, // 10Sp
     color: '#f43f5e',
     maxPieces: 1,

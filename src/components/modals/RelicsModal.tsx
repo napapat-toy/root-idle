@@ -270,7 +270,7 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                             opacity: isOwned ? 1 : 0.75,
                           }}
                         >
-                          {isOwned ? relic.name : (isEn ? rarityInfo.enName : rarityInfo.name)}
+                          {isOwned ? (isEn ? relic.enName : relic.name) : (isEn ? rarityInfo.enName : rarityInfo.name)}
                         </span>
                       </button>
                     );
@@ -314,7 +314,7 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <span style={{ fontWeight: 700, fontSize: '13.5px', color: isSelectedOwned ? 'var(--root-cream)' : 'var(--root-cream-dim)' }}>
-                            {isSelectedOwned ? selectedRelic.name : (isEn ? 'Undiscovered Relic' : 'โบราณวัตถุลึกลับ')}
+                            {isSelectedOwned ? (isEn ? selectedRelic.enName : selectedRelic.name) : (isEn ? 'Undiscovered Relic' : 'โบราณวัตถุลึกลับ')}
                           </span>
                           <span
                             style={{
@@ -387,11 +387,14 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                       fontSize: '11.5px',
                       fontWeight: 600,
                       color: isSelectedOwned ? 'var(--accent-glow)' : 'var(--root-cream-dim)',
+                      minHeight: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
                     }}
                   >
                     {isSelectedOwned ? (
                       <>
-                        ⚡ {selectedRelic.effectDesc} {selectedMult > selectedCount && <span style={{ color: '#facc15' }}>(×2 Gaia Active!)</span>}
+                        ⚡ {isEn ? selectedRelic.enEffectDesc : selectedRelic.effectDesc} {selectedMult > selectedCount && <span style={{ color: '#facc15' }}>(×2 Gaia Active!)</span>}
                       </>
                     ) : (
                       <>
@@ -401,13 +404,23 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                   </div>
 
                   {/* Lore or Discovery Clue */}
-                  <div style={{ fontSize: '10.5px', color: 'var(--root-cream-dim)', fontStyle: 'italic', lineHeight: '1.4' }}>
+                  <div
+                    style={{
+                      fontSize: '10.5px',
+                      color: 'var(--root-cream-dim)',
+                      fontStyle: 'italic',
+                      lineHeight: '1.4',
+                      minHeight: '28px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
                     {isSelectedOwned ? (
-                      <>&ldquo;{selectedRelic.desc}&rdquo;</>
+                      <>&ldquo;{isEn ? selectedRelic.enDesc : selectedRelic.desc}&rdquo;</>
                     ) : (
                       <>
                         {isEn
-                          ? '🌱 Hint: Keep roots expanding deep or roll Lucky Jackpots to discover this artifact.'
+                          ? '🌱 Hint: Keep roots expanding deep or roll Lucky Jackpots to discover.'
                           : '🌱 คำใบ้: ขยายรากให้ลึกและกว้าง หรือหมุน Lucky Jackpot เพื่อตามหาโบราณวัตถุชิ้นนี้'}
                       </>
                     )}
