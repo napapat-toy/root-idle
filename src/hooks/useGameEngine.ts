@@ -15,6 +15,7 @@ import {
   createFreshState,
   currentOfflineCapSeconds,
   echoCost,
+  echoMaxed,
   echoUnlockedFor,
   MODULE_DEFS,
   prestigeUnlocked,
@@ -27,6 +28,10 @@ import {
   RELIC_DEFS,
   hasRelic,
   pickWeightedUnownedRelic,
+  relicBonusSproutChance,
+  relicCount,
+  relicMaxed,
+  relicMult,
   unownedRelicList,
 } from '@/constants/gameData';
 import { buildBranchesFromLog, deriveLog } from '@/lib/treeGenerator';
@@ -56,6 +61,7 @@ export function useGameEngine() {
 
   const stateRef = useRef<GameState>(state);
   stateRef.current = state;
+  const relicPityMinutesRef = useRef(0);
 
   // Rate calculation
   const totalRate = useCallback(() => {
@@ -117,16 +123,30 @@ export function useGameEngine() {
     const cost = bulkCostFor(def, cur.owned[defId] || 0, qty, cur);
     if (cur.nutrients < cost) return;
 
+    const sproutChance = relicBonusSproutChance(cur);
+    const gotBonus = sproutChance > 0 && Math.random() < sproutChance;
+    const addedQty = qty + (gotBonus ? 1 : 0);
+
     setState(prev => ({
       ...prev,
       nutrients: prev.nutrients - cost,
       owned: {
         ...prev.owned,
-        [defId]: (prev.owned[defId] || 0) + qty,
+        [defId]: (prev.owned[defId] || 0) + addedQty,
       },
-      totalOwned: prev.totalOwned + qty,
+      totalOwned: prev.totalOwned + addedQty,
     }));
-  }, []);
+
+    if (gotBonus) {
+      const isEn = cur.lang === 'en';
+      randomEvents.showFloatingText(
+        typeof window !== 'undefined' ? window.innerWidth / 2 : 200,
+        typeof window !== 'undefined' ? window.innerHeight / 2 : 200,
+        isEn ? `🌱 Twin Sprout! (+1 Free ${def.name})` : `🌱 แตกหน่อคู่! (แถมฟรี +1 ${def.name})`,
+        '#fbbf24'
+      );
+    }
+  }, [randomEvents]);
 
   // Buy Root Upgrade
   const buyRootUpgrade = useCallback((moduleId: string) => {
@@ -149,7 +169,7 @@ export function useGameEngine() {
   const buyEcho = useCallback((moduleId: string) => {
     const cur = stateRef.current;
     const def = MODULE_DEFS.find(m => m.id === moduleId);
-    if (!def || !echoUnlockedFor(cur, moduleId)) return;
+    if (!def || !echoUnlockedFor(cur, moduleId) || echoMaxed(cur, moduleId)) return;
     const cost = echoCost(cur, def, totalRate());
     if (cur.nutrients < cost) return;
 
@@ -352,38 +372,23 @@ export function useGameEngine() {
     if (!targetId) return;
     const def = RELIC_DEFS.find(r => r.id === targetId);
     if (!def) return;
+    const currentCount = relicCount(cur, targetId);
+    if (currentCount >= def.maxPieces) return;
+    const nextCount = currentCount + 1;
     const isEn = cur.lang === 'en';
 
     setState(prev => ({
       ...prev,
-      relics: { ...prev.relics, [targetId]: true },
+      relics: { ...prev.relics, [targetId]: nextCount },
       unclaimedRelicId: null,
     }));
 
     randomEvents.showFloatingText(
       200,
       140,
-      isEn ? `🏺 Unearthed: ${def.name}!` : `🏺 ค้นพบโบราณวัตถุ: ${def.name}!`,
-      def.color || '#ffd76a'
-    );
-  }, [randomEvents]);
-
-  const excavateRelic = useCallback((relicId: string) => {
-    const cur = stateRef.current;
-    const def = RELIC_DEFS.find(r => r.id === relicId);
-    if (!def || cur.relics?.[relicId] || cur.nutrients < def.baseCost) return;
-    const isEn = cur.lang === 'en';
-
-    setState(prev => ({
-      ...prev,
-      nutrients: prev.nutrients - def.baseCost,
-      relics: { ...prev.relics, [relicId]: true },
-    }));
-
-    randomEvents.showFloatingText(
-      200,
-      140,
-      isEn ? `⛏️ Excavated: ${def.name}!` : `⛏️ ขุดค้นสำเร็จ: ${def.name}!`,
+      isEn
+        ? `🏺 Fragment: ${def.name} (${nextCount}/${def.maxPieces})!`
+        : `🏺 ชิ้นส่วน: ${def.name} (${nextCount}/${def.maxPieces})!`,
       def.color || '#ffd76a'
     );
   }, [randomEvents]);
@@ -397,10 +402,10 @@ export function useGameEngine() {
 
   const onWaterCanvas = useCallback((x: number, y: number) => {
     const cur = stateRef.current;
-    const isMagma = hasRelic(cur, 'magmastone');
-    if (isMagma) {
+    const magmaMult = relicMult(cur, 'magmastone');
+    if (magmaMult > 0) {
       const rate = totalRate();
-      const burstGain = Math.max(1, rate * 0.05);
+      const burstGain = Math.max(1, rate * 0.0005 * magmaMult);
       setState(prev => ({
         ...prev,
         nutrients: prev.nutrients + burstGain,
@@ -512,7 +517,7 @@ export function useGameEngine() {
     return () => clearInterval(interval);
   }, [doPrestige, randomEvents, totalRate]);
 
-  // Rare ambient Relic discovery loop (checks every 60s)
+  // Ambient Relic discovery loop with 50-minute Pity Protection (checks every 60s)
   useEffect(() => {
     const interval = setInterval(() => {
       const cur = stateRef.current;
@@ -524,17 +529,22 @@ export function useGameEngine() {
 
       if (!cur.unclaimedRelicId) {
         const unowned = unownedRelicList(cur);
-        if (unowned.length > 0 && Math.random() < 0.025) {
-          const picked = pickWeightedUnownedRelic(unowned);
-          if (picked) {
-            setState(prev => ({ ...prev, unclaimedRelicId: picked.id }));
-            const isEn = cur.lang === 'en';
-            randomEvents.showFloatingText(
-              250,
-              160,
-              isEn ? `✨ A relic emerged from the soil!` : `✨ โบราณวัตถุปรากฏขึ้นจากผิวดิน!`,
-              picked.color || '#ffd76a'
-            );
+        if (unowned.length > 0) {
+          relicPityMinutesRef.current += 1;
+          // 2.0% chance per minute, or 100% guaranteed when pity timer reaches 50 minutes!
+          if (Math.random() < 0.020 || relicPityMinutesRef.current >= 50) {
+            relicPityMinutesRef.current = 0;
+            const picked = pickWeightedUnownedRelic(unowned);
+            if (picked) {
+              setState(prev => ({ ...prev, unclaimedRelicId: picked.id }));
+              const isEn = cur.lang === 'en';
+              randomEvents.showFloatingText(
+                250,
+                160,
+                isEn ? `✨ A relic emerged from the soil!` : `✨ โบราณวัตถุปรากฏขึ้นจากผิวดิน!`,
+                picked.color || '#ffd76a'
+              );
+            }
           }
         }
       }
@@ -609,7 +619,6 @@ export function useGameEngine() {
     startTrial: transcendenceEngine.startTrial,
     abandonTrial: transcendenceEngine.abandonTrial,
     claimUnearthedRelic,
-    excavateRelic,
     setActiveBiome,
     onWaterCanvas,
     importSaveCode,

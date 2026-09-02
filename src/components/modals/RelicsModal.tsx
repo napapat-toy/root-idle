@@ -8,8 +8,11 @@ import {
   RELIC_RARITY_INFO,
   hasRelic,
   isMasterRelicActive,
+  relicCount,
+  relicMaxed,
   relicMult,
   relicsCount,
+  totalRelicFragmentsCount,
 } from '@/constants/gameData';
 import { t } from '@/lib/i18n';
 
@@ -17,7 +20,6 @@ interface RelicsModalProps {
   state: GameState;
   onClose: () => void;
   onSelectBiome: (biomeId: BiomeId) => void;
-  onExcavateRelic?: (id: string) => void;
 }
 
 export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
@@ -32,12 +34,15 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
   const [selectedRelicId, setSelectedRelicId] = useState<string>(RELIC_DEFS[0].id);
 
   const ownedCount = relicsCount(state);
+  const totalFragments = totalRelicFragmentsCount(state);
   const totalCount = RELIC_DEFS.length;
   const masterActive = isMasterRelicActive(state);
   const activeBiome = state.activeBiome || 'topsoil';
 
   const selectedRelic: RelicDef = RELIC_DEFS.find(r => r.id === selectedRelicId) || RELIC_DEFS[0];
-  const isSelectedOwned = hasRelic(state, selectedRelic.id);
+  const selectedCount = relicCount(state, selectedRelic.id);
+  const isSelectedOwned = selectedCount > 0;
+  const isSelectedMaxed = relicMaxed(state, selectedRelic.id);
   const selectedRarityInfo = RELIC_RARITY_INFO[selectedRelic.rarity];
   const selectedMult = relicMult(state, selectedRelic.id);
 
@@ -59,7 +64,9 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
             {isEn ? 'Subterranean Museum' : 'พิพิธภัณฑ์โบราณคดีใต้พิภพ'}
           </h2>
           <div className="away-time" style={{ marginBottom: '14px', fontSize: '12px' }}>
-            {isEn ? `Discovered: ${ownedCount} / ${totalCount} Ancient Relics` : `ค้นพบแล้ว: ${ownedCount} / ${totalCount} ชิ้น`}
+            {isEn
+              ? `Discovered: ${ownedCount} / ${totalCount} Types (${totalFragments} Fragments Collected)`
+              : `ค้นพบแล้ว: ${ownedCount} / ${totalCount} ชนิด (${totalFragments} ชิ้นส่วนสะสม)`}
           </div>
 
           {/* Tab Switcher */}
@@ -177,7 +184,9 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                   }}
                 >
                   {RELIC_DEFS.map((relic, idx) => {
-                    const isOwned = hasRelic(state, relic.id);
+                    const count = relicCount(state, relic.id);
+                    const isOwned = count > 0;
+                    const isMaxed = relicMaxed(state, relic.id);
                     const isSelected = relic.id === selectedRelicId;
                     const rarityInfo = RELIC_RARITY_INFO[relic.rarity];
 
@@ -212,7 +221,7 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                           outline: 'none',
                         }}
                       >
-                        {/* Pedestal Tag & Rarity Dot */}
+                        {/* Pedestal Tag & Fragment Count */}
                         <div
                           style={{
                             position: 'absolute',
@@ -228,7 +237,9 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                           }}
                         >
                           <span>#{String(idx + 1).padStart(2, '0')}</span>
-                          <span style={{ fontSize: '8px' }}>{rarityInfo.icon}</span>
+                          <span style={{ fontSize: '8.5px', color: isMaxed ? '#facc15' : isOwned ? relic.color : 'inherit', fontWeight: 700 }}>
+                            {isMaxed ? 'MAX' : isOwned ? `${count}/${relic.maxPieces}` : rarityInfo.icon}
+                          </span>
                         </div>
 
                         {/* Artifact Icon */}
@@ -329,15 +340,41 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                       style={{
                         padding: '3px 8px',
                         borderRadius: '6px',
-                        background: isSelectedOwned ? `${selectedRelic.color}20` : 'rgba(255,255,255,0.05)',
-                        border: `1px solid ${isSelectedOwned ? selectedRelic.color : 'rgba(255,255,255,0.1)'}`,
-                        color: isSelectedOwned ? selectedRelic.color : 'var(--root-cream-dim)',
+                        background: isSelectedMaxed ? 'rgba(250, 204, 21, 0.15)' : isSelectedOwned ? `${selectedRelic.color}20` : 'rgba(255,255,255,0.05)',
+                        border: `1px solid ${isSelectedMaxed ? '#facc15' : isSelectedOwned ? selectedRelic.color : 'rgba(255,255,255,0.1)'}`,
+                        color: isSelectedMaxed ? '#facc15' : isSelectedOwned ? selectedRelic.color : 'var(--root-cream-dim)',
                         fontSize: '10.5px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      {isSelectedOwned ? (isEn ? '✓ FOUND' : '✓ ค้นพบแล้ว') : (isEn ? '🔒 UNDISCOVERED' : '🔒 ยังไม่ค้นพบ')}
+                      {isSelectedMaxed
+                        ? (isEn ? '✓ MAXED' : '✓ เต็มแล้ว')
+                        : isSelectedOwned
+                        ? `${selectedCount} / ${selectedRelic.maxPieces}`
+                        : (isEn ? '🔒 UNDISCOVERED' : '🔒 ยังไม่ค้นพบ')}
+                    </div>
+                  </div>
+
+                  {/* Fragment Progress Bar */}
+                  <div style={{ marginTop: '2px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '4px' }}>
+                      <span style={{ color: 'var(--root-cream-dim)' }}>
+                        {isEn ? 'Fragment Progress' : 'ความคืบหน้าชิ้นส่วน'}:
+                      </span>
+                      <span style={{ fontWeight: 700, color: isSelectedMaxed ? '#facc15' : selectedRelic.color }}>
+                        {selectedCount} / {selectedRelic.maxPieces} {isSelectedMaxed ? (isEn ? '(MAXED)' : '(เต็มแล้ว)') : ''}
+                      </span>
+                    </div>
+                    <div style={{ width: '100%', height: '6px', background: 'rgba(0,0,0,0.3)', borderRadius: '3px', overflow: 'hidden' }}>
+                      <div
+                        style={{
+                          width: `${Math.min(100, (selectedCount / selectedRelic.maxPieces) * 100)}%`,
+                          height: '100%',
+                          background: isSelectedMaxed ? 'linear-gradient(90deg, #facc15, #4ade80)' : selectedRelic.color,
+                          transition: 'width 0.3s ease',
+                        }}
+                      />
                     </div>
                   </div>
 
@@ -354,7 +391,7 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                   >
                     {isSelectedOwned ? (
                       <>
-                        ⚡ {selectedRelic.effectDesc} {selectedMult > 1 && <span style={{ color: '#facc15' }}>(×{selectedMult} Gaia Active!)</span>}
+                        ⚡ {selectedRelic.effectDesc} {selectedMult > selectedCount && <span style={{ color: '#facc15' }}>(×2 Gaia Active!)</span>}
                       </>
                     ) : (
                       <>
@@ -374,6 +411,40 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                           : '🌱 คำใบ้: ขยายรากให้ลึกและกว้าง หรือหมุน Lucky Jackpot เพื่อตามหาโบราณวัตถุชิ้นนี้'}
                       </>
                     )}
+                  </div>
+
+                  {/* Discovery & Completion Status */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginTop: '4px',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      background: isSelectedMaxed
+                        ? 'rgba(250, 204, 21, 0.1)'
+                        : isSelectedOwned
+                        ? 'rgba(255,255,255,0.03)'
+                        : 'rgba(255,255,255,0.02)',
+                      border: isSelectedMaxed ? '1px solid #facc1555' : '1px solid var(--line-soil)',
+                      fontSize: '11.5px',
+                    }}
+                  >
+                    <span style={{ color: 'var(--root-cream-dim)' }}>
+                      {isSelectedMaxed
+                        ? (isEn ? '👑 Status: Artifact Fully Restored!' : '👑 สถานะ: รวบรวมชิ้นส่วนครบสมบูรณ์แล้ว!')
+                        : isSelectedOwned
+                        ? (isEn ? `⛏️ Status: Gathering (${selectedCount}/${selectedRelic.maxPieces} Fragments)` : `⛏️ สถานะ: กำลังสะสม (${selectedCount}/${selectedRelic.maxPieces} ชิ้นส่วน)`)
+                        : (isEn ? '🔒 Status: Dormant Underground' : '🔒 สถานะ: หลับใหลอยู่ใต้พิภพ')}
+                    </span>
+                    <span style={{ fontWeight: 700, color: selectedRelic.color, fontSize: '11px' }}>
+                      {isSelectedMaxed
+                        ? (isEn ? '100% COMPLETE' : 'สมบูรณ์ 100%')
+                        : isSelectedOwned
+                        ? `${Math.round((selectedCount / selectedRelic.maxPieces) * 100)}%`
+                        : (isEn ? 'CHANCE TO UNEARTH' : 'รอการขุดพบ')}
+                    </span>
                   </div>
                 </div>
               </>

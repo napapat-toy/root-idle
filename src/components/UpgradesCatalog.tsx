@@ -4,7 +4,10 @@ import React, { useState } from 'react';
 import { GameState, Language } from '@/types/game';
 import {
   MODULE_DEFS,
+  ECHO_MAX_LEVEL,
   echoCost,
+  echoMaxed,
+  globalEchoMultiplier,
   relicEchoBonusPerEcho,
   relicSynergyBonusPerUnit,
   rootSynergyCost,
@@ -69,8 +72,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
     // 2. Buy affordable echoes
     unlockedEchoIds.forEach(id => {
       const def = MODULE_DEFS.find(m => m.id === id);
-      if (!def) return;
-      const echoes = state.echoes[id] || 0;
+      if (!def || echoMaxed(state, id)) return;
       const cost = echoCost(state, def, totalRate);
       if (currentNutrients >= cost) {
         onBuyEcho(id);
@@ -316,14 +318,16 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
         {(activeTab === 'all' || activeTab === 'echo') && unlockedEchoIds.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div className="panel-subtitle-row">
-              <span>✨ {isEn ? 'Echoes of Growth (+1% Permanent Global)' : 'สะท้อนแห่งการเติบโต (+1% ถาวร)'}</span>
+              <span>✨ {isEn ? `Echoes of Growth (×${globalEchoMultiplier(state).toFixed(2)} Multiplier this run)` : `สะท้อนแห่งการเติบโต (ตัวคูณรอบนี้: ×${globalEchoMultiplier(state).toFixed(2)})`}</span>
             </div>
             {unlockedEchoIds.map(id => {
               const def = MODULE_DEFS.find(m => m.id === id)!;
               const echoes = state.echoes[id] || 0;
+              const isMaxed = echoMaxed(state, id);
               const cost = echoCost(state, def, totalRate);
-              const affordable = state.nutrients >= cost;
+              const affordable = !isMaxed && state.nutrients >= cost;
               const localizedName = MODULE_TRANSLATIONS[def.id]?.[lang]?.name || def.name;
+              const echoBonusPct = Math.round(relicEchoBonusPerEcho(state) * 100);
 
               return (
                 <div
@@ -339,6 +343,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                     justifyContent: 'space-between',
                     gap: '10px',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                    opacity: isMaxed ? 0.75 : 1,
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
@@ -362,32 +367,40 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                       <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--root-cream)' }}>
                         <span style={{ color: '#67e8f9', marginRight: '4px' }}>✨</span>
                         {isEn ? 'Echo:' : 'สะท้อน:'} {localizedName}{' '}
-                        <span style={{ fontSize: '11px', color: 'var(--root-cream-dim)', fontWeight: 500 }}>
-                          ×{echoes}
+                        <span style={{ fontSize: '11px', color: isMaxed ? '#67e8f9' : 'var(--root-cream-dim)', fontWeight: 600 }}>
+                          {isMaxed ? '(MAX)' : `Lv.${echoes}/${ECHO_MAX_LEVEL}`}
                         </span>
                       </div>
                       <div style={{ fontSize: '11px', color: '#67e8f9', fontWeight: 600 }}>
-                        +{Number(relicEchoBonusPerEcho(state).toFixed(2))}% {isEn ? 'Global Production' : 'เรทผลผลิตรวมถาวร'}
+                        +{echoBonusPct}% {isEn ? 'Multiplicative Global Rate (this run)' : 'เรทผลผลิตรวมคูณทับ (ในรอบนี้)'}
                       </div>
                     </div>
                   </div>
 
                   <button
-                    disabled={!affordable}
+                    disabled={!affordable || isMaxed}
                     onClick={() => onBuyEcho(id)}
                     style={{
                       padding: '6px 12px',
                       borderRadius: '8px',
-                      background: affordable ? 'var(--accent-glow)' : 'rgba(255,255,255,0.05)',
-                      color: affordable ? '#12190d' : 'var(--root-cream-dim)',
+                      background: isMaxed
+                        ? 'rgba(255,255,255,0.05)'
+                        : affordable
+                          ? 'var(--accent-glow)'
+                          : 'rgba(255,255,255,0.05)',
+                      color: isMaxed
+                        ? 'var(--root-cream-dim)'
+                        : affordable
+                          ? '#12190d'
+                          : 'var(--root-cream-dim)',
                       border: 'none',
                       fontWeight: 700,
                       fontSize: '12px',
-                      cursor: affordable ? 'pointer' : 'not-allowed',
+                      cursor: affordable && !isMaxed ? 'pointer' : 'not-allowed',
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {fmt(cost)}
+                    {isMaxed ? (isEn ? 'MAX' : 'เต็มแล้ว ✓') : fmt(cost)}
                   </button>
                 </div>
               );

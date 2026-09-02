@@ -9,6 +9,9 @@ import {
   luckyDurationSeconds,
   luckyMagnitudeExtra,
   gaiaTouchBonusMult,
+  pickWeightedUnownedRelic,
+  relicEventNutrientBonus,
+  unownedRelicList,
 } from '@/constants/gameData';
 import { fmt, fmtInt } from '@/lib/formatters';
 
@@ -76,7 +79,8 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
 
     if (ev.type === 'bump') {
       const seconds = (30 + Math.random() * 60) * durationMult;
-      const amount = rate * seconds * bonusMult;
+      const geodeMult = relicEventNutrientBonus(cur);
+      const amount = rate * seconds * bonusMult * geodeMult;
       setState(prev => ({
         ...prev,
         nutrients: prev.nutrients + amount,
@@ -106,6 +110,23 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
         isEn ? `🍀 Lucky! ×${fmtInt(mult)}` : `🍀 โชคดี! ×${fmtInt(mult)}`,
         '#ffd76a'
       );
+
+      // 20% Chance on Lucky Jackpot to unearth an un-maxed relic fragment!
+      if (!cur.unclaimedRelicId && Math.random() < 0.20) {
+        const unowned = unownedRelicList(cur);
+        if (unowned.length > 0) {
+          const picked = pickWeightedUnownedRelic(unowned);
+          if (picked) {
+            setState(prev => ({ ...prev, unclaimedRelicId: picked.id }));
+            showFloatingText(
+              ev.left + 26,
+              ev.top - 12,
+              isEn ? `🏺 Unearthed: ${picked.name}!` : `🏺 ขุดพบ: ${picked.name}!`,
+              picked.color || '#ffd76a'
+            );
+          }
+        }
+      }
     } else {
       const isEn = cur.lang === 'en';
       const baseMult = 2 + Math.random() * 2;

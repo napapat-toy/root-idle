@@ -121,10 +121,8 @@ export function luckyChanceCost(stateOrLevel: GameState | number): number {
   return 1000 * (lvl + 1);
 }
 
-import { relicStarterRootsBonus } from './relics';
-
 export function starterRootsCount(state: GameState): number {
-  return (state.prestige.starterLevel || 0) * 10 + relicStarterRootsBonus(state);
+  return (state.prestige.starterLevel || 0) * 10;
 }
 
 export function calcPrestigeSeeds(state: GameState): number {

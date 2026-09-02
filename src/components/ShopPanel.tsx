@@ -7,7 +7,9 @@ import {
   MODULE_DEFS,
   MODULE_UNLOCK_REQUIRE_OWNED,
   baseTotalRate,
+  ECHO_MAX_LEVEL,
   echoCost,
+  echoMaxed,
   echoUnlockedFor,
   effectiveRate,
   globalEchoMultiplier,
@@ -186,20 +188,22 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
 
     if (hoveredTile.type === 'echo') {
       const echoes = state.echoes[def.id] || 0;
+      const isMaxed = echoMaxed(state, def.id);
       const cost = echoCost(state, def, totalRate);
-      const affordable = state.nutrients >= cost;
-      const echoBonus = relicEchoBonusPerEcho(state);
-      const echoBonusStr = Number(echoBonus.toFixed(2)).toString();
+      const affordable = !isMaxed && state.nutrients >= cost;
+      const echoBonusPct = Math.round(relicEchoBonusPerEcho(state) * 100);
 
       return {
         icon: def.icon || '✨',
         title: isEn ? `Echo: ${localizedName}` : `สะท้อน: ${localizedName}`,
-        desc: isEn
-          ? `Permanent +${echoBonusStr}% global production rate across all species even after Prestige`
-          : `เพิ่มเรทการผลิตทั้งหมด +${echoBonusStr}% ถาวรแม้หว่านใหม่`,
+        desc: isMaxed
+          ? (isEn ? `Max level reached (${echoes}/${ECHO_MAX_LEVEL})` : `เต็มเลเวลสูงสุดแล้ว (${echoes}/${ECHO_MAX_LEVEL})`)
+          : (isEn
+            ? `+${echoBonusPct}% multiplicative global rate in this run (Lv. ${echoes}/${ECHO_MAX_LEVEL})`
+            : `เพิ่มเรทผลิตรวมทั้งหมด +${echoBonusPct}% (คูณทับ) ในรอบนี้ (Lv. ${echoes}/${ECHO_MAX_LEVEL})`),
         reqText: null,
-        costText: fmt(cost),
-        multText: isEn ? `+${echoBonusStr}% Global` : `+${echoBonusStr}% เรทรวม`,
+        costText: isMaxed ? (isEn ? 'MAX' : 'เต็มแล้ว') : fmt(cost),
+        multText: isEn ? `+${echoBonusPct}% Mult` : `+${echoBonusPct}% ตัวคูณ`,
         color: '#67e8f9',
         canBuy: affordable,
       };
@@ -332,8 +336,9 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
             {quickEchoIds.map(id => {
               const def = MODULE_DEFS.find(m => m.id === id)!;
               const echoes = state.echoes[id] || 0;
+              const isMaxed = echoMaxed(state, id);
               const cost = echoCost(state, def, totalRate);
-              const affordable = state.nutrients >= cost;
+              const affordable = !isMaxed && state.nutrients >= cost;
               const isHovered = hoveredTile?.type === 'echo' && hoveredTile?.id === id;
 
               return (
@@ -343,14 +348,14 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
                   onMouseEnter={() => setHoveredTile({ type: 'echo', id })}
                   onMouseLeave={() => setHoveredTile(null)}
                   className={`upgrade-tile echo ${!affordable ? 'disabled' : ''} ${isHovered ? 'active-hover' : ''}`}
-                  style={{ borderColor: '#67e8f9' }}
+                  style={{ borderColor: '#67e8f9', opacity: isMaxed ? 0.6 : 1 }}
                   title={`Echo: ${def.name}`}
                 >
                   <div className="upgrade-tile-icon" style={{ fontSize: '16px' }}>
-                    {def.icon || '✨'}
+                     {def.icon || '✨'}
                   </div>
                   <div className="upgrade-tile-badge" style={{ color: '#67e8f9' }}>
-                    {echoes === 0 ? 'NEW' : `×${echoes}`}
+                    {isMaxed ? 'MAX' : echoes === 0 ? 'NEW' : `Lv.${echoes}`}
                   </div>
                 </div>
               );

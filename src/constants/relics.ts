@@ -8,42 +8,53 @@ export const RELIC_RARITY_INFO: Record<RelicRarity, { name: string; enName: stri
   mythic: { name: 'สิ่งศักดิ์สิทธิ์', enName: 'Mythic', color: '#f43f5e', badgeBg: 'rgba(244, 63, 94, 0.2)', icon: '👑' },
 };
 
+export const RELIC_MAX_PIECES: Record<RelicRarity, number> = {
+  common: 20,
+  rare: 10,
+  epic: 5,
+  legendary: 3,
+  mythic: 1,
+};
+
 export const RELIC_DEFS: RelicDef[] = [
-  // 🟢 COMMON (Weight: 35)
+  // 🟢 COMMON (Weight: 50, Max: 20)
   {
     id: 'amber',
     name: 'อำพันดึกดำบรรพ์',
     icon: '琥',
-    desc: 'ยางไม้โบราณที่ผนึกหยดน้ำค้างล้านปี เก็บรักษาความชุ่มชื้นของผืนป่าแรกกำเนิด',
+    desc: 'ยางไม้โบราณที่ผนึกหยดน้ำค้างล้านปี เสริมความมีชีวิตชีวาของเซลล์รากไม้',
     rarity: 'common',
-    dropWeight: 35,
-    effectDesc: '+15% เรทการผลิตรากทุกชนิด',
+    dropWeight: 50,
+    effectDesc: '+0.5% เรทการผลิตรากทุกชนิดต่อชิ้น (สูงสุด +10%)',
     baseCost: 50_000_000_000, // 50B
     color: '#4ade80',
+    maxPieces: 20,
   },
   {
     id: 'aquifer',
     name: 'ไข่มุกตาน้ำบาดาลลึก',
     icon: '🌊',
-    desc: 'หยดน้ำบริสุทธิ์กลั่นตัวจากความดันล้านบรรยากาศใต้โลก หล่อเลี้ยงรากลึก',
+    desc: 'หยดน้ำบริสุทธิ์กลั่นตัวจากความดันล้านบรรยากาศใต้โลก หล่อเลี้ยงรากชั้นลึก',
     rarity: 'common',
-    dropWeight: 35,
-    effectDesc: '+30% ผลผลิตสารอาหารจากความชุ่มชื้นผิวดินตลอดเวลา',
+    dropWeight: 50,
+    effectDesc: '+1.0% ผลผลิตเฉพาะรากชั้นลึกต่อชิ้น (สูงสุด +20%)',
     baseCost: 200_000_000_000, // 200B
     color: '#2dd4bf',
+    maxPieces: 20,
   },
 
-  // 🔵 RARE (Weight: 20)
+  // 🔵 RARE (Weight: 20, Max: 10)
   {
     id: 'geode',
     name: 'จีโอดคริสตัลโบราณ',
     icon: '💎',
-    desc: 'โพรงหินผลึกเรืองแสงที่สะท้อนแสงออโรร่าใต้พิภพ นำพาโชคลาภแห่งผืนดิน',
+    desc: 'โพรงหินผลึกเรืองแสงที่สะท้อนแสงออโรร่าใต้พิภพ ดึงดูดสารอาหารบริสุทธิ์',
     rarity: 'rare',
     dropWeight: 20,
-    effectDesc: '+30% ความถี่และขนาดของ Lucky Event',
+    effectDesc: '+2.0% สารอาหารที่ได้รับจากลูกแก้วเหตุการณ์ต่อชิ้น (สูงสุด +20%)',
     baseCost: 5_000_000_000_000, // 5T
     color: '#38bdf8',
+    maxPieces: 10,
   },
   {
     id: 'chronolith',
@@ -52,33 +63,36 @@ export const RELIC_DEFS: RelicDef[] = [
     desc: 'ฟอสซิลหินที่จดจำการไหลผ่านของกาลเวลาใต้แผ่นเปลือกโลกนับยุคสมัย',
     rarity: 'rare',
     dropWeight: 20,
-    effectDesc: '+4 ชม. เวลาออฟไลน์สูงสุด & +25% ประสิทธิภาพออฟไลน์',
+    effectDesc: '+15 นาทีเวลาออฟไลน์ & +1.0% ประสิทธิภาพต่อชิ้น (สูงสุด +2.5 ชม. & +10%)',
     baseCost: 50_000_000_000_000, // 50T
     color: '#60a5fa',
+    maxPieces: 10,
   },
   {
     id: 'magmastone',
     name: 'ศิลาแก่นเพลิงพิภพ',
     icon: '🌋',
-    desc: 'ผลึกหินภูเขาไฟที่กักเก็บความร้อนใต้พิภพ มอบพลังขับเคลื่อนมหาศาลเมื่อสัมผัสน้ำ',
+    desc: 'ผลึกหินภูเขาไฟที่กักเก็บความร้อนใต้พิภพ ปลดปล่อยพลังงานเมื่อถูกกระตุ้น',
     rarity: 'rare',
     dropWeight: 20,
-    effectDesc: 'เมื่อคลิกรดน้ำ ปล่อยคลื่นความร้อนมอบสารอาหารระเบิดทันที +5% ของเรทรวม',
+    effectDesc: 'คลิกหน้าจอรากมอบสารอาหารทันที 0.05% ของเรทต่อวินาที (สูงสุด 0.5%)',
     baseCost: 500_000_000_000_000, // 500T
     color: '#f97316',
+    maxPieces: 10,
   },
 
-  // 🟣 EPIC (Weight: 10)
+  // 🟣 EPIC (Weight: 8, Max: 5)
   {
     id: 'mycocore',
     name: 'ฟอสซิลไมคอร์ไรซาบรรพกาล',
     icon: '🍄',
     desc: 'แก่นสปอร์บรรพบุรุษเชื้อราที่สร้างเครือข่ายเชื่อมโยงรากไม้ทั้งผืนโลก',
     rarity: 'epic',
-    dropWeight: 10,
-    effectDesc: 'เครือข่ายราก (Synergies) ให้ผลผลิตเพิ่มเป็น +0.12%/ต้น (เดิม +0.08%)',
+    dropWeight: 8,
+    effectDesc: 'เครือข่ายราก (Synergies) ให้ผลผลิตเพิ่มขึ้น +0.005%/ต้น ต่อชิ้น (สูงสุด +0.025%)',
     baseCost: 15_000_000_000_000_000, // 15Qa
     color: '#c084fc',
+    maxPieces: 5,
   },
   {
     id: 'crown',
@@ -86,10 +100,11 @@ export const RELIC_DEFS: RelicDef[] = [
     icon: '🏵️',
     desc: 'กิ่งก้านที่กลายเป็นหินของต้นไม้ต้นแรกของโลก เปล่งพลังสะท้อนอันไร้ขอบเขต',
     rarity: 'epic',
-    dropWeight: 10,
-    effectDesc: 'สะท้อนราก (Echoes) ให้ผลผลิตเพิ่มเป็น +1.5%/อัน (เดิม +1.0%)',
+    dropWeight: 8,
+    effectDesc: 'สะท้อนราก (Echoes) ให้ตัวคูณเพิ่มขึ้น +0.2%/อัน ต่อชิ้น (สูงสุด +1.0%)',
     baseCost: 150_000_000_000_000_000, // 150Qa
     color: '#a855f7',
+    maxPieces: 5,
   },
   {
     id: 'meteorite',
@@ -97,36 +112,39 @@ export const RELIC_DEFS: RelicDef[] = [
     icon: '🪐',
     desc: 'สะเก็ดดาวจากนอกระบบสุริยะที่ถูกรากดูดซับแร่ธาตุอวกาศเข้าสู่ลำต้น',
     rarity: 'epic',
-    dropWeight: 10,
-    effectDesc: '+35% สารอาหารที่ได้รับจากทุกแหล่ง',
+    dropWeight: 8,
+    effectDesc: '+1.0% ตัวคูณสารอาหารทั้งหมดต่อชิ้น (สูงสุด +5.0% Multiplier)',
     baseCost: 5_000_000_000_000_000_000, // 5Sx
     color: '#e879f9',
+    maxPieces: 5,
   },
 
-  // 🟡 LEGENDARY (Weight: 4)
+  // 🟡 LEGENDARY (Weight: 2, Max: 3)
   {
     id: 'ruintablet',
     name: 'แผ่นจารึกอารยธรรมใต้ดิน',
     icon: '🏛️',
-    desc: 'ศิลาจารึกอักขระโบราณ สอนวิธีการเร่งการเจริญเติบโตของรากในทุกวัฏจักร',
+    desc: 'ศิลาจารึกอักขระโบราณ บันทึกศาสตร์การเพาะปลูกและแตกหน่อของพฤกษาบรรพกาล',
     rarity: 'legendary',
-    dropWeight: 4,
-    effectDesc: 'เริ่มต้นรอบหว่านใหม่ด้วยรากโบนัส +30 ต้นฟรีทันที',
+    dropWeight: 2,
+    effectDesc: 'เมื่อซื้อราก มีโอกาส +5% ต่อชิ้นที่จะแตกหน่อแถมรากฟรี +1 ต้น (สูงสุด 15%)',
     baseCost: 100_000_000_000_000_000_000, // 100Sx
     color: '#fbbf24',
+    maxPieces: 3,
   },
 
-  // 👑 MYTHIC (Weight: 1)
+  // 👑 MYTHIC (Weight: 0.5, Max: 1)
   {
     id: 'gaiacore',
     name: 'หัวใจแห่งไกอา',
     icon: '👑',
     desc: 'แก่นกลางของจิตวิญญาณแห่งโลก เมื่อค้นพบจะปลุกพลังโบราณวัตถุทุกชิ้นให้ทวีคูณเป็น 2 เท่า!',
     rarity: 'mythic',
-    dropWeight: 1,
-    effectDesc: '⭐ บูสต์พลังของโบราณวัตถุทุกชิ้นขึ้นเป็น 2 เท่าถาวร!',
+    dropWeight: 0.5,
+    effectDesc: '⭐ บูสต์พลังของชิ้นส่วนโบราณวัตถุทุกชิ้นขึ้นเป็น 2 เท่าถาวร!',
     baseCost: 10_000_000_000_000_000_000_000, // 10Sp
     color: '#f43f5e',
+    maxPieces: 1,
   },
 ];
 
@@ -201,13 +219,30 @@ export const BIOME_DEFS: BiomeDef[] = [
 
 // Helper functions for Relic & Biome bonuses
 
+export function relicCount(state: GameState, relicId: string): number {
+  const val = state.relics?.[relicId];
+  if (typeof val === 'number') return Math.max(0, val);
+  return val ? 1 : 0;
+}
+
 export function hasRelic(state: GameState, relicId: string): boolean {
-  return !!state.relics?.[relicId];
+  return relicCount(state, relicId) > 0;
+}
+
+export function relicMaxed(state: GameState, relicId: string): boolean {
+  const def = RELIC_DEFS.find(r => r.id === relicId);
+  if (!def) return false;
+  return relicCount(state, relicId) >= def.maxPieces;
+}
+
+export function totalRelicFragmentsCount(state: GameState): number {
+  if (!state.relics) return 0;
+  return RELIC_DEFS.reduce((sum, r) => sum + relicCount(state, r.id), 0);
 }
 
 export function relicsCount(state: GameState): number {
   if (!state.relics) return 0;
-  return Object.values(state.relics).filter(Boolean).length;
+  return RELIC_DEFS.filter(r => hasRelic(state, r.id)).length;
 }
 
 export function isMasterRelicActive(state: GameState): boolean {
@@ -215,51 +250,60 @@ export function isMasterRelicActive(state: GameState): boolean {
 }
 
 export function relicMult(state: GameState, relicId: string): number {
-  if (!hasRelic(state, relicId)) return 0;
-  return isMasterRelicActive(state) && relicId !== 'gaiacore' ? 2 : 1;
+  const count = relicCount(state, relicId);
+  if (count <= 0) return 0;
+  return isMasterRelicActive(state) && relicId !== 'gaiacore' ? count * 2 : count;
 }
 
 export function relicRateBonusMultiplier(state: GameState): number {
   let mult = 1;
   const amberMult = relicMult(state, 'amber');
-  if (amberMult > 0) mult *= (1 + 0.15 * amberMult);
-
-  const aquiferMult = relicMult(state, 'aquifer');
-  if (aquiferMult > 0) mult *= (1 + 0.30 * aquiferMult);
+  if (amberMult > 0) mult *= (1 + 0.005 * amberMult);
 
   const meteoriteMult = relicMult(state, 'meteorite');
-  if (meteoriteMult > 0) mult *= (1 + 0.35 * meteoriteMult);
+  if (meteoriteMult > 0) mult *= (1 + 0.01 * meteoriteMult);
 
   return mult;
 }
 
-export function relicLuckyMultiplier(state: GameState): number {
+const DEEP_ROOT_IDS = new Set([
+  'eternal', 'nexus', 'crystal', 'heart', 'seed', 'throne',
+  'magma', 'aether', 'void', 'astral', 'chronos', 'singularity', 'genesis', 'yggdrasil'
+]);
+
+export function relicDeepRootsBonus(state: GameState, moduleId: string): number {
+  if (!DEEP_ROOT_IDS.has(moduleId)) return 1;
+  const aquiferMult = relicMult(state, 'aquifer');
+  return aquiferMult > 0 ? 1 + 0.01 * aquiferMult : 1;
+}
+
+export function relicEventNutrientBonus(state: GameState): number {
   const m = relicMult(state, 'geode');
-  return m > 0 ? (1 + 0.30 * m) : 1;
+  return m > 0 ? 1 + 0.02 * m : 1;
 }
 
 export function relicOfflineBonus(state: GameState): { extraHours: number; effMultiplier: number } {
   const m = relicMult(state, 'chronolith');
   if (m === 0) return { extraHours: 0, effMultiplier: 1 };
   return {
-    extraHours: 4 * m,
-    effMultiplier: 1 + 0.25 * m,
+    extraHours: 0.25 * m,
+    effMultiplier: 1 + 0.01 * m,
   };
 }
 
 export function relicSynergyBonusPerUnit(state: GameState): number {
   const m = relicMult(state, 'mycocore');
-  return m > 0 ? Math.round((0.08 + 0.04 * m) * 100) / 100 : 0.08;
+  return m > 0 ? Math.round((0.08 + 0.005 * m) * 1000) / 1000 : 0.08;
 }
 
 export function relicEchoBonusPerEcho(state: GameState): number {
   const m = relicMult(state, 'crown');
-  return m > 0 ? Math.round((1.0 + 0.5 * m) * 100) / 100 : 1.0;
+  return m > 0 ? Math.round((0.05 + 0.002 * m) * 1000) / 1000 : 0.05;
 }
 
-export function relicStarterRootsBonus(state: GameState): number {
+export function relicBonusSproutChance(state: GameState): number {
   const m = relicMult(state, 'ruintablet');
-  return m * 30;
+  return m > 0 ? Math.min(0.50, m * 0.05) : 0;
 }
 
 export function biomeActiveRateMultiplier(state: GameState): number {
@@ -283,5 +327,5 @@ export function pickWeightedUnownedRelic(unownedRelics: RelicDef[]): RelicDef | 
 }
 
 export function unownedRelicList(state: GameState): RelicDef[] {
-  return RELIC_DEFS.filter(r => !hasRelic(state, r.id));
+  return RELIC_DEFS.filter(r => !relicMaxed(state, r.id));
 }

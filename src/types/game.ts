@@ -139,6 +139,7 @@ export interface RelicDef {
   effectDesc: string;
   baseCost: number;
   color: string;
+  maxPieces: number;
 }
 
 export type TrialId = 'none' | 'arid_drought' | 'basalt_strata' | 'void_anomaly';
@@ -180,7 +181,7 @@ export interface GameState {
   rootUpgrades: Record<string, number>; // moduleId -> level
   echoes: Record<string, number>;      // moduleId -> level
   rootSynergies: Record<string, boolean>; // moduleId -> owned
-  relics: Record<string, boolean>;     // relicId -> owned
+  relics: Record<string, number | boolean>;     // relicId -> count or owned
   unclaimedRelicId: string | null;     // spawned relic waiting to be collected on screen
   activeBiome: BiomeId;
   buyQty: number;
@@ -258,7 +259,7 @@ export interface SavePayload {
   es?: number;
   p?: Partial<PrestigeState>;
   ts?: Partial<TranscendenceState>;
-  rel?: Record<string, boolean>;
+  rel?: Record<string, number | boolean>;
   bm?: BiomeId;
   pt?: number;
   rpt?: number;

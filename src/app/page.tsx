@@ -89,7 +89,6 @@ export default function Home() {
     startTrial,
     abandonTrial,
     claimUnearthedRelic,
-    excavateRelic,
     setActiveBiome,
     onWaterCanvas,
     importSaveCode,
@@ -215,7 +214,6 @@ export default function Home() {
         <RelicsModal
           state={state}
           onClose={() => setRelicsModalOpen(false)}
-          onExcavateRelic={excavateRelic}
           onSelectBiome={setActiveBiome}
         />
       )}

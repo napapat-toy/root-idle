@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.26.1';
+export const GAME_VERSION = '1.27.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -13,9 +13,11 @@ export const ROOT_UPGRADE_NORMAL_MULT = 1.75;
 export const ROOT_UPGRADE_DISCOUNT = 0.40;
 
 export const ECHO_REQUIRE_OWNED = 20;
-export const ECHO_BASE_SECONDS = 200;
-export const ECHO_COST_MULT = 4;
+export const ECHO_BASE_SECONDS = 45;
+export const ECHO_COST_MULT = 2.0;
 export const ECHO_REQUIRE_UPGRADE_LEVEL = 3;
+export const ECHO_MAX_LEVEL = 5;
+export const ECHO_BONUS_PER_LEVEL = 0.05;
 
 export const ROOT_SYNERGY_REQUIRE_OWNED = 50;
 export const ROOT_SYNERGY_PCT_PER_UNIT = 0.08; // +0.08% per owned unit
@@ -139,6 +141,7 @@ export function rootUpgradeMultiplier(state: GameState, moduleId: string): numbe
 // Echoes
 import {
   relicRateBonusMultiplier,
+  relicDeepRootsBonus,
   relicSynergyBonusPerUnit,
   relicEchoBonusPerEcho,
   biomeActiveRateMultiplier,
@@ -159,12 +162,13 @@ export function totalEchoCount(state: GameState): number {
 }
 
 export function echoBonusPct(state: GameState): number {
-  return totalEchoCount(state) * relicEchoBonusPerEcho(state);
+  return Math.round((globalEchoMultiplier(state) - 1) * 100);
 }
 
 export function globalEchoMultiplier(state: GameState): number {
+  const bonusPerEcho = relicEchoBonusPerEcho(state);
   const trialMult = trialEchoBonusMultiplier(state);
-  return (1 + echoBonusPct(state) * 0.01) * trialMult;
+  return (1 + totalEchoCount(state) * bonusPerEcho) * trialMult;
 }
 
 export function echoUnlockedFor(state: GameState, moduleId: string): boolean {
@@ -172,7 +176,12 @@ export function echoUnlockedFor(state: GameState, moduleId: string): boolean {
     && (state.rootUpgrades[moduleId] || 0) >= ECHO_REQUIRE_UPGRADE_LEVEL;
 }
 
+export function echoMaxed(state: GameState, moduleId: string): boolean {
+  return (state.echoes[moduleId] || 0) >= ECHO_MAX_LEVEL;
+}
+
 export function echoCost(state: GameState, def: ModuleDef, currentTotalRate: number): number {
+  if (echoMaxed(state, def.id)) return Infinity;
   const n = state.echoes[def.id] || 0;
   const cost = ECHO_BASE_SECONDS * currentTotalRate * Math.pow(ECHO_COST_MULT, n);
   return Math.ceil(Math.max(cost, 1));
@@ -230,20 +239,20 @@ export function totalSynergiesCount(state: GameState): number {
 }
 
 export function totalGlobalBonusPercent(state: GameState): number {
-  const echoPct = echoBonusPct(state);
   const achPct = achievementBonusPct(state);
   const synPct = totalSynergyBonusPct(state);
   const prestigePct = prestigeBonusPct(state);
-  const relicPct = (relicRateBonusMultiplier(state) - 1) * 100;
   const biomePct = (biomeActiveRateMultiplier(state) - 1) * 100;
-  return echoPct + achPct + synPct + prestigePct + relicPct + biomePct;
+  return achPct + synPct + prestigePct + biomePct;
 }
 
 export function globalRateMultiplier(state: GameState): number {
   const vigor = primordialVigorMult(state);
   const trialRate = trialRateMultiplier(state);
   const trialBonus = trialCompletionBonusMultiplier(state);
-  return (1 + totalGlobalBonusPercent(state) * 0.01) * vigor * trialRate * trialBonus;
+  const echoMult = globalEchoMultiplier(state);
+  const relicMult = relicRateBonusMultiplier(state);
+  return (1 + totalGlobalBonusPercent(state) * 0.01) * vigor * trialRate * trialBonus * echoMult * relicMult;
 }
 
 // Effective Rates
@@ -251,9 +260,10 @@ export function effectiveRate(state: GameState, def: ModuleDef): number {
   const count = state.owned[def.id] || 0;
   const milestoneMult = moduleMilestoneMultiplier(count);
   const upgMult = rootUpgradeMultiplier(state, def.id);
+  const deepMult = relicDeepRootsBonus(state, def.id);
   const globalMult = globalRateMultiplier(state);
 
-  return def.rate * milestoneMult * upgMult * globalMult;
+  return def.rate * milestoneMult * upgMult * deepMult * globalMult;
 }
 
 export function calculateTotalRate(state: GameState): number {

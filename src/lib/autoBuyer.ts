@@ -3,10 +3,13 @@ import {
   baseTotalRate,
   costFor,
   echoCost,
+  echoMaxed,
   echoUnlockedFor,
   effectiveRate,
   MODULE_DEFS,
   MODULE_UNLOCK_REQUIRE_OWNED,
+  relicBonusSproutChance,
+  relicEchoBonusPerEcho,
   rootSynergyCost,
   rootSynergyUnlocked,
   speciesSynergyBonusPct,
@@ -112,11 +115,14 @@ export function evaluateAutoBuy(
         isGatekeeper,
         isMilestoneTarget,
         apply: () => {
+          const sproutChance = relicBonusSproutChance(state);
+          const bonus = sproutChance > 0 && Math.random() < sproutChance ? 1 : 0;
+          const added = 1 + bonus;
           setState(prev => ({
             ...prev,
             nutrients: Math.max(0, prev.nutrients - cost),
-            owned: { ...prev.owned, [def.id]: (prev.owned[def.id] || 0) + 1 },
-            totalOwned: prev.totalOwned + 1,
+            owned: { ...prev.owned, [def.id]: (prev.owned[def.id] || 0) + added },
+            totalOwned: prev.totalOwned + added,
           }));
         },
       });
@@ -157,16 +163,17 @@ export function evaluateAutoBuy(
       });
 
       MODULE_DEFS.forEach(def => {
-        if (echoUnlockedFor(state, def.id)) {
+        if (echoUnlockedFor(state, def.id) && !echoMaxed(state, def.id)) {
           const cost = echoCost(state, def, totalRate);
-          const gain = totalRate * 0.01;
+          const bonus = relicEchoBonusPerEcho(state);
+          const gain = totalRate * bonus;
           candidates.push({
             type: 'echo',
             id: def.id,
             cost,
             value: gain,
             shareOfTotal: 1.0, // Echo buffs all roots globally
-            marginalGain: 0.01,
+            marginalGain: bonus,
             isNewUnlock: (state.echoes[def.id] || 0) === 0,
             apply: () => {
               setState(prev => ({
@@ -207,10 +214,36 @@ export function evaluateAutoBuy(
 
     if (candidates.length === 0) break;
 
+    // POCKET CHANGE SWEEPER:
+    // If there are affordable upgrades, echoes, or cheap modules costing <= 3% of current wallet:
+    // Scoop them up immediately! This prevents upgrade backlog from stalling progression.
+    const pocketChange = candidates.filter(c => c.cost <= currentNutrients * 0.03);
+    if (pocketChange.length > 0) {
+      pocketChange.sort((a, b) => {
+        // Prioritize upgrades and echoes to compound multipliers, then by value/cost ROI
+        if (a.type !== b.type) {
+          if (a.type === 'upgrade' || a.type === 'echo') return -1;
+          if (b.type === 'upgrade' || b.type === 'echo') return 1;
+        }
+        const roiB = b.value / Math.max(1, b.cost);
+        const roiA = a.value / Math.max(1, a.cost);
+        return roiB - roiA || b.marginalGain - a.marginalGain;
+      });
+      pocketChange[0].apply();
+      currentNutrients -= pocketChange[0].cost;
+      executedAny = true;
+      continue;
+    }
+
     // Filter out obsolete < 1% candidates when total rate is developed (> 50)
-    // Always keep candidates that unlock new tiers, gatekeepers to next tiers, milestone targets (< 100 roots & <= 10% wallet), or produce >= 1% of total income
+    // Always keep:
+    // - New tier unlocks or gatekeepers
+    // - Milestone targets (< 100 roots & <= 10% wallet)
+    // - Pocket change candidates (cost <= 5% wallet)
+    // - Candidates producing >= 1% of total income
     const highImpactCandidates = candidates.filter(c => {
       if (c.isNewUnlock || c.isGatekeeper || c.isMilestoneTarget) return true;
+      if (c.cost <= currentNutrients * 0.05) return true;
       if (totalRate <= 50) return true;
       return c.shareOfTotal >= 0.01 || c.marginalGain >= 0.01;
     });
@@ -295,8 +328,12 @@ export function evaluateAutoBuy(
     // 4. Higher share of total production
     // 5. Faster wait time / best ROI
     reachable.sort((a, b) => {
-      // 1. If one is a Major Target (>= 20% / new unlock / gatekeeper) and the other is not, Major Target always wins
+      // 1. If one is a Major Target (>= 20% / new unlock / gatekeeper) and the other is not:
+      // But if the non-major target is AFFORDABLE RIGHT NOW (waitSec === 0) with solid boost or is an upgrade/echo,
+      // and the major target requires waiting > 10s: buy the immediate boost!
       if (a.isMajor !== b.isMajor) {
+        if (a.waitSec === 0 && b.waitSec > 10 && (a.marginalGain >= 0.03 || a.type === 'upgrade' || a.type === 'echo')) return -1;
+        if (b.waitSec === 0 && a.waitSec > 10 && (b.marginalGain >= 0.03 || b.type === 'upgrade' || b.type === 'echo')) return 1;
         return a.isMajor ? -1 : 1;
       }
 
