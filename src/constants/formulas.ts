@@ -275,7 +275,12 @@ export function calculateTotalRate(state: GameState): number {
 }
 
 export function prestigeUnlocked(state: GameState): boolean {
-  return totalEchoCount(state) >= PRESTIGE_UNLOCK_ECHOES || (state.owned['throne'] || 0) >= 1;
+  return (
+    totalEchoCount(state) >= PRESTIGE_UNLOCK_ECHOES ||
+    (state.owned['throne'] || 0) >= 1 ||
+    (state.stats?.prestigeCount || 0) > 0 ||
+    (state.transcendence?.count || 0) > 0
+  );
 }
 
 // Subterranean Geological Depth Layers

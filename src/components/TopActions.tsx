@@ -33,9 +33,12 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   const tr = t(lang);
 
   const pendingSeeds = calcPrestigeSeeds(state);
-  const canPrestige = prestigeUnlocked(state) && pendingSeeds > 0;
-  const hasPrestigeShop = state.eternalSeeds > 0;
-  const showPrestigeBtn = canPrestige || hasPrestigeShop;
+  const isPrestigeEverUnlocked =
+    prestigeUnlocked(state) ||
+    state.eternalSeeds > 0 ||
+    (state.stats?.prestigeCount || 0) > 0 ||
+    (state.transcendence?.count || 0) > 0;
+  const showPrestigeBtn = isPrestigeEverUnlocked;
 
   const unlockedAchCount = state.achievements?.length || 0;
   const hasAnyAuto = state.prestige.autoRoot || state.prestige.autoEvent || state.prestige.autoReset;
