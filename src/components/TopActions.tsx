@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { GameState, Language } from '@/types/game';
-import { calcPrestigeSeeds, prestigeUnlocked } from '@/constants/gameData';
+import { calcPrestigeSeeds, prestigeUnlocked, isTranscendenceUnlocked } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { t } from '@/lib/i18n';
 
@@ -30,6 +30,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onOpenTranscendence,
 }) => {
   const lang: Language = state.lang || 'th';
+  const isEn = lang === 'en';
   const tr = t(lang);
 
   const pendingSeeds = calcPrestigeSeeds(state);
@@ -43,8 +44,8 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   const unlockedAchCount = state.achievements?.length || 0;
   const hasAnyAuto = state.prestige.autoRoot || state.prestige.autoEvent || state.prestige.autoReset;
 
-  const yggOwned = state.owned['yggdrasil'] || 0;
-  const showTranscendenceBtn = (state.transcendence?.count || 0) > 0 || (state.transcendence?.gaiaEssences || 0) > 0 || yggOwned >= 100;
+  const isTrialActive = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
+  const showTranscendenceBtn = isTranscendenceUnlocked(state);
   const pendingEssences = (state.runEarned >= 1e28) ? Math.max(1, Math.floor(Math.pow(state.runEarned / 1e28, 0.15) * 5)) : 0;
 
   return (
@@ -70,12 +71,22 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
             className={`prestige-mini-btn ${pendingEssences > 0 ? 'ready-pulse' : ''}`}
             onClick={onOpenTranscendence}
             style={{
-              borderColor: 'rgba(52, 211, 153, 0.6)',
-              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.2))',
+              borderColor: isTrialActive ? 'rgba(245, 158, 11, 0.7)' : 'rgba(52, 211, 153, 0.6)',
+              background: isTrialActive
+                ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(249, 115, 22, 0.2))'
+                : 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.2))',
             }}
           >
-            🌍 <span className="action-btn-text">{tr.transcendenceBtn}</span>
-            {pendingEssences > 0 && (
+            {isTrialActive ? '⚔️' : '🌍'}{' '}
+            <span className="action-btn-text">
+              {tr.transcendenceBtn}
+            </span>
+            {isTrialActive && (
+              <span style={{ color: '#facc15', fontWeight: 700, marginLeft: '5px', fontSize: '10.5px' }}>
+                ({isEn ? 'Trial' : 'ทดสอบ'})
+              </span>
+            )}
+            {pendingEssences > 0 && !isTrialActive && (
               <span style={{ color: '#34d399', fontWeight: 700, marginLeft: '5px', fontSize: '11px' }}>
                 (+{fmtInt(pendingEssences)} 🌍)
               </span>

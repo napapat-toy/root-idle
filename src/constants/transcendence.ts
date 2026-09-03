@@ -58,7 +58,25 @@ export function isTranscendenceUnlocked(state: GameState): boolean {
   const yggOwned = state.owned['yggdrasil'] || 0;
   const prestiges = state.stats?.prestigeCount || 0;
   const hasTranscended = (state.transcendence?.count || 0) > 0;
-  return hasTranscended || (yggOwned >= TRANSCENDENCE_REQUIRE_YGGDRASIL && prestiges >= TRANSCENDENCE_REQUIRE_PRESTIGES);
+  const hasEssences =
+    (state.transcendence?.totalGaiaEssencesLifetime || 0) > 0 ||
+    (state.transcendence?.gaiaEssences || 0) > 0;
+  const hasPerks =
+    (state.transcendence?.primordialVigorLevel || 0) > 0 ||
+    (state.transcendence?.soilMemoryLevel || 0) > 0 ||
+    (state.transcendence?.gaiaTouchLevel || 0) > 0 ||
+    !!state.transcendence?.autoManagerUnlocked;
+  const inTrial = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
+  const hasCompletedTrials = Object.keys(state.transcendence?.completedTrials || {}).length > 0;
+
+  return (
+    hasTranscended ||
+    hasEssences ||
+    hasPerks ||
+    inTrial ||
+    hasCompletedTrials ||
+    (yggOwned >= TRANSCENDENCE_REQUIRE_YGGDRASIL && prestiges >= TRANSCENDENCE_REQUIRE_PRESTIGES)
+  );
 }
 
 export function calcTranscendenceEssences(state: GameState): number {
