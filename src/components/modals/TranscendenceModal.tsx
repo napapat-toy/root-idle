@@ -19,6 +19,7 @@ import {
 } from '@/constants/gameData';
 import { t } from '@/lib/i18n';
 import { fmt, fmtInt } from '@/lib/formatters';
+import { ConfirmModal } from './ConfirmModal';
 
 interface TranscendenceModalProps {
   state: GameState;
@@ -49,6 +50,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
 
   const [activeTab, setActiveTab] = useState<'tree' | 'trials'>('tree');
   const [showConfirmTranscend, setShowConfirmTranscend] = useState<boolean>(false);
+  const [pendingTrialDef, setPendingTrialDef] = useState<TrialDef | null>(null);
 
   const essences = state.transcendence?.gaiaEssences || 0;
   const totalLifetimeEssences = state.transcendence?.totalGaiaEssencesLifetime || 0;
@@ -95,11 +97,12 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
           <div
             style={{
               display: 'flex',
-              background: 'var(--bg-panel-2)',
+              background: 'rgba(0, 0, 0, 0.4)',
               borderRadius: '10px',
               padding: '3px',
-              marginBottom: '16px',
+              marginBottom: '14px',
               gap: '4px',
+              border: '1px solid var(--line-soil)',
             }}
           >
             <button
@@ -108,16 +111,18 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                 flex: 1,
                 padding: '8px 12px',
                 borderRadius: '8px',
-                border: 'none',
-                background: activeTab === 'tree' ? 'var(--accent-gold)' : 'transparent',
-                color: activeTab === 'tree' ? '#1c150b' : 'var(--text-dim)',
-                fontWeight: activeTab === 'tree' ? 700 : 500,
-                fontSize: '13px',
+                border: activeTab === 'tree' ? '1px solid rgba(52, 211, 153, 0.5)' : '1px solid transparent',
+                background: activeTab === 'tree' ? 'linear-gradient(135deg, #10b981, #059669)' : 'transparent',
+                color: activeTab === 'tree' ? '#ffffff' : 'var(--root-cream)',
+                fontWeight: activeTab === 'tree' ? 700 : 600,
+                fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
+                boxShadow: activeTab === 'tree' ? '0 2px 8px rgba(16, 185, 129, 0.35)' : 'none',
+                opacity: activeTab === 'tree' ? 1 : 0.75,
               }}
             >
-              {tr.gaiaTreeTab}
+              🌳 {tr.gaiaTreeTab}
             </button>
             <button
               onClick={() => setActiveTab('trials')}
@@ -125,16 +130,18 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                 flex: 1,
                 padding: '8px 12px',
                 borderRadius: '8px',
-                border: 'none',
-                background: activeTab === 'trials' ? 'var(--accent-gold)' : 'transparent',
-                color: activeTab === 'trials' ? '#1c150b' : 'var(--text-dim)',
-                fontWeight: activeTab === 'trials' ? 700 : 500,
-                fontSize: '13px',
+                border: activeTab === 'trials' ? '1px solid rgba(234, 179, 8, 0.5)' : '1px solid transparent',
+                background: activeTab === 'trials' ? 'linear-gradient(135deg, #eab308, #ca8a04)' : 'transparent',
+                color: activeTab === 'trials' ? '#1c150b' : 'var(--root-cream)',
+                fontWeight: activeTab === 'trials' ? 700 : 600,
+                fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
+                boxShadow: activeTab === 'trials' ? '0 2px 8px rgba(234, 179, 8, 0.35)' : 'none',
+                opacity: activeTab === 'trials' ? 1 : 0.75,
               }}
             >
-              {tr.trialsTab}
+              ⚔️ {tr.trialsTab}
             </button>
           </div>
 
@@ -151,7 +158,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                   textAlign: 'center',
                 }}
               >
-                <div style={{ fontSize: '13px', color: 'var(--text-dim)', marginBottom: '6px' }}>
+                <div style={{ fontSize: '13px', color: 'var(--root-cream-dim)', marginBottom: '6px' }}>
                   {tr.transcendenceDesc}
                 </div>
                 <div style={{ fontSize: '18px', fontWeight: 800, color: '#34d399', marginBottom: '10px' }}>
@@ -201,7 +208,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                       onClick={() => setShowConfirmTranscend(false)}
                       style={{
                         background: 'var(--bg-panel-2)',
-                        color: 'var(--text-dim)',
+                        color: 'var(--root-cream-dim)',
                         border: '1px solid rgba(255,255,255,0.1)',
                         borderRadius: '8px',
                         padding: '8px 16px',
@@ -237,7 +244,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                         Lv. {vigorLvl}/{PRIMORDIAL_VIGOR_MAX_LEVEL}
                       </span>
                     </div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>{tr.transcendPerk1Desc}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk1Desc}</div>
                     <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
                       {isEn ? `Current Effect: +${(vigorLvl * 25).toFixed(0)}% Base Rate` : `ผลปัจจุบัน: เรทพื้นฐาน +${(vigorLvl * 25).toFixed(0)}%`}
                     </div>
@@ -281,7 +288,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                         Lv. {soilLvl}/{SOIL_MEMORY_MAX_LEVEL}
                       </span>
                     </div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>{tr.transcendPerk2Desc}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk2Desc}</div>
                     <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
                       {isEn ? `Current Effect: Retain ${(soilMemoryRetainPct(state) * 100).toFixed(0)}% Echoes` : `ผลปัจจุบัน: คงสะท้อนราก ${(soilMemoryRetainPct(state) * 100).toFixed(0)}%`}
                     </div>
@@ -322,7 +329,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                       <span style={{ fontSize: '18px' }}>⚙️</span>
                       <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk3Name}</span>
                     </div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>{tr.transcendPerk3Desc}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk3Desc}</div>
                   </div>
                   <button
                     onClick={onBuyAutoManager}
@@ -363,7 +370,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                         Lv. {touchLvl}/{GAIA_TOUCH_MAX_LEVEL}
                       </span>
                     </div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>{tr.transcendPerk4Desc}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk4Desc}</div>
                     <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
                       {isEn ? `Current Effect: ×${gaiaTouchBonusMult(state).toFixed(2)} Lucky Magnitude` : `ผลปัจจุบัน: แจ็กพอตโชคดี ×${gaiaTouchBonusMult(state).toFixed(2)} เท่า`}
                     </div>
@@ -393,6 +400,46 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
           {/* Tab 2: Subterranean Trials */}
           {activeTab === 'trials' && (
             <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {/* Trial Overview & Reset Notice Banner */}
+              <div
+                style={{
+                  background: 'rgba(234, 179, 8, 0.08)',
+                  border: '1px solid rgba(234, 179, 8, 0.3)',
+                  borderRadius: '12px',
+                  padding: '10px 14px',
+                  fontSize: '11.5px',
+                  color: 'var(--root-cream)',
+                  lineHeight: '1.45',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, color: '#facc15', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '15px' }}>⚔️</span>
+                  <span style={{ fontSize: '12.5px' }}>
+                    {isEn ? 'Subterranean Trial Rules & Reset Information' : 'กติกาการทดลองแห่งผืนพิภพและการรีเซ็ต'}
+                  </span>
+                </div>
+                <div style={{ color: 'var(--root-cream-dim)', fontSize: '11px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                  <div>
+                    🌱 <strong>{isEn ? 'What gets reset: ' : 'สิ่งที่จะรีเซ็ต: '}</strong>
+                    {isEn
+                      ? 'Triggers a standard Prestige Reset for the current garden. Current roots and nutrients reset to 0, and you collect all pending Eternal Seeds for this run.'
+                      : 'จะทำการหว่านเมล็ดใหม่ (Prestige) รอบปัจจุบัน โดยรากและสารอาหารจะถูกรีเซ็ตเพื่อเริ่มปลูกใหม่ และคุณจะได้รับเมล็ดพันธุ์ที่สะสมไว้ทั้งหมดของรอบนี้'}
+                  </div>
+                  <div>
+                    🛡️ <strong>{isEn ? 'What is kept safe: ' : 'สิ่งที่ไม่หาย (ปลอดภัย 100%): '}</strong>
+                    {isEn
+                      ? 'All permanent Prestige upgrades, Gaia perks, Eternal Seeds in wallet, and Relics remain completely intact!'
+                      : 'อัปเกรดร้าน Prestige ทั้งหมด, บัฟไกอา, เมล็ดพันธุ์ในกระเป๋า และโบราณวัตถุ (Relics) ทั้งหมดจะยังอยู่ครบถ้วน ไม่หาย!'}
+                  </div>
+                  <div>
+                    🎯 <strong>{isEn ? 'Goal & Abandon: ' : 'เป้าหมายและยกเลิก: '}</strong>
+                    {isEn
+                      ? 'Grow 25 Yggdrasil Roots under trial restrictions to claim permanent rewards. You can abandon the trial anytime without penalty.'
+                      : 'ปลูกรากต้นไม้โลกครบ 25 ต้นภายใต้ข้อจำกัดเพื่อปลดล็อกรางวัลถาวร และสามารถกดยกเลิกการทดสอบได้ตลอดเวลาโดยไม่มีบทลงโทษ'}
+                  </div>
+                </div>
+              </div>
+
               {TRIAL_DEFS.map((def: TrialDef) => {
                 const isCompleted = isTrialCompleted(state, def.id);
                 const isActive = activeTrial === def.id;
@@ -416,7 +463,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                         <span style={{ fontSize: '24px' }}>{def.icon}</span>
                         <div>
                           <div style={{ fontWeight: 700, fontSize: '15px' }}>{isEn ? def.enName : def.name}</div>
-                          <div style={{ fontSize: '11px', color: 'var(--text-dim)' }}>{isEn ? def.enDesc : def.desc}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)' }}>{isEn ? def.enDesc : def.desc}</div>
                         </div>
                       </div>
                       {isCompleted && (
@@ -467,7 +514,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                         </button>
                       ) : (
                         <button
-                          onClick={() => onStartTrial(def.id)}
+                          onClick={() => setPendingTrialDef(def)}
                           style={{
                             background: 'linear-gradient(135deg, #eab308, #ca8a04)',
                             color: '#1c150b',
@@ -490,6 +537,26 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
           )}
         </div>
       </div>
+
+      {/* Confirm Trial Modal */}
+      <ConfirmModal
+        isOpen={!!pendingTrialDef}
+        title={isEn ? 'Confirm Begin Trial' : 'ยืนยันการเริ่มการทดสอบ'}
+        message={
+          isEn
+            ? `Entering "${pendingTrialDef?.enName}" will trigger a Prestige Reset for your current garden. You will collect all pending Eternal Seeds, but roots and nutrients will be reset so you can begin the challenge.\n\nAll permanent upgrades, seed perks, relics, and essences remain 100% safe!`
+            : `การเข้าสู่การทดสอบ "${pendingTrialDef?.name}" จะทำการหว่านเมล็ดใหม่ (Prestige Reset) รอบปัจจุบันทันที โดยคุณจะได้รับเมล็ดพันธุ์ที่สะสมไว้ทั้งหมด แต่รากและสารอาหารจะถูกรีเซ็ตเพื่อเริ่มความท้าทายใหม่\n\n(อัปเกรดถาวรทั้งหมด, เมล็ดพันธุ์ในกระเป๋า, โบราณวัตถุ และละอองชีวิตจะยังอยู่ครบ 100% ไม่หาย)`
+        }
+        confirmText={isEn ? 'Begin Trial' : 'เริ่มการทดสอบ'}
+        cancelText={isEn ? 'Cancel' : 'ยกเลิก'}
+        onConfirm={() => {
+          if (pendingTrialDef) {
+            onStartTrial(pendingTrialDef.id);
+            setPendingTrialDef(null);
+          }
+        }}
+        onCancel={() => setPendingTrialDef(null)}
+      />
     </div>
   );
 });
