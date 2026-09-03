@@ -876,6 +876,7 @@ svg#rootCanvas {
 .modal-wrapper.wardrobe-modal-wrapper { max-width: 640px; }
 .modal-wrapper.prestige-modal-wrapper { max-width: 480px; }
 .modal-wrapper.options-modal-wrapper { max-width: 460px; }
+.modal-wrapper.relics-modal-wrapper { max-width: 500px; }
 .modal-wrapper.offline-modal-wrapper,
 .modal-wrapper.confirm-modal-wrapper { max-width: 380px; }
 

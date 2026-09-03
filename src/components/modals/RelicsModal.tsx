@@ -49,21 +49,32 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
   return (
     <div className="offline-backdrop" onClick={onClose} style={{ zIndex: 2100 }}>
       <div
-        className="modal-wrapper"
+        className="modal-wrapper relics-modal-wrapper"
         onClick={e => e.stopPropagation()}
-        style={{ maxWidth: '560px', width: '100%' }}
+        style={{ maxWidth: '500px', width: '95%', boxSizing: 'border-box', margin: '0 auto' }}
       >
         <button className="modal-close-x" onClick={onClose} aria-label={tr.close}>
           &times;
         </button>
 
-        <div className="offline-modal generic-modal" style={{ padding: '20px 24px', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
+        <div
+          className="offline-modal generic-modal"
+          style={{
+            padding: 'clamp(14px, 3.5vw, 20px)',
+            maxHeight: '88vh',
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            boxSizing: 'border-box',
+            overflowX: 'hidden',
+          }}
+        >
           {/* Header */}
-          <div className="icon" style={{ fontSize: '32px', marginBottom: '6px' }}>🏺</div>
-          <h2 style={{ marginBottom: '4px' }}>
+          <div className="icon" style={{ fontSize: '28px', marginBottom: '4px' }}>🏺</div>
+          <h2 style={{ marginBottom: '3px', fontSize: 'clamp(16px, 4vw, 18px)' }}>
             {isEn ? 'Subterranean Museum' : 'พิพิธภัณฑ์โบราณคดีใต้พิภพ'}
           </h2>
-          <div className="away-time" style={{ marginBottom: '14px', fontSize: '12px' }}>
+          <div className="away-time" style={{ marginBottom: '12px', fontSize: 'clamp(10.5px, 2.6vw, 11.5px)' }}>
             {isEn
               ? `Discovered: ${ownedCount} / ${totalCount} Types (${totalFragments} Fragments Collected)`
               : `ค้นพบแล้ว: ${ownedCount} / ${totalCount} ชนิด (${totalFragments} ชิ้นส่วนสะสม)`}
@@ -78,23 +89,28 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
               padding: '3px',
               gap: '4px',
               border: '1px solid var(--line-soil)',
-              marginBottom: '14px',
+              marginBottom: '12px',
               flexShrink: 0,
+              width: '100%',
+              boxSizing: 'border-box',
             }}
           >
             <button
               onClick={() => setActiveTab('relics')}
               style={{
                 flex: 1,
-                padding: '8px',
+                padding: '7px 4px',
                 borderRadius: '7px',
                 border: 'none',
                 fontWeight: 600,
-                fontSize: '12px',
+                fontSize: 'clamp(10.5px, 2.8vw, 11.5px)',
                 cursor: 'pointer',
                 background: activeTab === 'relics' ? 'var(--accent-glow)' : 'transparent',
                 color: activeTab === 'relics' ? '#12190d' : 'var(--root-cream)',
                 transition: 'all 0.15s ease',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
               }}
             >
               🏺 {isEn ? 'Relic Showcase' : 'ตู้โชว์โบราณวัตถุ'} ({ownedCount}/{totalCount})
@@ -103,15 +119,18 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
               onClick={() => setActiveTab('biomes')}
               style={{
                 flex: 1,
-                padding: '8px',
+                padding: '7px 4px',
                 borderRadius: '7px',
                 border: 'none',
                 fontWeight: 600,
-                fontSize: '12px',
+                fontSize: 'clamp(10.5px, 2.8vw, 11.5px)',
                 cursor: 'pointer',
                 background: activeTab === 'biomes' ? 'var(--accent-glow)' : 'transparent',
                 color: activeTab === 'biomes' ? '#12190d' : 'var(--root-cream)',
                 transition: 'all 0.15s ease',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
               }}
             >
               🖼️ {isEn ? 'Canvas Biomes' : 'ชีวนิเวศฉากหลัง'}
@@ -119,7 +138,19 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
           </div>
 
           {/* Scrollable Body */}
-          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', paddingRight: '2px' }}>
+          <div
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
+              paddingRight: '2px',
+              width: '100%',
+              boxSizing: 'border-box',
+            }}
+          >
             {activeTab === 'relics' && (
               <>
                 {/* Discovery Guidance Banner */}
@@ -128,16 +159,18 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                     background: 'rgba(255, 255, 255, 0.03)',
                     border: '1px solid var(--line-soil)',
                     borderRadius: '10px',
-                    padding: '8px 12px',
+                    padding: '8px 10px',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    fontSize: '11px',
+                    fontSize: 'clamp(10px, 2.5vw, 11px)',
                     color: 'var(--root-cream-dim)',
                     lineHeight: '1.4',
+                    width: '100%',
+                    boxSizing: 'border-box',
                   }}
                 >
-                  <span style={{ fontSize: '16px' }}>⛏️</span>
+                  <span style={{ fontSize: '15px', flexShrink: 0 }}>⛏️</span>
                   <span>
                     {isEn
                       ? 'Relics are unearthed serendipitously as roots grow (~40-50 min), or have a 20% drop chance on Lucky Jackpot!'
@@ -152,21 +185,23 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                       background: 'linear-gradient(135deg, rgba(250, 204, 21, 0.2), rgba(245, 158, 11, 0.1))',
                       border: '1px solid #facc15',
                       borderRadius: '10px',
-                      padding: '8px 12px',
+                      padding: '8px 10px',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '10px',
+                      gap: '8px',
                       color: '#facc15',
-                      fontSize: '11.5px',
+                      fontSize: 'clamp(10.5px, 2.7vw, 11.5px)',
                       fontWeight: 600,
+                      width: '100%',
+                      boxSizing: 'border-box',
                     }}
                   >
-                    <span style={{ fontSize: '20px' }}>👑</span>
+                    <span style={{ fontSize: '18px', flexShrink: 0 }}>👑</span>
                     <div>
                       <div style={{ fontWeight: 700 }}>
                         {isEn ? 'Heart of Gaia Resonance Active!' : 'พลังจิตวิญญาณแห่งไกอาตื่นรู้!'}
                       </div>
-                      <div style={{ fontSize: '10.5px', opacity: 0.9 }}>
+                      <div style={{ fontSize: '10px', opacity: 0.9 }}>
                         {isEn
                           ? 'All relic passive bonuses are doubled (×2.00) permanently!'
                           : 'พลังของโบราณวัตถุทุกชิ้นทำงานทวีคูณเป็น 2 เท่าถาวร!'}
@@ -179,8 +214,10 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(5, 1fr)',
-                    gap: '8px',
+                    gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
+                    gap: 'clamp(4px, 1.5vw, 6px)',
+                    width: '100%',
+                    boxSizing: 'border-box',
                   }}
                 >
                   {RELIC_DEFS.map((relic, idx) => {
@@ -201,8 +238,8 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                           alignItems: 'center',
                           justifyContent: 'center',
                           position: 'relative',
-                          padding: '6px 4px',
-                          borderRadius: '12px',
+                          padding: '4px 2px',
+                          borderRadius: '10px',
                           background: isOwned
                             ? `linear-gradient(135deg, var(--bg-panel-2) 0%, ${relic.color}25 100%)`
                             : 'rgba(255, 255, 255, 0.02)',
@@ -212,32 +249,37 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                             ? `1px solid ${relic.color}66`
                             : '1px solid var(--line-soil)',
                           boxShadow: isSelected
-                            ? `0 0 14px ${isOwned ? relic.color : rarityInfo.color}55`
+                            ? `0 0 12px ${isOwned ? relic.color : rarityInfo.color}55`
                             : isOwned
-                            ? `0 0 8px ${relic.color}22`
+                            ? `0 0 6px ${relic.color}22`
                             : 'none',
                           cursor: 'pointer',
                           transition: 'all 0.15s ease',
                           outline: 'none',
+                          minWidth: 0,
+                          width: '100%',
+                          boxSizing: 'border-box',
+                          overflow: 'hidden',
                         }}
                       >
                         {/* Pedestal Tag & Fragment Count */}
                         <div
                           style={{
                             position: 'absolute',
-                            top: '4px',
-                            left: '5px',
-                            right: '5px',
+                            top: '3px',
+                            left: '3px',
+                            right: '3px',
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            fontSize: '9px',
+                            fontSize: 'clamp(7.5px, 1.8vw, 8.5px)',
                             color: 'var(--root-cream-dim)',
                             fontWeight: 600,
+                            lineHeight: 1,
                           }}
                         >
                           <span>#{String(idx + 1).padStart(2, '0')}</span>
-                          <span style={{ fontSize: '8.5px', color: isMaxed ? '#facc15' : isOwned ? relic.color : 'inherit', fontWeight: 700 }}>
+                          <span style={{ color: isMaxed ? '#facc15' : isOwned ? relic.color : 'inherit', fontWeight: 700 }}>
                             {isMaxed ? 'MAX' : isOwned ? `${count}/${relic.maxPieces}` : rarityInfo.icon}
                           </span>
                         </div>
@@ -245,11 +287,12 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                         {/* Artifact Icon */}
                         <span
                           style={{
-                            fontSize: '26px',
-                            marginTop: '6px',
+                            fontSize: 'clamp(19px, 4.5vw, 24px)',
+                            marginTop: '4px',
                             filter: isOwned ? 'none' : 'grayscale(100%) opacity(25%)',
-                            transform: isSelected ? 'scale(1.12)' : 'scale(1)',
+                            transform: isSelected ? 'scale(1.1)' : 'scale(1)',
                             transition: 'transform 0.15s ease',
+                            lineHeight: 1,
                           }}
                         >
                           {isOwned ? relic.icon : '🏺'}
@@ -258,16 +301,17 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                         {/* Rarity or Name label */}
                         <span
                           style={{
-                            fontSize: '9.5px',
+                            fontSize: 'clamp(8px, 2vw, 9.5px)',
                             fontWeight: 600,
                             color: isOwned ? relic.color : rarityInfo.color,
-                            marginTop: '4px',
+                            marginTop: '3px',
                             textAlign: 'center',
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
-                            maxWidth: '90%',
+                            maxWidth: '96%',
                             opacity: isOwned ? 1 : 0.75,
+                            lineHeight: 1.1,
                           }}
                         >
                           {isOwned ? (isEn ? relic.enName : relic.name) : (isEn ? rarityInfo.enName : rarityInfo.name)}
@@ -286,34 +330,45 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                     border: isSelectedOwned ? `1px solid ${selectedRelic.color}88` : '1px solid var(--line-soil)',
                     borderLeft: `5px solid ${isSelectedOwned ? selectedRelic.color : selectedRarityInfo.color}`,
                     borderRadius: '12px',
-                    padding: '12px 14px',
+                    padding: '10px 12px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '8px',
+                    gap: '7px',
                     marginTop: '2px',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    minWidth: 0,
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
                       <div
                         style={{
-                          width: '40px',
-                          height: '40px',
-                          borderRadius: '10px',
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '9px',
                           background: isSelectedOwned ? `${selectedRelic.color}25` : 'rgba(255,255,255,0.04)',
                           border: `1px solid ${isSelectedOwned ? selectedRelic.color : 'rgba(255,255,255,0.1)'}`,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontSize: '22px',
-                          boxShadow: isSelectedOwned ? `0 0 12px ${selectedRelic.color}33` : 'none',
+                          fontSize: '18px',
+                          flexShrink: 0,
+                          boxShadow: isSelectedOwned ? `0 0 10px ${selectedRelic.color}33` : 'none',
                         }}
                       >
                         {isSelectedOwned ? selectedRelic.icon : '🏺'}
                       </div>
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ fontWeight: 700, fontSize: '13.5px', color: isSelectedOwned ? 'var(--root-cream)' : 'var(--root-cream-dim)' }}>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                          <span
+                            style={{
+                              fontWeight: 700,
+                              fontSize: 'clamp(12px, 3.2vw, 13.5px)',
+                              color: isSelectedOwned ? 'var(--root-cream)' : 'var(--root-cream-dim)',
+                              wordBreak: 'break-word',
+                            }}
+                          >
                             {isSelectedOwned ? (isEn ? selectedRelic.enName : selectedRelic.name) : (isEn ? 'Undiscovered Relic' : 'โบราณวัตถุลึกลับ')}
                           </span>
                           <span
@@ -325,13 +380,14 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                               padding: '1px 6px',
                               borderRadius: '4px',
                               fontWeight: 700,
+                              flexShrink: 0,
                             }}
                           >
                             {selectedRarityInfo.icon} {isEn ? selectedRarityInfo.enName : selectedRarityInfo.name}
                           </span>
                         </div>
-                        <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)' }}>
-                          {isEn ? `Rarity Tier: ${selectedRarityInfo.enName}` : `ระดับความหายาก: ${selectedRarityInfo.name}`}
+                        <div style={{ fontSize: '10.5px', color: 'var(--root-cream-dim)', marginTop: '1px' }}>
+                          {isEn ? `Rarity: ${selectedRarityInfo.enName}` : `ระดับความหายาก: ${selectedRarityInfo.name}`}
                         </div>
                       </div>
                     </div>
@@ -346,6 +402,7 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                         fontSize: '10.5px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
+                        flexShrink: 0,
                       }}
                     >
                       {isSelectedMaxed
@@ -357,8 +414,8 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                   </div>
 
                   {/* Fragment Progress Bar */}
-                  <div style={{ marginTop: '2px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '4px' }}>
+                  <div style={{ marginTop: '1px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', marginBottom: '3px' }}>
                       <span style={{ color: 'var(--root-cream-dim)' }}>
                         {isEn ? 'Fragment Progress' : 'ความคืบหน้าชิ้นส่วน'}:
                       </span>
@@ -366,7 +423,7 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                         {selectedCount} / {selectedRelic.maxPieces} {isSelectedMaxed ? (isEn ? '(MAXED)' : '(เต็มแล้ว)') : ''}
                       </span>
                     </div>
-                    <div style={{ width: '100%', height: '6px', background: 'rgba(0,0,0,0.3)', borderRadius: '3px', overflow: 'hidden' }}>
+                    <div style={{ width: '100%', height: '5px', background: 'rgba(0,0,0,0.3)', borderRadius: '3px', overflow: 'hidden' }}>
                       <div
                         style={{
                           width: `${Math.min(100, (selectedCount / selectedRelic.maxPieces) * 100)}%`,
@@ -378,41 +435,47 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                     </div>
                   </div>
 
-                  {/* Effect Details */}
+                  {/* Effect Details - standard block with word-break to completely prevent horizontal overflow */}
                   <div
                     style={{
                       background: 'rgba(0,0,0,0.25)',
                       padding: '7px 10px',
                       borderRadius: '8px',
-                      fontSize: '11.5px',
+                      fontSize: 'clamp(10.5px, 2.8vw, 11.5px)',
                       fontWeight: 600,
                       color: isSelectedOwned ? 'var(--accent-glow)' : 'var(--root-cream-dim)',
-                      minHeight: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
+                      lineHeight: '1.45',
+                      wordBreak: 'break-word',
+                      boxSizing: 'border-box',
+                      width: '100%',
                     }}
                   >
                     {isSelectedOwned ? (
-                      <>
-                        ⚡ {isEn ? selectedRelic.enEffectDesc : selectedRelic.effectDesc} {selectedMult > selectedCount && <span style={{ color: '#facc15' }}>(×2 Gaia Active!)</span>}
-                      </>
+                      <div>
+                        ⚡ {isEn ? selectedRelic.enEffectDesc : selectedRelic.effectDesc}
+                        {selectedMult > selectedCount && (
+                          <span style={{ color: '#facc15', marginLeft: '6px', fontWeight: 700 }}>
+                            (×2 Gaia Active!)
+                          </span>
+                        )}
+                      </div>
                     ) : (
-                      <>
+                      <div>
                         🔍 {isEn ? 'Ancient power remains dormant underground.' : 'คุณสมบัติจะปรากฏเมื่อขุดพบใต้พิภพ'}
-                      </>
+                      </div>
                     )}
                   </div>
 
                   {/* Lore or Discovery Clue */}
                   <div
                     style={{
-                      fontSize: '10.5px',
+                      fontSize: 'clamp(9.5px, 2.5vw, 10.5px)',
                       color: 'var(--root-cream-dim)',
                       fontStyle: 'italic',
                       lineHeight: '1.4',
-                      minHeight: '28px',
-                      display: 'flex',
-                      alignItems: 'center',
+                      wordBreak: 'break-word',
+                      boxSizing: 'border-box',
+                      width: '100%',
                     }}
                   >
                     {isSelectedOwned ? (
@@ -432,8 +495,8 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      marginTop: '4px',
-                      padding: '8px 12px',
+                      gap: '8px',
+                      padding: '6px 10px',
                       borderRadius: '8px',
                       background: isSelectedMaxed
                         ? 'rgba(250, 204, 21, 0.1)'
@@ -441,22 +504,24 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                         ? 'rgba(255,255,255,0.03)'
                         : 'rgba(255,255,255,0.02)',
                       border: isSelectedMaxed ? '1px solid #facc1555' : '1px solid var(--line-soil)',
-                      fontSize: '11.5px',
+                      fontSize: 'clamp(10px, 2.6vw, 11px)',
+                      width: '100%',
+                      boxSizing: 'border-box',
                     }}
                   >
-                    <span style={{ color: 'var(--root-cream-dim)' }}>
+                    <span style={{ color: 'var(--root-cream-dim)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {isSelectedMaxed
-                        ? (isEn ? '👑 Status: Artifact Fully Restored!' : '👑 สถานะ: รวบรวมชิ้นส่วนครบสมบูรณ์แล้ว!')
+                        ? (isEn ? '👑 Status: Fully Restored!' : '👑 สถานะ: รวบรวมชิ้นส่วนครบสมบูรณ์แล้ว!')
                         : isSelectedOwned
-                        ? (isEn ? `⛏️ Status: Gathering (${selectedCount}/${selectedRelic.maxPieces} Fragments)` : `⛏️ สถานะ: กำลังสะสม (${selectedCount}/${selectedRelic.maxPieces} ชิ้นส่วน)`)
+                        ? (isEn ? `⛏️ Status: Gathering (${selectedCount}/${selectedRelic.maxPieces})` : `⛏️ สถานะ: กำลังสะสม (${selectedCount}/${selectedRelic.maxPieces} ชิ้นส่วน)`)
                         : (isEn ? '🔒 Status: Dormant Underground' : '🔒 สถานะ: หลับใหลอยู่ใต้พิภพ')}
                     </span>
-                    <span style={{ fontWeight: 700, color: selectedRelic.color, fontSize: '11px' }}>
+                    <span style={{ fontWeight: 700, color: selectedRelic.color, fontSize: '10.5px', flexShrink: 0 }}>
                       {isSelectedMaxed
                         ? (isEn ? '100% COMPLETE' : 'สมบูรณ์ 100%')
                         : isSelectedOwned
                         ? `${Math.round((selectedCount / selectedRelic.maxPieces) * 100)}%`
-                        : (isEn ? 'CHANCE TO UNEARTH' : 'รอการขุดพบ')}
+                        : (isEn ? 'UNEARTH CHANCE' : 'รอการขุดพบ')}
                     </span>
                   </div>
                 </div>
