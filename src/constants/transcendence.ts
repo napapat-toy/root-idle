@@ -57,6 +57,7 @@ export const TRIAL_DEFS: TrialDef[] = [
 export function isTranscendenceUnlocked(state: GameState): boolean {
   const yggOwned = state.owned['yggdrasil'] || 0;
   const prestiges = state.stats?.prestigeCount || 0;
+  const hasEverUnlocked = !!state.transcendence?.everUnlocked;
   const hasTranscended = (state.transcendence?.count || 0) > 0;
   const hasEssences =
     (state.transcendence?.totalGaiaEssencesLifetime || 0) > 0 ||
@@ -70,6 +71,7 @@ export function isTranscendenceUnlocked(state: GameState): boolean {
   const hasCompletedTrials = Object.keys(state.transcendence?.completedTrials || {}).length > 0;
 
   return (
+    hasEverUnlocked ||
     hasTranscended ||
     hasEssences ||
     hasPerks ||

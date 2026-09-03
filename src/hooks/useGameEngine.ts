@@ -79,6 +79,7 @@ export function useGameEngine() {
 
   // 2. Cosmetics sub-hook
   const cosmetics = useCosmeticsEngine({
+    state,
     stateRef,
     setState,
   });
@@ -128,15 +129,27 @@ export function useGameEngine() {
     const gotBonus = sproutChance > 0 && Math.random() < sproutChance;
     const addedQty = qty + (gotBonus ? 1 : 0);
 
-    setState(prev => ({
-      ...prev,
-      nutrients: prev.nutrients - cost,
-      owned: {
-        ...prev.owned,
-        [defId]: (prev.owned[defId] || 0) + addedQty,
-      },
-      totalOwned: prev.totalOwned + addedQty,
-    }));
+    setState(prev => {
+      const nextYgg = (prev.owned[defId] || 0) + addedQty;
+      const shouldUnlockTranscend =
+        defId === 'yggdrasil' &&
+        nextYgg >= 100 &&
+        (prev.stats?.prestigeCount || 0) >= 5 &&
+        !prev.transcendence?.everUnlocked;
+
+      return {
+        ...prev,
+        nutrients: prev.nutrients - cost,
+        owned: {
+          ...prev.owned,
+          [defId]: nextYgg,
+        },
+        totalOwned: prev.totalOwned + addedQty,
+        transcendence: shouldUnlockTranscend
+          ? { ...prev.transcendence, everUnlocked: true }
+          : prev.transcendence,
+      };
+    });
 
     if (gotBonus) {
       const isEn = cur.lang === 'en';

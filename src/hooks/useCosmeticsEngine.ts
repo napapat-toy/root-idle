@@ -12,22 +12,23 @@ import {
 } from '@/constants/gameData';
 
 interface UseCosmeticsEngineProps {
+  state: GameState;
   stateRef: React.MutableRefObject<GameState>;
   setState: React.Dispatch<React.SetStateAction<GameState>>;
 }
 
-export function useCosmeticsEngine({ stateRef, setState }: UseCosmeticsEngineProps) {
+export function useCosmeticsEngine({ state, stateRef, setState }: UseCosmeticsEngineProps) {
   const [previewSkin, setPreviewSkin] = useState<SkinId | null>(null);
   const [previewUITheme, setPreviewUITheme] = useState<UIThemeId | null>(null);
 
   // Live effective cosmetics (prioritizing preview when open)
   const effectiveSkin = useMemo<SkinId>(() => {
-    return previewSkin || stateRef.current.prestige.activeSkin || 'none';
-  }, [previewSkin, stateRef]);
+    return previewSkin || state.prestige.activeSkin || 'none';
+  }, [previewSkin, state.prestige.activeSkin]);
 
   const effectiveUITheme = useMemo<UIThemeId>(() => {
-    return previewUITheme || stateRef.current.prestige.activeUITheme || 'classic';
-  }, [previewUITheme, stateRef]);
+    return previewUITheme || state.prestige.activeUITheme || 'classic';
+  }, [previewUITheme, state.prestige.activeUITheme]);
 
   // Skin actions
   const ownedSkinList = useCallback(() => {

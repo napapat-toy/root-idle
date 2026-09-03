@@ -47,6 +47,8 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   const isTrialActive = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
   const showTranscendenceBtn = isTranscendenceUnlocked(state);
   const pendingEssences = (state.runEarned >= 1e28) ? Math.max(1, Math.floor(Math.pow(state.runEarned / 1e28, 0.15) * 5)) : 0;
+  const yggOwned = state.owned['yggdrasil'] || 0;
+  const showTranscendenceProgress = !showTranscendenceBtn && (state.stats?.prestigeCount || 0) >= 3 && yggOwned > 0;
 
   return (
     <div className="top-actions-row">
@@ -91,6 +93,31 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
                 (+{fmtInt(pendingEssences)} 🌍)
               </span>
             )}
+          </button>
+        )}
+
+        {showTranscendenceProgress && onOpenTranscendence && (
+          <button
+            className="prestige-mini-btn"
+            onClick={onOpenTranscendence}
+            title={isEn
+              ? `Gaia Awakening requires 100 Yggdrasil roots in current run (${yggOwned}/100)`
+              : `การตื่นรู้แห่งไกอาต้องการรากต้นไม้โลกครบ 100 ต้นในรอบปัจจุบัน (ความคืบหน้า: ${yggOwned}/100)`
+            }
+            style={{
+              borderColor: 'rgba(52, 211, 153, 0.35)',
+              background: 'rgba(16, 185, 129, 0.08)',
+              color: 'var(--root-cream-dim)',
+              opacity: 0.9,
+            }}
+          >
+            🔒 🌍{' '}
+            <span className="action-btn-text">
+              {tr.transcendenceBtn}
+            </span>
+            <span style={{ color: '#34d399', fontWeight: 600, marginLeft: '5px', fontSize: '10.5px' }}>
+              ({yggOwned}/100 🌳)
+            </span>
           </button>
         )}
       </div>

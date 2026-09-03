@@ -173,6 +173,7 @@ export interface TranscendenceState {
   gaiaTouchLevel: number;       // +10% lucky/event magnitude & frequency
   activeTrial: TrialId;
   completedTrials: Record<string, boolean>;
+  everUnlocked?: boolean;
 }
 
 export type Language = 'th' | 'en';

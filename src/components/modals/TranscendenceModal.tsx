@@ -83,7 +83,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
           &times;
         </button>
 
-        <div className="offline-modal generic-modal" style={{ padding: '20px 24px', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
+        <div className="offline-modal generic-modal custom-scrollbar" style={{ padding: '20px 24px', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
           {/* Header */}
           <div className="icon" style={{ fontSize: '36px', marginBottom: '4px' }}>🌍</div>
           <h2 style={{ marginBottom: '4px', background: 'linear-gradient(135deg, #34d399, #38bdf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -109,17 +109,15 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
               onClick={() => setActiveTab('tree')}
               style={{
                 flex: 1,
-                padding: '8px 12px',
+                padding: '8px',
                 borderRadius: '8px',
-                border: activeTab === 'tree' ? '1px solid rgba(52, 211, 153, 0.5)' : '1px solid transparent',
-                background: activeTab === 'tree' ? 'linear-gradient(135deg, #10b981, #059669)' : 'transparent',
-                color: activeTab === 'tree' ? '#ffffff' : 'var(--root-cream)',
-                fontWeight: activeTab === 'tree' ? 700 : 600,
-                fontSize: '12.5px',
+                border: 'none',
+                fontWeight: 700,
+                fontSize: '13px',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: activeTab === 'tree' ? '0 2px 8px rgba(16, 185, 129, 0.35)' : 'none',
-                opacity: activeTab === 'tree' ? 1 : 0.75,
+                background: activeTab === 'tree' ? 'linear-gradient(135deg, #10b981, #059669)' : 'transparent',
+                color: activeTab === 'tree' ? '#ffffff' : 'var(--root-cream-dim)',
+                transition: 'all 0.15s ease',
               }}
             >
               🌳 {tr.gaiaTreeTab}
@@ -128,17 +126,15 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
               onClick={() => setActiveTab('trials')}
               style={{
                 flex: 1,
-                padding: '8px 12px',
+                padding: '8px',
                 borderRadius: '8px',
-                border: activeTab === 'trials' ? '1px solid rgba(234, 179, 8, 0.5)' : '1px solid transparent',
-                background: activeTab === 'trials' ? 'linear-gradient(135deg, #eab308, #ca8a04)' : 'transparent',
-                color: activeTab === 'trials' ? '#1c150b' : 'var(--root-cream)',
-                fontWeight: activeTab === 'trials' ? 700 : 600,
-                fontSize: '12.5px',
+                border: 'none',
+                fontWeight: 700,
+                fontSize: '13px',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: activeTab === 'trials' ? '0 2px 8px rgba(234, 179, 8, 0.35)' : 'none',
-                opacity: activeTab === 'trials' ? 1 : 0.75,
+                background: activeTab === 'trials' ? 'linear-gradient(135deg, #eab308, #ca8a04)' : 'transparent',
+                color: activeTab === 'trials' ? '#ffffff' : 'var(--root-cream-dim)',
+                transition: 'all 0.15s ease',
               }}
             >
               ⚔️ {tr.trialsTab}
@@ -147,7 +143,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
 
           {/* Tab 1: Gaia Spirit Tree */}
           {activeTab === 'tree' && (
-            <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {/* Grand Reset Card */}
               <div
                 style={{
@@ -165,26 +161,63 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                   {isEn ? `+${fmt(pendingEssences)} Gaia Essences on Grand Reset` : `+${fmt(pendingEssences)} ละอองชีวิตดึกดำบรรพ์ (เมื่อรีเซ็ตใหญ่)`}
                 </div>
 
-                {!showConfirmTranscend ? (
-                  <button
-                    onClick={() => setShowConfirmTranscend(true)}
-                    disabled={pendingEssences <= 0}
-                    style={{
-                      background: pendingEssences > 0 ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.06)',
-                      color: pendingEssences > 0 ? '#ffffff' : 'rgba(255,255,255,0.3)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '10px 20px',
-                      fontWeight: 700,
-                      fontSize: '14px',
-                      cursor: pendingEssences > 0 ? 'pointer' : 'not-allowed',
-                      boxShadow: pendingEssences > 0 ? '0 4px 14px rgba(16, 185, 129, 0.35)' : 'none',
-                      transition: 'all 0.2s',
-                    }}
-                  >
-                    {tr.confirmTranscendBtn}
-                  </button>
-                ) : (
+                {/* Progress / Prerequisite Warning if under 100 Yggdrasil roots */}
+                {(() => {
+                  const yggOwned = state.owned['yggdrasil'] || 0;
+                  const hasUnlockedTranscend = (state.transcendence?.count || 0) > 0 || yggOwned >= 100 || !!state.transcendence?.everUnlocked;
+
+                  if (!hasUnlockedTranscend) {
+                    return (
+                      <div
+                        style={{
+                          background: 'rgba(245, 158, 11, 0.12)',
+                          border: '1px solid rgba(245, 158, 11, 0.4)',
+                          borderRadius: '8px',
+                          padding: '8px 12px',
+                          marginBottom: '10px',
+                          fontSize: '12.5px',
+                          color: '#facc15',
+                          fontWeight: 600,
+                        }}
+                      >
+                        🔒 {isEn
+                          ? `Requires 100 Yggdrasil roots in current run to unlock Grand Reset (${yggOwned}/100 🌳)`
+                          : `ต้องการรากต้นไม้โลกครบ 100 ต้น ในรอบปัจจุบันเพื่อปลดล็อกการรีเซ็ตใหญ่ (${yggOwned}/100 🌳)`}
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+
+                {(() => {
+                  const yggOwned = state.owned['yggdrasil'] || 0;
+                  const hasUnlockedTranscend = (state.transcendence?.count || 0) > 0 || yggOwned >= 100 || !!state.transcendence?.everUnlocked;
+
+                  if (!showConfirmTranscend) {
+                    return (
+                      <button
+                        onClick={() => setShowConfirmTranscend(true)}
+                        disabled={!hasUnlockedTranscend || pendingEssences <= 0}
+                        style={{
+                          background: hasUnlockedTranscend && pendingEssences > 0 ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.06)',
+                          color: hasUnlockedTranscend && pendingEssences > 0 ? '#ffffff' : 'rgba(255,255,255,0.3)',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '10px 20px',
+                          fontWeight: 700,
+                          fontSize: '14px',
+                          cursor: hasUnlockedTranscend && pendingEssences > 0 ? 'pointer' : 'not-allowed',
+                          boxShadow: hasUnlockedTranscend && pendingEssences > 0 ? '0 4px 14px rgba(16, 185, 129, 0.35)' : 'none',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        {!hasUnlockedTranscend
+                          ? (isEn ? `🔒 Requires 100 Yggdrasil (${yggOwned}/100)` : `🔒 ต้องการ 100 ต้นไม้โลก (${yggOwned}/100)`)
+                          : tr.confirmTranscendBtn}
+                      </button>
+                    );
+                  }
+                  return (
                   <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                     <button
                       onClick={() => {
@@ -219,7 +252,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                       {tr.cancel}
                     </button>
                   </div>
-                )}
+                ); })()}
               </div>
 
               {/* Gaia Perks List */}

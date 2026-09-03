@@ -206,6 +206,7 @@ export function payloadToState(payload: SavePayload): GameState {
         gaiaTouchLevel: 0,
         activeTrial: 'none' as const,
         completedTrials: {},
+        everUnlocked: false,
       },
       payload.ts || {}
     ),
@@ -228,6 +229,10 @@ export function payloadToState(payload: SavePayload): GameState {
   const prestigeRecord = state.prestige as unknown as Record<string, unknown>;
   if (state.prestige.activeSkin === 'none' && state.prestige.auraRoots && Boolean(prestigeRecord.auraRootsEnabled)) {
     state.prestige.activeSkin = 'rainbow';
+  }
+
+  if ((state.owned['yggdrasil'] || 0) >= 100 && (state.stats?.prestigeCount || 0) >= 5) {
+    state.transcendence.everUnlocked = true;
   }
 
   // Graceful restoration for relics lost due to legacy storage bug

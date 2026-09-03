@@ -58,5 +58,8 @@ export function formatDuration(sec: number, lang: Language = 'th'): string {
   }
   const d = Math.floor(h / 24);
   const rh = h % 24;
-  return isEn ? `${d}d ${rh}h` : `${d} วัน ${rh} ชม.`;
+  if (isEn) {
+    return rh > 0 ? `${d}d ${rh}h ${rm}m` : `${d}d ${rm}m`;
+  }
+  return rh > 0 ? `${d} วัน ${rh} ชม. ${rm} นาที` : `${d} วัน ${rm} นาที`;
 }
