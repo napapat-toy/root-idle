@@ -454,6 +454,41 @@ export function useGameEngine() {
         }
       }
     }
+
+    // Live in-memory recovery check if transcendence state was wiped
+    setState(prev => {
+      const tState = prev.transcendence;
+      const isTranscendenceEmpty =
+        (tState?.count || 0) === 0 &&
+        (tState?.gaiaEssences || 0) === 0 &&
+        (tState?.totalGaiaEssencesLifetime || 0) === 0 &&
+        (tState?.primordialVigorLevel || 0) === 0 &&
+        !tState?.autoManagerUnlocked &&
+        (tState?.gaiaTouchLevel || 0) === 0 &&
+        Object.keys(tState?.completedTrials || {}).length === 0;
+
+      if (
+        isTranscendenceEmpty &&
+        ((prev.stats?.prestigeCount || 0) >= 5 || (prev.owned['yggdrasil'] || 0) >= 25)
+      ) {
+        return {
+          ...prev,
+          transcendence: {
+            count: 0,
+            gaiaEssences: 2,
+            totalGaiaEssencesLifetime: 40,
+            primordialVigorLevel: 1,
+            soilMemoryLevel: 0,
+            autoManagerUnlocked: true,
+            gaiaTouchLevel: 1,
+            activeTrial: 'none',
+            completedTrials: { arid_drought: true },
+            everUnlocked: true,
+          },
+        };
+      }
+      return prev;
+    });
   }, []);
 
   // GAME LOOP (requestAnimationFrame)

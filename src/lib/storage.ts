@@ -254,6 +254,35 @@ export function payloadToState(payload: SavePayload): GameState {
     };
   }
 
+  // Graceful restoration for Transcendence progress lost due to v1.27.0/v1.27.1 storage bug
+  const tState = state.transcendence;
+  const isTranscendenceEmpty =
+    (tState?.count || 0) === 0 &&
+    (tState?.gaiaEssences || 0) === 0 &&
+    (tState?.totalGaiaEssencesLifetime || 0) === 0 &&
+    (tState?.primordialVigorLevel || 0) === 0 &&
+    !tState?.autoManagerUnlocked &&
+    (tState?.gaiaTouchLevel || 0) === 0 &&
+    Object.keys(tState?.completedTrials || {}).length === 0;
+
+  if (
+    isTranscendenceEmpty &&
+    ((state.stats?.prestigeCount || 0) >= 5 || (state.owned['yggdrasil'] || 0) >= 25)
+  ) {
+    state.transcendence = {
+      count: 0,
+      gaiaEssences: 2,
+      totalGaiaEssencesLifetime: 40,
+      primordialVigorLevel: 1,
+      soilMemoryLevel: 0,
+      autoManagerUnlocked: true,
+      gaiaTouchLevel: 1,
+      activeTrial: 'none',
+      completedTrials: { arid_drought: true },
+      everUnlocked: true,
+    };
+  }
+
   backfillUnlockGaps(state);
   return state;
 }
