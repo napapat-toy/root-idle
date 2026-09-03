@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { GameState, Language, SaveSlotMeta } from '@/types/game';
-import { GAME_VERSION, SAVE_SLOT_COUNT } from '@/constants/gameData';
+import { GAME_VERSION, SAVE_SLOT_COUNT, TRIAL_DEFS } from '@/constants/gameData';
 import { decodeSave, getSlotMeta } from '@/lib/storage';
 import { fmt, fmtInt, formatDuration } from '@/lib/formatters';
 import { ConfirmModal } from './ConfirmModal';
@@ -340,6 +340,53 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                                       <span style={{ color: 'var(--root-cream-dim)' }}> · Prestige ×{meta.prestigeCount}</span>
                                     )}
                                   </div>
+                                  {/* Line 3: Gaia Transcendence, Relics, Achievements & Active Trial */}
+                                  {((meta.gaiaEssences && meta.gaiaEssences > 0) ||
+                                    (meta.transcendenceCount && meta.transcendenceCount > 0) ||
+                                    (meta.relicsCount !== undefined && meta.relicsCount > 0) ||
+                                    (meta.achievementsCount !== undefined && meta.achievementsCount > 0) ||
+                                    (meta.activeTrial && meta.activeTrial !== 'none')) && (
+                                    <div style={{ marginTop: '2px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px', fontSize: '11px' }}>
+                                      {((meta.gaiaEssences && meta.gaiaEssences > 0) || (meta.transcendenceCount && meta.transcendenceCount > 0)) && (
+                                        <span style={{ color: '#34d399', fontWeight: 600 }}>
+                                          🌍 {fmt(meta.gaiaEssences || 0)} {isEn ? 'Essences' : 'ละอองชีวิต'}
+                                          {meta.transcendenceCount && meta.transcendenceCount > 0 ? ` (${isEn ? 'Ascent' : 'ตื่นรู้'} ×${meta.transcendenceCount})` : ''}
+                                        </span>
+                                      )}
+                                      {meta.relicsCount !== undefined && meta.relicsCount > 0 && (
+                                        <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
+                                          {((meta.gaiaEssences && meta.gaiaEssences > 0) || (meta.transcendenceCount && meta.transcendenceCount > 0)) ? ' · ' : ''}
+                                          🏺 {isEn ? `Relics ${meta.relicsCount}/10` : `โบราณวัตถุ ${meta.relicsCount}/10`}
+                                        </span>
+                                      )}
+                                      {meta.achievementsCount !== undefined && meta.achievementsCount > 0 && (
+                                        <span style={{ color: 'var(--root-cream-dim)' }}>
+                                          {((meta.gaiaEssences && meta.gaiaEssences > 0) || (meta.relicsCount && meta.relicsCount > 0)) ? ' · ' : ''}
+                                          🏆 {meta.achievementsCount}/22
+                                        </span>
+                                      )}
+                                      {meta.activeTrial && meta.activeTrial !== 'none' && (() => {
+                                        const trial = TRIAL_DEFS.find(t => t.id === meta.activeTrial);
+                                        if (!trial) return null;
+                                        return (
+                                          <span
+                                            style={{
+                                              background: 'rgba(245, 158, 11, 0.2)',
+                                              border: '1px solid rgba(245, 158, 11, 0.5)',
+                                              color: '#facc15',
+                                              padding: '1px 6px',
+                                              borderRadius: '4px',
+                                              fontSize: '10px',
+                                              fontWeight: 700,
+                                              marginLeft: '4px',
+                                            }}
+                                          >
+                                            ⚔️ {isEn ? `Trial: ${trial.enName}` : `ทดสอบ: ${trial.name}`}
+                                          </span>
+                                        );
+                                      })()}
+                                    </div>
+                                  )}
                                 </>
                               ) : (
                                 <span style={{ opacity: 0.6 }}>{tr.emptySlot}</span>

@@ -139,6 +139,7 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
 
           {/* Scrollable Body */}
           <div
+            className="custom-scrollbar"
             style={{
               flex: 1,
               overflowY: 'auto',

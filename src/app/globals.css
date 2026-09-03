@@ -899,10 +899,45 @@ svg#rootCanvas {
   @apply scale-95;
 }
 
-.offline-modal::-webkit-scrollbar { width: 6px; }
-.offline-modal::-webkit-scrollbar-track { background: transparent; }
-.offline-modal::-webkit-scrollbar-thumb { background: var(--line-soil); border-radius: 6px; }
-.offline-modal::-webkit-scrollbar-thumb:hover { background: var(--prestige-accent-dim); }
+.offline-modal::-webkit-scrollbar,
+.offline-modal *::-webkit-scrollbar,
+.modal-wrapper *::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.offline-modal::-webkit-scrollbar-track,
+.offline-modal *::-webkit-scrollbar-track,
+.modal-wrapper *::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.offline-modal::-webkit-scrollbar-thumb,
+.offline-modal *::-webkit-scrollbar-thumb,
+.modal-wrapper *::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--line-soil);
+  border-radius: 6px;
+}
+
+.offline-modal::-webkit-scrollbar-thumb:hover,
+.offline-modal *::-webkit-scrollbar-thumb:hover,
+.modal-wrapper *::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-glow-dim);
+}
+
+.offline-modal,
+.offline-modal *,
+.modal-wrapper,
+.modal-wrapper *,
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-soil) rgba(0, 0, 0, 0.2);
+}
 
 .offline-modal .icon {
   @apply text-[26px] mb-1;

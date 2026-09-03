@@ -1,5 +1,5 @@
 import { GameState, SavePayload, SaveSlotMeta } from '@/types/game';
-import { BUY_QTY_OPTIONS, calcPrestigeSeeds, MODULE_DEFS } from '@/constants/gameData';
+import { BUY_QTY_OPTIONS, calcPrestigeSeeds, MODULE_DEFS, relicsCount } from '@/constants/gameData';
 
 export const STORAGE_KEY = 'root-idle-state-v1';
 
@@ -76,10 +76,13 @@ export function decodeSave(rawCode: string): SavePayload {
       ru: payload.rootUpgrades || {},
       e: payload.echoes || {},
       syn: payload.rootSynergies || {},
+      rel: payload.relics || {},
+      bm: payload.activeBiome || 'topsoil',
       q: payload.buyQty || 1,
       re: payload.runEarned || payload.nutrients || 0,
       es: payload.eternalSeeds || 0,
       p: payload.prestige || {},
+      ts: payload.transcendence || {},
       pt: payload.totalPlayTimeSeconds || 0,
       rpt: payload.runPlayTimeSeconds || 0,
       ach: payload.achievements || [],
@@ -227,6 +230,25 @@ export function payloadToState(payload: SavePayload): GameState {
     state.prestige.activeSkin = 'rainbow';
   }
 
+  // Graceful restoration for relics lost due to legacy storage bug
+  const relicTotal = Object.values(state.relics || {}).reduce<number>(
+    (acc, v) => acc + (typeof v === 'number' ? v : (v ? 1 : 0)),
+    0
+  );
+  if (
+    relicTotal === 0 &&
+    ((state.stats?.prestigeCount || 0) >= 5 ||
+      (state.stats?.luckyJackpotCount || 0) >= 2 ||
+      (state.transcendence?.count || 0) > 0 ||
+      (state.transcendence?.gaiaEssences || 0) > 0)
+  ) {
+    state.relics = {
+      ...state.relics,
+      amber_resin: 1,
+      aquifer_pearl: 1,
+    };
+  }
+
   backfillUnlockGaps(state);
   return state;
 }
@@ -241,9 +263,12 @@ export function saveToLocalStorage(state: GameState): void {
       rootUpgrades: state.rootUpgrades,
       echoes: state.echoes,
       rootSynergies: state.rootSynergies,
+      relics: state.relics || {},
+      activeBiome: state.activeBiome || 'topsoil',
       runEarned: state.runEarned,
       eternalSeeds: state.eternalSeeds,
       prestige: state.prestige,
+      transcendence: state.transcendence,
       lockGapBackfilled: state.lockGapBackfilled,
       totalPlayTimeSeconds: state.totalPlayTimeSeconds,
       runPlayTimeSeconds: state.runPlayTimeSeconds,
@@ -273,10 +298,13 @@ export function loadFromLocalStorage(): { state: GameState; lastTs?: number } | 
       ru: data.rootUpgrades,
       e: data.echoes,
       syn: data.rootSynergies,
+      rel: data.relics || {},
+      bm: data.activeBiome || 'topsoil',
       q: data.buyQty,
       re: data.runEarned,
       es: data.eternalSeeds,
       p: data.prestige,
+      ts: data.transcendence,
       pt: data.totalPlayTimeSeconds,
       rpt: data.runPlayTimeSeconds,
       ach: data.achievements,
@@ -299,7 +327,7 @@ export function getSlotMeta(slotNum: number): SaveSlotMeta | null {
     const meta = JSON.parse(raw) as SaveSlotMeta;
 
     // Auto-backfill rich metadata for older saves by parsing meta.code
-    if (meta && meta.code && (meta.nutrients === undefined || meta.pendingSeeds === undefined || meta.totalPlayTimeSeconds === undefined)) {
+    if (meta && meta.code && (meta.nutrients === undefined || meta.pendingSeeds === undefined || meta.totalPlayTimeSeconds === undefined || meta.relicsCount === undefined || meta.gaiaEssences === undefined)) {
       try {
         const payload = decodeSave(meta.code);
         const owned = payload.o || {};
@@ -313,6 +341,10 @@ export function getSlotMeta(slotNum: number): SaveSlotMeta | null {
         meta.pendingSeeds = pendingSeeds;
         meta.highestModuleId = highestOwned ? highestOwned.id : 'fine';
         meta.prestigeCount = payload.st?.prestigeCount || 0;
+        meta.transcendenceCount = payload.ts?.count || 0;
+        meta.gaiaEssences = payload.ts?.gaiaEssences || 0;
+        meta.activeTrial = payload.ts?.activeTrial || 'none';
+        meta.relicsCount = payload.rel ? Object.values(payload.rel).filter(v => (typeof v === 'number' && v > 0) || v === true).length : 0;
         meta.achievementsCount = payload.ach?.length || 0;
         meta.totalOwned = payload.t || Object.values(owned).reduce((a, b) => a + b, 0);
         meta.totalPlayTimeSeconds = payload.pt || 0;
@@ -342,6 +374,10 @@ export function saveSlot(slotNum: number, state: GameState): void {
       nutrients: state.nutrients,
       highestModuleId: highestOwned ? highestOwned.id : 'fine',
       prestigeCount: state.stats?.prestigeCount || 0,
+      transcendenceCount: state.transcendence?.count || 0,
+      gaiaEssences: state.transcendence?.gaiaEssences || 0,
+      activeTrial: state.transcendence?.activeTrial || 'none',
+      relicsCount: relicsCount(state),
       achievementsCount: state.achievements?.length || 0,
       totalPlayTimeSeconds: state.totalPlayTimeSeconds || 0,
       lifetimeSeeds: Math.max(state.stats?.totalSeedsEarnedLifetime || 0, state.eternalSeeds || 0),

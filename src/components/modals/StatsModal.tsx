@@ -14,6 +14,15 @@ import {
   totalGlobalBonusPercent,
   globalRateMultiplier,
   totalMilestonesCount,
+  relicsCount,
+  totalRelicFragmentsCount,
+  isMasterRelicActive,
+  relicMaxed,
+  relicRateBonusMultiplier,
+  RELIC_DEFS,
+  BIOME_DEFS,
+  TRIAL_DEFS,
+  primordialVigorMult,
 } from '@/constants/gameData';
 import { fmt, formatDuration } from '@/lib/formatters';
 import { ACHIEVEMENTS } from '@/constants/achievementsData';
@@ -62,6 +71,24 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
   const globalMult = globalRateMultiplier(state);
   const milestoneCount = totalMilestonesCount(state);
 
+  // Relics & Biomes Data
+  const ownedRelicsCount = relicsCount(state);
+  const totalFragments = totalRelicFragmentsCount(state);
+  const completedRelics = RELIC_DEFS.filter(r => relicMaxed(state, r.id)).length;
+  const isMasterRelic = isMasterRelicActive(state);
+  const currentBiome = BIOME_DEFS.find(b => b.id === (state.activeBiome || 'topsoil'));
+  const relicRateMult = relicRateBonusMultiplier(state);
+
+  // Gaia Transcendence & Trials Data
+  const gaiaCount = state.transcendence?.count || 0;
+  const curEssences = state.transcendence?.gaiaEssences || 0;
+  const lifetimeEssences = state.transcendence?.totalGaiaEssencesLifetime || 0;
+  const conqueredTrials = Object.keys(state.transcendence?.completedTrials || {}).length;
+  const activeTrialId = state.transcendence?.activeTrial;
+  const activeTrial = TRIAL_DEFS.find(t => t.id === activeTrialId && activeTrialId !== 'none');
+  const vigorLevel = state.transcendence?.primordialVigorLevel || 0;
+  const vigorMult = primordialVigorMult(state);
+
   return (
     <div className="offline-backdrop" onClick={onClose}>
       <div className="modal-wrapper stats-modal-wrapper" onClick={e => e.stopPropagation()}>
@@ -69,7 +96,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
           &times;
         </button>
 
-        <div className="offline-modal generic-modal stats-modal-content">
+        <div className="offline-modal generic-modal stats-modal-content custom-scrollbar">
           <div className="icon">📊</div>
           <h2>{tr.statsTitle}</h2>
           <div className="away-time" style={{ marginBottom: '14px' }}>
@@ -79,7 +106,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
           </div>
 
           <div className="stats-dashboard-grid">
-            {/* 1. Time & Journey */}
+            {/* 1. Time & Growth */}
             <div className="stats-card">
               <div className="stats-card-header">
                 <span className="stats-card-icon">⏱️</span>
@@ -124,14 +151,18 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                   <span className="stats-label">{tr.statLifetimeNutrients}:</span>
                   <span className="stats-value golden">{fmt(lifetimeNutrients)}</span>
                 </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Milestones Cleared:' : 'ไมล์สโตนที่ปลดแล้ว:'}</span>
+                  <span className="stats-value highlight">{milestoneCount} {isEn ? 'steps' : 'ขั้น'}</span>
+                </div>
               </div>
             </div>
 
-            {/* 3. Prestige & Eternity */}
+            {/* 3. Prestige & Gaia Awakening */}
             <div className="stats-card">
               <div className="stats-card-header">
                 <span className="stats-card-icon">🌌</span>
-                <span className="stats-card-title">{tr.cardPrestigeTitle}</span>
+                <span className="stats-card-title">{isEn ? 'Prestige & Gaia' : 'การหว่านใหม่ & ตื่นรู้ไกอา'}</span>
               </div>
               <div className="stats-card-rows">
                 <div className="stats-row">
@@ -146,22 +177,68 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                   <span className="stats-label">{tr.statLifetimeSeeds}:</span>
                   <span className="stats-value golden">{fmt(lifetimeSeeds)}</span>
                 </div>
-                {(state.transcendence?.count || 0) > 0 && (
-                  <>
-                    <div className="stats-row">
-                      <span className="stats-label">{isEn ? 'Gaia Awakenings:' : 'การตื่นรู้แห่งไกอา:'}</span>
-                      <span className="stats-value highlight" style={{ color: '#34d399' }}>{state.transcendence.count} {isEn ? 'times' : 'ครั้ง'}</span>
-                    </div>
-                    <div className="stats-row">
-                      <span className="stats-label">{isEn ? 'Gaia Essences Lifetime:' : 'ละอองชีวิตดึกดำบรรพ์สะสม:'}</span>
-                      <span className="stats-value highlight" style={{ color: '#38bdf8' }}>{fmt(state.transcendence.totalGaiaEssencesLifetime)} 🌍</span>
-                    </div>
-                  </>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Gaia Awakenings:' : 'การตื่นรู้แห่งไกอา:'}</span>
+                  <span className="stats-value" style={{ color: '#34d399' }}>
+                    {gaiaCount > 0 ? `${gaiaCount} ${isEn ? 'times' : 'ครั้ง'}` : (curEssences > 0 ? (isEn ? 'Essence Available' : 'มีละอองชีวิต') : (isEn ? 'Locked' : 'ยังไม่ตื่นรู้'))}
+                  </span>
+                </div>
+                {(curEssences > 0 || lifetimeEssences > 0) && (
+                  <div className="stats-row">
+                    <span className="stats-label">{isEn ? 'Gaia Essences:' : 'ละอองชีวิตดึกดำบรรพ์:'}</span>
+                    <span className="stats-value highlight" style={{ color: '#38bdf8' }}>
+                      {fmt(curEssences)} 🌍 <span style={{ opacity: 0.7, fontSize: '10.5px' }}>({isEn ? 'all-time' : 'สะสม'} {fmt(lifetimeEssences)})</span>
+                    </span>
+                  </div>
                 )}
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Conquered Trials:' : 'พิชิตการทดลอง:'}</span>
+                  <span className="stats-value" style={{ color: conqueredTrials > 0 ? '#facc15' : 'var(--root-cream-dim)' }}>
+                    {conqueredTrials} / {TRIAL_DEFS.length} {isEn ? 'trials' : 'ด่าน'}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* 4. Roots & Achievements */}
+            {/* 4. Subterranean Relics & Biomes */}
+            <div className="stats-card">
+              <div className="stats-card-header">
+                <span className="stats-card-icon">🏺</span>
+                <span className="stats-card-title">{isEn ? 'Relics & Biomes' : 'โบราณวัตถุ & ชีวนิเวศ'}</span>
+              </div>
+              <div className="stats-card-rows">
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Relics Unearthed:' : 'โบราณวัตถุที่ค้นพบ:'}</span>
+                  <span className="stats-value highlight" style={{ color: ownedRelicsCount > 0 ? 'var(--accent-glow)' : 'var(--root-cream-dim)' }}>
+                    {ownedRelicsCount} / 10 {isEn ? 'types' : 'ชนิด'}
+                  </span>
+                </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Collected Fragments:' : 'ชิ้นส่วนสะสมทั้งหมด:'}</span>
+                  <span className="stats-value">{totalFragments} {isEn ? 'pieces' : 'ชิ้น'}</span>
+                </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Completed Artifacts:' : 'รวบรวมครบสมบูรณ์:'}</span>
+                  <span className="stats-value" style={{ color: completedRelics > 0 ? '#ffd76a' : 'var(--root-cream-dim)' }}>
+                    {completedRelics} / 10 {isEn ? 'relics' : 'ชิ้น'}
+                  </span>
+                </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Heart of Gaia:' : 'จิตวิญญาณแห่งไกอา:'}</span>
+                  <span className="stats-value" style={{ color: isMasterRelic ? '#facc15' : 'var(--root-cream-dim)' }}>
+                    {isMasterRelic ? (isEn ? 'Awakened (2×) 👑' : 'ตื่นรู้แล้ว (×2) 👑') : (isEn ? 'Dormant' : 'หลับใหลอยู่')}
+                  </span>
+                </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Active Biome:' : 'ชีวนิเวศฉากหลัง:'}</span>
+                  <span className="stats-value" style={{ color: 'var(--root-cream)' }}>
+                    {currentBiome ? `${currentBiome.icon} ${currentBiome.name}` : '🧭 Topsoil'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. Roots & Achievements */}
             <div className="stats-card">
               <div className="stats-card-header">
                 <span className="stats-card-icon">🌿</span>
@@ -170,12 +247,30 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
               <div className="stats-card-rows">
                 <div className="stats-row">
                   <span className="stats-label">{tr.statTotalRoots}:</span>
-                  <span className="stats-value">{state.totalOwned} {isEn ? 'units' : 'ต้น'}</span>
+                  <span className="stats-value">{state.totalOwned.toLocaleString()} {isEn ? 'roots' : 'ต้น'}</span>
                 </div>
                 <div className="stats-row">
                   <span className="stats-label">{tr.statAchievementsCount}:</span>
                   <span className="stats-value green">{unlockedAchievements} / {totalAchievements} ({achPercent}%)</span>
                 </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Synergy Networks:' : 'เครือข่ายรากผสาน:'}</span>
+                  <span className="stats-value" style={{ color: '#38bdf8' }}>{synCount} {isEn ? 'pairs' : 'ชนิด'}</span>
+                </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Root Echoes Stored:' : 'สะท้อนรากสะสม:'}</span>
+                  <span className="stats-value green">{totalEchoCount(state)} {isEn ? 'echoes' : 'อัน'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 6. Events & Encounters */}
+            <div className="stats-card">
+              <div className="stats-card-header">
+                <span className="stats-card-icon">🍀</span>
+                <span className="stats-card-title">{isEn ? 'Events & Fortune' : 'เหตุการณ์ & โชคชะตา'}</span>
+              </div>
+              <div className="stats-card-rows">
                 <div className="stats-row">
                   <span className="stats-label">{tr.statEventsClaimed}:</span>
                   <span className="stats-value">{stats.totalEventsClaimed} {isEn ? 'times' : 'ครั้ง'}</span>
@@ -184,10 +279,28 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                   <span className="stats-label">{tr.statLuckyCount}:</span>
                   <span className="stats-value golden">{stats.luckyJackpotCount} {isEn ? 'times' : 'ครั้ง'}</span>
                 </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Super Jackpot:' : 'ซูเปอร์แจ็กพอต:'}</span>
+                  <span className="stats-value" style={{ color: stats.superJackpotClaimed ? '#ffd76a' : 'var(--root-cream-dim)' }}>
+                    {stats.superJackpotClaimed ? (isEn ? 'Claimed ✨' : 'ค้นพบแล้ว ✨') : (isEn ? 'Not Yet' : 'ยังไม่เคยได้')}
+                  </span>
+                </div>
+                <div className="stats-row">
+                  <span className="stats-label">{isEn ? 'Challenge Status:' : 'สถานะการทดสอบ:'}</span>
+                  <span className="stats-value" style={{ color: activeTrial ? '#facc15' : 'var(--root-cream-dim)' }}>
+                    {activeTrial ? (
+                      <span style={{ background: 'rgba(245, 158, 11, 0.2)', border: '1px solid rgba(245, 158, 11, 0.5)', padding: '1px 5px', borderRadius: '4px', fontSize: '10.5px', fontWeight: 600 }}>
+                        ⚔️ {isEn ? activeTrial.enName : activeTrial.name}
+                      </span>
+                    ) : (
+                      isEn ? 'Normal Growth' : 'เติบโตอิสระ'
+                    )}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* 5. Production Multipliers & Bonuses */}
+            {/* 7. Production Multipliers & Bonuses (Wide Banner) */}
             <div className="stats-card" style={{ gridColumn: 'span 2' }}>
               <div className="stats-card-header">
                 <span className="stats-card-icon">⚡</span>
@@ -201,27 +314,39 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                   +{totalPct}% <span style={{ fontSize: '12px', opacity: 0.85, fontWeight: 500 }}>(×{globalMult.toFixed(2)})</span>
                 </span>
               </div>
-              <div className="stats-card-rows" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '8px 16px' }}>
-                <div className="stats-row">
-                  <span className="stats-label">{isEn ? 'Milestones Reached (10s)' : 'ไมล์สโตนที่ปลด (ครบ 10 ต้น)'}:</span>
-                  <span className="stats-value highlight">{milestoneCount} {isEn ? 'milestones' : 'ขั้น'}</span>
-                </div>
+              <div className="stats-card-rows" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '8px 16px' }}>
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Root Echo Bonus' : 'โบนัสสะท้อนราก'}:</span>
-                  <span className="stats-value green">+{echoPct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({totalEchoCount(state)} {isEn ? 'echoes' : 'อัน'})</span></span>
+                  <span className="stats-value green">+{echoPct}%</span>
                 </div>
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Prestige Passive Bonus' : 'โบนัสพลังรากนิรันดร์'}:</span>
-                  <span className="stats-value purple">+{prestigePct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({isEn ? 'Lv.' : 'เลเวล '}{state.prestige.passiveRateLevel || 0})</span></span>
+                  <span className="stats-value purple">+{prestigePct}%</span>
                 </div>
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Achievement Bonus' : 'โบนัสเหรียญความสำเร็จ'}:</span>
-                  <span className="stats-value golden">+{achPct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({state.achievements.length} {isEn ? 'achievements' : 'เหรียญ'})</span></span>
+                  <span className="stats-value golden">+{achPct}%</span>
                 </div>
                 <div className="stats-row">
-                  <span className="stats-label">{isEn ? 'Root Networks Bonus' : 'โบนัสเครือข่ายราก (Synergies)'}:</span>
-                  <span className="stats-value" style={{ color: '#38bdf8' }}>+{synPct}% <span style={{ opacity: 0.65, fontSize: '10.5px' }}>({synCount} {isEn ? 'species' : 'ชนิด'})</span></span>
+                  <span className="stats-label">{isEn ? 'Root Networks Bonus' : 'โบนัสเครือข่ายราก'}:</span>
+                  <span className="stats-value" style={{ color: '#38bdf8' }}>+{synPct}%</span>
                 </div>
+                {vigorLevel > 0 && (
+                  <div className="stats-row">
+                    <span className="stats-label">{isEn ? 'Gaia Primordial Vigor' : 'แกนพลังปฐมกาล (ไกอา)'}:</span>
+                    <span className="stats-value" style={{ color: '#34d399' }}>
+                      +{((vigorMult - 1) * 100).toFixed(0)}% <span style={{ opacity: 0.65, fontSize: '10px' }}>(Lv. {vigorLevel})</span>
+                    </span>
+                  </div>
+                )}
+                {relicRateMult > 1 && (
+                  <div className="stats-row">
+                    <span className="stats-label">{isEn ? 'Relics Multiplier' : 'ตัวคูณจากโบราณวัตถุ'}:</span>
+                    <span className="stats-value highlight" style={{ color: 'var(--accent-glow)' }}>
+                      ×{relicRateMult.toFixed(2)}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -236,3 +361,4 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
 });
 
 StatsModal.displayName = 'StatsModal';
+
