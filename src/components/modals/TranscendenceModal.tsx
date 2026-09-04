@@ -512,18 +512,30 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                     </div>
 
                     {/* Restriction & Reward */}
-                    <div style={{ fontSize: '12px', background: 'rgba(0,0,0,0.2)', padding: '8px 10px', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                      <div style={{ color: '#f87171' }}>
+                    <div style={{ fontSize: '12px', background: 'rgba(0,0,0,0.2)', padding: '8px 10px', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <div style={{ color: isCompleted ? 'var(--root-cream-dim)' : '#f87171' }}>
                         <strong>⚠️ {isEn ? 'Restriction: ' : 'ข้อจำกัด: '}</strong>
                         {isEn ? def.enRestrictionDesc : def.restrictionDesc}
+                        {isCompleted && (
+                          <span style={{ color: '#34d399', marginLeft: '6px', fontSize: '11px', fontWeight: 600 }}>
+                            ({isEn ? 'Inactive · Trial Cleared' : 'สิ้นสุดแล้ว · ไม่ส่งผล'})
+                          </span>
+                        )}
                       </div>
                       <div style={{ color: '#34d399' }}>
                         <strong>🏆 {isEn ? 'Reward: ' : 'รางวัล: '}</strong>
                         {isEn ? def.enRewardDesc : def.rewardDesc}
+                        {isCompleted && (
+                          <span style={{ color: '#ffd76a', fontWeight: 700, marginLeft: '6px', fontSize: '11px' }}>
+                            ({isEn ? 'Active & Permanent' : 'ทำงานถาวรแล้ว ✨'})
+                          </span>
+                        )}
                       </div>
-                      <div style={{ color: '#38bdf8', marginTop: '2px' }}>
-                        <strong>🎯 {isEn ? 'Goal: ' : 'เป้าหมาย: '}</strong>
-                        {isEn ? `Grow 25 Yggdrasil Roots (Current: ${curYgg} / 25)` : `ปลูกรากต้นไม้โลกครบ 25 ต้น (ปัจจุบัน: ${curYgg} / 25)`}
+                      <div style={{ color: isCompleted ? '#34d399' : '#38bdf8', marginTop: '2px' }}>
+                        <strong>🎯 {isEn ? 'Status: ' : 'สถานะ: '}</strong>
+                        {isCompleted
+                          ? (isEn ? '✅ Conquered (One-time reward permanently unlocked)' : '✅ พิชิตสำเร็จแล้ว (ปลดล็อกรางวัลถาวรเรียบร้อยแล้ว)')
+                          : (isEn ? `Goal: Grow 25 Yggdrasil Roots (Current: ${curYgg} / 25)` : `เป้าหมาย: ปลูกรากต้นไม้โลกครบ 25 ต้น (ปัจจุบัน: ${curYgg} / 25)`)}
                       </div>
                     </div>
 
@@ -544,6 +556,25 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                           }}
                         >
                           {tr.abandonTrialBtn}
+                        </button>
+                      ) : isCompleted ? (
+                        <button
+                          onClick={() => setPendingTrialDef(def)}
+                          title={isEn
+                            ? 'You have already unlocked this permanent reward. Starting again is for optional challenge only.'
+                            : 'คุณได้รับรางวัลถาวรเรียบร้อยแล้ว การเริ่มทดสอบซ้ำเป็นการท้าทายตนเองเท่านั้น (ไม่ได้รับรางวัลซ้ำ)'}
+                          style={{
+                            background: 'rgba(52, 211, 153, 0.12)',
+                            color: '#34d399',
+                            border: '1px solid rgba(52, 211, 153, 0.35)',
+                            borderRadius: '8px',
+                            padding: '6px 14px',
+                            fontWeight: 700,
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          ✓ {isEn ? 'Conquered (Replay Challenge)' : 'พิชิตแล้ว (ท้าทายซ้ำ)'}
                         </button>
                       ) : (
                         <button
