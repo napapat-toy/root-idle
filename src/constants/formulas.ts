@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.27.3';
+export const GAME_VERSION = '1.28.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -77,6 +77,10 @@ export function createFreshState(): GameState {
       gaiaTouchLevel: 0,
       activeTrial: 'none',
       completedTrials: {},
+      echoResonanceLevel: 0,
+      gaiaClairvoyanceLevel: 0,
+      primordialSeedlingLevel: 0,
+      deepMeditationLevel: 0,
     },
     achievements: [],
     stats: {
@@ -153,6 +157,8 @@ import {
   trialEchoBonusMultiplier,
   trialRateMultiplier,
   trialSynergyBonusMultiplier,
+  deepMeditationMultiplier,
+  fineRootBaseRate,
 } from './transcendence';
 
 export function totalEchoCount(state: GameState): number {
@@ -176,8 +182,12 @@ export function echoUnlockedFor(state: GameState, moduleId: string): boolean {
     && (state.rootUpgrades[moduleId] || 0) >= ECHO_REQUIRE_UPGRADE_LEVEL;
 }
 
+export function maxEchoLevel(state: GameState): number {
+  return ECHO_MAX_LEVEL + (state.transcendence?.echoResonanceLevel || 0);
+}
+
 export function echoMaxed(state: GameState, moduleId: string): boolean {
-  return (state.echoes[moduleId] || 0) >= ECHO_MAX_LEVEL;
+  return (state.echoes[moduleId] || 0) >= maxEchoLevel(state);
 }
 
 export function echoCost(state: GameState, def: ModuleDef, currentTotalRate: number): number {
@@ -252,7 +262,8 @@ export function globalRateMultiplier(state: GameState): number {
   const trialBonus = trialCompletionBonusMultiplier(state);
   const echoMult = globalEchoMultiplier(state);
   const relicMult = relicRateBonusMultiplier(state);
-  return (1 + totalGlobalBonusPercent(state) * 0.01) * vigor * trialRate * trialBonus * echoMult * relicMult;
+  const meditation = deepMeditationMultiplier(state);
+  return (1 + totalGlobalBonusPercent(state) * 0.01) * vigor * trialRate * trialBonus * echoMult * relicMult * meditation;
 }
 
 // Effective Rates
@@ -263,7 +274,8 @@ export function effectiveRate(state: GameState, def: ModuleDef): number {
   const deepMult = relicDeepRootsBonus(state, def.id);
   const globalMult = globalRateMultiplier(state);
 
-  return def.rate * milestoneMult * upgMult * deepMult * globalMult;
+  const baseRate = (def.id === 'fine') ? fineRootBaseRate(state) : def.rate;
+  return baseRate * milestoneMult * upgMult * deepMult * globalMult;
 }
 
 export function calculateTotalRate(state: GameState): number {

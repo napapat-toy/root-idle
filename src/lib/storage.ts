@@ -207,6 +207,10 @@ export function payloadToState(payload: SavePayload): GameState {
         activeTrial: 'none' as const,
         completedTrials: {},
         everUnlocked: false,
+        echoResonanceLevel: 0,
+        gaiaClairvoyanceLevel: 0,
+        primordialSeedlingLevel: 0,
+        deepMeditationLevel: 0,
       },
       payload.ts || {}
     ),

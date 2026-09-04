@@ -7,7 +7,7 @@ import {
   MODULE_DEFS,
   MODULE_UNLOCK_REQUIRE_OWNED,
   baseTotalRate,
-  ECHO_MAX_LEVEL,
+  maxEchoLevel,
   echoCost,
   echoMaxed,
   echoUnlockedFor,
@@ -193,14 +193,15 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
       const affordable = !isMaxed && state.nutrients >= cost;
       const echoBonusPct = Math.round(relicEchoBonusPerEcho(state) * 100);
 
+      const curMaxLevel = maxEchoLevel(state);
       return {
         icon: def.icon || '✨',
         title: isEn ? `Echo: ${localizedName}` : `สะท้อน: ${localizedName}`,
         desc: isMaxed
-          ? (isEn ? `Max level reached (${echoes}/${ECHO_MAX_LEVEL})` : `เต็มเลเวลสูงสุดแล้ว (${echoes}/${ECHO_MAX_LEVEL})`)
+          ? (isEn ? `Max level reached (${echoes}/${curMaxLevel})` : `เต็มเลเวลสูงสุดแล้ว (${echoes}/${curMaxLevel})`)
           : (isEn
-            ? `+${echoBonusPct}% multiplicative global rate in this run (Lv. ${echoes}/${ECHO_MAX_LEVEL})`
-            : `เพิ่มเรทผลิตรวมทั้งหมด +${echoBonusPct}% (คูณทับ) ในรอบนี้ (Lv. ${echoes}/${ECHO_MAX_LEVEL})`),
+            ? `+${echoBonusPct}% multiplicative global rate in this run (Lv. ${echoes}/${curMaxLevel})`
+            : `เพิ่มเรทผลิตรวมทั้งหมด +${echoBonusPct}% (คูณทับ) ในรอบนี้ (Lv. ${echoes}/${curMaxLevel})`),
         reqText: null,
         costText: isMaxed ? (isEn ? 'MAX' : 'เต็มแล้ว') : fmt(cost),
         multText: isEn ? `+${echoBonusPct}% Mult` : `+${echoBonusPct}% ตัวคูณ`,

@@ -174,6 +174,10 @@ export interface TranscendenceState {
   activeTrial: TrialId;
   completedTrials: Record<string, boolean>;
   everUnlocked?: boolean;
+  echoResonanceLevel?: number;       // +1 max Echo cap per level (e.g. 5 -> 10)
+  gaiaClairvoyanceLevel?: number;    // +0.1% lucky chance cap per level (up to 2.0% total)
+  primordialSeedlingLevel?: number;  // Base rate of Fine Roots: 0.60 -> 2.00 (5 levels)
+  deepMeditationLevel?: number;      // Up to +50% global rate per level over 60m playtime (max +250%)
 }
 
 export type Language = 'th' | 'en';

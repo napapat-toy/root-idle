@@ -12,6 +12,14 @@ import {
   primordialVigorCost,
   SOIL_MEMORY_MAX_LEVEL,
   soilMemoryCost,
+  ECHO_RESONANCE_MAX_LEVEL,
+  echoResonanceCost,
+  GAIA_CLAIRVOYANCE_MAX_LEVEL,
+  gaiaClairvoyanceCost,
+  PRIMORDIAL_SEEDLING_MAX_LEVEL,
+  primordialSeedlingCost,
+  DEEP_MEDITATION_MAX_LEVEL,
+  deepMeditationCost,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
   TRIAL_DEFS,
@@ -103,6 +111,74 @@ export function useTranscendenceEngine({
     }));
   }, [stateRef, setState]);
 
+  const buyEchoResonance = useCallback(() => {
+    const cur = stateRef.current;
+    const lvl = cur.transcendence?.echoResonanceLevel || 0;
+    if (lvl >= ECHO_RESONANCE_MAX_LEVEL) return;
+    const cost = echoResonanceCost(lvl);
+    if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - cost,
+        echoResonanceLevel: lvl + 1,
+      },
+    }));
+  }, [stateRef, setState]);
+
+  const buyGaiaClairvoyance = useCallback(() => {
+    const cur = stateRef.current;
+    const lvl = cur.transcendence?.gaiaClairvoyanceLevel || 0;
+    if (lvl >= GAIA_CLAIRVOYANCE_MAX_LEVEL) return;
+    const cost = gaiaClairvoyanceCost(lvl);
+    if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - cost,
+        gaiaClairvoyanceLevel: lvl + 1,
+      },
+    }));
+  }, [stateRef, setState]);
+
+  const buyPrimordialSeedling = useCallback(() => {
+    const cur = stateRef.current;
+    const lvl = cur.transcendence?.primordialSeedlingLevel || 0;
+    if (lvl >= PRIMORDIAL_SEEDLING_MAX_LEVEL) return;
+    const cost = primordialSeedlingCost(lvl);
+    if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - cost,
+        primordialSeedlingLevel: lvl + 1,
+      },
+    }));
+  }, [stateRef, setState]);
+
+  const buyDeepMeditation = useCallback(() => {
+    const cur = stateRef.current;
+    const lvl = cur.transcendence?.deepMeditationLevel || 0;
+    if (lvl >= DEEP_MEDITATION_MAX_LEVEL) return;
+    const cost = deepMeditationCost(lvl);
+    if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - cost,
+        deepMeditationLevel: lvl + 1,
+      },
+    }));
+  }, [stateRef, setState]);
+
   const startTrial = useCallback((trialId: TrialId) => {
     doPrestige();
     setState(prev => ({
@@ -180,6 +256,10 @@ export function useTranscendenceEngine({
     buySoilMemory,
     buyAutoManager,
     buyGaiaTouch,
+    buyEchoResonance,
+    buyGaiaClairvoyance,
+    buyPrimordialSeedling,
+    buyDeepMeditation,
     startTrial,
     abandonTrial,
   };

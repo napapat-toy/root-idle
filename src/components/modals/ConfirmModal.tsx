@@ -29,7 +29,15 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         <div className="offline-modal generic-modal confirm-modal-box">
           <div className="icon">⚠️</div>
           <h2>{title}</h2>
-          <div className="away-time" style={{ marginBottom: '16px' }}>
+          <div
+            className="away-time"
+            style={{
+              marginBottom: '16px',
+              whiteSpace: 'pre-line',
+              textAlign: message.includes('\n') ? 'left' : 'center',
+              lineHeight: '1.5',
+            }}
+          >
             {message}
           </div>
           <div className="modal-actions">

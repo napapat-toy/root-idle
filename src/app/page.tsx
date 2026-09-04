@@ -86,6 +86,10 @@ export default function Home() {
     buySoilMemory,
     buyAutoManager,
     buyGaiaTouch,
+    buyEchoResonance,
+    buyGaiaClairvoyance,
+    buyPrimordialSeedling,
+    buyDeepMeditation,
     startTrial,
     abandonTrial,
     claimUnearthedRelic,
@@ -298,6 +302,10 @@ export default function Home() {
           onBuySoilMemory={buySoilMemory}
           onBuyAutoManager={buyAutoManager}
           onBuyGaiaTouch={buyGaiaTouch}
+          onBuyEchoResonance={buyEchoResonance}
+          onBuyGaiaClairvoyance={buyGaiaClairvoyance}
+          onBuyPrimordialSeedling={buyPrimordialSeedling}
+          onBuyDeepMeditation={buyDeepMeditation}
           onStartTrial={startTrial}
           onAbandonTrial={abandonTrial}
         />

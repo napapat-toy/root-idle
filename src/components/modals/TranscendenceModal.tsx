@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { GameState, Language, TrialDef, TrialId } from '@/types/game';
 import {
   calcTranscendenceEssences,
+  calcPrestigeSeeds,
+  canTranscend,
+  TRANSCENDENCE_REQUIRE_YGGDRASIL,
   primordialVigorCost,
   primordialVigorMult,
   soilMemoryCost,
@@ -14,6 +17,17 @@ import {
   PRIMORDIAL_VIGOR_MAX_LEVEL,
   SOIL_MEMORY_MAX_LEVEL,
   GAIA_TOUCH_MAX_LEVEL,
+  ECHO_RESONANCE_MAX_LEVEL,
+  echoResonanceCost,
+  GAIA_CLAIRVOYANCE_MAX_LEVEL,
+  gaiaClairvoyanceCost,
+  PRIMORDIAL_SEEDLING_MAX_LEVEL,
+  primordialSeedlingCost,
+  fineRootBaseRate,
+  DEEP_MEDITATION_MAX_LEVEL,
+  deepMeditationCost,
+  deepMeditationMultiplier,
+  luckyChancePct,
   TRIAL_DEFS,
   isTrialCompleted,
 } from '@/constants/gameData';
@@ -29,6 +43,10 @@ interface TranscendenceModalProps {
   onBuySoilMemory: () => void;
   onBuyAutoManager: () => void;
   onBuyGaiaTouch: () => void;
+  onBuyEchoResonance: () => void;
+  onBuyGaiaClairvoyance: () => void;
+  onBuyPrimordialSeedling: () => void;
+  onBuyDeepMeditation: () => void;
   onStartTrial: (trialId: TrialId) => void;
   onAbandonTrial: () => void;
 }
@@ -41,6 +59,10 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
   onBuySoilMemory,
   onBuyAutoManager,
   onBuyGaiaTouch,
+  onBuyEchoResonance,
+  onBuyGaiaClairvoyance,
+  onBuyPrimordialSeedling,
+  onBuyDeepMeditation,
   onStartTrial,
   onAbandonTrial,
 }) => {
@@ -70,12 +92,28 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
   const touchCost = gaiaTouchCost(touchLvl);
   const touchMaxed = touchLvl >= GAIA_TOUCH_MAX_LEVEL;
 
+  const echoResLvl = state.transcendence?.echoResonanceLevel || 0;
+  const echoResCost = echoResonanceCost(echoResLvl);
+  const echoResMaxed = echoResLvl >= ECHO_RESONANCE_MAX_LEVEL;
+
+  const clairvoyanceLvl = state.transcendence?.gaiaClairvoyanceLevel || 0;
+  const clairvoyanceCost = gaiaClairvoyanceCost(clairvoyanceLvl);
+  const clairvoyanceMaxed = clairvoyanceLvl >= GAIA_CLAIRVOYANCE_MAX_LEVEL;
+
+  const seedlingLvl = state.transcendence?.primordialSeedlingLevel || 0;
+  const seedlingCost = primordialSeedlingCost(seedlingLvl);
+  const seedlingMaxed = seedlingLvl >= PRIMORDIAL_SEEDLING_MAX_LEVEL;
+
+  const meditationLvl = state.transcendence?.deepMeditationLevel || 0;
+  const meditationCost = deepMeditationCost(meditationLvl);
+  const meditationMaxed = meditationLvl >= DEEP_MEDITATION_MAX_LEVEL;
+
   const activeTrial = state.transcendence?.activeTrial || 'none';
 
   return (
     <div className="offline-backdrop" onClick={onClose} style={{ zIndex: 2100 }}>
       <div
-        className="modal-wrapper"
+        className="modal-wrapper transcendence-modal-wrapper"
         onClick={e => e.stopPropagation()}
         style={{ maxWidth: '600px', width: '100%' }}
       >
@@ -83,7 +121,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
           &times;
         </button>
 
-        <div className="offline-modal generic-modal custom-scrollbar" style={{ padding: '20px 24px', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
+        <div className="offline-modal generic-modal custom-scrollbar transcendence-modal-content" style={{ maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
           {/* Header */}
           <div className="icon" style={{ fontSize: '36px', marginBottom: '4px' }}>🌍</div>
           <h2 style={{ marginBottom: '4px', background: 'linear-gradient(135deg, #34d399, #38bdf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -143,7 +181,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
 
           {/* Tab 1: Gaia Spirit Tree */}
           {activeTab === 'tree' && (
-            <div className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left' }}>
               {/* Grand Reset Card */}
               <div
                 style={{
@@ -155,104 +193,138 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                 }}
               >
                 <div style={{ fontSize: '13px', color: 'var(--root-cream-dim)', marginBottom: '6px' }}>
-                  {tr.transcendenceDesc}
-                </div>
-                <div style={{ fontSize: '18px', fontWeight: 800, color: '#34d399', marginBottom: '10px' }}>
-                  {isEn ? `+${fmt(pendingEssences)} Gaia Essences on Grand Reset` : `+${fmt(pendingEssences)} ละอองชีวิตดึกดำบรรพ์ (เมื่อรีเซ็ตใหญ่)`}
+                  {isEn
+                    ? 'Channel the ancient vitality of the World Tree to awaken the planet’s soul. Requires at least 100 Yggdrasil roots in the current run.'
+                    : 'หลอมรวมพลังรากต้นไม้โลกเพื่อปลุกจิตวิญญาณแห่งโลก รีเซ็ตรอบใหญ่ต้องมีรากต้นไม้โลกครบอย่างน้อย 100 ต้นในรอบปัจจุบัน'}
                 </div>
 
-                {/* Progress / Prerequisite Warning if under 100 Yggdrasil roots */}
                 {(() => {
                   const yggOwned = state.owned['yggdrasil'] || 0;
-                  const hasUnlockedTranscend = (state.transcendence?.count || 0) > 0 || yggOwned >= 100 || !!state.transcendence?.everUnlocked;
+                  const hasReachedYgg = canTranscend(state);
 
-                  if (!hasUnlockedTranscend) {
+                  if (hasReachedYgg) {
                     return (
-                      <div
-                        style={{
-                          background: 'rgba(245, 158, 11, 0.12)',
-                          border: '1px solid rgba(245, 158, 11, 0.4)',
-                          borderRadius: '8px',
-                          padding: '8px 12px',
-                          marginBottom: '10px',
-                          fontSize: '12.5px',
-                          color: '#facc15',
-                          fontWeight: 600,
-                        }}
-                      >
-                        🔒 {isEn
-                          ? `Requires 100 Yggdrasil roots in current run to unlock Grand Reset (${yggOwned}/100 🌳)`
-                          : `ต้องการรากต้นไม้โลกครบ 100 ต้น ในรอบปัจจุบันเพื่อปลดล็อกการรีเซ็ตใหญ่ (${yggOwned}/100 🌳)`}
-                      </div>
+                      <>
+                        <div style={{ fontSize: '18px', fontWeight: 800, color: '#34d399', marginBottom: '2px' }}>
+                          {isEn ? `+${fmt(pendingEssences)} Gaia Essences on Grand Reset` : `+${fmt(pendingEssences)} ละอองชีวิตดึกดำบรรพ์ (เมื่อรีเซ็ตใหญ่)`}
+                        </div>
+                        <div style={{ fontSize: '11.5px', color: '#6ee7b7', marginBottom: '10px' }}>
+                          {isEn ? `(Calculated directly from ${yggOwned} World Trees in this run)` : `(คำนวณจากต้นไม้โลก ${yggOwned} ต้นในรอบนี้โดยตรง)`}
+                        </div>
+                      </>
                     );
                   }
-                  return null;
+
+                  return (
+                    <div
+                      style={{
+                        background: 'rgba(245, 158, 11, 0.12)',
+                        border: '1px solid rgba(245, 158, 11, 0.4)',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        marginBottom: '10px',
+                        fontSize: '13px',
+                        color: '#facc15',
+                        fontWeight: 700,
+                      }}
+                    >
+                      🔒 {isEn
+                        ? `Requires 100 Yggdrasil World Trees in current run (${yggOwned}/${TRANSCENDENCE_REQUIRE_YGGDRASIL} 🌳)`
+                        : `ต้องการรากต้นไม้โลกครบ 100 ต้น ในรอบปัจจุบัน (${yggOwned}/${TRANSCENDENCE_REQUIRE_YGGDRASIL} 🌳)`}
+                    </div>
+                  );
                 })()}
 
                 {(() => {
                   const yggOwned = state.owned['yggdrasil'] || 0;
-                  const hasUnlockedTranscend = (state.transcendence?.count || 0) > 0 || yggOwned >= 100 || !!state.transcendence?.everUnlocked;
+                  const hasReachedYgg = canTranscend(state);
+
+                  if (!hasReachedYgg) {
+                    return (
+                      <button
+                        disabled
+                        style={{
+                          background: 'rgba(255,255,255,0.06)',
+                          color: 'rgba(255,255,255,0.3)',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '10px 20px',
+                          fontWeight: 700,
+                          fontSize: '13px',
+                          cursor: 'not-allowed',
+                        }}
+                      >
+                        🔒 {isEn ? `Requires 100 Yggdrasil (${yggOwned}/100)` : `ต้องการ 100 ต้นไม้โลก (${yggOwned}/100)`}
+                      </button>
+                    );
+                  }
 
                   if (!showConfirmTranscend) {
                     return (
                       <button
                         onClick={() => setShowConfirmTranscend(true)}
-                        disabled={!hasUnlockedTranscend || pendingEssences <= 0}
                         style={{
-                          background: hasUnlockedTranscend && pendingEssences > 0 ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.06)',
-                          color: hasUnlockedTranscend && pendingEssences > 0 ? '#ffffff' : 'rgba(255,255,255,0.3)',
+                          background: 'linear-gradient(135deg, #10b981, #059669)',
+                          color: '#ffffff',
                           border: 'none',
                           borderRadius: '8px',
                           padding: '10px 20px',
                           fontWeight: 700,
                           fontSize: '14px',
-                          cursor: hasUnlockedTranscend && pendingEssences > 0 ? 'pointer' : 'not-allowed',
-                          boxShadow: hasUnlockedTranscend && pendingEssences > 0 ? '0 4px 14px rgba(16, 185, 129, 0.35)' : 'none',
+                          cursor: 'pointer',
+                          boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
                           transition: 'all 0.2s',
                         }}
                       >
-                        {!hasUnlockedTranscend
-                          ? (isEn ? `🔒 Requires 100 Yggdrasil (${yggOwned}/100)` : `🔒 ต้องการ 100 ต้นไม้โลก (${yggOwned}/100)`)
-                          : tr.confirmTranscendBtn}
+                        ✨ {tr.confirmTranscendBtn}
                       </button>
                     );
                   }
+
                   return (
-                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                    <button
-                      onClick={() => {
-                        setShowConfirmTranscend(false);
-                        onTranscend();
-                      }}
-                      style={{
-                        background: '#ef4444',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '8px 16px',
-                        fontWeight: 700,
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {isEn ? '⚠️ Confirm Grand Reset' : '⚠️ ยืนยันการรีเซ็ตใหญ่'}
-                    </button>
-                    <button
-                      onClick={() => setShowConfirmTranscend(false)}
-                      style={{
-                        background: 'var(--bg-panel-2)',
-                        color: 'var(--root-cream-dim)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '8px',
-                        padding: '8px 16px',
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {tr.cancel}
-                    </button>
-                  </div>
-                ); })()}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                      <div style={{ fontSize: '11.5px', color: '#fca5a5', maxWidth: '380px', lineHeight: '1.4' }}>
+                        ⚠️ {isEn
+                          ? `Confirm Grand Reset: Convert ${yggOwned} World Trees into +${fmt(pendingEssences)} 🌍. Wallet seeds reset to 0 to begin the new era, while all permanent shop upgrades are preserved.`
+                          : `ยืนยันการรีเซ็ตใหญ่: หลอมรวมต้นไม้โลก ${yggOwned} ต้น รับ +${fmt(pendingEssences)} 🌍 (เมล็ดในกระเป๋าจะรีเซ็ตเป็น 0 เพื่อเริ่มยุคใหม่ แต่อัปเกรดร้านค้าจะอยู่ครบถ้วน)`}
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <button
+                          onClick={() => {
+                            setShowConfirmTranscend(false);
+                            onTranscend();
+                          }}
+                          style={{
+                            background: '#ef4444',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: '8px',
+                            padding: '8px 16px',
+                            fontWeight: 700,
+                            fontSize: '13px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {isEn ? '⚠️ Confirm Grand Reset' : '⚠️ ยืนยันการรีเซ็ตใหญ่'}
+                        </button>
+                        <button
+                          onClick={() => setShowConfirmTranscend(false)}
+                          style={{
+                            background: 'var(--bg-panel-2)',
+                            color: 'var(--root-cream-dim)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '8px',
+                            padding: '8px 16px',
+                            fontSize: '13px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {tr.cancel}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Gaia Perks List */}
@@ -267,13 +339,14 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    gap: '12px',
                   }}
                 >
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px' }}>🌱</span>
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>🌱</span>
                       <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk1Name}</span>
-                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px' }}>
+                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
                         Lv. {vigorLvl}/{PRIMORDIAL_VIGOR_MAX_LEVEL}
                       </span>
                     </div>
@@ -295,6 +368,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                       fontSize: '12px',
                       cursor: !vigorMaxed && essences >= vigorCost ? 'pointer' : 'not-allowed',
                       whiteSpace: 'nowrap',
+                      flexShrink: 0,
                     }}
                   >
                     {vigorMaxed ? tr.maxTag : `${fmtInt(vigorCost)} 🌍`}
@@ -311,13 +385,14 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    gap: '12px',
                   }}
                 >
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px' }}>📜</span>
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>📜</span>
                       <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk2Name}</span>
-                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px' }}>
+                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
                         Lv. {soilLvl}/{SOIL_MEMORY_MAX_LEVEL}
                       </span>
                     </div>
@@ -339,6 +414,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                       fontSize: '12px',
                       cursor: !soilMaxed && essences >= soilCost ? 'pointer' : 'not-allowed',
                       whiteSpace: 'nowrap',
+                      flexShrink: 0,
                     }}
                   >
                     {soilMaxed ? tr.maxTag : `${fmtInt(soilCost)} 🌍`}
@@ -355,11 +431,12 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    gap: '12px',
                   }}
                 >
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px' }}>⚙️</span>
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>⚙️</span>
                       <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk3Name}</span>
                     </div>
                     <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk3Desc}</div>
@@ -377,6 +454,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                       fontSize: '12px',
                       cursor: !autoManagerOwned && essences >= AUTO_MANAGER_COST ? 'pointer' : 'not-allowed',
                       whiteSpace: 'nowrap',
+                      flexShrink: 0,
                     }}
                   >
                     {autoManagerOwned ? tr.ownedTag : `${fmtInt(AUTO_MANAGER_COST)} 🌍`}
@@ -393,13 +471,14 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    gap: '12px',
                   }}
                 >
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px' }}>✨</span>
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>✨</span>
                       <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk4Name}</span>
-                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px' }}>
+                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
                         Lv. {touchLvl}/{GAIA_TOUCH_MAX_LEVEL}
                       </span>
                     </div>
@@ -421,9 +500,196 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                       fontSize: '12px',
                       cursor: !touchMaxed && essences >= touchCost ? 'pointer' : 'not-allowed',
                       whiteSpace: 'nowrap',
+                      flexShrink: 0,
                     }}
                   >
                     {touchMaxed ? tr.maxTag : `${fmtInt(touchCost)} 🌍`}
+                  </button>
+                </div>
+
+                {/* Perk 5: Echo Resonance */}
+                <div
+                  style={{
+                    background: 'var(--bg-panel-2)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '10px',
+                    padding: '12px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>🔮</span>
+                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk5Name}</span>
+                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
+                        Lv. {echoResLvl}/{ECHO_RESONANCE_MAX_LEVEL}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk5Desc}</div>
+                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
+                      {isEn ? `Current Effect: Max Echo Cap Lv.${5 + echoResLvl}` : `ผลปัจจุบัน: เพดานสะท้อนรากสูงสุด Lv.${5 + echoResLvl}`}
+                    </div>
+                  </div>
+                  <button
+                    onClick={onBuyEchoResonance}
+                    disabled={echoResMaxed || essences < echoResCost}
+                    style={{
+                      background: echoResMaxed ? 'rgba(255,255,255,0.06)' : essences >= echoResCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
+                      color: echoResMaxed ? 'rgba(255,255,255,0.3)' : essences >= echoResCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      fontWeight: 700,
+                      fontSize: '12px',
+                      cursor: !echoResMaxed && essences >= echoResCost ? 'pointer' : 'not-allowed',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {echoResMaxed ? tr.maxTag : `${fmtInt(echoResCost)} 🌍`}
+                  </button>
+                </div>
+
+                {/* Perk 6: Gaia's Clairvoyance */}
+                <div
+                  style={{
+                    background: 'var(--bg-panel-2)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '10px',
+                    padding: '12px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>👁️</span>
+                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk6Name}</span>
+                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
+                        Lv. {clairvoyanceLvl}/{GAIA_CLAIRVOYANCE_MAX_LEVEL}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk6Desc}</div>
+                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
+                      {isEn ? `Current Effect: +${(clairvoyanceLvl * 0.1).toFixed(1)}% Lucky Chance (Cap: ${(luckyChancePct(state) * 100).toFixed(1)}%)` : `ผลปัจจุบัน: +${(clairvoyanceLvl * 0.1).toFixed(1)}% โอกาสโชคดี (เพดานรวม: ${(luckyChancePct(state) * 100).toFixed(1)}%)`}
+                    </div>
+                  </div>
+                  <button
+                    onClick={onBuyGaiaClairvoyance}
+                    disabled={clairvoyanceMaxed || essences < clairvoyanceCost}
+                    style={{
+                      background: clairvoyanceMaxed ? 'rgba(255,255,255,0.06)' : essences >= clairvoyanceCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
+                      color: clairvoyanceMaxed ? 'rgba(255,255,255,0.3)' : essences >= clairvoyanceCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      fontWeight: 700,
+                      fontSize: '12px',
+                      cursor: !clairvoyanceMaxed && essences >= clairvoyanceCost ? 'pointer' : 'not-allowed',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {clairvoyanceMaxed ? tr.maxTag : `${fmtInt(clairvoyanceCost)} 🌍`}
+                  </button>
+                </div>
+
+                {/* Perk 7: Primordial Seedling */}
+                <div
+                  style={{
+                    background: 'var(--bg-panel-2)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '10px',
+                    padding: '12px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>🌱</span>
+                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk7Name}</span>
+                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
+                        Lv. {seedlingLvl}/{PRIMORDIAL_SEEDLING_MAX_LEVEL}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk7Desc}</div>
+                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
+                      {isEn ? `Current Effect: Fine Root Base Rate +${fineRootBaseRate(state).toFixed(2)}/s` : `ผลปัจจุบัน: เรทตั้งต้นรากฝอย +${fineRootBaseRate(state).toFixed(2)}/วิ`}
+                    </div>
+                  </div>
+                  <button
+                    onClick={onBuyPrimordialSeedling}
+                    disabled={seedlingMaxed || essences < seedlingCost}
+                    style={{
+                      background: seedlingMaxed ? 'rgba(255,255,255,0.06)' : essences >= seedlingCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
+                      color: seedlingMaxed ? 'rgba(255,255,255,0.3)' : essences >= seedlingCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      fontWeight: 700,
+                      fontSize: '12px',
+                      cursor: !seedlingMaxed && essences >= seedlingCost ? 'pointer' : 'not-allowed',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {seedlingMaxed ? tr.maxTag : `${fmtInt(seedlingCost)} 🌍`}
+                  </button>
+                </div>
+
+                {/* Perk 8: Deep Meditation */}
+                <div
+                  style={{
+                    background: 'var(--bg-panel-2)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '10px',
+                    padding: '12px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>🧘</span>
+                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk8Name}</span>
+                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
+                        Lv. {meditationLvl}/{DEEP_MEDITATION_MAX_LEVEL}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk8Desc}</div>
+                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
+                      {isEn
+                        ? `Current Effect: +${((deepMeditationMultiplier(state) - 1) * 100).toFixed(1)}% Rate (Max: +${(meditationLvl * 50).toFixed(0)}%)`
+                        : `ผลปัจจุบัน: +${((deepMeditationMultiplier(state) - 1) * 100).toFixed(1)}% เรทผลิต (สูงสุด: +${(meditationLvl * 50).toFixed(0)}%)`}
+                    </div>
+                  </div>
+                  <button
+                    onClick={onBuyDeepMeditation}
+                    disabled={meditationMaxed || essences < meditationCost}
+                    style={{
+                      background: meditationMaxed ? 'rgba(255,255,255,0.06)' : essences >= meditationCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
+                      color: meditationMaxed ? 'rgba(255,255,255,0.3)' : essences >= meditationCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      fontWeight: 700,
+                      fontSize: '12px',
+                      cursor: !meditationMaxed && essences >= meditationCost ? 'pointer' : 'not-allowed',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {meditationMaxed ? tr.maxTag : `${fmtInt(meditationCost)} 🌍`}
                   </button>
                 </div>
               </div>
@@ -432,7 +698,35 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
 
           {/* Tab 2: Subterranean Trials */}
           {activeTab === 'trials' && (
-            <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left' }}>
+              {/* Smart Guide Banner if current garden has reached 100 Yggdrasil roots */}
+              {canTranscend(state) && (
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.1))',
+                    border: '1px solid rgba(52, 211, 153, 0.45)',
+                    borderRadius: '12px',
+                    padding: '10px 14px',
+                    fontSize: '12px',
+                    color: '#6ee7b7',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    lineHeight: '1.45',
+                  }}
+                >
+                  <span style={{ fontSize: '20px', flexShrink: 0 }}>💡</span>
+                  <div>
+                    <strong style={{ color: '#ffffff' }}>
+                      {isEn ? 'Recommended Next Step: ' : 'คำแนะนำจังหวะการเล่น: '}
+                    </strong>
+                    {isEn
+                      ? `You currently have ${state.owned['yggdrasil'] || 0} World Trees (+${fmt(calcTranscendenceEssences(state))} 🌍 ready)! It is strongly recommended to switch to Tab 1 and press "Awaken Gaia" first to claim essences and upgrade perks before starting a trial.`
+                      : `ตอนนี้คุณมีต้นไม้โลก ${state.owned['yggdrasil'] || 0} ต้น (พร้อมตื่นรู้รับ +${fmt(calcTranscendenceEssences(state))} 🌍)! แนะนำให้กด "ตื่นรู้แห่งไกอา" ในแท็บแรก เพื่อนำละอองชีวิตไปอัปพลังเทพเจ้าก่อนเริ่มการทดสอบรอบใหม่ จะคุ้มค่าที่สุดและผ่านได้ง่ายขึ้น`}
+                  </div>
+                </div>
+              )}
+
               {/* Trial Overview & Reset Notice Banner */}
               <div
                 style={{
@@ -446,7 +740,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, color: '#facc15', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '15px' }}>⚔️</span>
+                  <span style={{ fontSize: '15px', flexShrink: 0 }}>⚔️</span>
                   <span style={{ fontSize: '12.5px' }}>
                     {isEn ? 'Subterranean Trial Rules & Reset Information' : 'กติกาการทดลองแห่งผืนพิภพและการรีเซ็ต'}
                   </span>
@@ -455,14 +749,14 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                   <div>
                     🌱 <strong>{isEn ? 'What gets reset: ' : 'สิ่งที่จะรีเซ็ต: '}</strong>
                     {isEn
-                      ? 'Triggers a standard Prestige Reset for the current garden. Current roots and nutrients reset to 0, and you collect all pending Eternal Seeds for this run.'
-                      : 'จะทำการหว่านเมล็ดใหม่ (Prestige) รอบปัจจุบัน โดยรากและสารอาหารจะถูกรีเซ็ตเพื่อเริ่มปลูกใหม่ และคุณจะได้รับเมล็ดพันธุ์ที่สะสมไว้ทั้งหมดของรอบนี้'}
+                      ? `Triggers a Prestige Reset for current garden: roots reset to 0 to begin the challenge, and current nutrients are converted into +${fmt(calcPrestigeSeeds(state))} Eternal Seeds 🌰 immediately.`
+                      : `จะทำการหว่านเมล็ดใหม่ (Prestige) รอบปัจจุบัน: รากไม้จะเริ่มใหม่เพื่อเข้าสู่การทดสอบ และสารอาหารทั้งหมดจะถูกแปลงเป็น +${fmt(calcPrestigeSeeds(state))} เมล็ดพันธุ์นิรันดร์ 🌰 เข้ากระเป๋าให้ทันที`}
                   </div>
                   <div>
                     🛡️ <strong>{isEn ? 'What is kept safe: ' : 'สิ่งที่ไม่หาย (ปลอดภัย 100%): '}</strong>
                     {isEn
-                      ? 'All permanent Prestige upgrades, Gaia perks, Eternal Seeds in wallet, and Relics remain completely intact!'
-                      : 'อัปเกรดร้าน Prestige ทั้งหมด, บัฟไกอา, เมล็ดพันธุ์ในกระเป๋า และโบราณวัตถุ (Relics) ทั้งหมดจะยังอยู่ครบถ้วน ไม่หาย!'}
+                      ? 'All permanent Prestige upgrades, Gaia perks, Eternal Seeds in wallet, Gaia Essences (🌍), and Relics remain completely intact!'
+                      : 'อัปเกรดร้าน Prestige ทั้งหมด, บัฟไกอา, เมล็ดพันธุ์ในกระเป๋า, ละอองชีวิต (🌍) และโบราณวัตถุ (Relics) ทั้งหมดจะอยู่ครบถ้วน ไม่หาย!'}
                   </div>
                   <div>
                     🎯 <strong>{isEn ? 'Goal & Abandon: ' : 'เป้าหมายและยกเลิก: '}</strong>
@@ -491,21 +785,21 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                       gap: '8px',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontSize: '24px' }}>{def.icon}</span>
-                        <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
+                        <span style={{ fontSize: '24px', flexShrink: 0 }}>{def.icon}</span>
+                        <div style={{ minWidth: 0 }}>
                           <div style={{ fontWeight: 700, fontSize: '15px' }}>{isEn ? def.enName : def.name}</div>
                           <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)' }}>{isEn ? def.enDesc : def.desc}</div>
                         </div>
                       </div>
                       {isCompleted && (
-                        <span style={{ fontSize: '12px', color: '#34d399', fontWeight: 700, background: 'rgba(52, 211, 153, 0.15)', padding: '2px 8px', borderRadius: '6px' }}>
+                        <span style={{ fontSize: '12px', color: '#34d399', fontWeight: 700, background: 'rgba(52, 211, 153, 0.15)', padding: '2px 8px', borderRadius: '6px', flexShrink: 0 }}>
                           {tr.trialCompletedBadge}
                         </span>
                       )}
                       {isActive && !isCompleted && (
-                        <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 700, background: 'rgba(245, 158, 11, 0.15)', padding: '2px 8px', borderRadius: '6px' }}>
+                        <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 700, background: 'rgba(245, 158, 11, 0.15)', padding: '2px 8px', borderRadius: '6px', flexShrink: 0 }}>
                           {tr.trialActiveBadge}
                         </span>
                       )}
@@ -553,6 +847,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                             fontWeight: 700,
                             fontSize: '12px',
                             cursor: 'pointer',
+                            flexShrink: 0,
                           }}
                         >
                           {tr.abandonTrialBtn}
@@ -572,6 +867,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                             fontWeight: 700,
                             fontSize: '12px',
                             cursor: 'pointer',
+                            flexShrink: 0,
                           }}
                         >
                           ✓ {isEn ? 'Conquered (Replay Challenge)' : 'พิชิตแล้ว (ท้าทายซ้ำ)'}
@@ -588,6 +884,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                             fontWeight: 700,
                             fontSize: '12px',
                             cursor: 'pointer',
+                            flexShrink: 0,
                           }}
                         >
                           {tr.startTrialBtn}
@@ -608,8 +905,8 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
         title={isEn ? 'Confirm Begin Trial' : 'ยืนยันการเริ่มการทดสอบ'}
         message={
           isEn
-            ? `Entering "${pendingTrialDef?.enName}" will trigger a Prestige Reset for your current garden. You will collect all pending Eternal Seeds, but roots and nutrients will be reset so you can begin the challenge.\n\nAll permanent upgrades, seed perks, relics, and essences remain 100% safe!`
-            : `การเข้าสู่การทดสอบ "${pendingTrialDef?.name}" จะทำการหว่านเมล็ดใหม่ (Prestige Reset) รอบปัจจุบันทันที โดยคุณจะได้รับเมล็ดพันธุ์ที่สะสมไว้ทั้งหมด แต่รากและสารอาหารจะถูกรีเซ็ตเพื่อเริ่มความท้าทายใหม่\n\n(อัปเกรดถาวรทั้งหมด, เมล็ดพันธุ์ในกระเป๋า, โบราณวัตถุ และละอองชีวิตจะยังอยู่ครบ 100% ไม่หาย)`
+            ? `Entering "${pendingTrialDef?.enName}" will trigger a Prestige Reset for your current garden.\n\n✨ Current nutrients will be converted into +${fmt(calcPrestigeSeeds(state))} Eternal Seeds 🌰 immediately!\n🛡️ Your wallet seeds (${fmt(state.eternalSeeds)} 🌰), Gaia Essences (${fmt(state.transcendence?.gaiaEssences || 0)} 🌍), and relics remain 100% safe!\n🌱 Only garden roots and nutrients will reset to start the trial.`
+            : `การเข้าสู่การทดสอบ "${pendingTrialDef?.name}" จะทำการรีเซ็ตแบบหว่านเมล็ดใหม่ (Prestige Reset) รอบปัจจุบันทันที\n\n✨ สารอาหารสะสมในรอบนี้จะถูกแปลงเป็น +${fmt(calcPrestigeSeeds(state))} เมล็ดพันธุ์นิรันดร์ 🌰 เข้ากระเป๋าให้ทันที!\n🛡️ เมล็ดพันธุ์เดิมในกระเป๋า (${fmt(state.eternalSeeds)} 🌰), ละอองชีวิต (${fmt(state.transcendence?.gaiaEssences || 0)} 🌍) และโบราณวัตถุจะอยู่ครบ 100% ไม่สูญหาย!\n🌱 มีเพียงรากไม้ในสวนที่จะเริ่มใหม่เพื่อเข้าสู่เงื่อนไขการทดสอบ`
         }
         confirmText={isEn ? 'Begin Trial' : 'เริ่มการทดสอบ'}
         cancelText={isEn ? 'Cancel' : 'ยกเลิก'}

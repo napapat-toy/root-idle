@@ -113,7 +113,9 @@ export function luckyChanceMaxed(state: GameState): boolean {
 }
 
 export function luckyChancePct(state: GameState): number {
-  return Math.min(LUCKY_CHANCE_MAX, LUCKY_CHANCE_BASE + (state.prestige.luckyChanceLevel || 0) * LUCKY_CHANCE_STEP);
+  const prestigeBonus = Math.min(LUCKY_CHANCE_MAX, LUCKY_CHANCE_BASE + (state.prestige.luckyChanceLevel || 0) * LUCKY_CHANCE_STEP);
+  const gaiaBonus = (state.transcendence?.gaiaClairvoyanceLevel || 0) * 0.001;
+  return prestigeBonus + gaiaBonus;
 }
 
 export function luckyChanceCost(stateOrLevel: GameState | number): number {

@@ -269,7 +269,7 @@ export function useGameEngine() {
   const doTranscendence = useCallback(() => {
     const cur = stateRef.current;
     const gained = calcTranscendenceEssences(cur);
-    if (gained <= 0 && (cur.transcendence?.gaiaEssences || 0) === 0) return 0;
+    if (gained <= 0) return 0;
 
     // Clear any active temporary buffs and on-screen events upon Transcendence
     randomEvents.clearEventsAndBuffs();
@@ -631,6 +631,10 @@ export function useGameEngine() {
     buySoilMemory: transcendenceEngine.buySoilMemory,
     buyAutoManager: transcendenceEngine.buyAutoManager,
     buyGaiaTouch: transcendenceEngine.buyGaiaTouch,
+    buyEchoResonance: transcendenceEngine.buyEchoResonance,
+    buyGaiaClairvoyance: transcendenceEngine.buyGaiaClairvoyance,
+    buyPrimordialSeedling: transcendenceEngine.buyPrimordialSeedling,
+    buyDeepMeditation: transcendenceEngine.buyDeepMeditation,
     startTrial: transcendenceEngine.startTrial,
     abandonTrial: transcendenceEngine.abandonTrial,
     claimUnearthedRelic,

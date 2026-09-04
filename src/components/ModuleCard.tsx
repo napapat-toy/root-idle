@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { GameState, Language, ModuleDef } from '@/types/game';
-import { bulkCostFor, moduleMilestoneMultiplier, moduleMilestonesCountFor } from '@/constants/gameData';
+import { bulkCostFor, moduleMilestoneMultiplier, moduleMilestonesCountFor, fineRootBaseRate } from '@/constants/gameData';
 import { fmt } from '@/lib/formatters';
 import { MODULE_TRANSLATIONS } from '@/lib/i18n';
 
@@ -98,7 +98,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = React.memo(({
       <div className={`module-hovercard ${hoverAbove ? 'above' : ''}`}>
         <div className="mh-row">
           <span>{isEn ? 'Base Rate' : 'เรทเริ่มต้น'}</span>
-          <b className="mh-base">+{fmt(def.rate)}{isEn ? '/s' : '/วิ'}</b>
+          <b className="mh-base">+{fmt(def.id === 'fine' && state ? fineRootBaseRate(state) : def.rate)}{isEn ? '/s' : '/วิ'}</b>
         </div>
         {owned >= 10 && (
           <div className="mh-row">

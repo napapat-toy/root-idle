@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { GameState, Language } from '@/types/game';
-import { calcPrestigeSeeds, prestigeUnlocked, isTranscendenceUnlocked } from '@/constants/gameData';
+import { calcPrestigeSeeds, prestigeUnlocked, isTranscendenceUnlocked, calcTranscendenceEssences, canTranscend } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { t } from '@/lib/i18n';
 
@@ -46,7 +46,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
 
   const isTrialActive = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
   const showTranscendenceBtn = isTranscendenceUnlocked(state);
-  const pendingEssences = (state.runEarned >= 1e28) ? Math.max(1, Math.floor(Math.pow(state.runEarned / 1e28, 0.15) * 5)) : 0;
+  const pendingEssences = calcTranscendenceEssences(state);
   const yggOwned = state.owned['yggdrasil'] || 0;
   const showTranscendenceProgress = !showTranscendenceBtn && (state.stats?.prestigeCount || 0) >= 3 && yggOwned > 0;
 

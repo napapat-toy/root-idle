@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { GameState, Language } from '@/types/game';
 import {
   MODULE_DEFS,
-  ECHO_MAX_LEVEL,
+  maxEchoLevel,
   echoCost,
   echoMaxed,
   globalEchoMultiplier,
@@ -368,7 +368,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                         <span style={{ color: '#67e8f9', marginRight: '4px' }}>✨</span>
                         {isEn ? 'Echo:' : 'สะท้อน:'} {localizedName}{' '}
                         <span style={{ fontSize: '11px', color: isMaxed ? '#67e8f9' : 'var(--root-cream-dim)', fontWeight: 600 }}>
-                          {isMaxed ? '(MAX)' : `Lv.${echoes}/${ECHO_MAX_LEVEL}`}
+                          {isMaxed ? '(MAX)' : `Lv.${echoes}/${maxEchoLevel(state)}`}
                         </span>
                       </div>
                       <div style={{ fontSize: '11px', color: '#67e8f9', fontWeight: 600 }}>
