@@ -390,7 +390,24 @@ export function evaluateAutoBuy(
     const affordableCandidates = evaluatedPool.filter(c => c.waitSec === 0);
 
     if (affordableCandidates.length > 0 && ultimateTarget.waitSec > 10) {
-      // 4.1 Check for quick payback boosters
+      // 4.1 Check for affordable upgrades and echoes (Global multipliers that accelerate saving)
+      const cheapMultipliers = affordableCandidates.filter(
+        c => (c.type === 'upgrade' || c.type === 'echo') && c.cost <= currentNutrients * 0.15
+      );
+      if (cheapMultipliers.length > 0) {
+        cheapMultipliers.sort((a, b) => {
+          const roiB = b.value / Math.max(1, b.cost);
+          const roiA = a.value / Math.max(1, a.cost);
+          return roiB - roiA;
+        });
+        const multiplier = cheapMultipliers[0];
+        multiplier.apply();
+        currentNutrients -= multiplier.cost;
+        executedAny = true;
+        continue;
+      }
+
+      // 4.2 Check for quick payback boosters
       const quickBoosters = affordableCandidates.filter(c => {
         const paybackSec = c.cost / Math.max(0.01, c.value);
         return paybackSec < ultimateTarget.waitSec * 0.35 && (c.shareOfTotal >= 0.03 || c.marginalGain >= 0.03);
@@ -408,8 +425,10 @@ export function evaluateAutoBuy(
         continue;
       }
 
-      // 4.2 Pocket Milestone Stepping Stones: if candidate is < 100 roots and costs <= 5% of current balance, scoop it up!
-      const pocketMilestones = affordableCandidates.filter(c => c.isMilestoneTarget && c.cost <= currentNutrients * 0.05);
+      // 4.3 Pocket Milestone Stepping Stones: if candidate is < 100 roots and costs <= 10% wallet or <= 0.5% of target cost
+      const pocketMilestones = affordableCandidates.filter(
+        c => c.isMilestoneTarget && (c.cost <= currentNutrients * 0.10 || c.cost <= ultimateTarget.cost * 0.005)
+      );
       if (pocketMilestones.length > 0) {
         pocketMilestones.sort((a, b) => a.cost - b.cost); // buy cheapest first
         const milestone = pocketMilestones[0];

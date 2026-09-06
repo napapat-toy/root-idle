@@ -226,6 +226,16 @@ export function useTranscendenceEngine({
             isEn ? `🏆 Trial Conquered: ${def.enName}!` : `🏆 พิชิตการทดลอง: ${def.name}!`,
             '#ffd76a'
           );
+          if (active === 'void_anomaly') {
+            setTimeout(() => {
+              showFloatingText(
+                250,
+                155,
+                isEn ? '🤖 Automation Bots Reactivated!' : '🤖 ระบบบอทอัตโนมัติกลับมาทำงานแล้ว!',
+                '#4ade80'
+              );
+            }, 400);
+          }
         }
       }
     }, 1000);

@@ -45,6 +45,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   const hasAnyAuto = state.prestige.autoRoot || state.prestige.autoEvent || state.prestige.autoReset;
 
   const isTrialActive = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
+  const isVoidTrial = state.transcendence?.activeTrial === 'void_anomaly';
   const showTranscendenceBtn = isTranscendenceUnlocked(state);
   const pendingEssences = calcTranscendenceEssences(state);
   const yggOwned = state.owned['yggdrasil'] || 0;
@@ -127,10 +128,30 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className="utility-icon-btn"
             onClick={onOpenAutomation}
-            title={lang === 'en' ? 'Automation Control Hub' : 'ศูนย์ควบคุมระบบอัตโนมัติ'}
+            title={
+              isVoidTrial
+                ? (isEn ? '🤖 Automation Hub (Suppressed by Void Anomaly)' : '🤖 ศูนย์ควบคุมบอท (ถูกปิดกั้นชั่วคราวโดยรอยแยกสูญญะ)')
+                : (isEn ? 'Automation Control Hub' : 'ศูนย์ควบคุมระบบอัตโนมัติ')
+            }
             style={{ position: 'relative' }}
           >
-            🤖
+            <span style={{ position: 'relative', display: 'inline-block' }}>
+              🤖
+              {isVoidTrial && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '-4px',
+                    left: '-5px',
+                    fontSize: '10px',
+                    lineHeight: 1,
+                    filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.8))',
+                  }}
+                >
+                  🚫
+                </span>
+              )}
+            </span>
             {(state.prestige.autoRootEnabled || state.prestige.autoEventEnabled || state.prestige.autoResetEnabled) && (
               <span
                 style={{
@@ -140,8 +161,8 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
                   width: '8px',
                   height: '8px',
                   borderRadius: '50%',
-                  background: 'var(--accent-glow)',
-                  boxShadow: '0 0 6px var(--accent-glow)',
+                  background: isVoidTrial ? '#c084fc' : 'var(--accent-glow)',
+                  boxShadow: isVoidTrial ? '0 0 8px #c084fc' : '0 0 6px var(--accent-glow)',
                 }}
               />
             )}

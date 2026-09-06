@@ -111,6 +111,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
   const seeds = state.eternalSeeds;
   const gained = calcPrestigeSeeds(state);
+  const isVoidTrial = state.transcendence?.activeTrial === 'void_anomaly';
 
   const handlePrestigeClick = () => {
     if (gained <= 0) {
@@ -313,24 +314,66 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
               {/* ===== Automation ===== */}
               {renderSectionHeader(tr.prestigeSecAuto)}
+
+              {/* Void Anomaly Warning Banner */}
+              {isVoidTrial && (
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(99, 102, 241, 0.12))',
+                    border: '1px solid rgba(192, 132, 252, 0.45)',
+                    borderRadius: '10px',
+                    padding: '10px 14px',
+                    fontSize: '12px',
+                    color: '#e9d5ff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    marginBottom: '10px',
+                    lineHeight: '1.45',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span style={{ fontSize: '20px', flexShrink: 0 }}>🌌</span>
+                  <div>
+                    <strong style={{ color: '#ffffff' }}>
+                      {isEn ? 'Void Anomaly Active: ' : 'กำลังอยู่ในการทดลอง "รอยแยกสูญญะ": '}
+                    </strong>
+                    {isEn
+                      ? 'All automation bots are temporarily suppressed by dimensional disturbance until you grow 25 World Trees.'
+                      : 'ระบบบอททั้งหมดถูกระงับชั่วคราวจากสนามพลังมิติสุญญะ (ไม่ทำงาน) จนกว่าจะปลูกรากต้นไม้โลกครบ 25 ต้น'}
+                  </div>
+                </div>
+              )}
+
               {(() => {
                 const autoOwned = state.prestige.autoRoot;
                 const enabled = state.prestige.autoRootEnabled;
                 const activeMode = getActiveAutoRootMode(state);
                 const isCurrent = activeMode === 'basic' && enabled;
                 if (autoOwned) {
+                  const badgeText = isVoidTrial
+                    ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
+                    : !enabled
+                    ? (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')
+                    : isCurrent
+                    ? (isEn ? '✓ Active' : '✓ ใช้อยู่')
+                    : (isEn ? 'Unlocked' : 'เปิดใช้งาน');
                   return renderItem(
                     isEn ? '🤖 Auto Root (Basic: Cheapest)' : '🤖 ออโต้ราก (พื้นฐาน: ถูกที่สุด)',
-                    !enabled ? (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่') : isCurrent ? (isEn ? '✓ Active' : '✓ ใช้อยู่') : (isEn ? 'Unlocked' : 'เปิดใช้งาน'),
+                    badgeText,
                     isEn
-                      ? 'Automatically buys the cheapest affordable root every 2 seconds — Click to toggle/select'
+                      ? isVoidTrial
+                        ? '⚠️ Dimensional interference is temporarily suppressing this bot during the Void Anomaly trial.'
+                        : 'Automatically buys the cheapest affordable root every 2 seconds — Click to toggle/select'
+                      : isVoidTrial
+                      ? '⚠️ บอทถูกระงับชั่วคราวจากสนามพลังมิติสุญญะ จะกลับมาทำงานเมื่อพิชิตด่านสำเร็จ'
                       : 'ซื้อรากเสริมที่ราคาถูกที่สุดให้อัตโนมัติทุก 2 วินาที — คลิกเพื่อเลือกใช้ระดับนี้หรือเปิด/ปิด',
                     '—',
                     onSetAutoRootMode ? () => onSetAutoRootMode('basic') : onToggleAutoRoot,
                     false,
                     true,
-                    !enabled,
-                    isCurrent
+                    !enabled || isVoidTrial,
+                    isCurrent && !isVoidTrial
                   );
                 }
                 return renderItem(
@@ -352,18 +395,29 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   const activeMode = getActiveAutoRootMode(state);
                   const isCurrent = activeMode === 'smart' && enabled;
                   if (smartOwned) {
+                    const badgeText = isVoidTrial
+                      ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
+                      : !enabled
+                      ? (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')
+                      : isCurrent
+                      ? (isEn ? '✓ Active' : '✓ ใช้อยู่')
+                      : (isEn ? 'Unlocked' : 'ปลดล็อกแล้ว (คลิกใช้)');
                     return renderItem(
                       isEn ? '🧠 Smart Auto Root' : '🧠 ออโต้รากอัจฉริยะ',
-                      !enabled ? (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่') : isCurrent ? (isEn ? '✓ Active' : '✓ ใช้อยู่') : (isEn ? 'Unlocked' : 'ปลดล็อกแล้ว (คลิกใช้)'),
+                      badgeText,
                       isEn
-                        ? '1-2 min lookahead ROI optimization: saves up nutrients to buy the most valuable roots'
+                        ? isVoidTrial
+                          ? '⚠️ Dimensional interference is temporarily suppressing this bot during the Void Anomaly trial.'
+                          : '1-2 min lookahead ROI optimization: saves up nutrients to buy the most valuable roots'
+                        : isVoidTrial
+                        ? '⚠️ บอทถูกระงับชั่วคราวจากสนามพลังมิติสุญญะ จะกลับมาทำงานเมื่อพิชิตด่านสำเร็จ'
                         : 'คำนวณล่วงหน้า 1-2 นาที เก็บสารอาหารรอซื้อรากที่คุ้มและได้เรทสูงสุด — คลิกเพื่อเลือกใช้ระดับนี้',
                       '—',
                       () => onSetAutoRootMode('smart'),
                       false,
                       true,
-                      !enabled,
-                      isCurrent
+                      !enabled || isVoidTrial,
+                      isCurrent && !isVoidTrial
                     );
                   }
                   return renderItem(
@@ -385,18 +439,29 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   const activeMode = getActiveAutoRootMode(state);
                   const isCurrent = activeMode === 'all' && enabled;
                   if (allOwned) {
+                    const badgeText = isVoidTrial
+                      ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
+                      : !enabled
+                      ? (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')
+                      : isCurrent
+                      ? (isEn ? '✓ Active' : '✓ ใช้อยู่')
+                      : (isEn ? 'Unlocked' : 'ปลดล็อกแล้ว (คลิกใช้)');
                     return renderItem(
                       isEn ? '♾️ Universal Auto Root' : '♾️ ออโต้รากทุกสรรพสิ่ง',
-                      !enabled ? (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่') : isCurrent ? (isEn ? '✓ Active' : '✓ ใช้อยู่') : (isEn ? 'Unlocked' : 'ปลดล็อกแล้ว (คลิกใช้)'),
+                      badgeText,
                       isEn
-                        ? 'Autonomous Master: Automatically purchases roots, milestone upgrades, and echoes!'
+                        ? isVoidTrial
+                          ? '⚠️ Dimensional interference is temporarily suppressing this bot during the Void Anomaly trial.'
+                          : 'Autonomous Master: Automatically purchases roots, milestone upgrades, and echoes!'
+                        : isVoidTrial
+                        ? '⚠️ บอทถูกระงับชั่วคราวจากสนามพลังมิติสุญญะ จะกลับมาทำงานเมื่อพิชิตด่านสำเร็จ'
                         : 'นอกจากซื้อรากเสริม ยังไล่ซื้ออัพเกรด และสะท้อนรากที่คุ้มที่สุดให้อัตโนมัติด้วย — คลิกเพื่อเลือกใช้ระดับนี้',
                       '—',
                       () => onSetAutoRootMode('all'),
                       false,
                       true,
-                      !enabled,
-                      isCurrent
+                      !enabled || isVoidTrial,
+                      isCurrent && !isVoidTrial
                     );
                   }
                   return renderItem(
@@ -415,17 +480,26 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                 const autoEventOwned = state.prestige.autoEvent;
                 const enabled = state.prestige.autoEventEnabled;
                 if (autoEventOwned) {
+                  const badgeText = isVoidTrial
+                    ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
+                    : enabled
+                    ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่')
+                    : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่');
                   return renderItem(
                     isEn ? '🎯 Auto Event Clicker' : '🎯 ออโต้อีเว้น',
-                    enabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่'),
+                    badgeText,
                     isEn
-                      ? 'Automatically collects floating events as they spawn — Click to toggle ON/OFF'
+                      ? isVoidTrial
+                        ? '⚠️ Floating event collection is temporarily suppressed during the Void Anomaly trial.'
+                        : 'Automatically collects floating events as they spawn — Click to toggle ON/OFF'
+                      : isVoidTrial
+                      ? '⚠️ การเก็บอีเว้นอัตโนมัติถูกระงับชั่วคราวระหว่างการทดลองรอยแยกสูญญะ'
                       : 'คลิกอีเว้นที่โผล่มาให้อัตโนมัติทุกครั้ง ไม่พลาดอีเว้นอีกต่อไป — กดเพื่อเปิด/ปิดชั่วคราว',
                     '—',
                     onToggleAutoEvent,
                     false,
                     true,
-                    !enabled
+                    !enabled || isVoidTrial
                   );
                 }
                 return renderItem(
@@ -446,15 +520,23 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                 const target = state.prestige.autoResetThreshold || 1000;
                 if (autoResetOwned) {
                   return (
-                    <div className={`prestige-item owned ${!enabled ? 'toggled-off' : ''}`}>
+                    <div className={`prestige-item owned ${!enabled || isVoidTrial ? 'toggled-off' : ''}`}>
                       <div className="p-top">
                         <span>🔁 {isEn ? 'Auto Re-sow (Prestige)' : 'ออโต้หว่านใหม่'}</span>
-                        <span style={{ color: enabled ? 'var(--prestige-accent)' : 'var(--root-cream-dim)' }}>
-                          {enabled ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่') : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}
+                        <span style={{ color: isVoidTrial ? '#c084fc' : enabled ? 'var(--prestige-accent)' : 'var(--root-cream-dim)' }}>
+                          {isVoidTrial
+                            ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
+                            : enabled
+                            ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่')
+                            : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}
                         </span>
                       </div>
                       <div className="p-desc">
-                        {isEn
+                        {isVoidTrial
+                          ? (isEn
+                            ? '⚠️ Auto Re-sow is temporarily suppressed during the Void Anomaly trial.'
+                            : '⚠️ ระบบหว่านใหม่อัตโนมัติถูกระงับชั่วคราวระหว่างการทดลองรอยแยกสูญญะ')
+                          : isEn
                           ? `Automatically re-sows whenever yields reach ≥${fmtInt(target)} Eternal Seeds.`
                           : `หว่านใหม่อัตโนมัติทันทีที่สะสมได้ครบตามเป้าหมาย (≥${fmtInt(target)} เมล็ด)`}
                       </div>

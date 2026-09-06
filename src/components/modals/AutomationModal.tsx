@@ -33,6 +33,8 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
   const isEn = lang === 'en';
   const tr = t(lang);
 
+  const isVoidTrial = state.transcendence?.activeTrial === 'void_anomaly';
+
   const availableAutoModes = getAvailableAutoRootModes(state);
   const activeAutoMode = getActiveAutoRootMode(state);
 
@@ -57,6 +59,36 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
             {isEn ? 'Manage autonomous bots and prestige routines' : 'จัดการสวิตช์และระดับการทำงานของระบบออโต้'}
           </div>
 
+          {/* Void Anomaly Interference Warning Banner */}
+          {isVoidTrial && (
+            <div
+              style={{
+                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(99, 102, 241, 0.12))',
+                border: '1px solid rgba(192, 132, 252, 0.45)',
+                borderRadius: '10px',
+                padding: '10px 14px',
+                fontSize: '12px',
+                color: '#e9d5ff',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                marginBottom: '12px',
+                lineHeight: '1.45',
+                textAlign: 'left',
+              }}
+            >
+              <span style={{ fontSize: '22px', flexShrink: 0 }}>🌌</span>
+              <div>
+                <strong style={{ color: '#ffffff' }}>
+                  {isEn ? 'Void Anomaly Active: ' : 'กำลังอยู่ในการทดลอง "รอยแยกสูญญะ": '}
+                </strong>
+                {isEn
+                  ? 'All automation bots are temporarily suppressed by dimensional interference until you grow 25 World Trees.'
+                  : 'ระบบบอททั้งหมดถูกสนามพลังมิติสุญญะปิดกั้นชั่วคราว (ไม่ทำงาน) จนกว่าจะปลูกรากต้นไม้โลกครบ 25 ต้นเพื่อพิชิตการทดลอง!'}
+              </div>
+            </div>
+          )}
+
         {/* Automation Items Container */}
         <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {/* 1. Auto Root Buyer */}
@@ -71,12 +103,26 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
                 onClick={onToggleAutoRoot}
               >
                 <span style={{ fontWeight: 700, fontSize: '14px' }}>🌱 {isEn ? 'Auto Root Buyer' : 'ออโต้ซื้อราก & โบราณวัตถุ'}</span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: state.prestige.autoRootEnabled ? 'var(--accent-glow)' : 'var(--root-cream-dim)' }}>
-                  {state.prestige.autoRootEnabled ? (isEn ? '🟢 ENABLED' : '🟢 เปิดอยู่') : (isEn ? '⚪ DISABLED' : '⚪ ปิดอยู่')}
+                <span
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: isVoidTrial && state.prestige.autoRootEnabled ? '#c084fc' : state.prestige.autoRootEnabled ? 'var(--accent-glow)' : 'var(--root-cream-dim)',
+                  }}
+                >
+                  {isVoidTrial && state.prestige.autoRootEnabled
+                    ? (isEn ? '🚫 SUPPRESSED' : '🚫 ถูกปิดกั้นชั่วคราว')
+                    : state.prestige.autoRootEnabled
+                    ? (isEn ? '🟢 ENABLED' : '🟢 เปิดอยู่')
+                    : (isEn ? '⚪ DISABLED' : '⚪ ปิดอยู่')}
                 </span>
               </div>
               <div className="p-desc" style={{ margin: '6px 0 10px', fontSize: '11.5px' }}>
-                {state.prestige.autoRootEnabled
+                {isVoidTrial && state.prestige.autoRootEnabled
+                  ? (isEn
+                    ? '⚠️ Dimensional interference is currently suppressing this bot. It will automatically reactivate once the trial is conquered.'
+                    : '⚠️ สนามพลังมิติสุญญะกำลังรบกวน บอทถูกระงับชั่วคราวและจะกลับมาทำงานอัตโนมัติเมื่อพิชิตด่านสำเร็จ')
+                  : state.prestige.autoRootEnabled
                   ? (isEn ? 'Purchasing roots and claiming unearthed relics autonomously.' : 'ซื้อรากและช่วยเก็บโบราณวัตถุให้อัตโนมัติต่อเนื่อง (คลิกแถบด้านบนเพื่อเปิด/ปิด)')
                   : (isEn ? 'Disabled temporarily (Click header to resume)' : 'ปิดอยู่ชั่วคราว (คลิกแถบด้านบนเพื่อเปิดทำงาน)')}
               </div>
@@ -137,12 +183,26 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
             >
               <div className="p-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 700, fontSize: '14px' }}>🎯 {isEn ? 'Auto Event Clicker' : 'ออโต้เก็บอีเวนต์ & ลัคกี้'}</span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: state.prestige.autoEventEnabled ? 'var(--accent-glow)' : 'var(--root-cream-dim)' }}>
-                  {state.prestige.autoEventEnabled ? (isEn ? '🟢 ENABLED' : '🟢 เปิดอยู่') : (isEn ? '⚪ DISABLED' : '⚪ ปิดอยู่')}
+                <span
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: isVoidTrial && state.prestige.autoEventEnabled ? '#c084fc' : state.prestige.autoEventEnabled ? 'var(--accent-glow)' : 'var(--root-cream-dim)',
+                  }}
+                >
+                  {isVoidTrial && state.prestige.autoEventEnabled
+                    ? (isEn ? '🚫 SUPPRESSED' : '🚫 ถูกปิดกั้นชั่วคราว')
+                    : state.prestige.autoEventEnabled
+                    ? (isEn ? '🟢 ENABLED' : '🟢 เปิดอยู่')
+                    : (isEn ? '⚪ DISABLED' : '⚪ ปิดอยู่')}
                 </span>
               </div>
               <div className="p-desc" style={{ marginTop: '6px', fontSize: '11.5px' }}>
-                {state.prestige.autoEventEnabled
+                {isVoidTrial && state.prestige.autoEventEnabled
+                  ? (isEn
+                    ? '⚠️ Dimensional interference is currently suppressing this bot. It will automatically reactivate once the trial is conquered.'
+                    : '⚠️ สนามพลังมิติสุญญะกำลังรบกวน บอทถูกระงับชั่วคราวและจะกลับมาทำงานอัตโนมัติเมื่อพิชิตด่านสำเร็จ')
+                  : state.prestige.autoEventEnabled
                   ? (isEn ? 'Automatically claims floating buffs and jackpots without sound.' : 'กดเก็บไอคอนโชคลาภ/บัฟเร่งความเร็วที่ลอยขึ้นมาให้อัตโนมัติ (คลิกเพื่อเปิด/ปิด)')
                   : (isEn ? 'Disabled temporarily (Click to enable)' : 'ปิดอยู่ชั่วคราว (คลิกเพื่อเปิดทำงาน)')}
               </div>
@@ -161,12 +221,26 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
             >
               <div className="p-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 700, fontSize: '14px' }}>🌌 {isEn ? 'Auto Re-sow (Prestige)' : 'ออโต้หว่านใหม่อัตโนมัติ'}</span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: state.prestige.autoResetEnabled ? 'var(--prestige-accent)' : 'var(--root-cream-dim)' }}>
-                  {state.prestige.autoResetEnabled ? (isEn ? '🟢 ENABLED' : '🟢 เปิดอยู่') : (isEn ? '⚪ DISABLED' : '⚪ ปิดอยู่')}
+                <span
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: isVoidTrial && state.prestige.autoResetEnabled ? '#c084fc' : state.prestige.autoResetEnabled ? 'var(--prestige-accent)' : 'var(--root-cream-dim)',
+                  }}
+                >
+                  {isVoidTrial && state.prestige.autoResetEnabled
+                    ? (isEn ? '🚫 SUPPRESSED' : '🚫 ถูกปิดกั้นชั่วคราว')
+                    : state.prestige.autoResetEnabled
+                    ? (isEn ? '🟢 ENABLED' : '🟢 เปิดอยู่')
+                    : (isEn ? '⚪ DISABLED' : '⚪ ปิดอยู่')}
                 </span>
               </div>
               <div className="p-desc" style={{ margin: '6px 0 10px', fontSize: '11.5px' }}>
-                {state.prestige.autoResetEnabled
+                {isVoidTrial && state.prestige.autoResetEnabled
+                  ? (isEn
+                    ? '⚠️ Dimensional interference is currently suppressing this bot. It will automatically reactivate once the trial is conquered.'
+                    : '⚠️ สนามพลังมิติสุญญะกำลังรบกวน บอทถูกระงับชั่วคราวและจะกลับมาทำงานอัตโนมัติเมื่อพิชิตด่านสำเร็จ')
+                  : state.prestige.autoResetEnabled
                   ? (isEn
                     ? `Triggers automatically when reaching ≥${fmtInt(state.prestige.autoResetThreshold || 1000)} Eternal Seeds.`
                     : `หว่านใหม่อัตโนมัติทันทีที่สะสมได้ครบตามเป้าหมาย (≥${fmtInt(state.prestige.autoResetThreshold || 1000)} เมล็ด)`)
