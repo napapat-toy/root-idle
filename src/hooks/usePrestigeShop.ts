@@ -9,6 +9,7 @@ import {
   AUTO_ROOT_COST,
   AUTO_ROOT_SMART_COST,
   calcBulkPrestigeUpgrade,
+  EVENT_BONUS_MAX_LEVEL,
   eventBonusCost,
   eventDurationCost,
   eventDurationMaxed,
@@ -208,17 +209,20 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
 
   const buyEventBonus = useCallback((amount?: number | 'max') => {
     const cur = stateRef.current;
+    const curLevel = cur.prestige.eventBonusLevel || 0;
+    if (curLevel >= EVENT_BONUS_MAX_LEVEL) return;
     const { count, totalCost } = calcBulkPrestigeUpgrade(
-      cur.prestige.eventBonusLevel || 0,
+      curLevel,
       cur.eternalSeeds,
       eventBonusCost,
-      amount || 1
+      amount || 1,
+      EVENT_BONUS_MAX_LEVEL
     );
     if (count <= 0) return;
     setState(prev => ({
       ...prev,
       eternalSeeds: prev.eternalSeeds - totalCost,
-      prestige: { ...prev.prestige, eventBonusLevel: (prev.prestige.eventBonusLevel || 0) + count },
+      prestige: { ...prev.prestige, eventBonusLevel: Math.min(EVENT_BONUS_MAX_LEVEL, (prev.prestige.eventBonusLevel || 0) + count) },
     }));
   }, [stateRef, setState]);
 

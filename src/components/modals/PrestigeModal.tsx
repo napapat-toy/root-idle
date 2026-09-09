@@ -11,6 +11,7 @@ import {
   AUTO_ROOT_SMART_COST,
   calcBulkPrestigeUpgrade,
   calcPrestigeSeeds,
+  EVENT_BONUS_MAX_LEVEL,
   eventBonusCost,
   eventDurationCost,
   eventDurationMaxed,
@@ -583,16 +584,17 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               {/* ===== Events & Buffs ===== */}
               {renderSectionHeader(tr.prestigeSecEvents)}
               {(() => {
-                const ebLevel = state.prestige.eventBonusLevel || 0;
+                const ebLevel = Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0);
                 return renderBulkItem(
                   isEn ? '💰 Event Value Booster' : '💰 โบนัสอีเว้น',
-                  isEn ? `Lv.${ebLevel} (+${ebLevel * 20}%)` : `เลเวล ${ebLevel} (+${ebLevel * 20}%)`,
+                  isEn ? `Lv.${ebLevel} (+${ebLevel * 10}%)` : `เลเวล ${ebLevel} (+${ebLevel * 10}%)`,
                   isEn
-                    ? `Increases reward gains from floating events by +20% (Currently +${ebLevel * 20}%)`
-                    : `เพิ่มผลตอบแทนของกล่องสมบัติ/บัฟ/โชคดี ที่ได้จากการคลิกอีเว้นอีก 20% (ตอนนี้ +${ebLevel * 20}%)`,
+                    ? `Increases reward gains from floating events by +10% (Currently +${ebLevel * 10}%)`
+                    : `เพิ่มผลตอบแทนของกล่องสมบัติ/บัฟ/โชคดี ที่ได้จากการคลิกอีเว้นอีก 10% (ตอนนี้ +${ebLevel * 10}%)`,
                   eventBonusCost,
                   ebLevel,
-                  onBuyEventBonus
+                  onBuyEventBonus,
+                  EVENT_BONUS_MAX_LEVEL
                 );
               })()}
 

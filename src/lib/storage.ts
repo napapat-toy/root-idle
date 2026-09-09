@@ -1,5 +1,5 @@
 import { GameState, SavePayload, SaveSlotMeta } from '@/types/game';
-import { BUY_QTY_OPTIONS, calcPrestigeSeeds, MODULE_DEFS, relicsCount } from '@/constants/gameData';
+import { BUY_QTY_OPTIONS, calcPrestigeSeeds, EVENT_BONUS_MAX_LEVEL, MODULE_DEFS, relicsCount } from '@/constants/gameData';
 
 export const STORAGE_KEY = 'root-idle-state-v1';
 
@@ -237,6 +237,10 @@ export function payloadToState(payload: SavePayload): GameState {
 
   if ((state.owned['yggdrasil'] || 0) >= 100 && (state.stats?.prestigeCount || 0) >= 5) {
     state.transcendence.everUnlocked = true;
+  }
+
+  if ((state.prestige.eventBonusLevel || 0) > EVENT_BONUS_MAX_LEVEL) {
+    state.prestige.eventBonusLevel = EVENT_BONUS_MAX_LEVEL;
   }
 
   // Graceful restoration for relics lost due to legacy storage bug
