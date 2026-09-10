@@ -191,11 +191,13 @@ export function echoMaxed(state: GameState, moduleId: string): boolean {
   return (state.echoes[moduleId] || 0) >= maxEchoLevel(state);
 }
 
-export function echoCost(state: GameState, def: ModuleDef, currentTotalRate: number): number {
+export function echoCost(state: GameState, def: ModuleDef, _currentTotalRate?: number): number {
   if (echoMaxed(state, def.id)) return Infinity;
   const n = state.echoes[def.id] || 0;
-  const cost = ECHO_BASE_SECONDS * currentTotalRate * Math.pow(ECHO_COST_MULT, n);
-  return Math.ceil(Math.max(cost, 1));
+  // Fixed cost: Starts at cost equivalent to root #25, scaling +5 roots per level
+  // Fully scales with Transcendence uncaps (Lv.6 to Lv.10+)
+  const targetRoots = 25 + n * 5;
+  return costFor(def, targetRoots, state);
 }
 
 // Achievements
