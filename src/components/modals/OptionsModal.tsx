@@ -39,7 +39,6 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const [importCode, setImportCode] = useState('');
   const [importError, setImportError] = useState('');
   const [slotsMeta, setSlotsMeta] = useState<Record<number, SaveSlotMeta | null>>({});
-  const [activeTab, setActiveTab] = useState<'saves' | 'settings'>('saves');
 
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
@@ -208,59 +207,51 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 <div className="icon">⚙️</div>
                 <h2>{tr.optionsTitle}</h2>
 
-                {/* Tab Switcher */}
-                <div
-                  style={{
-                    display: 'flex',
-                    background: 'var(--bg-panel-2)',
-                    borderRadius: '10px',
-                    padding: '3px',
-                    gap: '4px',
-                    border: '1px solid var(--line-soil)',
-                    marginBottom: '14px',
-                  }}
-                >
-                  <button
-                    onClick={() => setActiveTab('saves')}
-                    style={{
-                      flex: 1,
-                      padding: '8px',
-                      borderRadius: '7px',
-                      border: 'none',
-                      fontWeight: 600,
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      background: activeTab === 'saves' ? 'var(--accent-glow)' : 'transparent',
-                      color: activeTab === 'saves' ? '#12190d' : 'var(--root-cream)',
-                    }}
-                  >
-                    💾 {isEn ? 'Save Data' : 'ข้อมูลเซฟ'}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('settings')}
-                    style={{
-                      flex: 1,
-                      padding: '8px',
-                      borderRadius: '7px',
-                      border: 'none',
-                      fontWeight: 600,
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      background: activeTab === 'settings' ? 'var(--accent-glow)' : 'transparent',
-                      color: activeTab === 'settings' ? '#12190d' : 'var(--root-cream)',
-                    }}
-                  >
-                    ⚙️ {isEn ? 'Settings' : 'การตั้งค่าทั่วไป'}
-                  </button>
-                </div>
-
-                {/* TAB 1: SAVES */}
-                {activeTab === 'saves' && (
-                  <>
-                    {/* Export / Import */}
-                    <div className="panel-title" style={{ margin: '8px 0 8px', textAlign: 'left' }}>
-                      {tr.exportImportTitle}
+                {/* Language Selection */}
+                {onSetLanguage && (
+                  <div style={{ marginBottom: '16px', textAlign: 'left' }}>
+                    <div className="panel-title" style={{ margin: '4px 0 8px' }}>
+                      {tr.langSelectorTitle}
                     </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        onClick={() => onSetLanguage('th')}
+                        style={{
+                          flex: 1,
+                          padding: '10px',
+                          borderRadius: '8px',
+                          background: lang === 'th' ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
+                          color: lang === 'th' ? '#12190d' : 'var(--root-cream)',
+                          borderColor: lang === 'th' ? 'var(--accent-glow)' : 'var(--line-soil)',
+                          fontWeight: lang === 'th' ? 700 : 500,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        🇹🇭 ภาษาไทย (TH)
+                      </button>
+                      <button
+                        onClick={() => onSetLanguage('en')}
+                        style={{
+                          flex: 1,
+                          padding: '10px',
+                          borderRadius: '8px',
+                          background: lang === 'en' ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
+                          color: lang === 'en' ? '#12190d' : 'var(--root-cream)',
+                          borderColor: lang === 'en' ? 'var(--accent-glow)' : 'var(--line-soil)',
+                          fontWeight: lang === 'en' ? 700 : 500,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        🇬🇧 English (EN)
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Export / Import */}
+                <div className="panel-title" style={{ margin: '8px 0 8px', textAlign: 'left' }}>
+                  {tr.exportImportTitle}
+                </div>
                     <div className="modal-actions" style={{ marginBottom: '14px' }}>
                       <button onClick={handleExportClick}>📤 {isEn ? 'Export Save Code' : 'Export โค้ดเซฟ'}</button>
                       <button
@@ -413,76 +404,28 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                       })}
                     </div>
 
-                    {/* Danger zone */}
-                    <div
-                      className="panel-title"
-                      style={{ margin: '18px 0 8px', textAlign: 'left', color: '#e08a8a' }}
-                    >
-                      {tr.dangerZoneTitle}
-                    </div>
-                    <button className="danger-btn" onClick={handleHardResetClick}>
-                      {tr.hardResetBtn}
-                    </button>
-                  </>
-                )}
-
-                {/* TAB 2: SETTINGS */}
-                {activeTab === 'settings' && (
-                  <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    {/* Language Selection */}
-                    {onSetLanguage && (
-                      <div>
-                        <div className="panel-title" style={{ margin: '8px 0 8px' }}>
-                          {tr.langSelectorTitle}
-                        </div>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <button
-                            onClick={() => onSetLanguage('th')}
-                            style={{
-                              flex: 1,
-                              padding: '10px',
-                              borderRadius: '8px',
-                              background: lang === 'th' ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
-                              color: lang === 'th' ? '#12190d' : 'var(--root-cream)',
-                              borderColor: lang === 'th' ? 'var(--accent-glow)' : 'var(--line-soil)',
-                              fontWeight: lang === 'th' ? 700 : 500,
-                              cursor: 'pointer',
-                            }}
-                          >
-                            🇹🇭 ภาษาไทย (TH)
-                          </button>
-                          <button
-                            onClick={() => onSetLanguage('en')}
-                            style={{
-                              flex: 1,
-                              padding: '10px',
-                              borderRadius: '8px',
-                              background: lang === 'en' ? 'var(--accent-glow-dim)' : 'var(--bg-panel-2)',
-                              color: lang === 'en' ? '#12190d' : 'var(--root-cream)',
-                              borderColor: lang === 'en' ? 'var(--accent-glow)' : 'var(--line-soil)',
-                              fontWeight: lang === 'en' ? 700 : 500,
-                              cursor: 'pointer',
-                            }}
-                          >
-                            🇬🇧 English (EN)
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* App & Audio Info */}
-                    <div style={{ background: 'var(--bg-panel-2)', border: '1px solid var(--line-soil)', borderRadius: '10px', padding: '12px', marginTop: '10px' }}>
-                      <div style={{ fontWeight: 700, fontSize: '12.5px', color: 'var(--root-cream)', marginBottom: '4px' }}>
-                        🌿 {isEn ? 'About Root Idle' : 'เกี่ยวกับเกม Root Idle'}
-                      </div>
-                      <div style={{ fontSize: '11.5px', color: 'var(--root-cream-dim)', lineHeight: 1.5 }}>
-                        {isEn
-                          ? 'A tranquil, atmospheric incremental idle tree growth experience. Designed to be completely silent and peaceful.'
-                          : 'เกมจำลองการเติบโตของเครือข่ายรากไม้ใต้พิภพ ออกแบบให้เล่นได้อย่างสงบ ผ่อนคลาย และไร้เสียงรบกวน 100%'}
-                      </div>
-                    </div>
+                {/* About Root Idle */}
+                <div style={{ background: 'var(--bg-panel-2)', border: '1px solid var(--line-soil)', borderRadius: '10px', padding: '12px', marginTop: '16px', textAlign: 'left' }}>
+                  <div style={{ fontWeight: 700, fontSize: '12.5px', color: 'var(--root-cream)', marginBottom: '4px' }}>
+                    🌿 {isEn ? 'About Root Idle' : 'เกี่ยวกับเกม Root Idle'}
                   </div>
-                )}
+                  <div style={{ fontSize: '11.5px', color: 'var(--root-cream-dim)', lineHeight: 1.5 }}>
+                    {isEn
+                      ? 'A tranquil, atmospheric incremental idle tree growth experience. Designed to be completely silent and peaceful.'
+                      : 'เกมจำลองการเติบโตของเครือข่ายรากไม้ใต้พิภพ ออกแบบให้เล่นได้อย่างสงบ ผ่อนคลาย และไร้เสียงรบกวน 100%'}
+                  </div>
+                </div>
+
+                {/* Danger zone */}
+                <div
+                  className="panel-title"
+                  style={{ margin: '18px 0 8px', textAlign: 'left', color: '#e08a8a' }}
+                >
+                  {tr.dangerZoneTitle}
+                </div>
+                <button className="danger-btn" onClick={handleHardResetClick}>
+                  {tr.hardResetBtn}
+                </button>
 
                 <div style={{ marginTop: '22px', textAlign: 'center', fontSize: '11px', color: 'var(--root-cream-dim)', opacity: 0.5, letterSpacing: '0.06em' }}>
                   Root Idle · v{GAME_VERSION}

@@ -16,7 +16,6 @@ interface TopActionsProps {
   onOpenRelics?: () => void;
   onOpenAutomation?: () => void;
   onOpenTranscendence?: () => void;
-  onToggleLanguage?: () => void;
 }
 
 export const TopActions: React.FC<TopActionsProps> = React.memo(({
@@ -29,7 +28,6 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onOpenRelics,
   onOpenAutomation,
   onOpenTranscendence,
-  onToggleLanguage,
 }) => {
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
@@ -225,16 +223,6 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           </button>
         )}
 
-        {onToggleLanguage && (
-          <button
-            className="utility-icon-btn"
-            onClick={onToggleLanguage}
-            title={tr.langToggleTooltip}
-            style={{ fontWeight: 700, fontSize: '11px', letterSpacing: '0.5px', color: 'var(--accent-glow)' }}
-          >
-            {isEn ? 'TH' : 'EN'}
-          </button>
-        )}
 
         <button
           className="utility-icon-btn"

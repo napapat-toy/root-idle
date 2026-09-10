@@ -149,10 +149,10 @@ export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY:
       newAngle = newAngle * (1 - downwardBias) + (Math.PI / 2) * downwardBias;
 
       // Soft boundary guidance when branches approach edges
-      if (parent.x2 < 45 && Math.cos(newAngle) < 0) {
-        newAngle = Math.PI / 2 + Math.abs(Math.cos(newAngle)) * 0.4;
-      } else if (parent.x2 > 455 && Math.cos(newAngle) > 0) {
-        newAngle = Math.PI / 2 - Math.abs(Math.cos(newAngle)) * 0.4;
+      if (parent.x2 < 60 && Math.cos(newAngle) < 0) {
+        newAngle = Math.PI / 2 + Math.abs(Math.cos(newAngle)) * 0.5;
+      } else if (parent.x2 > 440 && Math.cos(newAngle) > 0) {
+        newAngle = Math.PI / 2 - Math.abs(Math.cos(newAngle)) * 0.5;
       }
     }
 
@@ -162,7 +162,7 @@ export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY:
     let nx = startX + Math.cos(newAngle) * len;
     let ny = startY + Math.sin(newAngle) * len;
 
-    nx = Math.max(20, Math.min(480, nx));
+    nx = Math.max(30, Math.min(470, nx));
     ny = Math.max(18, ny);
 
     branches.push({

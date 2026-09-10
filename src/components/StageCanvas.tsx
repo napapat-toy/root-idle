@@ -151,6 +151,7 @@ const RootTreeSvg: React.FC<RootTreeSvgProps> = React.memo(({
 
   return (
     <svg
+      id="rootCanvas"
       className="root-svg"
       viewBox={`0 0 500 ${targetH}`}
       preserveAspectRatio="xMidYMin meet"
@@ -225,7 +226,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
   onClaimUnearthedRelic,
   onWaterCanvas,
 }) => {
-  const targetH = Math.max(480, maxY + 24);
+  const targetH = Math.max(480, maxY + 50);
   const isEn = lang === 'en';
 
   const highestIndex = useMemo(() => {

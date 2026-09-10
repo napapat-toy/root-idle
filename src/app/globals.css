@@ -309,7 +309,7 @@ body {
   }
   .stage {
     flex: 1;
-    min-height: 0;
+    min-height: 0 !important;
     height: 100%;
     overflow: hidden;
   }
@@ -359,11 +359,11 @@ h1 span {
 }
 
 .stats {
-  @apply text-left sm:text-right font-mono shrink-0;
+  @apply text-left sm:text-right font-mono shrink-0 max-w-full;
 }
 
 .stats .amount {
-  @apply text-[26px] font-bold text-accent-amber;
+  @apply text-[22px] sm:text-[26px] font-bold text-accent-amber leading-tight;
 }
 
 .stats-sub {
@@ -371,7 +371,7 @@ h1 span {
 }
 
 .stats .rate {
-  @apply text-xs text-accent-glow-dim;
+  @apply text-[11px] sm:text-xs text-accent-glow-dim leading-tight;
 }
 
 .stats .rate.seeds {
@@ -450,7 +450,8 @@ h1 span {
   background: linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 25%, var(--bg-deep) 60%, #030305 100%);
   border: 1px solid var(--line-soil);
   box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.65);
-  @apply rounded-[14px] relative overflow-hidden flex-1 min-h-115 lg:min-h-130 h-full;
+  @apply rounded-[14px] relative overflow-hidden flex-1 h-full;
+  min-height: 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
   transition: background 0.4s ease, border-color 0.3s ease;
@@ -483,7 +484,7 @@ h1 span {
   @apply inline-block text-[11px] font-mono text-[#ffd76a] bg-[rgba(40,30,10,0.6)] px-2 py-0.5 rounded-md backdrop-blur-[2px] max-w-47.5 text-right leading-[1.4];
 }
 
-svg#rootCanvas {
+svg#rootCanvas, .root-svg {
   @apply w-full h-full block;
 }
 
@@ -710,7 +711,10 @@ svg#rootCanvas {
 .module {
   background: var(--bg-panel);
   border: 1px solid var(--line-soil);
-  @apply rounded-[10px] p-3 sm:p-3.5 cursor-pointer select-none relative transition-all duration-150 min-h-[76px];
+  @apply rounded-[10px] cursor-pointer select-none relative transition-all duration-150 shrink-0 flex flex-col justify-center;
+  padding: 10px 14px 12px 14px;
+  min-height: 88px;
+  box-sizing: border-box;
   z-index: 1;
 }
 
@@ -718,12 +722,11 @@ svg#rootCanvas {
 .module:hover {
   background: var(--bg-panel-2);
   border-color: var(--accent-glow-dim);
-  transform: translateY(-1px);
-  z-index: 40;
+  @apply -translate-y-px z-40;
 }
 
 .module:active:not(.disabled) {
-  transform: translateY(0);
+  @apply translate-y-0;
 }
 
 .module.disabled {
@@ -731,11 +734,15 @@ svg#rootCanvas {
 }
 
 .module.has-hovercard.disabled {
-  opacity: 1;
+  @apply opacity-100;
 }
 
 .module.has-hovercard.disabled .module-body {
-  opacity: 0.45;
+  @apply opacity-45;
+}
+
+.module-body {
+  @apply flex flex-col gap-1 w-full;
 }
 
 .module-top {
@@ -751,11 +758,11 @@ svg#rootCanvas {
 }
 
 .module-desc {
-  @apply text-[12px] text-root-cream-dim mt-0.5 leading-[1.4] truncate flex-1 min-w-0;
+  @apply text-[12px] text-root-cream-dim leading-[1.4] truncate flex-1 min-w-0 mt-0;
 }
 
 .module-bottom {
-  @apply flex justify-between mt-2.5 font-mono text-[12.5px];
+  @apply flex justify-between items-center font-mono text-[12.5px] mt-1;
 }
 
 .module-cost {
