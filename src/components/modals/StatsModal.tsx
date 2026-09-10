@@ -230,7 +230,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Active Biome:' : 'ชีวนิเวศฉากหลัง:'}</span>
                   <span className="stats-value" style={{ color: 'var(--root-cream)' }}>
-                    {currentBiome ? `${currentBiome.icon} ${currentBiome.name}` : '🧭 Topsoil'}
+                    {currentBiome ? `${currentBiome.icon} ${isEn ? currentBiome.enName : currentBiome.name}` : (isEn ? '🧭 Dynamic Subterranean Strata' : '🧭 การเดินทางใต้พิภพ (Dynamic)')}
                   </span>
                 </div>
               </div>

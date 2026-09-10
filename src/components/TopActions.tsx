@@ -16,6 +16,7 @@ interface TopActionsProps {
   onOpenRelics?: () => void;
   onOpenAutomation?: () => void;
   onOpenTranscendence?: () => void;
+  onToggleLanguage?: () => void;
 }
 
 export const TopActions: React.FC<TopActionsProps> = React.memo(({
@@ -28,6 +29,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onOpenRelics,
   onOpenAutomation,
   onOpenTranscendence,
+  onToggleLanguage,
 }) => {
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
@@ -172,7 +174,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className="utility-icon-btn"
             onClick={onOpenRelics}
-            title={lang === 'en' ? 'Subterranean Museum & Biomes' : 'พิพิธภัณฑ์โบราณวัตถุ & ชีวนิเวศ'}
+            title={tr.relicsTooltip}
             style={{ position: 'relative' }}
           >
             🏺
@@ -220,6 +222,17 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
             title={tr.achievementsTooltip.replace('{count}', String(unlockedAchCount))}
           >
             🏆
+          </button>
+        )}
+
+        {onToggleLanguage && (
+          <button
+            className="utility-icon-btn"
+            onClick={onToggleLanguage}
+            title={tr.langToggleTooltip}
+            style={{ fontWeight: 700, fontSize: '11px', letterSpacing: '0.5px', color: 'var(--accent-glow)' }}
+          >
+            {isEn ? 'TH' : 'EN'}
           </button>
         )}
 

@@ -153,6 +153,7 @@ export default function Home() {
           onOpenOptions={() => setOptionsModalOpen(true)}
           onOpenAchievements={() => setAchievementsModalOpen(true)}
           onOpenStats={() => setStatsModalOpen(true)}
+          onToggleLanguage={() => setLanguage(lang === 'th' ? 'en' : 'th')}
         />
 
         <StageCanvas

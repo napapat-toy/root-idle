@@ -552,17 +552,13 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                     }}
                   >
                     <span style={{ color: 'var(--root-cream-dim)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {isSelectedMaxed
-                        ? (isEn ? '👑 Status: Fully Restored!' : '👑 สถานะ: รวบรวมชิ้นส่วนครบสมบูรณ์แล้ว!')
-                        : isSelectedOwned
-                        ? (isEn ? `⛏️ Status: Gathering (${selectedCount}/${selectedRelic.maxPieces})` : `⛏️ สถานะ: กำลังสะสม (${selectedCount}/${selectedRelic.maxPieces} ชิ้นส่วน)`)
+                      {isSelectedOwned
+                        ? (isEn ? '👑 Status: 100% Master Power Active!' : '👑 สถานะ: ครอบครองสมบูรณ์ 100% (ทำงานตลอดเวลา!)')
                         : (isEn ? '🔒 Status: Dormant Underground' : '🔒 สถานะ: หลับใหลอยู่ใต้พิภพ')}
                     </span>
                     <span style={{ fontWeight: 700, color: selectedRelic.color, fontSize: '10.5px', flexShrink: 0 }}>
-                      {isSelectedMaxed
-                        ? (isEn ? '100% COMPLETE' : 'สมบูรณ์ 100%')
-                        : isSelectedOwned
-                        ? `${Math.round((selectedCount / selectedRelic.maxPieces) * 100)}%`
+                      {isSelectedOwned
+                        ? (isEn ? '100% ACTIVE' : 'สมบูรณ์ 100%')
                         : (isEn ? 'UNEARTH CHANCE' : 'รอการขุดพบ')}
                     </span>
                   </div>
@@ -602,13 +598,13 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                         <span style={{ fontSize: '26px' }}>{biome.icon}</span>
                         <div>
                           <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--root-cream)' }}>
-                            {biome.name} {isSelected && <span style={{ color: 'var(--accent-glow)', fontSize: '10.5px' }}>● {isEn ? 'ACTIVE' : 'ใช้งานอยู่'}</span>}
+                            {isEn ? biome.enName : biome.name} {isSelected && <span style={{ color: 'var(--accent-glow)', fontSize: '10.5px' }}>● {isEn ? 'ACTIVE' : 'ใช้งานอยู่'}</span>}
                           </div>
                           <div style={{ fontSize: '10.5px', color: 'var(--root-cream-dim)', marginTop: '2px' }}>
-                            {biome.desc}
+                            {isEn ? biome.enDesc : biome.desc}
                           </div>
                           <div style={{ fontSize: '10.5px', color: '#ffd76a', marginTop: '2px', fontWeight: 600 }}>
-                            ⚡ {biome.ambientBonusDesc}
+                            ⚡ {isEn ? biome.enAmbientBonusDesc : biome.ambientBonusDesc}
                           </div>
                           {!isUnlocked && (
                             <div style={{ fontSize: '10px', color: '#f59e0b', marginTop: '2px', fontWeight: 600 }}>

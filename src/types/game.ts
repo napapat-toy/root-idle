@@ -118,12 +118,15 @@ export type BiomeId =
 export interface BiomeDef {
   id: BiomeId;
   name: string;
+  enName: string;
   desc: string;
+  enDesc: string;
   icon: string;
   bgGradient: string;
   particleType: 'spores' | 'crystals' | 'embers' | 'runes' | 'stardust' | 'leaves';
   particleColor: string;
   ambientBonusDesc: string;
+  enAmbientBonusDesc: string;
   relicRequiredCount: number;
 }
 
