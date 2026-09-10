@@ -128,6 +128,8 @@ export const CATEGORY_NAMES: Record<AchievementCategory, Record<Language, string
   luck: { th: 'โชคชะตา & อีเวนต์', en: 'Luck & Events' },
   skins: { th: 'สกิน & แฟชั่น', en: 'Skins & Aesthetics' },
   time: { th: 'เวลา & ความผูกพัน', en: 'Time & Dedication' },
+  relics: { th: 'โบราณวัตถุ & ชีวนิเวศ', en: 'Relics & Biomes' },
+  gaia: { th: 'การตื่นรู้ & การทดลอง', en: 'Transcendence & Trials' },
 };
 
 export const SKIN_NAMES: Record<SkinId, Record<Language, string>> = {
@@ -476,6 +478,14 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'ตู้เสื้อผ้ารากไม้', desc: 'ปลดล็อกสกินในร้าน Prestige ครบทั้ง 4 รูปแบบ' },
     en: { title: 'Botanical Wardrobe', desc: 'Unlock all 4 prestige root skins' },
   },
+  theme_equip_custom: {
+    th: { title: 'จิตรกรแห่งผืนดิน', desc: 'สวมใส่ธีมหน้าต่าง UI พิเศษรูปแบบใดก็ได้ที่ไม่ใช่คลาสสิก' },
+    en: { title: 'Subterranean Palette', desc: 'Equip any custom UI theme other than classic' },
+  },
+  theme_void_sovereign: {
+    th: { title: 'ราชันย์แห่งมิติสุญญะ', desc: 'ปลดล็อกและสวมใส่ธีม UI [🌌 จอมราชันย์แห่งสุญญะ] จากการพิชิตการทดลอง' },
+    en: { title: 'Void Sovereign Domain', desc: 'Unlock and equip the [🌌 Void Sovereign] UI Theme from trials' },
+  },
 
   playtime_10m: {
     th: { title: 'รดน้ำอย่างใจเย็น', desc: 'เวลาเล่นสะสมรวมครบ 10 นาที' },
@@ -500,6 +510,78 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
   offline_24h: {
     th: { title: 'การหลับใหลอันยาวนาน', desc: 'เก็บผลผลิตออฟไลน์ (Offline Gain) ที่หายไปเกิน 24 ชั่วโมง' },
     en: { title: 'Deep Slumber', desc: 'Claim offline gains after 24+ hours away' },
+  },
+
+  // Relics & Biomes
+  relic_1: {
+    th: { title: 'ขุดพบโบราณคดีชิ้นแรก', desc: 'ค้นพบโบราณวัตถุใต้พิภพชิ้นแรก (ครอบครอง 1/1 Master Relic 1 ชิ้น)' },
+    en: { title: 'First Unearthed Relic', desc: 'Discover your first subterranean 1/1 Master Relic' },
+  },
+  relic_5: {
+    th: { title: 'นักสำรวจอารยธรรมโบราณ', desc: 'ครอบครองโบราณวัตถุระดับ Master สะสมครบ 5 ชิ้น' },
+    en: { title: 'Subterranean Explorer', desc: 'Amass 5 Master Relics in your museum' },
+  },
+  relic_10: {
+    th: { title: 'ผู้ครอบครองวัตถุบรรพกาล', desc: 'ครอบครองโบราณวัตถุใต้พิภพครบทั้ง 10 ชิ้นสมบูรณ์' },
+    en: { title: 'Grand Master Archaeologist', desc: 'Possess all 10 subterranean Master Relics' },
+  },
+  relic_gaiacore: {
+    th: { title: 'หัวใจแห่งไกอาตื่นรู้', desc: 'ค้นพบ [👑 หัวใจแห่งไกอา] โบราณวัตถุระดับ Mythic (ปลุกพลัง ×2 ทุกชิ้น)' },
+    en: { title: 'Heart of Gaia Awakened', desc: 'Unearth the Mythic [👑 Heart of Gaia] relic (doubles all relic powers)' },
+  },
+  cycle_resonance_50: {
+    th: { title: 'พลังการเวียนว่ายครึ่งทาง', desc: 'สะสมพลังการเวียนว่าย (Cycle Resonance Stack) จากศิลาแก่นเพลิงพิภพแตะ +50%' },
+    en: { title: 'Harmonic Cycle Resonance', desc: 'Stack Cycle Resonance to +50% from Magmatic Corestone' },
+  },
+  cycle_resonance_100: {
+    th: { title: 'เสียงสะท้อนแห่งวัฏสงสารสูงสุด', desc: 'สะสมพลังการเวียนว่าย (Cycle Resonance Stack) แตะขีดจำกัดสูงสุด (≥100%)' },
+    en: { title: 'Apex Cycle Resonance', desc: 'Stack Cycle Resonance to the maximum safety cap (≥100%)' },
+  },
+  biome_switch: {
+    th: { title: 'ก้าวสู่ถิ่นฐานใหม่', desc: 'สลับไปใช้ชีวนิเวศใต้พิภพอื่นที่ไม่ใช่ผิวดินชั้นบนเป็นครั้งแรก' },
+    en: { title: 'New Subterranean Horizon', desc: 'Switch your active canvas biome away from standard topsoil' },
+  },
+  biome_sanctum: {
+    th: { title: 'สู่วิหารแห่งไกอา', desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศระดับสูงสุด [🌌 วิหารแห่งไกอา]' },
+    en: { title: 'Sanctum of the World Soul', desc: 'Unlock and activate the pinnacle [🌌 Sanctum of Gaia] biome' },
+  },
+
+  // Transcendence & Trials
+  transcend_1: {
+    th: { title: 'การตื่นรู้ของพฤกษา', desc: 'ทำการตื่นรู้แห่งไกอา (Grand Reset) สำเร็จครั้งแรก' },
+    en: { title: 'Awakening of the Flora', desc: 'Perform your first Gaia Transcendence (Grand Reset)' },
+  },
+  transcend_5: {
+    th: { title: 'จิตวิญญาณแห่งผืนพิภพ', desc: 'ทำการตื่นรู้แห่งไกอาสะสมครบ 5 ครั้ง' },
+    en: { title: 'Avatar of the Living Earth', desc: 'Perform 5 total Gaia Transcendences' },
+  },
+  gaia_essences_50: {
+    th: { title: 'ประกายชีวิตดึกดำบรรพ์', desc: 'ครอบครองละอองชีวิตดึกดำบรรพ์ (Gaia Essences) อย่างน้อย 50 ละออง' },
+    en: { title: 'Primordial Spark', desc: 'Possess at least 50 Gaia Essences (🌍)' },
+  },
+  gaia_essences_500: {
+    th: { title: 'คลังพลังงานแห่งไกอา', desc: 'ครอบครองละอองชีวิตดึกดำบรรพ์ (Gaia Essences) สะสมอย่างน้อย 500 ละออง' },
+    en: { title: 'Vast Gaia Reservoir', desc: 'Accumulate at least 500 Gaia Essences (🌍)' },
+  },
+  gaia_essences_2500: {
+    th: { title: 'มหาสมุทรวิญญาณแห่งโลก', desc: 'ครอบครองละอองชีวิตดึกดำบรรพ์ (Gaia Essences) สะสมอย่างน้อย 2,500 ละออง' },
+    en: { title: 'Ocean of the World Soul', desc: 'Accumulate at least 2,500 Gaia Essences (🌍)' },
+  },
+  transcend_vigor_max: {
+    th: { title: 'กายาปฐมกาลไร้เทียมทาน', desc: 'อัพเกรดแกนพลังปฐมกาล (Primordial Vigor) แตะเลเวล 20 (สูงสุด)' },
+    en: { title: 'Apex Primordial Vigor', desc: 'Upgrade Primordial Vigor to max Level 20' },
+  },
+  transcend_soil_memory_max: {
+    th: { title: 'ความทรงจำผืนดิน 100%', desc: 'อัพเกรดความทรงจำของผืนดิน (Soil Memory) แตะเลเวล 10 (คง Echoes ไว้ 100%)' },
+    en: { title: 'Total Soil Memory', desc: 'Upgrade Soil Memory to max Level 10 (retains 100% Echoes)' },
+  },
+  trial_first_clear: {
+    th: { title: 'ผู้ก้าวข้ามการทดสอบ', desc: 'พิชิตการทดลองแห่งผืนพิภพสำเร็จเป็นครั้งแรก (ปลูกต้นไม้โลกครบ 25 ต้นภายใต้ข้อจำกัด)' },
+    en: { title: 'Trial Breakthrough', desc: 'Conquer any subterranean trial (25 Yggdrasils under restriction)' },
+  },
+  trial_all_conquered: {
+    th: { title: 'ราชันย์ผู้พิชิตใต้พิภพ', desc: 'พิชิตการทดลองแห่งผืนพิภพครบทั้ง 3 ด่าน (ดินแล้งกันดาร, ชั้นหินอัคนีทึบ, รอยแยกสูญญะ)' },
+    en: { title: 'Conqueror of the Depths', desc: 'Conquer all 3 Subterranean Trials' },
   },
 };
 

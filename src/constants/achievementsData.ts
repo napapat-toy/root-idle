@@ -1,11 +1,14 @@
 import { AchievementCategoryInfo, AchievementDef } from '@/types/achievements';
 import { MODULE_DEFS } from './modules';
+import { hasRelic, relicsCount, relicCycleResonanceStack } from './relics';
 
 export const ACHIEVEMENT_CATEGORIES: AchievementCategoryInfo[] = [
   { id: 'roots', name: 'การแผ่ขยายราก', icon: '🌿' },
   { id: 'economy', name: 'เศรษฐกิจ & ผลผลิต', icon: '⚡' },
   { id: 'prestige', name: 'การหว่านใหม่', icon: '🌌' },
   { id: 'luck', name: 'โชคชะตา & อีเวนต์', icon: '🍀' },
+  { id: 'relics', name: 'โบราณวัตถุ & ชีวนิเวศ', icon: '🏺' },
+  { id: 'gaia', name: 'การตื่นรู้ & การทดลอง', icon: '🌍' },
   { id: 'skins', name: 'สกิน & แฟชั่น', icon: '🎨' },
   { id: 'time', name: 'เวลา & ความผูกพัน', icon: '⏳' },
 ];
@@ -720,6 +723,24 @@ export const ACHIEVEMENTS: AchievementDef[] = [
       !!s.prestige.skinGrayscale &&
       !!s.prestige.skinGradient,
   },
+  {
+    id: 'theme_equip_custom',
+    category: 'skins',
+    title: 'จิตรกรแห่งผืนดิน',
+    desc: 'สวมใส่ธีมหน้าต่าง UI พิเศษรูปแบบใดก็ได้ที่ไม่ใช่คลาสสิก',
+    icon: '🖼️',
+    bonusPct: 2,
+    check: (s) => !!s.prestige.activeUITheme && s.prestige.activeUITheme !== 'classic',
+  },
+  {
+    id: 'theme_void_sovereign',
+    category: 'skins',
+    title: 'ราชันย์แห่งมิติสุญญะ',
+    desc: 'ปลดล็อกและสวมใส่ธีม UI [🌌 จอมราชันย์แห่งสุญญะ] จากการพิชิตการทดลอง',
+    icon: '🌌',
+    bonusPct: 5,
+    check: (s) => s.prestige.activeUITheme === 'void_sovereign',
+  },
 
   // ===== ⏳ หมวด 6: เวลา & ความผูกพัน (Dedication & Time) =====
   {
@@ -775,6 +796,166 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     icon: '💤',
     bonusPct: 8,
     check: (s) => (s.stats?.maxOfflineTimeSeconds || 0) >= 86400,
+  },
+
+  // ===== 🏺 หมวด 7: โบราณวัตถุ & ชีวนิเวศ (Relics & Biomes) =====
+  {
+    id: 'relic_1',
+    category: 'relics',
+    title: 'ขุดพบโบราณคดีชิ้นแรก',
+    desc: 'ค้นพบโบราณวัตถุใต้พิภพชิ้นแรก (ครอบครอง 1/1 Master Relic 1 ชิ้น)',
+    icon: '🏺',
+    bonusPct: 2,
+    check: (s) => relicsCount(s) >= 1,
+  },
+  {
+    id: 'relic_5',
+    category: 'relics',
+    title: 'นักสำรวจอารยธรรมโบราณ',
+    desc: 'ครอบครองโบราณวัตถุระดับ Master สะสมครบ 5 ชิ้น',
+    icon: '📜',
+    bonusPct: 5,
+    check: (s) => relicsCount(s) >= 5,
+  },
+  {
+    id: 'relic_10',
+    category: 'relics',
+    title: 'ผู้ครอบครองวัตถุบรรพกาล',
+    desc: 'ครอบครองโบราณวัตถุใต้พิภพครบทั้ง 10 ชิ้นสมบูรณ์',
+    icon: '🏛️',
+    bonusPct: 10,
+    check: (s) => relicsCount(s) >= 10,
+  },
+  {
+    id: 'relic_gaiacore',
+    category: 'relics',
+    title: 'หัวใจแห่งไกอาตื่นรู้',
+    desc: 'ค้นพบ [👑 หัวใจแห่งไกอา] โบราณวัตถุระดับ Mythic (ปลุกพลัง ×2 ทุกชิ้น)',
+    icon: '👑',
+    bonusPct: 10,
+    check: (s) => hasRelic(s, 'gaiacore'),
+  },
+  {
+    id: 'cycle_resonance_50',
+    category: 'relics',
+    title: 'พลังการเวียนว่ายครึ่งทาง',
+    desc: 'สะสมพลังการเวียนว่าย (Cycle Resonance Stack) จากศิลาแก่นเพลิงพิภพแตะ +50%',
+    icon: '🔥',
+    bonusPct: 5,
+    check: (s) => relicCycleResonanceStack(s) >= 50,
+  },
+  {
+    id: 'cycle_resonance_100',
+    category: 'relics',
+    title: 'เสียงสะท้อนแห่งวัฏสงสารสูงสุด',
+    desc: 'สะสมพลังการเวียนว่าย (Cycle Resonance Stack) แตะขีดจำกัดสูงสุด (≥100%)',
+    icon: '🌋',
+    bonusPct: 10,
+    check: (s) => relicCycleResonanceStack(s) >= 100,
+  },
+  {
+    id: 'biome_switch',
+    category: 'relics',
+    title: 'ก้าวสู่ถิ่นฐานใหม่',
+    desc: 'สลับไปใช้ชีวนิเวศใต้พิภพอื่นที่ไม่ใช่ผิวดินชั้นบนเป็นครั้งแรก',
+    icon: '🧭',
+    bonusPct: 2,
+    check: (s) => !!s.activeBiome && s.activeBiome !== 'topsoil',
+  },
+  {
+    id: 'biome_sanctum',
+    category: 'relics',
+    title: 'สู่วิหารแห่งไกอา',
+    desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศระดับสูงสุด [🌌 วิหารแห่งไกอา]',
+    icon: '🌌',
+    bonusPct: 8,
+    check: (s) => s.activeBiome === 'gaia_sanctum',
+  },
+
+  // ===== 🌍 หมวด 8: การตื่นรู้ & การทดลอง (Transcendence & Trials) =====
+  {
+    id: 'transcend_1',
+    category: 'gaia',
+    title: 'การตื่นรู้ของพฤกษา',
+    desc: 'ทำการตื่นรู้แห่งไกอา (Grand Reset) สำเร็จครั้งแรก',
+    icon: '🌍',
+    bonusPct: 5,
+    check: (s) => (s.transcendence?.count || 0) >= 1,
+  },
+  {
+    id: 'transcend_5',
+    category: 'gaia',
+    title: 'จิตวิญญาณแห่งผืนพิภพ',
+    desc: 'ทำการตื่นรู้แห่งไกอาสะสมครบ 5 ครั้ง',
+    icon: '🌟',
+    bonusPct: 10,
+    check: (s) => (s.transcendence?.count || 0) >= 5,
+  },
+  {
+    id: 'gaia_essences_50',
+    category: 'gaia',
+    title: 'ประกายชีวิตดึกดำบรรพ์',
+    desc: 'ครอบครองละอองชีวิตดึกดำบรรพ์ (Gaia Essences) อย่างน้อย 50 ละออง',
+    icon: '✨',
+    bonusPct: 3,
+    check: (s) => (s.transcendence?.gaiaEssences || 0) >= 50 || (s.transcendence?.totalGaiaEssencesLifetime || 0) >= 50,
+  },
+  {
+    id: 'gaia_essences_500',
+    category: 'gaia',
+    title: 'คลังพลังงานแห่งไกอา',
+    desc: 'ครอบครองละอองชีวิตดึกดำบรรพ์ (Gaia Essences) สะสมอย่างน้อย 500 ละออง',
+    icon: '🪐',
+    bonusPct: 7,
+    check: (s) => (s.transcendence?.gaiaEssences || 0) >= 500 || (s.transcendence?.totalGaiaEssencesLifetime || 0) >= 500,
+  },
+  {
+    id: 'gaia_essences_2500',
+    category: 'gaia',
+    title: 'มหาสมุทรวิญญาณแห่งโลก',
+    desc: 'ครอบครองละอองชีวิตดึกดำบรรพ์ (Gaia Essences) สะสมอย่างน้อย 2,500 ละออง',
+    icon: '🌌',
+    bonusPct: 12,
+    check: (s) => (s.transcendence?.gaiaEssences || 0) >= 2500 || (s.transcendence?.totalGaiaEssencesLifetime || 0) >= 2500,
+  },
+  {
+    id: 'transcend_vigor_max',
+    category: 'gaia',
+    title: 'กายาปฐมกาลไร้เทียมทาน',
+    desc: 'อัพเกรดแกนพลังปฐมกาล (Primordial Vigor) แตะเลเวล 20 (สูงสุด)',
+    icon: '⚡',
+    bonusPct: 8,
+    check: (s) => (s.transcendence?.primordialVigorLevel || 0) >= 20,
+  },
+  {
+    id: 'transcend_soil_memory_max',
+    category: 'gaia',
+    title: 'ความทรงจำผืนดิน 100%',
+    desc: 'อัพเกรดความทรงจำของผืนดิน (Soil Memory) แตะเลเวล 10 (คง Echoes ไว้ 100%)',
+    icon: '🧠',
+    bonusPct: 8,
+    check: (s) => (s.transcendence?.soilMemoryLevel || 0) >= 10,
+  },
+  {
+    id: 'trial_first_clear',
+    category: 'gaia',
+    title: 'ผู้ก้าวข้ามการทดสอบ',
+    desc: 'พิชิตการทดลองแห่งผืนพิภพสำเร็จเป็นครั้งแรก (ปลูกต้นไม้โลกครบ 25 ต้นภายใต้ข้อจำกัด)',
+    icon: '⚔️',
+    bonusPct: 5,
+    check: (s) => Object.keys(s.transcendence?.completedTrials || {}).length >= 1,
+  },
+  {
+    id: 'trial_all_conquered',
+    category: 'gaia',
+    title: 'ราชันย์ผู้พิชิตใต้พิภพ',
+    desc: 'พิชิตการทดลองแห่งผืนพิภพครบทั้ง 3 ด่าน (ดินแล้งกันดาร, ชั้นหินอัคนีทึบ, รอยแยกสูญญะ)',
+    icon: '🏆',
+    bonusPct: 15,
+    check: (s) =>
+      !!s.transcendence?.completedTrials?.arid_drought &&
+      !!s.transcendence?.completedTrials?.basalt_strata &&
+      !!s.transcendence?.completedTrials?.void_anomaly,
   },
 ];
 

@@ -1,6 +1,14 @@
 import { GameState } from './game';
 
-export type AchievementCategory = 'roots' | 'economy' | 'prestige' | 'luck' | 'skins' | 'time';
+export type AchievementCategory =
+  | 'roots'
+  | 'economy'
+  | 'prestige'
+  | 'luck'
+  | 'skins'
+  | 'time'
+  | 'relics'
+  | 'gaia';
 
 export interface AchievementDef {
   id: string;
