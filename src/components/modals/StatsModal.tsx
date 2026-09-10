@@ -15,9 +15,9 @@ import {
   globalRateMultiplier,
   totalMilestonesCount,
   relicsCount,
-  totalRelicFragmentsCount,
+  relicCycleResonanceStack,
   isMasterRelicActive,
-  relicMaxed,
+  hasRelic,
   relicRateBonusMultiplier,
   RELIC_DEFS,
   BIOME_DEFS,
@@ -73,8 +73,8 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
 
   // Relics & Biomes Data
   const ownedRelicsCount = relicsCount(state);
-  const totalFragments = totalRelicFragmentsCount(state);
-  const completedRelics = RELIC_DEFS.filter(r => relicMaxed(state, r.id)).length;
+  const cycleStack = relicCycleResonanceStack(state);
+  const hasMagma = hasRelic(state, 'magmastone');
   const isMasterRelic = isMasterRelicActive(state);
   const currentBiome = BIOME_DEFS.find(b => b.id === (state.activeBiome || 'topsoil'));
   const relicRateMult = relicRateBonusMultiplier(state);
@@ -208,21 +208,19 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
               </div>
               <div className="stats-card-rows">
                 <div className="stats-row">
-                  <span className="stats-label">{isEn ? 'Relics Unearthed:' : 'โบราณวัตถุที่ค้นพบ:'}</span>
-                  <span className="stats-value highlight" style={{ color: ownedRelicsCount > 0 ? 'var(--accent-glow)' : 'var(--root-cream-dim)' }}>
-                    {ownedRelicsCount} / 10 {isEn ? 'types' : 'ชนิด'}
+                  <span className="stats-label">{isEn ? 'Master Relics Owned:' : 'โบราณวัตถุที่ครอบครอง:'}</span>
+                  <span className="stats-value highlight" style={{ color: ownedRelicsCount > 0 ? '#ffd76a' : 'var(--root-cream-dim)' }}>
+                    {ownedRelicsCount} / 10 {isEn ? '(1/1 Complete)' : 'ชิ้นสมบูรณ์'}
                   </span>
                 </div>
-                <div className="stats-row">
-                  <span className="stats-label">{isEn ? 'Collected Fragments:' : 'ชิ้นส่วนสะสมทั้งหมด:'}</span>
-                  <span className="stats-value">{totalFragments} {isEn ? 'pieces' : 'ชิ้น'}</span>
-                </div>
-                <div className="stats-row">
-                  <span className="stats-label">{isEn ? 'Completed Artifacts:' : 'รวบรวมครบสมบูรณ์:'}</span>
-                  <span className="stats-value" style={{ color: completedRelics > 0 ? '#ffd76a' : 'var(--root-cream-dim)' }}>
-                    {completedRelics} / 10 {isEn ? 'relics' : 'ชิ้น'}
-                  </span>
-                </div>
+                {hasMagma && (
+                  <div className="stats-row">
+                    <span className="stats-label">{isEn ? 'Cycle Resonance Stack:' : 'สะสมพลังการเวียนว่าย:'}</span>
+                    <span className="stats-value highlight" style={{ color: '#f97316' }}>
+                      +{cycleStack}%
+                    </span>
+                  </div>
+                )}
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Heart of Gaia:' : 'จิตวิญญาณแห่งไกอา:'}</span>
                   <span className="stats-value" style={{ color: isMasterRelic ? '#facc15' : 'var(--root-cream-dim)' }}>

@@ -29,6 +29,7 @@ import {
   hasRelic,
   pickWeightedUnownedRelic,
   relicBonusSproutChance,
+  relicBonusTwinSproutChance,
   relicCount,
   relicMaxed,
   relicMult,
@@ -126,8 +127,15 @@ export function useGameEngine() {
     if (cur.nutrients < cost) return;
 
     const sproutChance = relicBonusSproutChance(cur);
-    const gotBonus = sproutChance > 0 && Math.random() < sproutChance;
-    const addedQty = qty + (gotBonus ? 1 : 0);
+    const twinChance = relicBonusTwinSproutChance(cur);
+    let bonusRoots = 0;
+    if (sproutChance > 0 && Math.random() < sproutChance) {
+      bonusRoots += 1;
+      if (twinChance > 0 && Math.random() < twinChance) {
+        bonusRoots += 1;
+      }
+    }
+    const addedQty = qty + bonusRoots;
 
     setState(prev => {
       const nextYgg = (prev.owned[defId] || 0) + addedQty;
@@ -151,13 +159,16 @@ export function useGameEngine() {
       };
     });
 
-    if (gotBonus) {
+    if (bonusRoots > 0) {
       const isEn = cur.lang === 'en';
       const rootName = isEn ? (MODULE_TRANSLATIONS[def.id]?.en?.name || def.name) : def.name;
+      const text = bonusRoots > 1
+        ? (isEn ? `🌱 Twin Sprout! (+${bonusRoots} Free ${rootName})` : `🌱 แตกหน่อคู่! (แถมฟรี +${bonusRoots} ${rootName})`)
+        : (isEn ? `🌱 Sprout Bonus! (+1 Free ${rootName})` : `🌱 แตกหน่อโบนัส! (แถมฟรี +1 ${rootName})`);
       randomEvents.showFloatingText(
         typeof window !== 'undefined' ? window.innerWidth / 2 : 200,
         typeof window !== 'undefined' ? window.innerHeight / 2 : 200,
-        isEn ? `🌱 Twin Sprout! (+1 Free ${rootName})` : `🌱 แตกหน่อคู่! (แถมฟรี +1 ${rootName})`,
+        text,
         '#fbbf24'
       );
     }
@@ -387,14 +398,12 @@ export function useGameEngine() {
     if (!targetId) return;
     const def = RELIC_DEFS.find(r => r.id === targetId);
     if (!def) return;
-    const currentCount = relicCount(cur, targetId);
-    if (currentCount >= def.maxPieces) return;
-    const nextCount = currentCount + 1;
+    if (hasRelic(cur, targetId)) return;
     const isEn = cur.lang === 'en';
 
     setState(prev => ({
       ...prev,
-      relics: { ...prev.relics, [targetId]: nextCount },
+      relics: { ...prev.relics, [targetId]: 1 },
       unclaimedRelicId: null,
     }));
 
@@ -402,8 +411,8 @@ export function useGameEngine() {
       200,
       140,
       isEn
-        ? `🏺 Fragment: ${def.enName} (${nextCount}/${def.maxPieces})!`
-        : `🏺 ชิ้นส่วน: ${def.name} (${nextCount}/${def.maxPieces})!`,
+        ? `🏺 Unearthed: ${def.enName} (100% Complete!)`
+        : `🏺 ค้นพบโบราณวัตถุ: ${def.name} (สำเร็จ 1/1 สมบูรณ์!)`,
       def.color || '#ffd76a'
     );
   }, [randomEvents]);
@@ -415,20 +424,9 @@ export function useGameEngine() {
     }));
   }, []);
 
-  const onWaterCanvas = useCallback((x: number, y: number) => {
-    const cur = stateRef.current;
-    const magmaMult = relicMult(cur, 'magmastone');
-    if (magmaMult > 0) {
-      const rate = totalRate();
-      const burstGain = Math.max(1, rate * 0.0005 * magmaMult);
-      setState(prev => ({
-        ...prev,
-        nutrients: prev.nutrients + burstGain,
-        runEarned: prev.runEarned + burstGain,
-      }));
-      randomEvents.showFloatingText(x, y, `🔥 +${fmt(burstGain)}`, '#ef4444');
-    }
-  }, [randomEvents, totalRate]);
+  const onWaterCanvas = useCallback((_x: number, _y: number) => {
+    // Water ripple / visual interaction without clicker nutrient burst
+  }, []);
 
   // INITIAL LOAD & OFFLINE PROGRESS
   useEffect(() => {

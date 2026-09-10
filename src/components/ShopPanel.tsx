@@ -191,7 +191,8 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
       const isMaxed = echoMaxed(state, def.id);
       const cost = echoCost(state, def, totalRate);
       const affordable = !isMaxed && state.nutrients >= cost;
-      const echoBonusPct = Math.round(relicEchoBonusPerEcho(state) * 100);
+      const rawEchoBonus = relicEchoBonusPerEcho(state) * 100;
+      const echoBonusPct = rawEchoBonus % 1 === 0 ? rawEchoBonus : Number(rawEchoBonus.toFixed(1));
 
       const curMaxLevel = maxEchoLevel(state);
       return {

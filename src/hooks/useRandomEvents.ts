@@ -11,6 +11,7 @@ import {
   gaiaTouchBonusMult,
   pickWeightedUnownedRelic,
   relicEventNutrientBonus,
+  relicEventCooldownMultiplier,
   unownedRelicList,
 } from '@/constants/gameData';
 import { fmt, fmtInt } from '@/lib/formatters';
@@ -169,9 +170,10 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
   const scheduleNextEvent = useCallback(() => {
     if (eventTimerRef.current) clearTimeout(eventTimerRef.current);
 
-    const delay = 105000 + Math.random() * 50000; // 105–155s
+    const cur = stateRef.current;
+    const cdMult = relicEventCooldownMultiplier(cur);
+    const delay = (105000 + Math.random() * 50000) * cdMult; // 105–155s scaled by Geode
     eventTimerRef.current = setTimeout(() => {
-      const cur = stateRef.current;
       const r = Math.random();
       const luckyPct = luckyChancePct(cur);
       const nonLuckyPct = 1 - luckyPct;

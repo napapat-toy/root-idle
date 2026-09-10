@@ -1,4 +1,5 @@
 import { GameState, TrialDef, TrialId } from '@/types/game';
+import { relicTranscendenceEssenceBonus } from './relics';
 
 export const TRANSCENDENCE_REQUIRE_YGGDRASIL = 100;
 export const TRANSCENDENCE_REQUIRE_PRESTIGES = 5;
@@ -98,7 +99,8 @@ export function calcTranscendenceEssences(state: GameState): number {
   // Base 50 essences for reaching 100 Yggdrasil roots
   // Plus smooth progressive bonus for each Yggdrasil root beyond 100
   const bonusRoots = yggOwned - TRANSCENDENCE_REQUIRE_YGGDRASIL;
-  const essences = Math.floor(50 + Math.pow(bonusRoots, 1.05) * 0.5);
+  const meteoriteMult = relicTranscendenceEssenceBonus(state);
+  const essences = Math.floor((50 + Math.pow(bonusRoots, 1.05) * 0.5) * meteoriteMult);
   return Math.max(1, essences);
 }
 

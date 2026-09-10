@@ -327,7 +327,8 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
               const cost = echoCost(state, def, totalRate);
               const affordable = !isMaxed && state.nutrients >= cost;
               const localizedName = MODULE_TRANSLATIONS[def.id]?.[lang]?.name || def.name;
-              const echoBonusPct = Math.round(relicEchoBonusPerEcho(state) * 100);
+              const rawEchoBonus = relicEchoBonusPerEcho(state) * 100;
+              const echoBonusPct = rawEchoBonus % 1 === 0 ? rawEchoBonus : Number(rawEchoBonus.toFixed(1));
 
               return (
                 <div

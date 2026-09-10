@@ -330,7 +330,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
             animation: 'pulse 2s infinite ease-in-out',
             zIndex: 30,
           }}
-          title={isEn ? `Click to Claim: ${unclaimedRelic.name}` : `คลิกเพื่อเก็บโบราณวัตถุ: ${unclaimedRelic.name}`}
+          title={isEn ? `Click to Claim: ${unclaimedRelic.enName}` : `คลิกเพื่อเก็บโบราณวัตถุ: ${unclaimedRelic.name}`}
         >
           <span style={{ fontSize: '26px' }}>{unclaimedRelic.icon}</span>
           <div style={{ textAlign: 'left' }}>
@@ -353,7 +353,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
               </span>
             </div>
             <div style={{ fontSize: '13px', color: '#ffffff', fontWeight: 700 }}>
-              {unclaimedRelic.name}
+              {isEn ? unclaimedRelic.enName : unclaimedRelic.name}
             </div>
           </div>
         </button>

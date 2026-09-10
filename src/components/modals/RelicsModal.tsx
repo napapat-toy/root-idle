@@ -9,10 +9,10 @@ import {
   hasRelic,
   isMasterRelicActive,
   relicCount,
+  relicCycleResonanceStack,
   relicMaxed,
   relicMult,
   relicsCount,
-  totalRelicFragmentsCount,
 } from '@/constants/gameData';
 import { t } from '@/lib/i18n';
 
@@ -34,7 +34,6 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
   const [selectedRelicId, setSelectedRelicId] = useState<string>(RELIC_DEFS[0].id);
 
   const ownedCount = relicsCount(state);
-  const totalFragments = totalRelicFragmentsCount(state);
   const totalCount = RELIC_DEFS.length;
   const masterActive = isMasterRelicActive(state);
   const activeBiome = state.activeBiome || 'topsoil';
@@ -76,8 +75,8 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
           </h2>
           <div className="away-time" style={{ marginBottom: '12px', fontSize: 'clamp(10.5px, 2.6vw, 11.5px)' }}>
             {isEn
-              ? `Discovered: ${ownedCount} / ${totalCount} Types (${totalFragments} Fragments Collected)`
-              : `ค้นพบแล้ว: ${ownedCount} / ${totalCount} ชนิด (${totalFragments} ชิ้นส่วนสะสม)`}
+              ? `Discovered: ${ownedCount} / ${totalCount} Master Relics (1/1 Complete)`
+              : `ค้นพบแล้ว: ${ownedCount} / ${totalCount} ชิ้นสมบูรณ์ (1/1 ครบสมบูรณ์)`}
           </div>
 
           {/* Tab Switcher */}
@@ -280,8 +279,8 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                           }}
                         >
                           <span>#{String(idx + 1).padStart(2, '0')}</span>
-                          <span style={{ color: isMaxed ? '#facc15' : isOwned ? relic.color : 'inherit', fontWeight: 700 }}>
-                            {isMaxed ? 'MAX' : isOwned ? `${count}/${relic.maxPieces}` : rarityInfo.icon}
+                          <span style={{ color: isOwned ? '#facc15' : 'inherit', fontWeight: 700 }}>
+                            {isOwned ? '✓ 1/1' : rarityInfo.icon}
                           </span>
                         </div>
 
@@ -397,43 +396,85 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                       style={{
                         padding: '3px 8px',
                         borderRadius: '6px',
-                        background: isSelectedMaxed ? 'rgba(250, 204, 21, 0.15)' : isSelectedOwned ? `${selectedRelic.color}20` : 'rgba(255,255,255,0.05)',
-                        border: `1px solid ${isSelectedMaxed ? '#facc15' : isSelectedOwned ? selectedRelic.color : 'rgba(255,255,255,0.1)'}`,
-                        color: isSelectedMaxed ? '#facc15' : isSelectedOwned ? selectedRelic.color : 'var(--root-cream-dim)',
+                        background: isSelectedOwned ? 'rgba(250, 204, 21, 0.15)' : 'rgba(255,255,255,0.05)',
+                        border: `1px solid ${isSelectedOwned ? '#facc15' : 'rgba(255,255,255,0.1)'}`,
+                        color: isSelectedOwned ? '#facc15' : 'var(--root-cream-dim)',
                         fontSize: '10.5px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
                         flexShrink: 0,
                       }}
                     >
-                      {isSelectedMaxed
-                        ? (isEn ? '✓ MAXED' : '✓ เต็มแล้ว')
-                        : isSelectedOwned
-                        ? `${selectedCount} / ${selectedRelic.maxPieces}`
+                      {isSelectedOwned
+                        ? (isEn ? '✓ 1/1 OWNED' : '✓ 1/1 ครอบครองแล้ว')
                         : (isEn ? '🔒 UNDISCOVERED' : '🔒 ยังไม่ค้นพบ')}
                     </div>
                   </div>
 
-                  {/* Fragment Progress Bar */}
+                  {/* Master Power Status / Cycle Resonance Section */}
                   <div style={{ marginTop: '1px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', marginBottom: '3px' }}>
-                      <span style={{ color: 'var(--root-cream-dim)' }}>
-                        {isEn ? 'Fragment Progress' : 'ความคืบหน้าชิ้นส่วน'}:
-                      </span>
-                      <span style={{ fontWeight: 700, color: isSelectedMaxed ? '#facc15' : selectedRelic.color }}>
-                        {selectedCount} / {selectedRelic.maxPieces} {isSelectedMaxed ? (isEn ? '(MAXED)' : '(เต็มแล้ว)') : ''}
-                      </span>
-                    </div>
-                    <div style={{ width: '100%', height: '5px', background: 'rgba(0,0,0,0.3)', borderRadius: '3px', overflow: 'hidden' }}>
+                    {isSelectedOwned && selectedRelic.id === 'magmastone' ? (
                       <div
                         style={{
-                          width: `${Math.min(100, (selectedCount / selectedRelic.maxPieces) * 100)}%`,
-                          height: '100%',
-                          background: isSelectedMaxed ? 'linear-gradient(90deg, #facc15, #4ade80)' : selectedRelic.color,
-                          transition: 'width 0.3s ease',
+                          background: 'rgba(249, 115, 22, 0.12)',
+                          border: '1px solid rgba(249, 115, 22, 0.35)',
+                          borderRadius: '8px',
+                          padding: '6px 10px',
+                          fontSize: '10.5px',
+                          lineHeight: '1.4',
                         }}
-                      />
-                    </div>
+                      >
+                        <div style={{ color: '#f97316', fontWeight: 700, display: 'flex', justifyContent: 'space-between' }}>
+                          <span>🔥 {isEn ? 'Cycle Resonance Stack' : 'สะสมพลังการเวียนว่าย'}:</span>
+                          <span>+{relicCycleResonanceStack(state)}% {masterActive ? '(Cap ×2)' : ''}</span>
+                        </div>
+                        <div style={{ color: 'var(--root-cream-dim)', fontSize: '9.5px', marginTop: '2px' }}>
+                          {isEn
+                            ? `Prestige ×${state.stats?.prestigeCount || 0} (+${state.stats?.prestigeCount || 0}%) · Transcendence ×${state.transcendence?.count || 0} (+${(state.transcendence?.count || 0) * 3}%)`
+                            : `หว่านใหม่ ${state.stats?.prestigeCount || 0} ครั้ง (+${state.stats?.prestigeCount || 0}%) · ตื่นรู้ ${state.transcendence?.count || 0} ครั้ง (+${(state.transcendence?.count || 0) * 3}%)`}
+                        </div>
+                      </div>
+                    ) : isSelectedOwned ? (
+                      <div
+                        style={{
+                          background: 'rgba(74, 222, 128, 0.08)',
+                          border: '1px solid rgba(74, 222, 128, 0.25)',
+                          borderRadius: '8px',
+                          padding: '6px 10px',
+                          fontSize: '10.5px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <span style={{ color: 'var(--root-cream-dim)' }}>
+                          {isEn ? 'Master Power Status' : 'สถานะพลังโบราณวัตถุ'}:
+                        </span>
+                        <span style={{ color: '#4ade80', fontWeight: 700 }}>
+                          {isEn ? '● Active Permanently' : '● ทำงานสมบูรณ์ 100%'}
+                        </span>
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.03)',
+                          border: '1px solid var(--line-soil)',
+                          borderRadius: '8px',
+                          padding: '6px 10px',
+                          fontSize: '10.5px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <span style={{ color: 'var(--root-cream-dim)' }}>
+                          {isEn ? 'Excavation Status' : 'สถานะการค้นหา'}:
+                        </span>
+                        <span style={{ color: 'var(--root-cream-dim)' }}>
+                          {isEn ? 'Dormant Underground' : 'หลับใหลอยู่ใต้พิภพ'}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Effect Details - standard block with word-break to completely prevent horizontal overflow */}

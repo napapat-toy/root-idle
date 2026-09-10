@@ -1,4 +1,5 @@
 import { GameState } from '@/types/game';
+import { relicCycleResonanceStack } from './relics';
 
 export const PRESTIGE_UNLOCK_ECHOES = 5;
 export const SEED_DIVIDER = 10000000000; // 10 Billion (1e10)
@@ -27,7 +28,9 @@ export const AUTO_EVENT_COST = 1000;
 export const STARTER_CULTURE_MAX_LEVEL = 50; // Max 500 starter roots upon Prestige
 
 export function prestigeBonusPct(state: GameState): number {
-  return state.prestige.passiveRateLevel || 0;
+  const base = state.prestige.passiveRateLevel || 0;
+  const cycleBonus = relicCycleResonanceStack(state);
+  return Math.round(base * (1 + cycleBonus * 0.01) * 100) / 100;
 }
 
 export function prestigeRateMultiplier(state: GameState): number {

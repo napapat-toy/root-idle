@@ -9,6 +9,7 @@ import {
   MODULE_DEFS,
   MODULE_UNLOCK_REQUIRE_OWNED,
   relicBonusSproutChance,
+  relicBonusTwinSproutChance,
   relicEchoBonusPerEcho,
   rootSynergyCost,
   rootSynergyUnlocked,
@@ -116,7 +117,14 @@ export function evaluateAutoBuy(
         isMilestoneTarget,
         apply: () => {
           const sproutChance = relicBonusSproutChance(state);
-          const bonus = sproutChance > 0 && Math.random() < sproutChance ? 1 : 0;
+          const twinChance = relicBonusTwinSproutChance(state);
+          let bonus = 0;
+          if (sproutChance > 0 && Math.random() < sproutChance) {
+            bonus += 1;
+            if (twinChance > 0 && Math.random() < twinChance) {
+              bonus += 1;
+            }
+          }
           const added = 1 + bonus;
           setState(prev => ({
             ...prev,

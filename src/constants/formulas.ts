@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.28.2';
+export const GAME_VERSION = '1.29.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -147,6 +147,7 @@ import {
   relicRateBonusMultiplier,
   relicDeepRootsBonus,
   relicSynergyBonusPerUnit,
+  relicSynergyUnlockRequiredCount,
   relicEchoBonusPerEcho,
   biomeActiveRateMultiplier,
 } from './relics';
@@ -209,12 +210,14 @@ export function achievementMultiplier(state: GameState): number {
 
 // Synergies
 export function rootSynergyUnlocked(state: GameState, moduleId: string): boolean {
-  return (state.owned[moduleId] || 0) >= ROOT_SYNERGY_REQUIRE_OWNED;
+  const req = relicSynergyUnlockRequiredCount(state);
+  return (state.owned[moduleId] || 0) >= req;
 }
 
 export function rootSynergyCost(def: ModuleDef, state?: GameState): number {
   const trialMult = state ? trialCostMultiplier(state) : 1.0;
-  return Math.ceil(def.baseCost * Math.pow(def.costMult, ROOT_SYNERGY_REQUIRE_OWNED) * 10 * trialMult);
+  const req = state ? relicSynergyUnlockRequiredCount(state) : ROOT_SYNERGY_REQUIRE_OWNED;
+  return Math.ceil(def.baseCost * Math.pow(def.costMult, req) * 10 * trialMult);
 }
 
 export function speciesSynergyBonusPct(state: GameState, _moduleId?: string): number {

@@ -9,155 +9,155 @@ export const RELIC_RARITY_INFO: Record<RelicRarity, { name: string; enName: stri
 };
 
 export const RELIC_MAX_PIECES: Record<RelicRarity, number> = {
-  common: 20,
-  rare: 10,
-  epic: 5,
-  legendary: 3,
+  common: 1,
+  rare: 1,
+  epic: 1,
+  legendary: 1,
   mythic: 1,
 };
 
 export const RELIC_DEFS: RelicDef[] = [
-  // 🟢 COMMON (Weight: 50, Max: 20)
+  // 🟢 COMMON (Weight: 50, Max: 1)
   {
     id: 'amber',
     name: 'อำพันดึกดำบรรพ์',
     enName: 'Primeval Amber',
     icon: '琥',
-    desc: 'ยางไม้โบราณที่ผนึกหยดน้ำค้างล้านปี เสริมความมีชีวิตชีวาของเซลล์รากไม้',
-    enDesc: 'Ancient resin sealing primordial dewdrops, vitalizing subterranean root cells.',
+    desc: 'ยางไม้โบราณที่ผนึกหยดน้ำค้างล้านปี เสริมพลังการเติบโตของเซลล์รากทุกชนิดทั่วทั้งผืนดิน',
+    enDesc: 'Ancient resin sealing primordial dewdrops, permanently vitalizing all subterranean root cells.',
     rarity: 'common',
     dropWeight: 50,
-    effectDesc: '+0.5% เรทการผลิตรากทุกชนิดต่อชิ้น (สูงสุด +10%)',
-    enEffectDesc: '+0.5% all roots rate per piece (Max +10%)',
-    baseCost: 50_000_000_000, // 50B
+    effectDesc: 'เรทการผลิตรากทุกชนิด +50% (×1.50) ถาวร',
+    enEffectDesc: '+50% (×1.50) production rate for all roots permanently',
+    baseCost: 50_000_000_000,
     color: '#4ade80',
-    maxPieces: 20,
+    maxPieces: 1,
   },
   {
     id: 'aquifer',
     name: 'ไข่มุกตาน้ำบาดาลลึก',
     enName: 'Abyssal Aquifer Pearl',
     icon: '🌊',
-    desc: 'หยดน้ำบริสุทธิ์กลั่นตัวจากความดันล้านบรรยากาศใต้โลก หล่อเลี้ยงรากชั้นลึก',
-    enDesc: 'Pure condensed droplet forged under extreme pressure, nourishing deep stratum roots.',
+    desc: 'หยดน้ำบริสุทธิ์กลั่นตัวจากความดันล้านบรรยากาศใต้โลก หล่อเลี้ยงรากชั้นลึกให้ดูดซับสารอาหารได้ทวีคูณ',
+    enDesc: 'Pure condensed droplet forged under extreme pressure, supercharging deep stratum roots.',
     rarity: 'common',
     dropWeight: 50,
-    effectDesc: '+1.0% ผลผลิตเฉพาะรากชั้นลึกต่อชิ้น (สูงสุด +20%)',
-    enEffectDesc: '+1.0% deep roots rate per piece (Max +20%)',
-    baseCost: 200_000_000_000, // 200B
+    effectDesc: 'รากชั้นลึก (Tier 5 เถารากยักษ์ เป็นต้นไป) เรทผลิต ×3.0 เท่า',
+    enEffectDesc: 'Deep roots (Tier 5 Giant Vine and beyond) yield ×3.0 rate',
+    baseCost: 200_000_000_000,
     color: '#2dd4bf',
-    maxPieces: 20,
+    maxPieces: 1,
   },
 
-  // 🔵 RARE (Weight: 20, Max: 10)
+  // 🔵 RARE (Weight: 20, Max: 1)
   {
     id: 'geode',
     name: 'จีโอดคริสตัลโบราณ',
     enName: 'Ancient Crystal Geode',
     icon: '💎',
-    desc: 'โพรงหินผลึกเรืองแสงที่สะท้อนแสงออโรร่าใต้พิภพ ดึงดูดสารอาหารบริสุทธิ์',
-    enDesc: 'Luminescent crystal cavity channeling auroral refraction to gather rich nutrients.',
+    desc: 'โพรงหินผลึกเรืองแสงที่สะท้อนแสงออโรร่าใต้พิภพ เร่งความถี่และดึงดูดสารอาหารบริสุทธิ์จากปรากฏการณ์ลึกลับ',
+    enDesc: 'Luminescent crystal cavity accelerating event frequency and tripling rewards from anomaly orbs.',
     rarity: 'rare',
     dropWeight: 20,
-    effectDesc: '+2.0% สารอาหารที่ได้รับจากลูกแก้วเหตุการณ์ต่อชิ้น (สูงสุด +20%)',
-    enEffectDesc: '+2.0% event orb nutrients per piece (Max +20%)',
-    baseCost: 5_000_000_000_000, // 5T
+    effectDesc: 'คูลดาวน์อีเวนต์ -35% & สารอาหารจากลูกแก้วเหตุการณ์ ×3.0 เท่า',
+    enEffectDesc: 'Event orb cooldown -35% & event nutrients ×3.0',
+    baseCost: 5_000_000_000_000,
     color: '#38bdf8',
-    maxPieces: 10,
+    maxPieces: 1,
   },
   {
     id: 'chronolith',
     name: 'ศิลาบันทึกกาลเวลา',
     enName: 'Chronolith of Aeons',
     icon: '⏳',
-    desc: 'ฟอสซิลหินที่จดจำการไหลผ่านของกาลเวลาใต้แผ่นเปลือกโลกนับยุคสมัย',
-    enDesc: 'Fossilized strata recording the slow passage of time beneath tectonic plates.',
+    desc: 'ฟอสซิลหินที่จดจำการไหลผ่านของกาลเวลาใต้แผ่นเปลือกโลก ช่วยสะสมสารอาหารออฟไลน์และเร่งเวลาเมื่อกลับสู่สวน',
+    enDesc: 'Fossilized strata capturing timeless subterranean currents, granting extra offline cap and Time Warp on return.',
     rarity: 'rare',
     dropWeight: 20,
-    effectDesc: '+15 นาทีเวลาออฟไลน์ & +1.0% ประสิทธิภาพต่อชิ้น (สูงสุด +2.5 ชม. & +10%)',
-    enEffectDesc: '+15m offline cap & +1.0% offline efficiency per piece (Max +2.5h & +10%)',
-    baseCost: 50_000_000_000_000, // 50T
+    effectDesc: 'เพดานออฟไลน์ +12 ชม. & เมื่อกลับเข้าเกมรับบัฟกาลเวลา (Time Warp) ×2.0 นาน 15 นาที',
+    enEffectDesc: '+12h offline cap & 15-minute ×2.0 Time Warp buff upon return',
+    baseCost: 50_000_000_000_000,
     color: '#60a5fa',
-    maxPieces: 10,
+    maxPieces: 1,
   },
   {
     id: 'magmastone',
     name: 'ศิลาแก่นเพลิงพิภพ',
     enName: 'Magmatic Corestone',
     icon: '🌋',
-    desc: 'ผลึกหินภูเขาไฟที่กักเก็บความร้อนใต้พิภพ ปลดปล่อยพลังงานเมื่อถูกกระตุ้น',
-    enDesc: 'Volcanic crystal storing geothermal energy, releasing instant burst upon stimulation.',
+    desc: 'ผลึกหินหลอมเหลวที่ซึมซับพลังงานจากการเวียนว่ายตายเกิด ทุกครั้งที่หว่านใหม่และตื่นรู้จะทวีพลัง 3 เสาหลักอย่างถาวร',
+    enDesc: 'Geothermal stone absorbing the cyclical energy of rebirth, stacking permanent bonuses from Prestige & Transcendence.',
     rarity: 'rare',
     dropWeight: 20,
-    effectDesc: 'คลิกหน้าจอรากมอบสารอาหารทันที 0.05% ของเรทต่อวินาที (สูงสุด 0.5%)',
-    enEffectDesc: 'Root clicks grant 0.05% of rate/sec instantly per piece (Max 0.5%)',
-    baseCost: 500_000_000_000_000, // 500T
+    effectDesc: 'พลังแห่งการเวียนว่าย: Prestige (+1%) / ตื่นรู้ (+3%) มอบ Stack บูสต์ Synergy, Echoes, และเมล็ดนิรันดร์ (สูงสุด +100%)',
+    enEffectDesc: 'Cycle Resonance: Prestige (+1%) / Transcendence (+3%) grants stack boosting Synergy, Echoes, & Seeds (Max +100%)',
+    baseCost: 500_000_000_000_000,
     color: '#f97316',
-    maxPieces: 10,
+    maxPieces: 1,
   },
 
-  // 🟣 EPIC (Weight: 8, Max: 5)
+  // 🟣 EPIC (Weight: 8, Max: 1)
   {
     id: 'mycocore',
     name: 'ฟอสซิลไมคอร์ไรซาบรรพกาล',
     enName: 'Primordial Mycocore',
     icon: '🍄',
-    desc: 'แก่นสปอร์บรรพบุรุษเชื้อราที่สร้างเครือข่ายเชื่อมโยงรากไม้ทั้งผืนโลก',
-    enDesc: 'Ancestral fungal spore mass weaving expansive planetary root communication.',
+    desc: 'แก่นสปอร์บรรพบุรุษเชื้อราที่สร้างเครือข่ายเชื่อมโยงรากไม้ทั้งผืนโลก เปลี่ยนรากต้นเกมเป็นแบตเตอรี่ส่งพลังอันมหาศาล',
+    enDesc: 'Ancestral fungal network turning early roots into colossal synergy multipliers for top-tier root engines.',
     rarity: 'epic',
     dropWeight: 8,
-    effectDesc: 'เครือข่ายราก (Synergies) ให้ผลผลิตเพิ่มขึ้น +0.005%/ต้น ต่อชิ้น (สูงสุด +0.025%)',
-    enEffectDesc: 'Root Synergies yield +0.005%/unit per piece (Max +0.025%)',
-    baseCost: 15_000_000_000_000_000, // 15Qa
+    effectDesc: 'เครือข่ายราก (Synergies) ให้ผลผลิตเพิ่มเป็น +0.25%/ต้น (แรงขึ้น 3 เท่า!) และปลดล็อคเครือข่ายได้ตั้งแต่ 25 ต้น',
+    enEffectDesc: 'Root Synergies yield +0.25%/unit (×3 power!) and unlocks earlier at 25 owned roots',
+    baseCost: 15_000_000_000_000_000,
     color: '#c084fc',
-    maxPieces: 5,
+    maxPieces: 1,
   },
   {
     id: 'crown',
     name: 'มงกุฎพฤกษาปฐมกาล',
     enName: 'Crown of the First Tree',
     icon: '🏵️',
-    desc: 'กิ่งก้านที่กลายเป็นหินของต้นไม้ต้นแรกของโลก เปล่งพลังสะท้อนอันไร้ขอบเขต',
-    enDesc: 'Petrified crown boughs of the genesis tree, radiating timeless harmonic resonance.',
+    desc: 'กิ่งก้านที่กลายเป็นหินของต้นไม้ต้นแรกของโลก เปล่งพลังสะท้อนอันไร้ขอบเขตสู่รากไม้ทุกสายพันธุ์',
+    enDesc: 'Petrified crown boughs of the genesis tree, radiating powerful harmonic echo resonance across the whole garden.',
     rarity: 'epic',
     dropWeight: 8,
-    effectDesc: 'สะท้อนราก (Echoes) ให้ตัวคูณเพิ่มขึ้น +0.2%/อัน ต่อชิ้น (สูงสุด +1.0%)',
-    enEffectDesc: 'Root Echoes grant +0.2% multiplier per level per piece (Max +1.0%)',
-    baseCost: 150_000_000_000_000_000, // 150Qa
+    effectDesc: 'ตัวคูณสะท้อนราก (Echoes) เพิ่มขึ้น +12.5% ต่อระดับ Echo',
+    enEffectDesc: 'Root Echoes grant +12.5% multiplier per echo level',
+    baseCost: 150_000_000_000_000_000,
     color: '#a855f7',
-    maxPieces: 5,
+    maxPieces: 1,
   },
   {
     id: 'meteorite',
     name: 'อุกกาบาตฝังใต้พิภพ',
     enName: 'Subterranean Meteorite',
     icon: '🪐',
-    desc: 'สะเก็ดดาวจากนอกระบบสุริยะที่ถูกรากดูดซับแร่ธาตุอวกาศเข้าสู่ลำต้น',
-    enDesc: 'Extraterrestrial meteorite core infusing roots with rare cosmic minerals.',
+    desc: 'สะเก็ดดาวจากนอกระบบสุริยะที่อุดมด้วยแร่ธาตุต่างมิติ กระตุ้นวิญญาณแห่งโลกให้มอบละอองชีวิตมากขึ้นเมื่อตื่นรู้',
+    enDesc: 'Extraterrestrial meteorite core infusing roots with rare cosmic minerals, increasing Gaia Essences gained.',
     rarity: 'epic',
     dropWeight: 8,
-    effectDesc: '+1.0% ตัวคูณสารอาหารทั้งหมดต่อชิ้น (สูงสุด +5.0% Multiplier)',
-    enEffectDesc: '+1.0% global nutrient multiplier per piece (Max +5.0% Multiplier)',
-    baseCost: 5_000_000_000_000_000_000, // 5Sx
+    effectDesc: 'ได้รับจิตวิญญาณแห่งไกอา (Gaia Essences) เพิ่มขึ้น +50% เมื่อตื่นรู้',
+    enEffectDesc: '+50% Gaia Essences earned upon Transcendence',
+    baseCost: 5_000_000_000_000_000_000,
     color: '#e879f9',
-    maxPieces: 5,
+    maxPieces: 1,
   },
 
-  // 🟡 LEGENDARY (Weight: 2, Max: 3)
+  // 🟡 LEGENDARY (Weight: 2, Max: 1)
   {
     id: 'ruintablet',
     name: 'แผ่นจารึกอารยธรรมใต้ดิน',
     enName: 'Ancient Ruin Tablet',
     icon: '🏛️',
-    desc: 'ศิลาจารึกอักขระโบราณ บันทึกศาสตร์การเพาะปลูกและแตกหน่อของพฤกษาบรรพกาล',
-    enDesc: 'Ancient inscribed tablet revealing esoteric agricultural wisdom and twin sprouting.',
+    desc: 'ศิลาจารึกอักขระโบราณ บันทึกศาสตร์การเพาะปลูกและแตกหน่อของพฤกษาบรรพกาล เพิ่มโอกาสงอกรากฟรีเมื่อทำการเพาะปลูก',
+    enDesc: 'Ancient inscribed tablet revealing esoteric agricultural wisdom and spontaneous twin sprouting.',
     rarity: 'legendary',
     dropWeight: 2,
-    effectDesc: 'เมื่อซื้อราก มีโอกาส +5% ต่อชิ้นที่จะแตกหน่อแถมรากฟรี +1 ต้น (สูงสุด 15%)',
-    enEffectDesc: 'Purchasing roots has +5% chance/piece to sprout +1 free bonus root (Max 15%)',
-    baseCost: 100_000_000_000_000_000_000, // 100Sx
+    effectDesc: 'เมื่อซื้อราก มีโอกาส 35% แตกหน่อแถมรากฟรี (+15% ลุ้นแตกหน่อคู่)',
+    enEffectDesc: 'Purchasing roots has 35% chance for +1 free sprout (+15% twin sprout)',
+    baseCost: 100_000_000_000_000_000_000,
     color: '#fbbf24',
-    maxPieces: 3,
+    maxPieces: 1,
   },
 
   // 👑 MYTHIC (Weight: 0.5, Max: 1)
@@ -166,13 +166,13 @@ export const RELIC_DEFS: RelicDef[] = [
     name: 'หัวใจแห่งไกอา',
     enName: 'Heart of Gaia',
     icon: '👑',
-    desc: 'แก่นกลางของจิตวิญญาณแห่งโลก เมื่อค้นพบจะปลุกพลังโบราณวัตถุทุกชิ้นให้ทวีคูณเป็น 2 เท่า!',
-    enDesc: 'Core spirit of the living Earth. Awakens and doubles (×2) all relic piece bonuses!',
+    desc: 'แก่นกลางของจิตวิญญาณแห่งโลก เมื่อค้นพบจะปลุกพลังโบราณวัตถุทุกชิ้นให้ทวีคูณเป็น 2 เท่าถาวร!',
+    enDesc: 'Core spirit of the living Earth. Awakens and permanently doubles (×2) all relic master powers!',
     rarity: 'mythic',
     dropWeight: 0.5,
-    effectDesc: '⭐ บูสต์พลังของชิ้นส่วนโบราณวัตถุทุกชิ้นขึ้นเป็น 2 เท่าถาวร!',
-    enEffectDesc: '⭐ Permanently doubles (×2) the effects of all relic pieces!',
-    baseCost: 10_000_000_000_000_000_000_000, // 10Sp
+    effectDesc: '⭐ บูสต์พลังของโบราณวัตถุทุกชิ้นขึ้นเป็น 2 เท่า (×2) ถาวร!',
+    enEffectDesc: '⭐ Permanently doubles (×2) the effects of all relics!',
+    baseCost: 10_000_000_000_000_000_000_000,
     color: '#f43f5e',
     maxPieces: 1,
   },
@@ -251,7 +251,7 @@ export const BIOME_DEFS: BiomeDef[] = [
 
 export function relicCount(state: GameState, relicId: string): number {
   const val = state.relics?.[relicId];
-  if (typeof val === 'number') return Math.max(0, val);
+  if (typeof val === 'number') return val > 0 ? 1 : 0;
   return val ? 1 : 0;
 }
 
@@ -260,14 +260,11 @@ export function hasRelic(state: GameState, relicId: string): boolean {
 }
 
 export function relicMaxed(state: GameState, relicId: string): boolean {
-  const def = RELIC_DEFS.find(r => r.id === relicId);
-  if (!def) return false;
-  return relicCount(state, relicId) >= def.maxPieces;
+  return hasRelic(state, relicId);
 }
 
 export function totalRelicFragmentsCount(state: GameState): number {
-  if (!state.relics) return 0;
-  return RELIC_DEFS.reduce((sum, r) => sum + relicCount(state, r.id), 0);
+  return relicsCount(state);
 }
 
 export function relicsCount(state: GameState): number {
@@ -280,60 +277,134 @@ export function isMasterRelicActive(state: GameState): boolean {
 }
 
 export function relicMult(state: GameState, relicId: string): number {
-  const count = relicCount(state, relicId);
-  if (count <= 0) return 0;
-  return isMasterRelicActive(state) && relicId !== 'gaiacore' ? count * 2 : count;
+  if (!hasRelic(state, relicId)) return 0;
+  return isMasterRelicActive(state) && relicId !== 'gaiacore' ? 2 : 1;
 }
 
+/**
+ * Magmatic Corestone Cycle Resonance Stack:
+ * Stacks permanent bonuses to Synergy, Echoes, and Eternal Seeds based on Prestige (+1%) and Transcendence (+3%).
+ * Hard Safety Cap: +100% (+200% with Heart of Gaia).
+ */
+export function relicCycleResonanceStack(state: GameState): number {
+  if (!hasRelic(state, 'magmastone')) return 0;
+  const pCount = state.stats?.prestigeCount || 0;
+  const tCount = state.transcendence?.count || 0;
+  const raw = pCount * 1 + tCount * 3;
+  const mult = relicMult(state, 'magmastone'); // 1 or 2 with Gaia
+  const baseCap = 100;
+  const maxCap = isMasterRelicActive(state) ? baseCap * 2 : baseCap;
+  return Math.min(maxCap, raw * mult);
+}
+
+/**
+ * Amber: +50% Global Rate (×1.50). With Gaia: +100% (×2.00).
+ */
 export function relicRateBonusMultiplier(state: GameState): number {
   let mult = 1;
   const amberMult = relicMult(state, 'amber');
-  if (amberMult > 0) mult *= (1 + 0.005 * amberMult);
-
-  const meteoriteMult = relicMult(state, 'meteorite');
-  if (meteoriteMult > 0) mult *= (1 + 0.01 * meteoriteMult);
-
+  if (amberMult > 0) {
+    mult *= (1 + 0.50 * amberMult);
+  }
   return mult;
 }
 
 const DEEP_ROOT_IDS = new Set([
-  'eternal', 'nexus', 'crystal', 'heart', 'seed', 'throne',
+  'vine', 'bionode', 'eternal', 'nexus', 'crystal', 'heart', 'seed', 'throne',
   'magma', 'aether', 'void', 'astral', 'chronos', 'singularity', 'genesis', 'yggdrasil'
 ]);
 
+/**
+ * Aquifer: Deep roots (Tier 5 Vine and beyond) rate ×3.0 (with Gaia: ×6.0).
+ */
 export function relicDeepRootsBonus(state: GameState, moduleId: string): number {
   if (!DEEP_ROOT_IDS.has(moduleId)) return 1;
   const aquiferMult = relicMult(state, 'aquifer');
-  return aquiferMult > 0 ? 1 + 0.01 * aquiferMult : 1;
+  if (aquiferMult === 0) return 1;
+  return aquiferMult === 2 ? 6.0 : 3.0;
 }
 
+/**
+ * Geode: Event nutrients ×3.0 (with Gaia: ×6.0).
+ */
 export function relicEventNutrientBonus(state: GameState): number {
   const m = relicMult(state, 'geode');
-  return m > 0 ? 1 + 0.02 * m : 1;
+  if (m === 0) return 1;
+  return m === 2 ? 6.0 : 3.0;
 }
 
-export function relicOfflineBonus(state: GameState): { extraHours: number; effMultiplier: number } {
+/**
+ * Geode: Event cooldown -35% (0.65x). With Gaia: -50% (0.50x).
+ */
+export function relicEventCooldownMultiplier(state: GameState): number {
+  const m = relicMult(state, 'geode');
+  if (m === 0) return 1.0;
+  return m === 2 ? 0.50 : 0.65;
+}
+
+/**
+ * Chronolith: +12h offline cap & Time Warp ×2.0 (with Gaia: +24h & ×3.0).
+ */
+export function relicOfflineBonus(state: GameState): { extraHours: number; effMultiplier: number; warpMultiplier: number } {
   const m = relicMult(state, 'chronolith');
-  if (m === 0) return { extraHours: 0, effMultiplier: 1 };
+  if (m === 0) return { extraHours: 0, effMultiplier: 1, warpMultiplier: 1 };
   return {
-    extraHours: 0.25 * m,
-    effMultiplier: 1 + 0.01 * m,
+    extraHours: 12 * m,
+    effMultiplier: 1 + 0.5 * m,
+    warpMultiplier: m === 2 ? 3.0 : 2.0,
   };
 }
 
+/**
+ * Mycocore: Root Synergy yields +0.25%/unit (×3 power!) scaled by Cycle Resonance.
+ */
 export function relicSynergyBonusPerUnit(state: GameState): number {
   const m = relicMult(state, 'mycocore');
-  return m > 0 ? Math.round((0.08 + 0.005 * m) * 1000) / 1000 : 0.08;
+  const baseBonus = m > 0 ? (m === 2 ? 0.50 : 0.25) : 0.08;
+  const cycleStack = relicCycleResonanceStack(state);
+  return Math.round(baseBonus * (1 + cycleStack * 0.01) * 1000) / 1000;
 }
 
+/**
+ * Mycocore: Reduces synergy unlock requirement from 50 to 25 roots.
+ */
+export function relicSynergyUnlockRequiredCount(state: GameState): number {
+  return hasRelic(state, 'mycocore') ? 25 : 50;
+}
+
+/**
+ * Crown: Root Echoes grant +12.5% multiplier per echo level scaled by Cycle Resonance.
+ */
 export function relicEchoBonusPerEcho(state: GameState): number {
   const m = relicMult(state, 'crown');
-  return m > 0 ? Math.round((0.05 + 0.002 * m) * 1000) / 1000 : 0.05;
+  const baseEcho = m > 0 ? (m === 2 ? 0.25 : 0.125) : 0.05;
+  const cycleStack = relicCycleResonanceStack(state);
+  return Math.round(baseEcho * (1 + cycleStack * 0.01) * 1000) / 1000;
 }
 
+/**
+ * Meteorite: +50% Gaia Essences earned upon Transcendence (with Gaia: +100%).
+ */
+export function relicTranscendenceEssenceBonus(state: GameState): number {
+  const m = relicMult(state, 'meteorite');
+  if (m === 0) return 1.0;
+  return m === 2 ? 2.0 : 1.50;
+}
+
+/**
+ * Ruin Tablet: 35% chance to sprout free bonus root (+15% twin sprout).
+ * With Gaia: 50% chance (+25% twin sprout).
+ */
 export function relicBonusSproutChance(state: GameState): number {
   const m = relicMult(state, 'ruintablet');
-  return m > 0 ? Math.min(0.50, m * 0.05) : 0;
+  if (m === 0) return 0;
+  return m === 2 ? 0.50 : 0.35;
+}
+
+export function relicBonusTwinSproutChance(state: GameState): number {
+  const m = relicMult(state, 'ruintablet');
+  if (m === 0) return 0;
+  return m === 2 ? 0.25 : 0.15;
 }
 
 export function biomeActiveRateMultiplier(state: GameState): number {
@@ -357,5 +428,5 @@ export function pickWeightedUnownedRelic(unownedRelics: RelicDef[]): RelicDef | 
 }
 
 export function unownedRelicList(state: GameState): RelicDef[] {
-  return RELIC_DEFS.filter(r => !relicMaxed(state, r.id));
+  return RELIC_DEFS.filter(r => !hasRelic(state, r.id));
 }
