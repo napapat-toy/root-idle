@@ -825,7 +825,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
 
                     {/* Restriction & Reward */}
                     <div style={{ fontSize: '12px', background: 'rgba(0,0,0,0.2)', padding: '8px 10px', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <div style={{ color: isCompleted ? 'var(--root-cream-dim)' : '#f87171' }}>
+                      <div style={{ color: '#f87171' }}>
                         <strong>⚠️ {isEn ? 'Restriction: ' : 'ข้อจำกัด: '}</strong>
                         {isEn ? def.enRestrictionDesc : def.restrictionDesc}
                         {isCompleted && (
