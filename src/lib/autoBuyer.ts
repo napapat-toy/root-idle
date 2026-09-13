@@ -1,6 +1,7 @@
 import { AutoRootMode, GameState } from '@/types/game';
 import {
   baseTotalRate,
+  bulkCostFor,
   costFor,
   echoCost,
   echoMaxed,
@@ -62,11 +63,12 @@ export function getActiveAutoRootMode(state: GameState): AutoRootMode {
 }
 
 /**
- * Calculates and executes the best purchases focusing on High-Share (> 1%) root species.
- * - Filters out obsolete low-tier species that contribute < 1% to total yield.
+ * Evaluates the next best action for auto-root buyer.
+ * - Always prioritizes completing low-hanging fruit milestones (< 100 roots).
+ * - Prioritizes unlocking new species immediately.
+ * - Prioritizes gatekeeper species (need 10 to unlock next species).
  * - Targets the most powerful game-changing roots, upgrades, and echoes reachable within 1 hour.
- * - Intelligently prioritizes high-share / high-ROI upgrades to maximize rate growth.
- * - Supports burst-buying up to 5 items in a single tick when nutrients are abundant.
+ * - Suppresses tiny marginal purchases that starve expensive high-ROI unlocks.
  */
 export function evaluateAutoBuy(
   state: GameState,
@@ -78,8 +80,8 @@ export function evaluateAutoBuy(
   }
 
   const mode = getActiveAutoRootMode(state);
-  const isSmart = mode === 'smart' || mode === 'all';
-  const isAll = mode === 'all';
+  const isSmart = true;
+  const isAll = true;
 
   let currentNutrients = state.nutrients;
   let executedAny = false;
@@ -95,21 +97,35 @@ export function evaluateAutoBuy(
     MODULE_DEFS.forEach((def, i) => {
       if (i > 0 && (state.owned[MODULE_DEFS[i - 1].id] || 0) < MODULE_UNLOCK_REQUIRE_OWNED) return;
       const count = state.owned[def.id] || 0;
-      const cost = costFor(def, count, state);
+      const singleCost = costFor(def, count, state);
       const eff = effectiveRate(state, def);
       const isNewUnlock = count === 0;
       const isGatekeeper = i < MODULE_DEFS.length - 1 && count < MODULE_UNLOCK_REQUIRE_OWNED;
-      const isMilestoneTarget = count < 100 && cost <= currentNutrients * 0.10;
-      const projectedModuleTotal = eff * (count + 1);
-      const projectedTotalRate = currentBaseRate + eff;
+      const isMilestoneTarget = count < 100 && singleCost <= currentNutrients * 0.10;
+
+      // Smart Bulk Scaling: If affordable within 2% of current wallet, buy in packs of 25 or 10!
+      let buyQty = 1;
+      let buyCost = singleCost;
+      const cost25 = bulkCostFor(def, count, 25, state);
+      const cost10 = bulkCostFor(def, count, 10, state);
+      if (cost25 <= currentNutrients * 0.02) {
+        buyQty = 25;
+        buyCost = cost25;
+      } else if (cost10 <= currentNutrients * 0.02) {
+        buyQty = 10;
+        buyCost = cost10;
+      }
+
+      const projectedModuleTotal = eff * (count + buyQty);
+      const projectedTotalRate = currentBaseRate + eff * buyQty;
       const shareOfTotal = projectedTotalRate > 0 ? projectedModuleTotal / projectedTotalRate : 0;
-      const marginalGain = eff / effectiveTotalRate;
+      const marginalGain = (eff * buyQty) / effectiveTotalRate;
 
       candidates.push({
         type: 'module',
         id: def.id,
-        cost,
-        value: eff,
+        cost: buyCost,
+        value: eff * buyQty,
         shareOfTotal,
         marginalGain,
         isNewUnlock,
@@ -119,16 +135,19 @@ export function evaluateAutoBuy(
           const sproutChance = relicBonusSproutChance(state);
           const twinChance = relicBonusTwinSproutChance(state);
           let bonus = 0;
-          if (sproutChance > 0 && Math.random() < sproutChance) {
-            bonus += 1;
-            if (twinChance > 0 && Math.random() < twinChance) {
+          const bonusRolls = Math.min(buyQty, 5);
+          for (let b = 0; b < bonusRolls; b++) {
+            if (sproutChance > 0 && Math.random() < sproutChance) {
               bonus += 1;
+              if (twinChance > 0 && Math.random() < twinChance) {
+                bonus += 1;
+              }
             }
           }
-          const added = 1 + bonus;
+          const added = buyQty + bonus;
           setState(prev => ({
             ...prev,
-            nutrients: Math.max(0, prev.nutrients - cost),
+            nutrients: Math.max(0, prev.nutrients - buyCost),
             owned: { ...prev.owned, [def.id]: (prev.owned[def.id] || 0) + added },
             totalOwned: prev.totalOwned + added,
           }));

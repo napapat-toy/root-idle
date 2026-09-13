@@ -37,6 +37,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
   const eventTimerRef = useRef<NodeJS.Timeout | null>(null);
   const activeEventExpireRef = useRef<NodeJS.Timeout | null>(null);
   const autoEventClaimRef = useRef<NodeJS.Timeout | null>(null);
+  const superJackpotExpireTimerRef = useRef<NodeJS.Timeout | null>(null);
   const claimedEventIdsRef = useRef<Set<number>>(new Set());
 
   // Multiplier calculation from active buffs
@@ -61,6 +62,8 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     }, 1600);
   }, []);
 
+  const claimEventRef = useRef<(ev: GameEventItem) => void>(() => {});
+
   // Event trigger & claim
   const claimEvent = useCallback((ev: GameEventItem) => {
     if (claimedEventIdsRef.current.has(ev.id)) return;
@@ -73,15 +76,19 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
 
     const cur = stateRef.current;
     const bonusMult = eventBonusMult(cur);
-    const durationMult = eventDurationMult(cur);
+    const trialDurationMult = cur.transcendence?.activeTrial === 'permafrost' ? 0.5 : 1.0;
+    const durationMult = eventDurationMult(cur) * trialDurationMult;
     const rate = totalRate();
 
     setActiveEvents(prev => prev.filter(e => e.id !== ev.id));
 
     if (ev.type === 'bump') {
+      const isLuckyActive = (activeLuckyBuffRef.current && Date.now() < activeLuckyBuffRef.current.expiresAt) || !!ev.isSuperJackpot;
       const seconds = (30 + Math.random() * 60) * durationMult;
       const geodeMult = relicEventNutrientBonus(cur);
       const amount = rate * seconds * bonusMult * geodeMult;
+      const isEn = cur.lang === 'en';
+
       setState(prev => ({
         ...prev,
         nutrients: prev.nutrients + amount,
@@ -89,13 +96,24 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
         stats: {
           ...prev.stats,
           totalEventsClaimed: (prev.stats?.totalEventsClaimed || 0) + 1,
+          superJackpotClaimed: isLuckyActive ? true : (prev.stats?.superJackpotClaimed || false),
         },
       }));
-      showFloatingText(ev.left + 26, ev.top + 20, `+${fmt(amount)}`, 'var(--accent-amber)');
+
+      if (isLuckyActive) {
+        showFloatingText(
+          ev.left + 26,
+          ev.top + 20,
+          isEn ? `💥 SUPER JACKPOT! +${fmt(amount)}` : `💥 แจ็กพอตซ้อนแจ็กพอต! +${fmt(amount)}`,
+          '#ffd700'
+        );
+      } else {
+        showFloatingText(ev.left + 26, ev.top + 20, `+${fmt(amount)}`, 'var(--accent-amber)');
+      }
     } else if (ev.type === 'lucky') {
       const isEn = cur.lang === 'en';
       const mult = (1 + (777 - 1) * bonusMult) * luckyMagnitudeExtra(cur) * gaiaTouchBonusMult(cur);
-      const seconds = luckyDurationSeconds(cur);
+      const seconds = luckyDurationSeconds(cur) * trialDurationMult;
       setActiveLuckyBuff({ multiplier: mult, expiresAt: Date.now() + seconds * 1000 });
       setState(prev => ({
         ...prev,
@@ -111,6 +129,35 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
         isEn ? `🍀 Lucky! ×${fmtInt(mult)}` : `🍀 โชคดี! ×${fmtInt(mult)}`,
         '#ffd76a'
       );
+
+      // 🎁 Spawn Super Jackpot Golden Box companion right beside the clover!
+      const bumpId = Date.now() + 1;
+      const companionBump: GameEventItem = {
+        id: bumpId,
+        type: 'bump',
+        isSuperJackpot: true,
+        left: Math.max(30, Math.min(380, ev.left + (Math.random() < 0.5 ? -50 : 50))),
+        top: Math.max(60, Math.min(260, ev.top + (Math.random() < 0.5 ? -40 : 40))),
+      };
+      setActiveEvents(prev => [...prev.filter(e => e.id !== ev.id), companionBump]);
+
+      // Auto-expire the companion box when the lucky buff expires
+      if (superJackpotExpireTimerRef.current) {
+        clearTimeout(superJackpotExpireTimerRef.current);
+      }
+      superJackpotExpireTimerRef.current = setTimeout(() => {
+        setActiveEvents(prev => prev.filter(e => e.id !== bumpId));
+        claimedEventIdsRef.current.delete(bumpId);
+      }, seconds * 1000);
+
+      // Auto-event perk triggers for the companion gift box as well
+      if (cur.prestige.autoEvent && cur.prestige.autoEventEnabled && cur.transcendence?.activeTrial !== 'void_anomaly') {
+        setTimeout(() => {
+          if (!claimedEventIdsRef.current.has(bumpId)) {
+            claimEventRef.current(companionBump);
+          }
+        }, 1200 + Math.random() * 1000);
+      }
 
       // 20% Chance on Lucky Jackpot to unearth an un-maxed relic fragment!
       if (!cur.unclaimedRelicId && Math.random() < 0.20) {
@@ -150,6 +197,8 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     }
   }, [showFloatingText, totalRate, setState, stateRef]);
 
+  claimEventRef.current = claimEvent;
+
   // Clean reset function for Prestige / Transcendence / Hard Reset
   const clearEventsAndBuffs = useCallback(() => {
     setActiveBuff(null);
@@ -163,6 +212,10 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       clearTimeout(autoEventClaimRef.current);
       autoEventClaimRef.current = null;
     }
+    if (superJackpotExpireTimerRef.current) {
+      clearTimeout(superJackpotExpireTimerRef.current);
+      superJackpotExpireTimerRef.current = null;
+    }
     claimedEventIdsRef.current.clear();
   }, []);
 
@@ -172,7 +225,8 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
 
     const cur = stateRef.current;
     const cdMult = relicEventCooldownMultiplier(cur);
-    const delay = (105000 + Math.random() * 50000) * cdMult; // 105–155s scaled by Geode
+    const trialCdMult = cur.transcendence?.activeTrial === 'permafrost' ? 1.6 : 1.0;
+    const delay = (105000 + Math.random() * 50000) * cdMult * trialCdMult; // 105–155s scaled by Geode & Permafrost
     eventTimerRef.current = setTimeout(() => {
       const r = Math.random();
       const luckyPct = luckyChancePct(cur);
@@ -212,6 +266,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       if (eventTimerRef.current) clearTimeout(eventTimerRef.current);
       if (activeEventExpireRef.current) clearTimeout(activeEventExpireRef.current);
       if (autoEventClaimRef.current) clearTimeout(autoEventClaimRef.current);
+      if (superJackpotExpireTimerRef.current) clearTimeout(superJackpotExpireTimerRef.current);
     };
   }, [scheduleNextEvent]);
 

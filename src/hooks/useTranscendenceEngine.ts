@@ -20,6 +20,7 @@ import {
   primordialSeedlingCost,
   DEEP_MEDITATION_MAX_LEVEL,
   deepMeditationCost,
+  gaiaBlessingCost,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
   TRIAL_DEFS,
@@ -78,10 +79,10 @@ export function useTranscendenceEngine({
     }));
   }, [stateRef, setState]);
 
-  const buyAutoManager = useCallback(() => {
+  const buyGaiaBlessing = useCallback(() => {
     const cur = stateRef.current;
-    if (cur.transcendence?.autoManagerUnlocked) return;
-    const cost = AUTO_MANAGER_COST;
+    const lvl = cur.transcendence?.gaiaBlessingLevel || 0;
+    const cost = gaiaBlessingCost(lvl);
     if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
 
     setState(prev => ({
@@ -89,10 +90,14 @@ export function useTranscendenceEngine({
       transcendence: {
         ...prev.transcendence,
         gaiaEssences: prev.transcendence.gaiaEssences - cost,
-        autoManagerUnlocked: true,
+        gaiaBlessingLevel: lvl + 1,
       },
     }));
   }, [stateRef, setState]);
+
+  const buyAutoManager = useCallback(() => {
+    buyGaiaBlessing();
+  }, [buyGaiaBlessing]);
 
   const buyGaiaTouch = useCallback(() => {
     const cur = stateRef.current;
@@ -243,27 +248,10 @@ export function useTranscendenceEngine({
     return () => clearInterval(interval);
   }, [stateRef, setState, showFloatingText]);
 
-  // Auto-Manager Loop (every 4s, upgrades prestige shop if affordable)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const cur = stateRef.current;
-      if (!cur.transcendence?.autoManagerUnlocked || cur.eternalSeeds < 50) return;
-
-      if (cur.eternalSeeds >= passiveRateCost(cur)) {
-        buyPassiveRate(1);
-      } else if (cur.eternalSeeds >= goldenSeedCost(cur)) {
-        buyGoldenSeed(1);
-      } else if (cur.prestige.starterLevel < STARTER_CULTURE_MAX_LEVEL && cur.eternalSeeds >= starterCultureCost(cur)) {
-        buyStarterCulture(1);
-      }
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [stateRef, buyPassiveRate, buyGoldenSeed, buyStarterCulture]);
-
   return {
     buyPrimordialVigor,
     buySoilMemory,
+    buyGaiaBlessing,
     buyAutoManager,
     buyGaiaTouch,
     buyEchoResonance,

@@ -15,7 +15,10 @@ export type SkinId =
   | 'nebula'
   | 'imperial'
   | 'drought'
-  | 'obsidian';
+  | 'obsidian'
+  | 'eclipse'
+  | 'permafrost'
+  | 'fulminant';
 
 export type UIThemeId =
   | 'classic'
@@ -31,7 +34,10 @@ export type UIThemeId =
   | 'emerald'
   | 'nebula'
   | 'imperial'
-  | 'void_sovereign';
+  | 'void_sovereign'
+  | 'abyssal_eclipse'
+  | 'boreal_tundra'
+  | 'electromagnetic';
 
 export interface ModuleDef {
   id: string;
@@ -148,7 +154,14 @@ export interface RelicDef {
   maxPieces: number;
 }
 
-export type TrialId = 'none' | 'arid_drought' | 'basalt_strata' | 'void_anomaly';
+export type TrialId =
+  | 'none'
+  | 'arid_drought'
+  | 'basalt_strata'
+  | 'void_anomaly'
+  | 'null_cycle'
+  | 'permafrost'
+  | 'geomagnetic_storm';
 
 export interface TrialDef {
   id: TrialId;
@@ -181,6 +194,7 @@ export interface TranscendenceState {
   gaiaClairvoyanceLevel?: number;    // +0.1% lucky chance cap per level (up to 2.0% total)
   primordialSeedlingLevel?: number;  // Base rate of Fine Roots: 0.60 -> 2.00 (5 levels)
   deepMeditationLevel?: number;      // Up to +50% global rate per level over 60m playtime (max +250%)
+  gaiaBlessingLevel?: number;        // Infinite sink: +5% Gaia Essences gained per level
 }
 
 export type Language = 'th' | 'en';
@@ -230,6 +244,7 @@ export interface GameEventItem {
   type: 'bump' | 'buff' | 'lucky';
   left: number;
   top: number;
+  isSuperJackpot?: boolean;
 }
 
 export interface FloatingTextItem {

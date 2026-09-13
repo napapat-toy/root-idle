@@ -11,7 +11,6 @@ import { PrestigeModal } from '@/components/modals/PrestigeModal';
 import { OptionsModal } from '@/components/modals/OptionsModal';
 import { AchievementsModal } from '@/components/modals/AchievementsModal';
 import { StatsModal } from '@/components/modals/StatsModal';
-import { AutoResetConfigModal } from '@/components/modals/AutoResetConfigModal';
 import { AchievementToast } from '@/components/AchievementToast';
 
 import { WardrobeModal } from '@/components/modals/WardrobeModal';
@@ -84,6 +83,7 @@ export default function Home() {
     doTranscendence,
     buyPrimordialVigor,
     buySoilMemory,
+    buyGaiaBlessing,
     buyAutoManager,
     buyGaiaTouch,
     buyEchoResonance,
@@ -110,7 +110,6 @@ export default function Home() {
   const [wardrobeModalOpen, setWardrobeModalOpen] = useState(false);
   const [relicsModalOpen, setRelicsModalOpen] = useState(false);
   const [automationModalOpen, setAutomationModalOpen] = useState(false);
-  const [autoResetModalOpen, setAutoResetModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   React.useEffect(() => {
@@ -239,9 +238,6 @@ export default function Home() {
         onBuyAutoRootAll={buyAutoRootAll}
         onBuyAutoEvent={buyAutoEvent}
         onToggleAutoEvent={toggleAutoEvent}
-        onBuyAutoReset={buyAutoReset}
-        onToggleAutoReset={toggleAutoReset}
-        onOpenAutoResetConfig={() => setAutoResetModalOpen(true)}
         onBuyEventBonus={buyEventBonus}
         onBuyEventDuration={buyEventDuration}
         onBuyLuckyChance={buyLuckyChance}
@@ -286,10 +282,6 @@ export default function Home() {
         state={state}
         onClose={() => setAutomationModalOpen(false)}
         onToggleAutoRoot={toggleAutoRoot}
-        onSetAutoRootMode={setAutoRootMode}
-        onToggleAutoEvent={toggleAutoEvent}
-        onToggleAutoReset={toggleAutoReset}
-        onOpenAutoResetConfig={() => setAutoResetModalOpen(true)}
       />
 
       {/* Gaia Transcendence Modal */}
@@ -300,6 +292,7 @@ export default function Home() {
           onTranscend={doTranscendence}
           onBuyPrimordialVigor={buyPrimordialVigor}
           onBuySoilMemory={buySoilMemory}
+          onBuyGaiaBlessing={buyGaiaBlessing}
           onBuyAutoManager={buyAutoManager}
           onBuyGaiaTouch={buyGaiaTouch}
           onBuyEchoResonance={buyEchoResonance}
@@ -308,19 +301,6 @@ export default function Home() {
           onBuyDeepMeditation={buyDeepMeditation}
           onStartTrial={startTrial}
           onAbandonTrial={abandonTrial}
-        />
-      )}
-
-      {/* Auto Reset Config Modal */}
-      {autoResetModalOpen && (
-        <AutoResetConfigModal
-          currentThreshold={state.prestige.autoResetThreshold || 0}
-          lang={lang}
-          onConfirm={(val) => {
-            setAutoResetThreshold(val);
-            setAutoResetModalOpen(false);
-          }}
-          onClose={() => setAutoResetModalOpen(false)}
         />
       )}
 
@@ -399,6 +379,7 @@ export default function Home() {
                     } else if (previewUITheme) {
                       buyUITheme(previewUITheme, true);
                     }
+                    clearPreview();
                   }}
                   style={{
                     padding: '5px 14px',

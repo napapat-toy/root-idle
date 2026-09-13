@@ -432,7 +432,6 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
                   onSelectUITheme(currentThemeId);
                 }
                 onClearPreview();
-                onClose();
               }}
               style={{
                 flex: 1,
@@ -480,7 +479,6 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
                   onBuyUITheme(currentThemeId, true);
                 }
                 onClearPreview();
-                onClose();
               }}
               style={{
                 flex: 1,

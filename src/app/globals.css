@@ -233,6 +233,51 @@
   --prestige-bg: #0d091e;
 }
 
+[data-ui-theme="abyssal_eclipse"] {
+  --bg-deep: #08060a;
+  --bg-panel: #120f17;
+  --bg-panel-2: #1b1622;
+  --root-cream: #fefce8;
+  --root-cream-dim: #fef08a;
+  --accent-glow: #eab308;
+  --accent-glow-dim: #a16207;
+  --accent-amber: #facc15;
+  --line-soil: #3e3215;
+  --prestige-accent: #facc15;
+  --prestige-accent-dim: #854d0e;
+  --prestige-bg: #141008;
+}
+
+[data-ui-theme="boreal_tundra"] {
+  --bg-deep: #06131f;
+  --bg-panel: #0c2236;
+  --bg-panel-2: #122d47;
+  --root-cream: #f0f9ff;
+  --root-cream-dim: #bae6fd;
+  --accent-glow: #38bdf8;
+  --accent-glow-dim: #0284c7;
+  --accent-amber: #7dd3fc;
+  --line-soil: #1e3a5f;
+  --prestige-accent: #0284c7;
+  --prestige-accent-dim: #0369a1;
+  --prestige-bg: #081a2b;
+}
+
+[data-ui-theme="electromagnetic"] {
+  --bg-deep: #090714;
+  --bg-panel: #130f24;
+  --bg-panel-2: #1d1636;
+  --root-cream: #f5f3ff;
+  --root-cream-dim: #c4b5fd;
+  --accent-glow: #06b6d4;
+  --accent-glow-dim: #0891b2;
+  --accent-amber: #c084fc;
+  --line-soil: #382663;
+  --prestige-accent: #a855f7;
+  --prestige-accent-dim: #7e22ce;
+  --prestige-bg: #120a24;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -408,7 +453,9 @@ h1 span {
 }
 
 .prestige-mini-btn:hover {
-  @apply bg-prestige-accent-dim text-prestige-bg -translate-y-px;
+  @apply -translate-y-px text-white;
+  filter: brightness(1.15);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
 }
 
 .prestige-mini-btn.toggled-off {
@@ -506,6 +553,13 @@ svg#rootCanvas, .root-svg {
   animation: eventPulseLucky 0.7s ease-in-out infinite;
 }
 
+.game-event.super-jackpot {
+  background: radial-gradient(circle at 35% 30%, #fff099, #e5a910, #5a3000);
+  box-shadow: 0 0 0 2px #fff, 0 0 28px rgba(255, 215, 0, 0.95), 0 0 50px rgba(255, 120, 0, 0.6);
+  animation: eventPulseSuper 0.65s ease-in-out infinite;
+  z-index: 12;
+}
+
 .game-event.fading {
   animation: none;
   @apply opacity-0 scale-60 transition-all duration-400;
@@ -519,6 +573,11 @@ svg#rootCanvas, .root-svg {
 @keyframes eventPulseLucky {
   0%, 100% { transform: scale(1) rotate(0deg); }
   50% { transform: scale(1.2) rotate(8deg); }
+}
+
+@keyframes eventPulseSuper {
+  0%, 100% { transform: scale(1.05) rotate(0deg); }
+  50% { transform: scale(1.28) rotate(-6deg); }
 }
 
 .floating-text {

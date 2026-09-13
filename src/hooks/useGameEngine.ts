@@ -17,6 +17,7 @@ import {
   echoCost,
   echoMaxed,
   echoUnlockedFor,
+  isTrialCompleted,
   MODULE_DEFS,
   prestigeUnlocked,
   rootSynergyCost,
@@ -294,9 +295,13 @@ export function useGameEngine() {
       });
     }
 
+    const starterBonus = Math.min(1000, starterRootsCount(cur));
     const freshOwned: Record<string, number> = {};
     MODULE_DEFS.forEach(d => { freshOwned[d.id] = 0; });
-    const initialNutrients = 10;
+    if (starterBonus > 0) {
+      freshOwned['fine'] = starterBonus;
+    }
+    const initialNutrients = cur.prestige.autoRoot ? 10 : 0;
 
     setState(prev => ({
       ...prev,
@@ -304,7 +309,7 @@ export function useGameEngine() {
       runEarned: initialNutrients,
       runPlayTimeSeconds: 0,
       owned: freshOwned,
-      totalOwned: 0,
+      totalOwned: starterBonus,
       rootUpgrades: {},
       echoes: retainedEchoes,
       rootSynergies: {},
@@ -439,11 +444,12 @@ export function useGameEngine() {
       if (lastTs) {
         const dt = Math.min((Date.now() - lastTs) / 1000, currentOfflineCapSeconds(loadedState));
         const rate = baseTotalRate(loadedState);
+        const permafrostOfflineMult = isTrialCompleted(loadedState, 'permafrost') ? 1.20 : 1.0;
         if (dt > 45) {
-          const gain = rate * dt;
+          const gain = rate * dt * permafrostOfflineMult;
           setOfflineModal({ gain, dt });
         } else if (dt > 1) {
-          const gain = rate * dt;
+          const gain = rate * dt * permafrostOfflineMult;
           setState(prev => ({
             ...prev,
             nutrients: prev.nutrients + gain,
@@ -454,38 +460,76 @@ export function useGameEngine() {
     }
   }, []);
 
-  // GAME LOOP (requestAnimationFrame)
+  // GAME LOOP (requestAnimationFrame with Wall-Clock Background Catch-up)
   useEffect(() => {
     let animId: number;
     let lastTime = performance.now();
+    let lastWallClock = Date.now();
 
     const loop = (now: number) => {
-      const dt = (now - lastTime) / 1000;
+      const nowWallClock = Date.now();
+      // If browser throttled rAF while tab was backgrounded, use wall-clock delta
+      const wallElapsed = (nowWallClock - lastWallClock) / 1000;
+      const perfElapsed = (now - lastTime) / 1000;
+      const dt = Math.max(perfElapsed, wallElapsed);
+
       lastTime = now;
+      lastWallClock = nowWallClock;
 
-      const rate = totalRate();
-      const gain = rate * dt;
+      if (dt > 0) {
+        const rate = totalRate();
+        const gain = rate * dt;
 
-      setState(prev => ({
-        ...prev,
-        nutrients: prev.nutrients + gain,
-        runEarned: prev.runEarned + gain,
-        totalPlayTimeSeconds: prev.totalPlayTimeSeconds + dt,
-        runPlayTimeSeconds: prev.runPlayTimeSeconds + dt,
-        stats: {
-          ...prev.stats,
-          totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
-        },
-      }));
+        setState(prev => ({
+          ...prev,
+          nutrients: prev.nutrients + gain,
+          runEarned: prev.runEarned + gain,
+          totalPlayTimeSeconds: prev.totalPlayTimeSeconds + dt,
+          runPlayTimeSeconds: prev.runPlayTimeSeconds + dt,
+          stats: {
+            ...prev.stats,
+            totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
+          },
+        }));
 
-      // Check expired buffs
-      randomEvents.checkBuffExpirations();
+        // Check expired buffs
+        randomEvents.checkBuffExpirations();
+      }
 
       animId = requestAnimationFrame(loop);
     };
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const nowWall = Date.now();
+        const gapSeconds = (nowWall - lastWallClock) / 1000;
+        if (gapSeconds > 0.5) {
+          const rate = totalRate();
+          const gain = rate * gapSeconds;
+          setState(prev => ({
+            ...prev,
+            nutrients: prev.nutrients + gain,
+            runEarned: prev.runEarned + gain,
+            totalPlayTimeSeconds: prev.totalPlayTimeSeconds + gapSeconds,
+            runPlayTimeSeconds: prev.runPlayTimeSeconds + gapSeconds,
+            stats: {
+              ...prev.stats,
+              totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
+            },
+          }));
+        }
+        lastTime = performance.now();
+        lastWallClock = nowWall;
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     animId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(animId);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [totalRate, randomEvents]);
 
   // Periodic Auto-save (every 8s)
@@ -505,30 +549,7 @@ export function useGameEngine() {
     return () => clearInterval(interval);
   }, [totalRate]);
 
-  // Auto-reset perk (checks every 2.5s for snappy triggers)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const cur = stateRef.current;
-      if (!cur.prestige.autoReset || !cur.prestige.autoResetEnabled || cur.transcendence?.activeTrial === 'void_anomaly') return;
-      if (!prestigeUnlocked(cur)) return;
-      const targetThreshold = Math.max(10, cur.prestige.autoResetThreshold || AUTO_RESET_MIN_SEEDS);
-      if (calcPrestigeSeeds(cur) < targetThreshold) return;
-      const isEn = cur.lang === 'en';
-      const gained = doPrestige();
-      randomEvents.showFloatingText(
-        250,
-        60,
-        isEn ? `🌌 Auto Re-sow +${fmtInt(gained)}` : `🌌 หว่านใหม่อัตโนมัติ +${fmtInt(gained)}`,
-        '#b78cf0'
-      );
-      // Instant kickstart buy right after auto-reset
-      setTimeout(() => {
-        evaluateAutoBuy(stateRef.current, totalRate(), setState);
-      }, 50);
-    }, 2500);
 
-    return () => clearInterval(interval);
-  }, [doPrestige, randomEvents, totalRate]);
 
   // Ambient Relic discovery loop with 50-minute Pity Protection (checks every 60s)
   useEffect(() => {
@@ -627,6 +648,7 @@ export function useGameEngine() {
     doTranscendence,
     buyPrimordialVigor: transcendenceEngine.buyPrimordialVigor,
     buySoilMemory: transcendenceEngine.buySoilMemory,
+    buyGaiaBlessing: transcendenceEngine.buyGaiaBlessing,
     buyAutoManager: transcendenceEngine.buyAutoManager,
     buyGaiaTouch: transcendenceEngine.buyGaiaTouch,
     buyEchoResonance: transcendenceEngine.buyEchoResonance,

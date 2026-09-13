@@ -21,6 +21,7 @@ import {
   echoResonanceCost,
   GAIA_CLAIRVOYANCE_MAX_LEVEL,
   gaiaClairvoyanceCost,
+  gaiaBlessingCost,
   PRIMORDIAL_SEEDLING_MAX_LEVEL,
   primordialSeedlingCost,
   fineRootBaseRate,
@@ -42,6 +43,7 @@ interface TranscendenceModalProps {
   onBuyPrimordialVigor: () => void;
   onBuySoilMemory: () => void;
   onBuyAutoManager: () => void;
+  onBuyGaiaBlessing?: () => void;
   onBuyGaiaTouch: () => void;
   onBuyEchoResonance: () => void;
   onBuyGaiaClairvoyance: () => void;
@@ -58,6 +60,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
   onBuyPrimordialVigor,
   onBuySoilMemory,
   onBuyAutoManager,
+  onBuyGaiaBlessing,
   onBuyGaiaTouch,
   onBuyEchoResonance,
   onBuyGaiaClairvoyance,
@@ -87,6 +90,8 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
   const soilMaxed = soilLvl >= SOIL_MEMORY_MAX_LEVEL;
 
   const autoManagerOwned = !!state.transcendence?.autoManagerUnlocked;
+  const blessingLvl = state.transcendence?.gaiaBlessingLevel || 0;
+  const blessingCost = gaiaBlessingCost(blessingLvl);
 
   const touchLvl = state.transcendence?.gaiaTouchLevel || 0;
   const touchCost = gaiaTouchCost(touchLvl);
@@ -422,6 +427,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                 </div>
 
                 {/* Perk 3: Auto Manager */}
+                {/* Perk 3: Gaia's Blessing (Repeatable Infinite Sink) */}
                 <div
                   style={{
                     background: 'var(--bg-panel-2)',
@@ -436,28 +442,40 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                 >
                   <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>⚙️</span>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>🌍</span>
                       <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk3Name}</span>
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          background: 'rgba(52, 211, 153, 0.15)',
+                          color: '#34d399',
+                          padding: '1px 7px',
+                          borderRadius: '999px',
+                        }}
+                      >
+                        Lv. {blessingLvl} (+{blessingLvl * 5}%)
+                      </span>
                     </div>
                     <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk3Desc}</div>
                   </div>
                   <button
-                    onClick={onBuyAutoManager}
-                    disabled={autoManagerOwned || essences < AUTO_MANAGER_COST}
+                    onClick={onBuyGaiaBlessing || onBuyAutoManager}
+                    disabled={essences < blessingCost}
                     style={{
-                      background: autoManagerOwned ? 'rgba(255,255,255,0.06)' : essences >= AUTO_MANAGER_COST ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                      color: autoManagerOwned ? 'rgba(255,255,255,0.3)' : essences >= AUTO_MANAGER_COST ? '#064e3b' : 'rgba(255,255,255,0.4)',
+                      background: essences >= blessingCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
+                      color: essences >= blessingCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
                       border: 'none',
                       borderRadius: '8px',
                       padding: '8px 12px',
                       fontWeight: 700,
                       fontSize: '12px',
-                      cursor: !autoManagerOwned && essences >= AUTO_MANAGER_COST ? 'pointer' : 'not-allowed',
+                      cursor: essences >= blessingCost ? 'pointer' : 'not-allowed',
                       whiteSpace: 'nowrap',
                       flexShrink: 0,
                     }}
                   >
-                    {autoManagerOwned ? tr.ownedTag : `${fmtInt(AUTO_MANAGER_COST)} 🌍`}
+                    {`${fmtInt(blessingCost)} 🌍`}
                   </button>
                 </div>
 
@@ -669,8 +687,8 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                     <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk8Desc}</div>
                     <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
                       {isEn
-                        ? `Current Effect: +${((deepMeditationMultiplier(state) - 1) * 100).toFixed(1)}% Rate (Max: +${(meditationLvl * 50).toFixed(0)}%)`
-                        : `ผลปัจจุบัน: +${((deepMeditationMultiplier(state) - 1) * 100).toFixed(1)}% เรทผลิต (สูงสุด: +${(meditationLvl * 50).toFixed(0)}%)`}
+                        ? `Current Multiplier: ×${deepMeditationMultiplier(state).toFixed(2)} (+${((deepMeditationMultiplier(state) - 1) * 100).toFixed(0)}% Global Rate)`
+                        : `ตัวคูณปัจจุบัน: ×${deepMeditationMultiplier(state).toFixed(2)} (+${((deepMeditationMultiplier(state) - 1) * 100).toFixed(0)}% เรทผลิตรวม)`}
                     </div>
                   </div>
                   <button

@@ -150,6 +150,9 @@ export const SKIN_NAMES: Record<SkinId, Record<Language, string>> = {
   imperial: { th: '🪙 มรดกทองคำราชันย์ (Imperial Gold)', en: '🪙 Imperial Gold' },
   drought: { th: '🏜️ ซาฮาราโบราณ (Ancient Drought)', en: '🏜️ Ancient Drought' },
   obsidian: { th: '🌋 ออบซิเดียนเพลิง (Obsidian Magma)', en: '🌋 Obsidian Magma' },
+  eclipse: { th: '🌑 คราสทมิฬ (Abyssal Eclipse)', en: '🌑 Abyssal Eclipse' },
+  permafrost: { th: '❄️ เหมันต์นิรันดร์ (Permafrost)', en: '❄️ Permafrost Frostbite' },
+  fulminant: { th: '⚡ พายุสายฟ้าฟาด (Fulminant Tempest)', en: '⚡ Fulminant Tempest' },
 };
 
 export const UI_THEME_NAMES: Record<UIThemeId, Record<Language, string>> = {
@@ -167,6 +170,9 @@ export const UI_THEME_NAMES: Record<UIThemeId, Record<Language, string>> = {
   nebula: { th: '🌌 มิติเนบิวลาอวกาศ (Cosmic Nebula)', en: '🌌 Cosmic Nebula' },
   imperial: { th: '🪙 ศิลาทองคำราชันย์ (Imperial Gold)', en: '🪙 Imperial Gold & Obsidian' },
   void_sovereign: { th: '🌌 จอมราชันย์แห่งสุญญะ (Void Sovereign)', en: '🌌 Void Sovereign' },
+  abyssal_eclipse: { th: '🌑 สุริยุปราคาใต้พิภพ (Abyssal Eclipse)', en: '🌑 Abyssal Eclipse' },
+  boreal_tundra: { th: '❄️ ทุ่งทุนดราเยือกแข็ง (Boreal Tundra)', en: '❄️ Boreal Tundra' },
+  electromagnetic: { th: '⚡ สนามแม่เหล็กไฟฟ้า (Electromagnetic)', en: '⚡ Electromagnetic Storm' },
 };
 
 export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, LocalizedAchievement>> = {
@@ -440,6 +446,14 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'โชคชะตายืนยาว', desc: 'อัพเกรดระยะเวลาบัฟโชคดีครบ 20 วินาทีเต็ม (สูงสุด)' },
     en: { title: 'Enduring Fortune', desc: 'Extend Lucky Buff duration to 20 full seconds (Max)' },
   },
+  passive_rate_10: {
+    th: { title: 'การดูดซึมไม่หยุดนิ่ง', desc: 'อัพเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 10' },
+    en: { title: 'Continuous Absorption', desc: 'Upgrade Permanent Passive Rate to Level 10 in Prestige Shop' },
+  },
+  passive_rate_25: {
+    th: { title: 'ชีพจรแห่งผืนดิน', desc: 'อัพเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 25' },
+    en: { title: 'Pulse of the Earth', desc: 'Upgrade Permanent Passive Rate to Level 25 in Prestige Shop' },
+  },
 
   event_1: {
     th: { title: 'ตาไวคว้าทัน', desc: 'คลิกเก็บอีเวนต์บนจอครั้งแรก' },
@@ -475,8 +489,8 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Garden Stylist', desc: 'Equip any custom root skin' },
   },
   skins_all_unlocked: {
-    th: { title: 'ตู้เสื้อผ้ารากไม้', desc: 'ปลดล็อกสกินในร้าน Prestige ครบทั้ง 4 รูปแบบ' },
-    en: { title: 'Botanical Wardrobe', desc: 'Unlock all 4 prestige root skins' },
+    th: { title: 'ตู้เสื้อผ้ารากไม้', desc: 'ปลดล็อกสกินรากไม้ในห้องแต่งตัวสะสมครบ 4 รูปแบบ' },
+    en: { title: 'Botanical Wardrobe', desc: 'Unlock any 4 root skins in the Wardrobe' },
   },
   theme_equip_custom: {
     th: { title: 'จิตรกรแห่งผืนดิน', desc: 'สวมใส่ธีมหน้าต่าง UI พิเศษรูปแบบใดก็ได้ที่ไม่ใช่คลาสสิก' },
@@ -485,6 +499,38 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
   theme_void_sovereign: {
     th: { title: 'ราชันย์แห่งมิติสุญญะ', desc: 'ปลดล็อกและสวมใส่ธีม UI [🌌 จอมราชันย์แห่งสุญญะ] จากการพิชิตการทดลอง' },
     en: { title: 'Void Sovereign Domain', desc: 'Unlock and equip the [🌌 Void Sovereign] UI Theme from trials' },
+  },
+  skins_collector_8: {
+    th: { title: 'ผู้คลั่งไคล้แฟชั่นรากไม้', desc: 'ปลดล็อกสกินรากไม้ในห้องแต่งตัวสะสมครบ 8 รูปแบบ' },
+    en: { title: 'Fashion Enthusiast', desc: 'Unlock 8 root skins in the Wardrobe' },
+  },
+  skins_collector_12: {
+    th: { title: 'รันเวย์ใต้พิภพ', desc: 'ปลดล็อกสกินรากไม้ในห้องแต่งตัวสะสมครบ 12 รูปแบบ' },
+    en: { title: 'Subterranean Runway', desc: 'Unlock 12 root skins in the Wardrobe' },
+  },
+  skin_nebula_unlocked: {
+    th: { title: 'รากไม้แห่งดวงดาว', desc: 'ครอบครองสกินระดับสูง [🌌 มิติเนบิวลา] หรือ [🪙 มรดกทองคำ]' },
+    en: { title: 'Astral Arborist', desc: 'Own luxury skin [🌌 Nebula] or [🪙 Golden Legacy]' },
+  },
+  skin_trial_champions: {
+    th: { title: 'อาภรณ์แห่งผู้พิชิต', desc: 'ปลดล็อกสกินพิเศษจากการพิชิตการทดลองใต้พิภพอย่างน้อย 1 รูปแบบ' },
+    en: { title: 'Conqueror\'s Regalia', desc: 'Unlock at least 1 subterranean trial skin' },
+  },
+  themes_collector_5: {
+    th: { title: 'สถาปนิกส่วนหน้า', desc: 'ปลดล็อกธีมหน้าต่าง UI ในห้องแต่งตัวสะสมครบ 5 ธีม' },
+    en: { title: 'Visual Architect', desc: 'Unlock 5 UI color themes in the Wardrobe' },
+  },
+  themes_collector_10: {
+    th: { title: 'พหุภพแห่งผืนดิน', desc: 'ปลดล็อกธีมหน้าต่าง UI ในห้องแต่งตัวสะสมครบ 10 ธีม' },
+    en: { title: 'Multiverse of Soils', desc: 'Unlock 10 UI color themes in the Wardrobe' },
+  },
+  skin_theme_match: {
+    th: { title: 'คู่สีกลมกลืนแห่งธรรมชาติ', desc: 'สวมใส่สกินรากไม้และธีมหน้าต่าง UI ในเซ็ตธีมเดียวกัน (เช่น ซากุระคู่ซากุระ)' },
+    en: { title: 'Harmonic Ensemble', desc: 'Equip a matching root skin and UI theme pair' },
+  },
+  wardrobe_grand_master: {
+    th: { title: 'มหาจักรพรรดิแห่งแฟชั่นรากไม้', desc: 'ครอบครองสกินรากไม้ครบทุกแบบ และธีมหน้าต่างครบทุกแบบในเกม' },
+    en: { title: 'Grand Haute Couture', desc: 'Own every single root skin and UI theme in the game' },
   },
 
   playtime_10m: {
@@ -579,9 +625,57 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'ผู้ก้าวข้ามการทดสอบ', desc: 'พิชิตการทดลองแห่งผืนพิภพสำเร็จเป็นครั้งแรก (ปลูกต้นไม้โลกครบ 25 ต้นภายใต้ข้อจำกัด)' },
     en: { title: 'Trial Breakthrough', desc: 'Conquer any subterranean trial (25 Yggdrasils under restriction)' },
   },
+  trial_arid_drought: {
+    th: { title: 'ผู้พิชิตแดนกันดาร', desc: 'พิชิตการทดลอง [🏜️ ดินแล้งกันดาร] สำเร็จ (ปลูกรากต้นไม้โลกครบ 25 ต้น)' },
+    en: { title: 'Drought Breaker', desc: 'Conquer the [🏜️ Arid Drought] trial (Grow 25 World Trees)' },
+  },
+  trial_basalt_strata: {
+    th: { title: 'ผู้ทะลวงหินอัคนี', desc: 'พิชิตการทดลอง [🌋 ชั้นหินอัคนีทึบ] สำเร็จ (ปลูกรากต้นไม้โลกครบ 25 ต้น)' },
+    en: { title: 'Basalt Shatterer', desc: 'Conquer the [🌋 Basalt Strata] trial (Grow 25 World Trees)' },
+  },
+  trial_void_anomaly: {
+    th: { title: 'ผู้พิชิตมิติสูญญะ', desc: 'พิชิตการทดลอง [🌌 รอยแยกสูญญะ] สำเร็จ โดยไม่พึ่งพาระบบบอทอัตโนมัติ' },
+    en: { title: 'Void Defier', desc: 'Conquer the [🌌 Void Anomaly] trial with all automation suppressed' },
+  },
+  trial_null_cycle: {
+    th: { title: 'ผู้พิชิตวงจรศูนย์', desc: 'พิชิตการทดลอง [🌑 วงจรศูนย์] สำเร็จ โดยปราศจากโบนัสเรทจาก Prestige' },
+    en: { title: 'Null Cycle Conqueror', desc: 'Conquer the [🌑 Null Cycle] trial with 0% Prestige rate bonus' },
+  },
+  trial_permafrost: {
+    th: { title: 'ผู้ฝ่าพายุเหมันต์', desc: 'พิชิตการทดลอง [❄️ เหมันต์เยือกแข็ง] สำเร็จ ท่ามกลางสภาพอากาศหนาวเหน็บ' },
+    en: { title: 'Permafrost Survivor', desc: 'Conquer the [❄️ Permafrost] trial under severe freezing delays' },
+  },
+  trial_geomagnetic_storm: {
+    th: { title: 'ผู้ต้านพายุแม่เหล็ก', desc: 'พิชิตการทดลอง [⚡ พายุสนามแม่เหล็ก] สำเร็จ โดยปราศจากพลังสะท้อนของ Echo' },
+    en: { title: 'Geomagnetic Tamer', desc: 'Conquer the [⚡ Geomagnetic Storm] trial with Echo bonus suppressed' },
+  },
   trial_all_conquered: {
-    th: { title: 'ราชันย์ผู้พิชิตใต้พิภพ', desc: 'พิชิตการทดลองแห่งผืนพิภพครบทั้ง 3 ด่าน (ดินแล้งกันดาร, ชั้นหินอัคนีทึบ, รอยแยกสูญญะ)' },
-    en: { title: 'Conqueror of the Depths', desc: 'Conquer all 3 Subterranean Trials' },
+    th: { title: 'ราชันย์ผู้พิชิตใต้พิภพ', desc: 'พิชิตบททดสอบแห่งผืนพิภพครบทั้ง 6 ด่านสมบูรณ์แบบ' },
+    en: { title: 'Conqueror of the Depths', desc: 'Conquer all 6 Subterranean Trials' },
+  },
+  gaia_touch_max: {
+    th: { title: 'หัตถ์แห่งเทพพิภพ', desc: 'อัพเกรดสัมผัสแห่งไกอา (Gaia Touch) แตะเลเวล 10 (สูงสุด)' },
+    en: { title: 'Touch of the Earth Goddess', desc: 'Upgrade Gaia Touch to max Level 10' },
+  },
+  echo_resonance_max: {
+    th: { title: 'กังวานคลื่นไร้ขีดจำกัด', desc: 'อัพเกรดความกังวานแห่งเสียงสะท้อน (Echo Resonance) แตะเลเวล 5 (สูงสุด)' },
+    en: { title: 'Limitless Resonance', desc: 'Upgrade Echo Resonance to max Level 5' },
+  },
+  primordial_seedling_max: {
+    th: { title: 'พงไพรจากเศษดิน', desc: 'อัพเกรดต้นกล้าปฐมกาล (Primordial Seedling) แตะเลเวล 5 (สูงสุด)' },
+    en: { title: 'Primeval Sprout Master', desc: 'Upgrade Primordial Seedling to max Level 5' },
+  },
+  gaia_meditation_max: {
+    th: { title: 'สมาธิลึกใต้พิภพ', desc: 'อัพเกรดสมาธิลึก (Deep Meditation) แตะเลเวล 5 (สูงสุด)' },
+    en: { title: 'Subterranean Nirvana', desc: 'Upgrade Deep Meditation to max Level 5' },
+  },
+  gaia_blessing_1: {
+    th: { title: 'ก้าวข้ามขีดจำกัดแห่งไกอา', desc: 'อัพเกรดพรแห่งไกอา (Gaia\'s Blessing) แตะเลเวล 1' },
+    en: { title: 'First Blessing', desc: 'Upgrade Gaia\'s Blessing to Level 1' },
+  },
+  gaia_blessing_10: {
+    th: { title: 'พรอันเป็นนิรันดร์', desc: 'อัพเกรดพรแห่งไกอาสะสมครบเลเวล 10 (+50% ละอองไกอา)' },
+    en: { title: 'Eternal Blessing', desc: 'Upgrade Gaia\'s Blessing to Level 10 (+50% Essences)' },
   },
 };
 
@@ -739,8 +833,8 @@ export const UI_TEXTS = {
     transcendPerk1Desc: 'เพิ่มเรทผลิตพื้นฐานของรากทุกชนิด +25%/Lv ถาวรข้ามทุกรอบรีเซ็ต',
     transcendPerk2Name: 'ความทรงจำของผืนดิน (Soil Memory)',
     transcendPerk2Desc: 'คงพลังสะท้อนราก (Echoes) ไว้ 10%/Lv ทันทีเมื่อหว่านใหม่ (สูงสุด 100%)',
-    transcendPerk3Name: 'บอทวิวัฒนาการ (Auto Manager)',
-    transcendPerk3Desc: 'ระบบ Automation ช่วยซื้ออัปเกรดร้านค้า Prestige อัตโนมัติ',
+    transcendPerk3Name: 'พรแห่งไกอา (Gaia\'s Blessing)',
+    transcendPerk3Desc: 'เพิ่มละอองชีวิต (🌍 Gaia Essences) ที่ได้รับจากการตื่นรู้ +5%/Lv (อัปเกรดได้ไม่จำกัด)',
     transcendPerk4Name: 'สัมผัสแห่งไกอา (Gaia\'s Touch)',
     transcendPerk4Desc: 'เพิ่มขนาดและผลคูณของแจ็กพอตโชคดี +30%/Lv',
     transcendPerk5Name: 'ทะลุขีดจำกัดเสียงสะท้อน (Echo Resonance)',
@@ -750,7 +844,7 @@ export const UI_TEXTS = {
     transcendPerk7Name: 'รากปฐมกำเนิด (Primordial Seedling)',
     transcendPerk7Desc: 'เพิ่มเรทผลิตตั้งต้นของรากฝอย +0.28/วิ ต่อเลเวล (จาก 0.60 เป็นสูงสุด 2.00/วิ)',
     transcendPerk8Name: 'ภวังค์แห่งการหยั่งราก (Deep Meditation)',
-    transcendPerk8Desc: 'ยิ่งหยั่งรากในรอบนี้นาน ยิ่งได้เรทผลิตทั้งหมดเพิ่มขึ้น ไต่ระดับจนเต็ม +50%/Lv ใน 60 นาที (สูงสุด +250%)',
+    transcendPerk8Desc: 'ยิ่งหยั่งรากในรอบนี้นาน ยิ่งได้รับตัวคูณเรทผลิตรวมทวีคูณ (เริ่มที่ทุก 10 นาที/เท่า ที่ Lv.1 ไต่เร็วขึ้นจนถึงทุก 5 นาที/เท่า ที่ Lv.5)',
     trialActiveBadge: 'กำลังทดสอบ',
     startTrialBtn: 'เริ่มการทดสอบ',
     abandonTrialBtn: 'ยกเลิกการทดสอบ',
@@ -910,8 +1004,8 @@ export const UI_TEXTS = {
     transcendPerk1Desc: 'Permanently increases baseline rate of all root species by +25%/Lv across all cycles',
     transcendPerk2Name: 'Soil Memory',
     transcendPerk2Desc: 'Retains 10%/Lv of your Root Echoes immediately upon Re-sow (max 100%)',
-    transcendPerk3Name: 'Auto Manager',
-    transcendPerk3Desc: 'Automation engine automatically purchases Prestige store upgrades',
+    transcendPerk3Name: 'Gaia\'s Blessing',
+    transcendPerk3Desc: 'Increases Gaia Essences (🌍) gained from Transcendence by +5%/Lv (Infinite repeat sink)',
     transcendPerk4Name: 'Gaia\'s Touch',
     transcendPerk4Desc: 'Increases magnitude and yield of Lucky Events by +30%/Lv',
     transcendPerk5Name: 'Echo Resonance',
@@ -921,7 +1015,7 @@ export const UI_TEXTS = {
     transcendPerk7Name: 'Primordial Seedling',
     transcendPerk7Desc: 'Increases initial base production of Fine Roots by +0.28/s per level (from 0.60 up to 2.00/s)',
     transcendPerk8Name: 'Deep Meditation',
-    transcendPerk8Desc: 'Deeper rooting amplifies global production by up to +50%/Lv ramping over 60 minutes online in this run (up to +250%)',
+    transcendPerk8Desc: 'The longer you stay rooted in this run, the higher your global multiplier grows (+1.0x every 10 mins at Lv.1, down to every 5 mins at Lv.5)',
     trialActiveBadge: 'In Progress',
     startTrialBtn: 'Begin Trial',
     abandonTrialBtn: 'Abandon Trial',

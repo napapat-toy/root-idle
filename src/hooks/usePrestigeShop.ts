@@ -98,29 +98,26 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
     setState(prev => ({
       ...prev,
       eternalSeeds: prev.eternalSeeds - AUTO_ROOT_COST,
-      prestige: { ...prev.prestige, autoRoot: true, autoRootMode: 'basic', autoRootEnabled: true },
+      prestige: {
+        ...prev.prestige,
+        autoRoot: true,
+        autoRootSmart: true,
+        autoRootAll: true,
+        autoRootMode: 'all',
+        autoRootEnabled: true,
+        autoEvent: true,
+        autoEventEnabled: true,
+      },
     }));
   }, [stateRef, setState]);
 
   const buyAutoRootSmart = useCallback(() => {
-    const cur = stateRef.current;
-    if (!cur.prestige.autoRoot || cur.prestige.autoRootSmart || cur.eternalSeeds < AUTO_ROOT_SMART_COST) return;
-    setState(prev => ({
-      ...prev,
-      eternalSeeds: prev.eternalSeeds - AUTO_ROOT_SMART_COST,
-      prestige: { ...prev.prestige, autoRootSmart: true, autoRootMode: 'smart', autoRootEnabled: true },
-    }));
-  }, [stateRef, setState]);
+    buyAutoRoot();
+  }, [buyAutoRoot]);
 
   const buyAutoRootAll = useCallback(() => {
-    const cur = stateRef.current;
-    if (!cur.prestige.autoRootSmart || cur.prestige.autoRootAll || cur.eternalSeeds < AUTO_ROOT_ALL_COST) return;
-    setState(prev => ({
-      ...prev,
-      eternalSeeds: prev.eternalSeeds - AUTO_ROOT_ALL_COST,
-      prestige: { ...prev.prestige, autoRootAll: true, autoRootMode: 'all', autoRootEnabled: true },
-    }));
-  }, [stateRef, setState]);
+    buyAutoRoot();
+  }, [buyAutoRoot]);
 
   const setAutoRootMode = useCallback((mode: AutoRootMode) => {
     setState(prev => ({
@@ -130,46 +127,28 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
   }, [setState]);
 
   const cycleAutoRootMode = useCallback(() => {
-    setState(prev => {
-      const available = getAvailableAutoRootModes(prev);
-      if (available.length === 0) return prev;
-      if (!prev.prestige.autoRootEnabled) {
-        return {
-          ...prev,
-          prestige: { ...prev.prestige, autoRootEnabled: true },
-        };
-      }
-      const current = getActiveAutoRootMode(prev);
-      const idx = available.indexOf(current);
-      if (idx < available.length - 1) {
-        return {
-          ...prev,
-          prestige: { ...prev.prestige, autoRootMode: available[idx + 1] },
-        };
-      } else {
-        return {
-          ...prev,
-          prestige: { ...prev.prestige, autoRootEnabled: false, autoRootMode: available[0] },
-        };
-      }
-    });
-  }, [setState]);
-
-  const buyAutoEvent = useCallback(() => {
-    const cur = stateRef.current;
-    if (cur.prestige.autoEvent || cur.eternalSeeds < AUTO_EVENT_COST) return;
-    setState(prev => ({
-      ...prev,
-      eternalSeeds: prev.eternalSeeds - AUTO_EVENT_COST,
-      prestige: { ...prev.prestige, autoEvent: true },
-    }));
-  }, [stateRef, setState]);
-
-  const toggleAutoRoot = useCallback(() => {
     setState(prev => ({
       ...prev,
       prestige: { ...prev.prestige, autoRootEnabled: !prev.prestige.autoRootEnabled },
     }));
+  }, [setState]);
+
+  const buyAutoEvent = useCallback(() => {
+    buyAutoRoot();
+  }, [buyAutoRoot]);
+
+  const toggleAutoRoot = useCallback(() => {
+    setState(prev => {
+      const nextEnabled = !prev.prestige.autoRootEnabled;
+      return {
+        ...prev,
+        prestige: {
+          ...prev.prestige,
+          autoRootEnabled: nextEnabled,
+          autoEventEnabled: nextEnabled,
+        },
+      };
+    });
   }, [setState]);
 
   const toggleAutoEvent = useCallback(() => {

@@ -59,9 +59,6 @@ interface PrestigeModalProps {
   onBuyAutoRootAll: () => void;
   onBuyAutoEvent: () => void;
   onToggleAutoEvent: () => void;
-  onBuyAutoReset: () => void;
-  onToggleAutoReset: () => void;
-  onOpenAutoResetConfig?: () => void;
   onBuyEventBonus: (amount?: number | 'max') => void;
   onBuyEventDuration: () => void;
   onBuyLuckyChance: () => void;
@@ -89,9 +86,6 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   onBuyAutoRootAll,
   onBuyAutoEvent,
   onToggleAutoEvent,
-  onBuyAutoReset,
-  onToggleAutoReset,
-  onOpenAutoResetConfig,
   onBuyEventBonus,
   onBuyEventDuration,
   onBuyLuckyChance,
@@ -349,235 +343,39 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               {(() => {
                 const autoOwned = state.prestige.autoRoot;
                 const enabled = state.prestige.autoRootEnabled;
-                const activeMode = getActiveAutoRootMode(state);
-                const isCurrent = activeMode === 'basic' && enabled;
                 if (autoOwned) {
                   const badgeText = isVoidTrial
                     ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
-                    : !enabled
-                    ? (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')
-                    : isCurrent
-                    ? (isEn ? '✓ Active' : '✓ ใช้อยู่')
-                    : (isEn ? 'Unlocked' : 'เปิดใช้งาน');
+                    : enabled
+                    ? (isEn ? '🟢 Active (All Systems)' : '🟢 เปิดอยู่ (ครอบคลุมทุกระบบ)')
+                    : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่');
                   return renderItem(
-                    isEn ? '🤖 Auto Root (Basic: Cheapest)' : '🤖 ออโต้ราก (พื้นฐาน: ถูกที่สุด)',
+                    isEn ? '♾️ Universal Automation' : '♾️ ออโต้สรรพสิ่ง',
                     badgeText,
                     isEn
                       ? isVoidTrial
-                        ? '⚠️ Dimensional interference is temporarily suppressing this bot during the Void Anomaly trial.'
-                        : 'Automatically buys the cheapest affordable root every 2 seconds — Click to toggle/select'
+                        ? '⚠️ Automation is temporarily suppressed during the Void Anomaly trial.'
+                        : 'Autonomous Engine: Smart ROI bulk root buying (10-25 packs), upgrades, echoes, species networks & floating events — Click to toggle ON/OFF'
                       : isVoidTrial
                       ? '⚠️ บอทถูกระงับชั่วคราวจากสนามพลังมิติสุญญะ จะกลับมาทำงานเมื่อพิชิตด่านสำเร็จ'
-                      : 'ซื้อรากเสริมที่ราคาถูกที่สุดให้อัตโนมัติทุก 2 วินาที — คลิกเพื่อเลือกใช้ระดับนี้หรือเปิด/ปิด',
+                      : 'ปัญญาประดิษฐ์อัตโนมัติครบวงจร: วิเคราะห์ ROI ซื้อรากไม้แบบเหมา (10-25 ต้น), ซื้ออัปเกรด, ปลุกเสียงสะท้อน, สร้างเครือข่ายรากไม้ และเก็บอีเวนต์ลอยให้อัตโนมัติ — คลิกเพื่อเปิด/ปิด',
                     '—',
-                    onSetAutoRootMode ? () => onSetAutoRootMode('basic') : onToggleAutoRoot,
+                    onToggleAutoRoot,
                     false,
                     true,
                     !enabled || isVoidTrial,
-                    isCurrent && !isVoidTrial
+                    enabled && !isVoidTrial
                   );
                 }
                 return renderItem(
-                  isEn ? '🤖 Auto Root' : '🤖 ออโต้ราก',
+                  isEn ? '♾️ Universal Automation' : '♾️ ออโต้สรรพสิ่ง',
                   '',
                   isEn
-                    ? 'Automatically purchases root modules every 2 seconds forever (Default: Cheapest item)'
-                    : 'เกมซื้อของให้อัตโนมัติทุก 2 วินาที ตลอดไป (โหมดเริ่มต้น: เลือกที่ถูกที่สุด)',
-                  `${AUTO_ROOT_COST} 🌌`,
+                    ? 'All-in-One Automation: Purchases optimal roots (smart bulk buy), milestone upgrades, permanent echoes, root synergy networks, and floating events forever!'
+                    : 'ระบบออโต้ครบจบในตัวเดียว: ซื้อรากที่คุ้มที่สุด (คำนวณ ROI ล่วงหน้าและเหมาซื้อ 10-25 ต้น), ซื้ออัปเกรด, สะท้อนราก, เครือข่ายรากไม้ และเก็บอีเวนต์ลอยให้อัตโนมัติทั้งหมดตลอดไป',
+                  `${fmtInt(AUTO_ROOT_COST)} 🌌`,
                   onBuyAutoRoot,
                   seeds < AUTO_ROOT_COST
-                );
-              })()}
-
-              {state.prestige.autoRoot &&
-                (() => {
-                  const smartOwned = state.prestige.autoRootSmart;
-                  const enabled = state.prestige.autoRootEnabled;
-                  const activeMode = getActiveAutoRootMode(state);
-                  const isCurrent = activeMode === 'smart' && enabled;
-                  if (smartOwned) {
-                    const badgeText = isVoidTrial
-                      ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
-                      : !enabled
-                      ? (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')
-                      : isCurrent
-                      ? (isEn ? '✓ Active' : '✓ ใช้อยู่')
-                      : (isEn ? 'Unlocked' : 'ปลดล็อกแล้ว (คลิกใช้)');
-                    return renderItem(
-                      isEn ? '🧠 Smart Auto Root' : '🧠 ออโต้รากอัจฉริยะ',
-                      badgeText,
-                      isEn
-                        ? isVoidTrial
-                          ? '⚠️ Dimensional interference is temporarily suppressing this bot during the Void Anomaly trial.'
-                          : '1-2 min lookahead ROI optimization: saves up nutrients to buy the most valuable roots'
-                        : isVoidTrial
-                        ? '⚠️ บอทถูกระงับชั่วคราวจากสนามพลังมิติสุญญะ จะกลับมาทำงานเมื่อพิชิตด่านสำเร็จ'
-                        : 'คำนวณล่วงหน้า 1-2 นาที เก็บสารอาหารรอซื้อรากที่คุ้มและได้เรทสูงสุด — คลิกเพื่อเลือกใช้ระดับนี้',
-                      '—',
-                      () => onSetAutoRootMode('smart'),
-                      false,
-                      true,
-                      !enabled || isVoidTrial,
-                      isCurrent && !isVoidTrial
-                    );
-                  }
-                  return renderItem(
-                    isEn ? '🧠 Smart Auto Root' : '🧠 ออโต้รากอัจฉริยะ',
-                    '',
-                    isEn
-                      ? 'Upgrade Auto Root: Evaluates rate efficiency and saves nutrients for optimal root purchases'
-                      : 'อัพเกรดออโต้ราก: คำนวณล่วงหน้า 1-2 นาที เก็บสารอาหารรอซื้ออันที่คุ้มและได้เรทสูงสุด',
-                    `${AUTO_ROOT_SMART_COST} 🌌`,
-                    onBuyAutoRootSmart,
-                    seeds < AUTO_ROOT_SMART_COST
-                  );
-                })()}
-
-              {state.prestige.autoRootSmart &&
-                (() => {
-                  const allOwned = state.prestige.autoRootAll;
-                  const enabled = state.prestige.autoRootEnabled;
-                  const activeMode = getActiveAutoRootMode(state);
-                  const isCurrent = activeMode === 'all' && enabled;
-                  if (allOwned) {
-                    const badgeText = isVoidTrial
-                      ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
-                      : !enabled
-                      ? (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')
-                      : isCurrent
-                      ? (isEn ? '✓ Active' : '✓ ใช้อยู่')
-                      : (isEn ? 'Unlocked' : 'ปลดล็อกแล้ว (คลิกใช้)');
-                    return renderItem(
-                      isEn ? '♾️ Universal Auto Root' : '♾️ ออโต้รากทุกสรรพสิ่ง',
-                      badgeText,
-                      isEn
-                        ? isVoidTrial
-                          ? '⚠️ Dimensional interference is temporarily suppressing this bot during the Void Anomaly trial.'
-                          : 'Autonomous Master: Automatically purchases roots, milestone upgrades, and echoes!'
-                        : isVoidTrial
-                        ? '⚠️ บอทถูกระงับชั่วคราวจากสนามพลังมิติสุญญะ จะกลับมาทำงานเมื่อพิชิตด่านสำเร็จ'
-                        : 'นอกจากซื้อรากเสริม ยังไล่ซื้ออัพเกรด และสะท้อนรากที่คุ้มที่สุดให้อัตโนมัติด้วย — คลิกเพื่อเลือกใช้ระดับนี้',
-                      '—',
-                      () => onSetAutoRootMode('all'),
-                      false,
-                      true,
-                      !enabled || isVoidTrial,
-                      isCurrent && !isVoidTrial
-                    );
-                  }
-                  return renderItem(
-                    isEn ? '♾️ Universal Auto Root' : '♾️ ออโต้รากทุกสรรพสิ่ง',
-                    '',
-                    isEn
-                      ? 'Ultimate Auto Upgrade: Automatically buys root modules, upgrades, and permanent Echoes'
-                      : 'อัพเกรดออโต้รากอีกขั้น: นอกจากซื้อรากเสริม ยังไล่ซื้ออัพเกรด และสะท้อนรากที่คุ้มที่สุดให้อัตโนมัติด้วย',
-                    `${AUTO_ROOT_ALL_COST} 🌌`,
-                    onBuyAutoRootAll,
-                    seeds < AUTO_ROOT_ALL_COST
-                  );
-                })()}
-
-              {(() => {
-                const autoEventOwned = state.prestige.autoEvent;
-                const enabled = state.prestige.autoEventEnabled;
-                if (autoEventOwned) {
-                  const badgeText = isVoidTrial
-                    ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
-                    : enabled
-                    ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่')
-                    : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่');
-                  return renderItem(
-                    isEn ? '🎯 Auto Event Clicker' : '🎯 ออโต้อีเว้น',
-                    badgeText,
-                    isEn
-                      ? isVoidTrial
-                        ? '⚠️ Floating event collection is temporarily suppressed during the Void Anomaly trial.'
-                        : 'Automatically collects floating events as they spawn — Click to toggle ON/OFF'
-                      : isVoidTrial
-                      ? '⚠️ การเก็บอีเว้นอัตโนมัติถูกระงับชั่วคราวระหว่างการทดลองรอยแยกสูญญะ'
-                      : 'คลิกอีเว้นที่โผล่มาให้อัตโนมัติทุกครั้ง ไม่พลาดอีเว้นอีกต่อไป — กดเพื่อเปิด/ปิดชั่วคราว',
-                    '—',
-                    onToggleAutoEvent,
-                    false,
-                    true,
-                    !enabled || isVoidTrial
-                  );
-                }
-                return renderItem(
-                  isEn ? '🎯 Auto Event Clicker' : '🎯 ออโต้อีเว้น',
-                  '',
-                  isEn
-                    ? 'Automatically collects floating events as soon as they appear'
-                    : 'คลิกอีเว้นที่โผล่มาให้อัตโนมัติทุกครั้ง ไม่พลาดอีเว้นอีกต่อไปแม้ไม่อยู่หน้าจอ',
-                  `${AUTO_EVENT_COST} 🌌`,
-                  onBuyAutoEvent,
-                  seeds < AUTO_EVENT_COST
-                );
-              })()}
-
-              {(() => {
-                const autoResetOwned = state.prestige.autoReset;
-                const enabled = state.prestige.autoResetEnabled;
-                const target = state.prestige.autoResetThreshold || 1000;
-                if (autoResetOwned) {
-                  return (
-                    <div className={`prestige-item owned ${!enabled || isVoidTrial ? 'toggled-off' : ''}`}>
-                      <div className="p-top">
-                        <span>🔁 {isEn ? 'Auto Re-sow (Prestige)' : 'ออโต้หว่านใหม่'}</span>
-                        <span style={{ color: isVoidTrial ? '#c084fc' : enabled ? 'var(--prestige-accent)' : 'var(--root-cream-dim)' }}>
-                          {isVoidTrial
-                            ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
-                            : enabled
-                            ? (isEn ? '🟢 Enabled' : '🟢 เปิดอยู่')
-                            : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')}
-                        </span>
-                      </div>
-                      <div className="p-desc">
-                        {isVoidTrial
-                          ? (isEn
-                            ? '⚠️ Auto Re-sow is temporarily suppressed during the Void Anomaly trial.'
-                            : '⚠️ ระบบหว่านใหม่อัตโนมัติถูกระงับชั่วคราวระหว่างการทดลองรอยแยกสูญญะ')
-                          : isEn
-                          ? `Automatically re-sows whenever yields reach ≥${fmtInt(target)} Eternal Seeds.`
-                          : `หว่านใหม่อัตโนมัติทันทีที่สะสมได้ครบตามเป้าหมาย (≥${fmtInt(target)} เมล็ด)`}
-                      </div>
-                      <div className="auto-cfg-actions">
-                        <button
-                          type="button"
-                          className="auto-cfg-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (onOpenAutoResetConfig) onOpenAutoResetConfig();
-                          }}
-                        >
-                          ⚙️ {isEn ? `Edit Target (≥${fmtInt(target)})` : `ตั้งค่าเป้าหมาย (≥${fmtInt(target)} เมล็ด)`}
-                        </button>
-                        <button
-                          type="button"
-                          className={`auto-cfg-btn ${enabled ? 'toggle-on' : 'toggle-off'}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onToggleAutoReset();
-                          }}
-                        >
-                          {enabled ? (isEn ? 'Turn OFF' : 'ปิดการทำงาน') : (isEn ? 'Turn ON' : 'เปิดการทำงาน')}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                }
-                return renderItem(
-                  isEn ? '🔁 Auto Re-sow (Prestige)' : '🔁 ออโต้หว่านใหม่',
-                  '',
-                  isEn
-                    ? `Prestige automation: Automatically re-sows whenever yields reach your custom seed target`
-                    : `ปลายทางของสายออโต้ — หว่านใหม่ให้อัตโนมัติทันทีที่สะสมครบตามเป้าหมายที่คุณกำหนด ไม่ต้องมาคอยกดเองอีกต่อไป`,
-                  `${AUTO_RESET_COST} 🌌`,
-                  () => {
-                    onBuyAutoReset();
-                    if (onOpenAutoResetConfig) onOpenAutoResetConfig();
-                  },
-                  seeds < AUTO_RESET_COST
                 );
               })()}
 

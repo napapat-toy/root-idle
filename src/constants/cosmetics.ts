@@ -24,6 +24,9 @@ export const SKIN_COSTS: Record<SkinId, number> = {
   // 🏆 Subterranean Trials Exclusive Rewards
   drought: 0,
   obsidian: 0,
+  eclipse: 0,
+  permafrost: 0,
+  fulminant: 0,
 };
 
 export const SKIN_PRESTIGE_KEYS: Record<SkinId, keyof PrestigeState | null> = {
@@ -44,6 +47,9 @@ export const SKIN_PRESTIGE_KEYS: Record<SkinId, keyof PrestigeState | null> = {
   imperial: 'skinImperial',
   drought: null,
   obsidian: null,
+  eclipse: null,
+  permafrost: null,
+  fulminant: null,
 };
 
 export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid' | 'luxury' | 'trial'; always?: boolean }> = [
@@ -64,6 +70,9 @@ export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid
   { id: 'imperial', name: '🪙 มรดกทองคำ', tier: 'luxury' },
   { id: 'drought', name: '🏜️ ซาฮาราโบราณ', tier: 'trial' },
   { id: 'obsidian', name: '🌋 ออบซิเดียนเพลิง', tier: 'trial' },
+  { id: 'eclipse', name: '🌑 สุริยคราสอนธการ', tier: 'trial' },
+  { id: 'permafrost', name: '❄️ ผลึกเหมันต์นิรันดร์', tier: 'trial' },
+  { id: 'fulminant', name: '⚡ สายฟ้าใต้ภพ', tier: 'trial' },
 ];
 
 export const SKIN_CYCLE_ORDER: SkinId[] = [
@@ -84,6 +93,9 @@ export const SKIN_CYCLE_ORDER: SkinId[] = [
   'imperial',
   'drought',
   'obsidian',
+  'eclipse',
+  'permafrost',
+  'fulminant',
 ];
 
 export const UI_THEME_COSTS: Record<UIThemeId, number> = {
@@ -105,6 +117,9 @@ export const UI_THEME_COSTS: Record<UIThemeId, number> = {
   imperial: 10000000,
   // 🏆 Subterranean Trials Exclusive Reward
   void_sovereign: 0,
+  abyssal_eclipse: 0,
+  boreal_tundra: 0,
+  electromagnetic: 0,
 };
 
 export const UI_THEME_PRESTIGE_KEYS: Record<UIThemeId, keyof PrestigeState | null> = {
@@ -122,6 +137,9 @@ export const UI_THEME_PRESTIGE_KEYS: Record<UIThemeId, keyof PrestigeState | nul
   nebula: 'themeNebula',
   imperial: 'themeImperial',
   void_sovereign: null,
+  abyssal_eclipse: null,
+  boreal_tundra: null,
+  electromagnetic: null,
 };
 
 export const UI_THEME_DEFS: Array<{ id: UIThemeId; name: string; tier: 'starter' | 'mid' | 'luxury' | 'trial'; always?: boolean }> = [
@@ -139,6 +157,9 @@ export const UI_THEME_DEFS: Array<{ id: UIThemeId; name: string; tier: 'starter'
   { id: 'nebula', name: '🌌 มิติเนบิวลาอวกาศ', tier: 'luxury' },
   { id: 'imperial', name: '🪙 ศิลาทองคำราชันย์', tier: 'luxury' },
   { id: 'void_sovereign', name: '🌌 จอมราชันย์แห่งสุญญะ', tier: 'trial' },
+  { id: 'abyssal_eclipse', name: '🌑 มหานครรัตติกาล', tier: 'trial' },
+  { id: 'boreal_tundra', name: '❄️ ทุนดราเยือกแข็ง', tier: 'trial' },
+  { id: 'electromagnetic', name: '⚡ คลื่นแม่เหล็กไฟฟ้านีออน', tier: 'trial' },
 ];
 
 export const UI_THEME_ORDER: UIThemeId[] = [
@@ -156,12 +177,18 @@ export const UI_THEME_ORDER: UIThemeId[] = [
   'nebula',
   'imperial',
   'void_sovereign',
+  'abyssal_eclipse',
+  'boreal_tundra',
+  'electromagnetic',
 ];
 
 export function isSkinUnlocked(state: { prestige: PrestigeState; transcendence?: { completedTrials?: Record<string, boolean> } }, id: SkinId): boolean {
   if (id === 'none') return true;
   if (id === 'drought') return !!state.transcendence?.completedTrials?.arid_drought;
   if (id === 'obsidian') return !!state.transcendence?.completedTrials?.basalt_strata;
+  if (id === 'eclipse') return !!state.transcendence?.completedTrials?.null_cycle;
+  if (id === 'permafrost') return !!state.transcendence?.completedTrials?.permafrost;
+  if (id === 'fulminant') return !!state.transcendence?.completedTrials?.geomagnetic_storm;
   const key = SKIN_PRESTIGE_KEYS[id];
   return key ? !!state.prestige[key] : false;
 }
@@ -169,6 +196,9 @@ export function isSkinUnlocked(state: { prestige: PrestigeState; transcendence?:
 export function isUIThemeUnlocked(state: { prestige: PrestigeState; transcendence?: { completedTrials?: Record<string, boolean> } }, id: UIThemeId): boolean {
   if (id === 'classic') return true;
   if (id === 'void_sovereign') return !!state.transcendence?.completedTrials?.void_anomaly;
+  if (id === 'abyssal_eclipse') return !!state.transcendence?.completedTrials?.null_cycle;
+  if (id === 'boreal_tundra') return !!state.transcendence?.completedTrials?.permafrost;
+  if (id === 'electromagnetic') return !!state.transcendence?.completedTrials?.geomagnetic_storm;
   const key = UI_THEME_PRESTIGE_KEYS[id];
   return key ? !!state.prestige[key] : false;
 }
@@ -191,6 +221,9 @@ export const SKIN_DESCRIPTIONS: Record<SkinId, { th: string; en: string }> = {
   imperial: { th: 'วิหารทองคำจักรพรรดิ โทนหินภูเขาไฟตัดกับทองคำบริสุทธิ์', en: 'Imperial golden relic with obsidian stone and royal gold' },
   drought: { th: 'เนินทรายทะเลทรายโบราณ โทนดินเผาอบอุ่นและสีทรายผุกร่อน', en: 'Ancient desert dunes with warm terracotta and weathered sand' },
   obsidian: { th: 'หินแก้วออบซิเดียนภูเขาไฟแทรกด้วยรอยแยกธารลาวาเพลิง', en: 'Volcanic obsidian glass with glowing crimson magma fissures' },
+  eclipse: { th: 'ความมืดมิดแห่งสุริยคราสตัดกับแสงโคโรนาทองคำบริสุทธิ์', en: 'Midnight eclipse obsidian infused with solar corona gold arcs' },
+  permafrost: { th: 'ผลึกน้ำแข็งบริสุทธิ์ยุคน้ำแข็งโบราณที่ไม่มีวันละลาย', en: 'Perpetual glacial frost crystals refracting pure arctic white' },
+  fulminant: { th: 'แก่นไม้ที่มีสายฟ้าฟาดไหลเวียนตามเส้นใยรากตลอดกาล', en: 'Basalt wood channeled with eternal violet-cyan lightning arcs' },
 };
 
 export const UI_THEME_DESCRIPTIONS: Record<UIThemeId, { th: string; en: string }> = {
@@ -208,6 +241,9 @@ export const UI_THEME_DESCRIPTIONS: Record<UIThemeId, { th: string; en: string }
   nebula: { th: 'ห้วงอวกาศมิดไนท์ การ์ดม่วงเนบิวลา ขอบแสงดาว และประกายกาแลกซี่', en: 'Midnight cosmic void with nebula purple cards and starlight' },
   imperial: { th: 'ศิลาภูเขาไฟออบซิเดียน ขอบทองคำบรอนซ์ และแสงทองคำบริสุทธิ์', en: 'Imperial volcanic stone with polished royal bronze borders' },
   void_sovereign: { th: 'มิติสุญญะมืดสนิท ตัดกับขอบนีออนคอสมิกอินดิโกและม่วงดวงดาว', en: 'Deep void dimension with radiant cosmic indigo borders' },
+  abyssal_eclipse: { th: 'ดำสนิทตัดขอบทองคำสุริยคราส โอ่อ่า สง่างาม เหนือกาลเวลา', en: 'Pitch black abyss bordered by brilliant solar corona gold' },
+  boreal_tundra: { th: 'โทนน้ำเงินน้ำแข็งขั้วโลก ขอบคริสตัลฟ้าเรืองแสงและขาวหิมะ', en: 'Glacial arctic blue shell with luminous frost cyan borders' },
+  electromagnetic: { th: 'ชาร์โคลดำพายุ ตัดกับขอบนีออนสายฟ้าม่วง-ไซยานสะกดสายตา', en: 'Storm charcoal slate with electric violet-cyan lightning borders' },
 };
 
 export const SKIN_SWATCHES: Record<SkinId, string[]> = {
@@ -228,6 +264,9 @@ export const SKIN_SWATCHES: Record<SkinId, string[]> = {
   imperial: ['#181408', '#b45309', '#f59e0b', '#fef08a'],
   drought: ['#26190e', '#8c4a27', '#d97736', '#fcd34d'],
   obsidian: ['#0a0808', '#261414', '#dc2626', '#fb923c'],
+  eclipse: ['#08060c', '#1a1424', '#eab308', '#fef08a'],
+  permafrost: ['#051524', '#0284c7', '#7dd3fc', '#f0f9ff'],
+  fulminant: ['#0a0814', '#7c3aed', '#a855f7', '#06b6d4'],
 };
 
 export const THEME_SWATCHES: Record<UIThemeId, string[]> = {
@@ -245,4 +284,7 @@ export const THEME_SWATCHES: Record<UIThemeId, string[]> = {
   nebula: ['#080714', '#120f26', '#4f46e5', '#f472b6'],
   imperial: ['#100f0c', '#1b1812', '#b45309', '#fef3c7'],
   void_sovereign: ['#080612', '#100d20', '#4f46e5', '#ddd6fe'],
+  abyssal_eclipse: ['#08060a', '#120f17', '#ca8a04', '#fef08a'],
+  boreal_tundra: ['#06131f', '#0c2236', '#0284c7', '#bae6fd'],
+  electromagnetic: ['#090714', '#130f24', '#9333ea', '#67e8f9'],
 };

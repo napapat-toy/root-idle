@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.29.1';
+export const GAME_VERSION = '1.30.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -81,6 +81,7 @@ export function createFreshState(): GameState {
       gaiaClairvoyanceLevel: 0,
       primordialSeedlingLevel: 0,
       deepMeditationLevel: 0,
+      gaiaBlessingLevel: 0,
     },
     achievements: [],
     stats: {
@@ -160,6 +161,7 @@ import {
   trialSynergyBonusMultiplier,
   deepMeditationMultiplier,
   fineRootBaseRate,
+  trialDeepRootsBonusMultiplier,
 } from './transcendence';
 
 export function totalEchoCount(state: GameState): number {
@@ -173,6 +175,7 @@ export function echoBonusPct(state: GameState): number {
 }
 
 export function globalEchoMultiplier(state: GameState): number {
+  if (state.transcendence?.activeTrial === 'geomagnetic_storm') return 1.0;
   const bonusPerEcho = relicEchoBonusPerEcho(state);
   const trialMult = trialEchoBonusMultiplier(state);
   return (1 + totalEchoCount(state) * bonusPerEcho) * trialMult;
@@ -277,10 +280,11 @@ export function effectiveRate(state: GameState, def: ModuleDef): number {
   const milestoneMult = moduleMilestoneMultiplier(count);
   const upgMult = rootUpgradeMultiplier(state, def.id);
   const deepMult = relicDeepRootsBonus(state, def.id);
+  const trialDeepMult = trialDeepRootsBonusMultiplier(state, def.id);
   const globalMult = globalRateMultiplier(state);
 
   const baseRate = (def.id === 'fine') ? fineRootBaseRate(state) : def.rate;
-  return baseRate * milestoneMult * upgMult * deepMult * globalMult;
+  return baseRate * milestoneMult * upgMult * deepMult * trialDeepMult * globalMult;
 }
 
 export function calculateTotalRate(state: GameState): number {

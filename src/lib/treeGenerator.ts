@@ -214,6 +214,9 @@ export function getBranchColor(branches: Branch[], b: Branch, i: number, skin: S
     if (skin === 'imperial') return '#241b10';
     if (skin === 'drought') return '#3a2416';
     if (skin === 'obsidian') return '#120b12';
+    if (skin === 'eclipse') return '#0a0914';
+    if (skin === 'permafrost') return '#0c1b24';
+    if (skin === 'fulminant') return '#110b20';
     return '#523820'; // Default rich dark wood
   }
 
@@ -335,6 +338,32 @@ export function getBranchColor(branches: Branch[], b: Branch, i: number, skin: S
     const hue = isMagma ? 12 : 270;
     const light = isMagma ? (50 + Math.min(b.depth, 10) * 3) : (18 + Math.min(b.depth, 10) * 2);
     return `hsl(${hue}, ${isMagma ? 95 : 15}%, ${light}%)`;
+  }
+
+  // 18. eclipse (🌑 คราสทมิฬ): Void obsidian into solar corona amber-gold
+  if (skin === 'eclipse') {
+    const isCorona = (i * 7) % 4 === 0;
+    const hue = isCorona ? 43 : 260;
+    const sat = isCorona ? 92 : 25;
+    const light = isCorona ? (52 + Math.min(b.depth, 10) * 3.5) : (12 + Math.min(b.depth, 12) * 2.2);
+    return `hsl(${hue}, ${sat}%, ${light}%)`;
+  }
+
+  // 19. permafrost (❄️ เหมันต์นิรันดร์): Glacial permafrost deep ice blue & crystalline frost white
+  if (skin === 'permafrost') {
+    const hue = 195 + ((i * 11) % 18);
+    const sat = 85;
+    const light = 52 + Math.min(b.depth, 12) * 3.8;
+    return `hsl(${hue}, ${sat}%, ${light}%)`;
+  }
+
+  // 20. fulminant (⚡ พายุสายฟ้าฟาด): High-voltage electric violet & neon lightning cyan
+  if (skin === 'fulminant') {
+    const isLightning = i % 2 === 0;
+    const hue = isLightning ? 188 : 280;
+    const sat = 95;
+    const light = 50 + Math.min(b.depth, 10) * 3.8;
+    return `hsl(${hue}, ${sat}%, ${light}%)`;
   }
 
   return '#eadfc7';

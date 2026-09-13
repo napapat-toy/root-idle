@@ -42,7 +42,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   const showPrestigeBtn = isPrestigeEverUnlocked;
 
   const unlockedAchCount = state.achievements?.length || 0;
-  const hasAnyAuto = state.prestige.autoRoot || state.prestige.autoEvent || state.prestige.autoReset;
+  const hasAnyAuto = !!state.prestige.autoRoot;
 
   const isTrialActive = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
   const isVoidTrial = state.transcendence?.activeTrial === 'void_anomaly';
@@ -152,7 +152,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
                 </span>
               )}
             </span>
-            {(state.prestige.autoRootEnabled || state.prestige.autoEventEnabled || state.prestige.autoResetEnabled) && (
+            {(state.prestige.autoRoot && state.prestige.autoRootEnabled) && (
               <span
                 style={{
                   position: 'absolute',
@@ -222,7 +222,6 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
             🏆
           </button>
         )}
-
 
         <button
           className="utility-icon-btn"

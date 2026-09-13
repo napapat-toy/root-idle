@@ -91,6 +91,15 @@ const TrunkBase: React.FC<{ totalOwned: number; activeSkin: SkinId }> = React.me
   } else if (activeSkin === 'obsidian') {
     barkFill = '#120b12';
     barkStroke = '#060306';
+  } else if (activeSkin === 'eclipse') {
+    barkFill = '#0a0914';
+    barkStroke = '#d4af37';
+  } else if (activeSkin === 'permafrost') {
+    barkFill = '#0c1b24';
+    barkStroke = '#38bdf8';
+  } else if (activeSkin === 'fulminant') {
+    barkFill = '#110b20';
+    barkStroke = '#a855f7';
   }
 
   const left = 250 - width / 2;
@@ -363,6 +372,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       {/* Clickable Floating Events */}
       {activeEvents.map(ev => {
         const isLucky = ev.type === 'lucky';
+        const isSuper = !!ev.isSuperJackpot;
         const icon = isLucky ? '🍀' : ev.type === 'buff' ? '⚡' : '🎁';
 
         return (
@@ -373,7 +383,8 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
               onClaimEvent(ev);
             }}
             style={{ left: `${ev.left}px`, top: `${ev.top}px` }}
-            className={`game-event ${isLucky ? 'lucky' : ''}`}
+            className={`game-event ${isLucky ? 'lucky' : ''} ${isSuper ? 'super-jackpot' : ''}`}
+            title={isSuper ? (isEn ? '💥 Super Jackpot Box!' : '💥 กล่องแจ็กพอตซ้อนแจ็กพอต!') : undefined}
           >
             {icon}
           </button>

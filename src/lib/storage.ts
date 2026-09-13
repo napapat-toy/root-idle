@@ -211,6 +211,7 @@ export function payloadToState(payload: SavePayload): GameState {
         gaiaClairvoyanceLevel: 0,
         primordialSeedlingLevel: 0,
         deepMeditationLevel: 0,
+        gaiaBlessingLevel: 0,
       },
       payload.ts || {}
     ),
@@ -241,6 +242,15 @@ export function payloadToState(payload: SavePayload): GameState {
 
   if ((state.prestige.eventBonusLevel || 0) > EVENT_BONUS_MAX_LEVEL) {
     state.prestige.eventBonusLevel = EVENT_BONUS_MAX_LEVEL;
+  }
+
+  // Auto-upgrade existing automation owners to full Universal Automation
+  if (state.prestige.autoRoot || state.prestige.autoRootAll) {
+    state.prestige.autoRoot = true;
+    state.prestige.autoRootSmart = true;
+    state.prestige.autoRootAll = true;
+    state.prestige.autoRootMode = 'all';
+    state.prestige.autoEvent = true;
   }
 
   // Graceful restoration for relics lost due to legacy storage bug

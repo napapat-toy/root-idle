@@ -18,16 +18,18 @@ export const LUCKY_CHANCE_MAX = 0.010;
 export const LUCKY_MAGNITUDE_MAX_LEVEL = 9; // Lv.9 = x10 max lucky multiplier cap
 
 export const PASSIVE_RATE_COST = 100;
-export const AUTO_ROOT_COST = 50;
-export const AUTO_ROOT_SMART_COST = 180;
-export const AUTO_ROOT_ALL_COST = 500;
+export const UNIVERSAL_AUTO_COST = 10000;
+export const AUTO_ROOT_COST = 10000;
+export const AUTO_ROOT_SMART_COST = 10000;
+export const AUTO_ROOT_ALL_COST = 10000;
 export const AUTO_RESET_COST = 10000;
 export const AUTO_RESET_MIN_SEEDS = 3;
-export const AUTO_EVENT_COST = 1000;
+export const AUTO_EVENT_COST = 10000;
 
 export const STARTER_CULTURE_MAX_LEVEL = 50; // Max 500 starter roots upon Prestige
 
 export function prestigeBonusPct(state: GameState): number {
+  if (state.transcendence?.activeTrial === 'null_cycle') return 0;
   const base = state.prestige.passiveRateLevel || 0;
   const cycleBonus = relicCycleResonanceStack(state);
   return Math.round(base * (1 + cycleBonus * 0.01) * 100) / 100;
@@ -143,7 +145,8 @@ export function calcPrestigeSeeds(state: GameState): number {
   const base = Math.floor(Math.pow(ratio, 0.20) * 10);
   const bonus = 1 + (state.prestige.goldenLevel || 0) * 0.05;
   const biomeBonus = state.activeBiome === 'sunken_ruins' ? 1.20 : 1.0;
-  const result = Math.floor(base * bonus * biomeBonus);
+  const trialBonus = state.transcendence?.completedTrials?.['null_cycle'] ? 1.25 : 1.0;
+  const result = Math.floor(base * bonus * biomeBonus * trialBonus);
   return Number.isFinite(result) ? Math.max(0, result) : 1e12;
 }
 

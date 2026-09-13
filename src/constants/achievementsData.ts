@@ -1,6 +1,7 @@
 import { AchievementCategoryInfo, AchievementDef } from '@/types/achievements';
 import { MODULE_DEFS } from './modules';
 import { hasRelic, relicsCount, relicCycleResonanceStack } from './relics';
+import { SKIN_DEFS, isSkinUnlocked, UI_THEME_DEFS, isUIThemeUnlocked } from './cosmetics';
 
 export const ACHIEVEMENT_CATEGORIES: AchievementCategoryInfo[] = [
   { id: 'roots', name: 'การแผ่ขยายราก', icon: '🌿' },
@@ -611,10 +612,10 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     id: 'full_auto_unlocked',
     category: 'prestige',
     title: 'สายออโต้เต็มรูปแบบ',
-    desc: 'ปลดล็อก ออโต้ราก + ออโต้อีเวนต์ + ออโต้หว่านใหม่ ครบทั้ง 3 สาย',
+    desc: 'ปลดล็อก ออโต้สรรพสิ่ง (Universal Automation) ครบจบในตัวเดียว',
     icon: '🤖',
     bonusPct: 8,
-    check: (s) => !!s.prestige.autoRoot && !!s.prestige.autoEvent && !!s.prestige.autoReset,
+    check: (s) => !!s.prestige.autoRoot,
   },
   {
     id: 'golden_seed_max',
@@ -633,6 +634,24 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     icon: '⏳',
     bonusPct: 10,
     check: (s) => (s.prestige.luckyDurationLevel || 0) >= 15,
+  },
+  {
+    id: 'passive_rate_10',
+    category: 'prestige',
+    title: 'การดูดซึมไม่หยุดนิ่ง',
+    desc: 'อัพเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 10',
+    icon: '💧',
+    bonusPct: 4,
+    check: (s) => (s.prestige.passiveRateLevel || 0) >= 10,
+  },
+  {
+    id: 'passive_rate_25',
+    category: 'prestige',
+    title: 'ชีพจรแห่งผืนดิน',
+    desc: 'อัพเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 25',
+    icon: '🌊',
+    bonusPct: 7,
+    check: (s) => (s.prestige.passiveRateLevel || 0) >= 25,
   },
 
   // ===== 🍀 หมวด 4: โชคชะตา & เหตุการณ์พิเศษ (Luck & Events) =====
@@ -714,14 +733,10 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     id: 'skins_all_unlocked',
     category: 'skins',
     title: 'ตู้เสื้อผ้ารากไม้',
-    desc: 'ปลดล็อกสกินในร้าน Prestige ครบทั้ง 4 รูปแบบ',
+    desc: 'ปลดล็อกสกินรากไม้ในห้องแต่งตัวสะสมครบ 4 รูปแบบ',
     icon: '👗',
     bonusPct: 8,
-    check: (s) =>
-      !!s.prestige.auraRoots &&
-      !!s.prestige.skinSameOrigin &&
-      !!s.prestige.skinGrayscale &&
-      !!s.prestige.skinGradient,
+    check: (s) => SKIN_DEFS.filter(def => def.id !== 'none' && isSkinUnlocked(s, def.id)).length >= 4,
   },
   {
     id: 'theme_equip_custom',
@@ -740,6 +755,83 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     icon: '🌌',
     bonusPct: 5,
     check: (s) => s.prestige.activeUITheme === 'void_sovereign',
+  },
+  {
+    id: 'skins_collector_8',
+    category: 'skins',
+    title: 'ผู้คลั่งไคล้แฟชั่นรากไม้',
+    desc: 'ปลดล็อกสกินรากไม้ในห้องแต่งตัวสะสมครบ 8 รูปแบบ',
+    icon: '👘',
+    bonusPct: 4,
+    check: (s) => SKIN_DEFS.filter(def => def.id !== 'none' && isSkinUnlocked(s, def.id)).length >= 8,
+  },
+  {
+    id: 'skins_collector_12',
+    category: 'skins',
+    title: 'รันเวย์ใต้พิภพ',
+    desc: 'ปลดล็อกสกินรากไม้ในห้องแต่งตัวสะสมครบ 12 รูปแบบ',
+    icon: '👑',
+    bonusPct: 6,
+    check: (s) => SKIN_DEFS.filter(def => def.id !== 'none' && isSkinUnlocked(s, def.id)).length >= 12,
+  },
+  {
+    id: 'skin_nebula_unlocked',
+    category: 'skins',
+    title: 'รากไม้แห่งดวงดาว',
+    desc: 'ครอบครองสกินระดับสูง [🌌 มิติเนบิวลา] หรือ [🪙 มรดกทองคำ]',
+    icon: '⭐',
+    bonusPct: 5,
+    check: (s) => !!s.prestige.skinNebula || !!s.prestige.skinImperial,
+  },
+  {
+    id: 'skin_trial_champions',
+    category: 'skins',
+    title: 'อาภรณ์แห่งผู้พิชิต',
+    desc: 'ปลดล็อกสกินพิเศษจากการพิชิตการทดลองใต้พิภพอย่างน้อย 1 รูปแบบ',
+    icon: '⚔️',
+    bonusPct: 6,
+    check: (s) =>
+      isSkinUnlocked(s, 'drought') ||
+      isSkinUnlocked(s, 'obsidian') ||
+      isSkinUnlocked(s, 'eclipse') ||
+      isSkinUnlocked(s, 'permafrost') ||
+      isSkinUnlocked(s, 'fulminant'),
+  },
+  {
+    id: 'themes_collector_5',
+    category: 'skins',
+    title: 'สถาปนิกส่วนหน้า',
+    desc: 'ปลดล็อกธีมหน้าต่าง UI ในห้องแต่งตัวสะสมครบ 5 ธีม',
+    icon: '🏛️',
+    bonusPct: 4,
+    check: (s) => UI_THEME_DEFS.filter(t => t.id !== 'classic' && isUIThemeUnlocked(s, t.id)).length >= 5,
+  },
+  {
+    id: 'themes_collector_10',
+    category: 'skins',
+    title: 'พหุภพแห่งผืนดิน',
+    desc: 'ปลดล็อกธีมหน้าต่าง UI ในห้องแต่งตัวสะสมครบ 10 ธีม',
+    icon: '🌈',
+    bonusPct: 6,
+    check: (s) => UI_THEME_DEFS.filter(t => t.id !== 'classic' && isUIThemeUnlocked(s, t.id)).length >= 10,
+  },
+  {
+    id: 'skin_theme_match',
+    category: 'skins',
+    title: 'คู่สีกลมกลืนแห่งธรรมชาติ',
+    desc: 'สวมใส่สกินรากไม้และธีมหน้าต่าง UI ในเซ็ตธีมเดียวกัน (เช่น ซากุระคู่ซากุระ หรือ ไซเบอร์พังก์คู่ไซเบอร์พังก์)',
+    icon: '✨',
+    bonusPct: 3,
+    check: (s) => s.prestige.activeSkin !== 'none' && s.prestige.activeUITheme !== 'classic' && (s.prestige.activeSkin as string) === (s.prestige.activeUITheme as string),
+  },
+  {
+    id: 'wardrobe_grand_master',
+    category: 'skins',
+    title: 'มหาจักรพรรดิแห่งแฟชั่นรากไม้',
+    desc: 'ครอบครองสกินรากไม้ครบทุกแบบ และธีมหน้าต่างครบทุกแบบในเกม',
+    icon: '💎',
+    bonusPct: 10,
+    check: (s) => SKIN_DEFS.filter(def => def.id !== 'none' && !isSkinUnlocked(s, def.id)).length === 0 && UI_THEME_DEFS.filter(t => t.id !== 'classic' && !isUIThemeUnlocked(s, t.id)).length === 0,
   },
 
   // ===== ⏳ หมวด 6: เวลา & ความผูกพัน (Dedication & Time) =====
@@ -946,16 +1038,127 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     check: (s) => Object.keys(s.transcendence?.completedTrials || {}).length >= 1,
   },
   {
+    id: 'trial_arid_drought',
+    category: 'gaia',
+    title: 'ผู้พิชิตแดนกันดาร',
+    desc: 'พิชิตการทดลอง [🏜️ ดินแล้งกันดาร] สำเร็จ (ปลูกรากต้นไม้โลกครบ 25 ต้น)',
+    icon: '🏜️',
+    bonusPct: 6,
+    check: (s) => !!s.transcendence?.completedTrials?.arid_drought,
+  },
+  {
+    id: 'trial_basalt_strata',
+    category: 'gaia',
+    title: 'ผู้ทะลวงหินอัคนี',
+    desc: 'พิชิตการทดลอง [🌋 ชั้นหินอัคนีทึบ] สำเร็จ (ปลูกรากต้นไม้โลกครบ 25 ต้น)',
+    icon: '🌋',
+    bonusPct: 6,
+    check: (s) => !!s.transcendence?.completedTrials?.basalt_strata,
+  },
+  {
+    id: 'trial_void_anomaly',
+    category: 'gaia',
+    title: 'ผู้พิชิตมิติสูญญะ',
+    desc: 'พิชิตการทดลอง [🌌 รอยแยกสูญญะ] สำเร็จ โดยไม่พึ่งพาระบบบอทอัตโนมัติ',
+    icon: '🌌',
+    bonusPct: 8,
+    check: (s) => !!s.transcendence?.completedTrials?.void_anomaly,
+  },
+  {
+    id: 'trial_null_cycle',
+    category: 'gaia',
+    title: 'ผู้พิชิตวงจรศูนย์',
+    desc: 'พิชิตการทดลอง [🌑 วงจรศูนย์] สำเร็จ โดยปราศจากโบนัสเรทจาก Prestige',
+    icon: '🌑',
+    bonusPct: 8,
+    check: (s) => !!s.transcendence?.completedTrials?.null_cycle,
+  },
+  {
+    id: 'trial_permafrost',
+    category: 'gaia',
+    title: 'ผู้ฝ่าพายุเหมันต์',
+    desc: 'พิชิตการทดลอง [❄️ เหมันต์เยือกแข็ง] สำเร็จ ท่ามกลางสภาพอากาศหนาวเหน็บ',
+    icon: '❄️',
+    bonusPct: 8,
+    check: (s) => !!s.transcendence?.completedTrials?.permafrost,
+  },
+  {
+    id: 'trial_geomagnetic_storm',
+    category: 'gaia',
+    title: 'ผู้ต้านพายุแม่เหล็ก',
+    desc: 'พิชิตการทดลอง [⚡ พายุสนามแม่เหล็ก] สำเร็จ โดยปราศจากพลังสะท้อนของ Echo',
+    icon: '⚡',
+    bonusPct: 8,
+    check: (s) => !!s.transcendence?.completedTrials?.geomagnetic_storm,
+  },
+  {
     id: 'trial_all_conquered',
     category: 'gaia',
     title: 'ราชันย์ผู้พิชิตใต้พิภพ',
-    desc: 'พิชิตการทดลองแห่งผืนพิภพครบทั้ง 3 ด่าน (ดินแล้งกันดาร, ชั้นหินอัคนีทึบ, รอยแยกสูญญะ)',
-    icon: '🏆',
-    bonusPct: 15,
+    desc: 'พิชิตบททดสอบแห่งผืนพิภพครบทั้ง 6 ด่านสมบูรณ์แบบ',
+    icon: '👑',
+    bonusPct: 20,
     check: (s) =>
       !!s.transcendence?.completedTrials?.arid_drought &&
       !!s.transcendence?.completedTrials?.basalt_strata &&
-      !!s.transcendence?.completedTrials?.void_anomaly,
+      !!s.transcendence?.completedTrials?.void_anomaly &&
+      !!s.transcendence?.completedTrials?.null_cycle &&
+      !!s.transcendence?.completedTrials?.permafrost &&
+      !!s.transcendence?.completedTrials?.geomagnetic_storm,
+  },
+  {
+    id: 'gaia_touch_max',
+    category: 'gaia',
+    title: 'หัตถ์แห่งเทพพิภพ',
+    desc: 'อัพเกรดสัมผัสแห่งไกอา (Gaia Touch) แตะเลเวล 10 (สูงสุด)',
+    icon: '✨',
+    bonusPct: 8,
+    check: (s) => (s.transcendence?.gaiaTouchLevel || 0) >= 10,
+  },
+  {
+    id: 'echo_resonance_max',
+    category: 'gaia',
+    title: 'กังวานคลื่นไร้ขีดจำกัด',
+    desc: 'อัพเกรดความกังวานแห่งเสียงสะท้อน (Echo Resonance) แตะเลเวล 5 (สูงสุด)',
+    icon: '🔔',
+    bonusPct: 7,
+    check: (s) => (s.transcendence?.echoResonanceLevel || 0) >= 5,
+  },
+  {
+    id: 'primordial_seedling_max',
+    category: 'gaia',
+    title: 'พงไพรจากเศษดิน',
+    desc: 'อัพเกรดต้นกล้าปฐมกาล (Primordial Seedling) แตะเลเวล 5 (สูงสุด)',
+    icon: '🌱',
+    bonusPct: 7,
+    check: (s) => (s.transcendence?.primordialSeedlingLevel || 0) >= 5,
+  },
+  {
+    id: 'gaia_meditation_max',
+    category: 'gaia',
+    title: 'สมาธิลึกใต้พิภพ',
+    desc: 'อัพเกรดสมาธิลึก (Deep Meditation) แตะเลเวล 5 (สูงสุด)',
+    icon: '🧘',
+    bonusPct: 8,
+    check: (s) => (s.transcendence?.deepMeditationLevel || 0) >= 5,
+  },
+  {
+    id: 'gaia_blessing_1',
+    category: 'gaia',
+    title: 'ก้าวข้ามขีดจำกัดแห่งไกอา',
+    desc: 'อัพเกรดพรแห่งไกอา (Gaia\'s Blessing) แตะเลเวล 1',
+    icon: '🌌',
+    bonusPct: 5,
+    check: (s) => (s.transcendence?.gaiaBlessingLevel || 0) >= 1,
+  },
+  {
+    id: 'gaia_blessing_10',
+    category: 'gaia',
+    title: 'พรอันเป็นนิรันดร์',
+    desc: 'อัพเกรดพรแห่งไกอาสะสมครบเลเวล 10 (+50% ละอองไกอา)',
+    icon: '👑',
+    bonusPct: 10,
+    check: (s) => (s.transcendence?.gaiaBlessingLevel || 0) >= 10,
   },
 ];
 
