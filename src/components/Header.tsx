@@ -1,20 +1,17 @@
 'use client';
 
 import React from 'react';
-import { fmt, fmtInt } from '@/lib/formatters';
+import { fmt } from '@/lib/formatters';
 import { Language } from '@/types/game';
-import { t } from '@/lib/i18n';
 
 interface HeaderProps {
   nutrients: number;
   totalRate: number;
-  eternalSeeds: number;
   lang?: Language;
 }
 
-export const Header: React.FC<HeaderProps> = React.memo(({ nutrients, totalRate, eternalSeeds, lang = 'th' }) => {
+export const Header: React.FC<HeaderProps> = React.memo(({ nutrients, totalRate, lang = 'th' }) => {
   const isEn = lang === 'en';
-  const tr = t(lang);
 
   return (
     <header>
@@ -39,11 +36,6 @@ export const Header: React.FC<HeaderProps> = React.memo(({ nutrients, totalRate,
           <span className="rate">
             +{fmt(totalRate)} {isEn ? 'nutrients/sec' : 'สารอาหาร/วิ'}
           </span>
-          {eternalSeeds > 0 && (
-            <span className="rate seeds">
-              🌌 {tr.eternalSeeds}: {fmtInt(eternalSeeds)}
-            </span>
-          )}
         </div>
       </div>
     </header>

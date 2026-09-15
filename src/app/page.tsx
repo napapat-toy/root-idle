@@ -128,7 +128,6 @@ export default function Home() {
       <Header
         nutrients={state.nutrients}
         totalRate={totalRate}
-        eternalSeeds={state.eternalSeeds}
         lang={lang}
       />
 

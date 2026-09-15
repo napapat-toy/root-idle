@@ -434,10 +434,6 @@ h1 span {
   @apply text-[11px] sm:text-xs text-accent-glow-dim leading-tight;
 }
 
-.stats .rate.seeds {
-  color: var(--prestige-accent);
-}
-
 /* ==========================================================================
    4. TOP ACTIONS & TOOLBAR (Contained in Canvas Column)
    ========================================================================== */
