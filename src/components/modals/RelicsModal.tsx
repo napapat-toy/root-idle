@@ -8,12 +8,14 @@ import {
   RELIC_RARITY_INFO,
   isMasterRelicActive,
   relicCount,
-  relicCycleResonanceStack,
   relicMaxed,
   relicMult,
   relicsCount,
 } from '@/constants/gameData';
 import { t } from '@/lib/i18n';
+import { RelicPedestal } from './relics/RelicPedestal';
+import { RelicDetailCard } from './relics/RelicDetailCard';
+import { BiomeRow } from './relics/BiomeRow';
 
 interface RelicsModalProps {
   state: GameState;
@@ -39,7 +41,6 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
 
   const selectedRelic: RelicDef = RELIC_DEFS.find(r => r.id === selectedRelicId) || RELIC_DEFS[0];
   const selectedCount = relicCount(state, selectedRelic.id);
-  const isSelectedOwned = selectedCount > 0;
   const isSelectedMaxed = relicMaxed(state, selectedRelic.id);
   const selectedRarityInfo = RELIC_RARITY_INFO[selectedRelic.rarity];
   const selectedMult = relicMult(state, selectedRelic.id);
@@ -219,348 +220,31 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                     boxSizing: 'border-box',
                   }}
                 >
-                  {RELIC_DEFS.map((relic, idx) => {
-                    const count = relicCount(state, relic.id);
-                    const isOwned = count > 0;
-                    const isSelected = relic.id === selectedRelicId;
-                    const rarityInfo = RELIC_RARITY_INFO[relic.rarity];
-
-                    return (
-                      <button
-                        key={relic.id}
-                        onClick={() => setSelectedRelicId(relic.id)}
-                        style={{
-                          aspectRatio: '1 / 1',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          position: 'relative',
-                          padding: '4px 2px',
-                          borderRadius: '10px',
-                          background: isOwned
-                            ? `linear-gradient(135deg, var(--bg-panel-2) 0%, ${relic.color}25 100%)`
-                            : 'rgba(255, 255, 255, 0.02)',
-                          border: isSelected
-                            ? `2px solid ${isOwned ? relic.color : rarityInfo.color}`
-                            : isOwned
-                            ? `1px solid ${relic.color}66`
-                            : '1px solid var(--line-soil)',
-                          boxShadow: isSelected
-                            ? `0 0 12px ${isOwned ? relic.color : rarityInfo.color}55`
-                            : isOwned
-                            ? `0 0 6px ${relic.color}22`
-                            : 'none',
-                          cursor: 'pointer',
-                          transition: 'all 0.15s ease',
-                          outline: 'none',
-                          minWidth: 0,
-                          width: '100%',
-                          boxSizing: 'border-box',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        {/* Pedestal Tag & Fragment Count */}
-                        <div
-                          style={{
-                            position: 'absolute',
-                            top: '3px',
-                            left: '3px',
-                            right: '3px',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            fontSize: 'clamp(7.5px, 1.8vw, 8.5px)',
-                            color: 'var(--root-cream-dim)',
-                            fontWeight: 600,
-                            lineHeight: 1,
-                          }}
-                        >
-                          <span>#{String(idx + 1).padStart(2, '0')}</span>
-                          <span style={{ color: isOwned ? '#facc15' : 'inherit', fontWeight: 700 }}>
-                            {isOwned ? '✓ 1/1' : rarityInfo.icon}
-                          </span>
-                        </div>
-
-                        {/* Artifact Icon */}
-                        <span
-                          style={{
-                            fontSize: 'clamp(19px, 4.5vw, 24px)',
-                            marginTop: '4px',
-                            filter: isOwned ? 'none' : 'grayscale(100%) opacity(25%)',
-                            transform: isSelected ? 'scale(1.1)' : 'scale(1)',
-                            transition: 'transform 0.15s ease',
-                            lineHeight: 1,
-                          }}
-                        >
-                          {isOwned ? relic.icon : '🏺'}
-                        </span>
-
-                        {/* Rarity or Name label */}
-                        <span
-                          style={{
-                            fontSize: 'clamp(8px, 2vw, 9.5px)',
-                            fontWeight: 600,
-                            color: isOwned ? relic.color : rarityInfo.color,
-                            marginTop: '3px',
-                            textAlign: 'center',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            maxWidth: '96%',
-                            opacity: isOwned ? 1 : 0.75,
-                            lineHeight: 1.1,
-                          }}
-                        >
-                          {isOwned ? (isEn ? relic.enName : relic.name) : (isEn ? rarityInfo.enName : rarityInfo.name)}
-                        </span>
-                      </button>
-                    );
-                  })}
+                  {RELIC_DEFS.map((relic, idx) => (
+                    <RelicPedestal
+                      key={relic.id}
+                      relic={relic}
+                      idx={idx}
+                      count={relicCount(state, relic.id)}
+                      isSelected={relic.id === selectedRelicId}
+                      rarityInfo={RELIC_RARITY_INFO[relic.rarity]}
+                      isEn={isEn}
+                      onSelect={setSelectedRelicId}
+                    />
+                  ))}
                 </div>
 
                 {/* Inspection Spotlight Detail Card */}
-                <div
-                  style={{
-                    background: isSelectedOwned
-                      ? `linear-gradient(135deg, var(--bg-panel-2) 0%, ${selectedRelic.color}15 100%)`
-                      : 'var(--bg-panel-2)',
-                    border: isSelectedOwned ? `1px solid ${selectedRelic.color}88` : '1px solid var(--line-soil)',
-                    borderLeft: `5px solid ${isSelectedOwned ? selectedRelic.color : selectedRarityInfo.color}`,
-                    borderRadius: '12px',
-                    padding: '10px 12px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '7px',
-                    marginTop: '2px',
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    minWidth: 0,
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
-                      <div
-                        style={{
-                          width: '36px',
-                          height: '36px',
-                          borderRadius: '9px',
-                          background: isSelectedOwned ? `${selectedRelic.color}25` : 'rgba(255,255,255,0.04)',
-                          border: `1px solid ${isSelectedOwned ? selectedRelic.color : 'rgba(255,255,255,0.1)'}`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '18px',
-                          flexShrink: 0,
-                          boxShadow: isSelectedOwned ? `0 0 10px ${selectedRelic.color}33` : 'none',
-                        }}
-                      >
-                        {isSelectedOwned ? selectedRelic.icon : '🏺'}
-                      </div>
-                      <div style={{ minWidth: 0, flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                          <span
-                            style={{
-                              fontWeight: 700,
-                              fontSize: 'clamp(12px, 3.2vw, 13.5px)',
-                              color: isSelectedOwned ? 'var(--root-cream)' : 'var(--root-cream-dim)',
-                              wordBreak: 'break-word',
-                            }}
-                          >
-                            {isSelectedOwned ? (isEn ? selectedRelic.enName : selectedRelic.name) : (isEn ? 'Undiscovered Relic' : 'โบราณวัตถุลึกลับ')}
-                          </span>
-                          <span
-                            style={{
-                              fontSize: '9.5px',
-                              color: selectedRarityInfo.color,
-                              background: selectedRarityInfo.badgeBg,
-                              border: `1px solid ${selectedRarityInfo.color}55`,
-                              padding: '1px 6px',
-                              borderRadius: '4px',
-                              fontWeight: 700,
-                              flexShrink: 0,
-                            }}
-                          >
-                            {selectedRarityInfo.icon} {isEn ? selectedRarityInfo.enName : selectedRarityInfo.name}
-                          </span>
-                        </div>
-                        <div style={{ fontSize: '10.5px', color: 'var(--root-cream-dim)', marginTop: '1px' }}>
-                          {isEn ? `Rarity: ${selectedRarityInfo.enName}` : `ระดับความหายาก: ${selectedRarityInfo.name}`}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        padding: '3px 8px',
-                        borderRadius: '6px',
-                        background: isSelectedOwned ? 'rgba(250, 204, 21, 0.15)' : 'rgba(255,255,255,0.05)',
-                        border: `1px solid ${isSelectedOwned ? '#facc15' : 'rgba(255,255,255,0.1)'}`,
-                        color: isSelectedOwned ? '#facc15' : 'var(--root-cream-dim)',
-                        fontSize: '10.5px',
-                        fontWeight: 700,
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {isSelectedOwned
-                        ? (isEn ? '✓ 1/1 OWNED' : '✓ 1/1 ครอบครองแล้ว')
-                        : (isEn ? '🔒 UNDISCOVERED' : '🔒 ยังไม่ค้นพบ')}
-                    </div>
-                  </div>
-
-                  {/* Master Power Status / Cycle Resonance Section */}
-                  <div style={{ marginTop: '1px' }}>
-                    {isSelectedOwned && selectedRelic.id === 'magmastone' ? (
-                      <div
-                        style={{
-                          background: 'rgba(249, 115, 22, 0.12)',
-                          border: '1px solid rgba(249, 115, 22, 0.35)',
-                          borderRadius: '8px',
-                          padding: '6px 10px',
-                          fontSize: '10.5px',
-                          lineHeight: '1.4',
-                        }}
-                      >
-                        <div style={{ color: '#f97316', fontWeight: 700, display: 'flex', justifyContent: 'space-between' }}>
-                          <span>🔥 {isEn ? 'Cycle Resonance Stack' : 'สะสมพลังการเวียนว่าย'}:</span>
-                          <span>+{relicCycleResonanceStack(state)}% {masterActive ? '(Cap ×2)' : ''}</span>
-                        </div>
-                        <div style={{ color: 'var(--root-cream-dim)', fontSize: '9.5px', marginTop: '2px' }}>
-                          {isEn
-                            ? `Prestige ×${state.stats?.prestigeCount || 0} (+${state.stats?.prestigeCount || 0}%) · Transcendence ×${state.transcendence?.count || 0} (+${(state.transcendence?.count || 0) * 3}%)`
-                            : `หว่านใหม่ ${state.stats?.prestigeCount || 0} ครั้ง (+${state.stats?.prestigeCount || 0}%) · ตื่นรู้ ${state.transcendence?.count || 0} ครั้ง (+${(state.transcendence?.count || 0) * 3}%)`}
-                        </div>
-                      </div>
-                    ) : isSelectedOwned ? (
-                      <div
-                        style={{
-                          background: 'rgba(74, 222, 128, 0.08)',
-                          border: '1px solid rgba(74, 222, 128, 0.25)',
-                          borderRadius: '8px',
-                          padding: '6px 10px',
-                          fontSize: '10.5px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                        }}
-                      >
-                        <span style={{ color: 'var(--root-cream-dim)' }}>
-                          {isEn ? 'Master Power Status' : 'สถานะพลังโบราณวัตถุ'}:
-                        </span>
-                        <span style={{ color: '#4ade80', fontWeight: 700 }}>
-                          {isEn ? '● Active Permanently' : '● ทำงานสมบูรณ์ 100%'}
-                        </span>
-                      </div>
-                    ) : (
-                      <div
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.03)',
-                          border: '1px solid var(--line-soil)',
-                          borderRadius: '8px',
-                          padding: '6px 10px',
-                          fontSize: '10.5px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                        }}
-                      >
-                        <span style={{ color: 'var(--root-cream-dim)' }}>
-                          {isEn ? 'Excavation Status' : 'สถานะการค้นหา'}:
-                        </span>
-                        <span style={{ color: 'var(--root-cream-dim)' }}>
-                          {isEn ? 'Dormant Underground' : 'หลับใหลอยู่ใต้พิภพ'}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Effect Details - standard block with word-break to completely prevent horizontal overflow */}
-                  <div
-                    style={{
-                      background: 'rgba(0,0,0,0.25)',
-                      padding: '7px 10px',
-                      borderRadius: '8px',
-                      fontSize: 'clamp(10.5px, 2.8vw, 11.5px)',
-                      fontWeight: 600,
-                      color: isSelectedOwned ? 'var(--accent-glow)' : 'var(--root-cream-dim)',
-                      lineHeight: '1.45',
-                      wordBreak: 'break-word',
-                      boxSizing: 'border-box',
-                      width: '100%',
-                    }}
-                  >
-                    {isSelectedOwned ? (
-                      <div>
-                        ⚡ {isEn ? selectedRelic.enEffectDesc : selectedRelic.effectDesc}
-                        {selectedMult > selectedCount && (
-                          <span style={{ color: '#facc15', marginLeft: '6px', fontWeight: 700 }}>
-                            (×2 Gaia Active!)
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <div>
-                        🔍 {isEn ? 'Ancient power remains dormant underground.' : 'คุณสมบัติจะปรากฏเมื่อขุดพบใต้พิภพ'}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Lore or Discovery Clue */}
-                  <div
-                    style={{
-                      fontSize: 'clamp(9.5px, 2.5vw, 10.5px)',
-                      color: 'var(--root-cream-dim)',
-                      fontStyle: 'italic',
-                      lineHeight: '1.4',
-                      wordBreak: 'break-word',
-                      boxSizing: 'border-box',
-                      width: '100%',
-                    }}
-                  >
-                    {isSelectedOwned ? (
-                      <>&ldquo;{isEn ? selectedRelic.enDesc : selectedRelic.desc}&rdquo;</>
-                    ) : (
-                      <>
-                        {isEn
-                          ? '🌱 Hint: Keep roots expanding deep or roll Lucky Jackpots to discover.'
-                          : '🌱 คำใบ้: ขยายรากให้ลึกและกว้าง หรือหมุน Lucky Jackpot เพื่อตามหาโบราณวัตถุชิ้นนี้'}
-                      </>
-                    )}
-                  </div>
-
-                  {/* Discovery & Completion Status */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '8px',
-                      padding: '6px 10px',
-                      borderRadius: '8px',
-                      background: isSelectedMaxed
-                        ? 'rgba(250, 204, 21, 0.1)'
-                        : isSelectedOwned
-                        ? 'rgba(255,255,255,0.03)'
-                        : 'rgba(255,255,255,0.02)',
-                      border: isSelectedMaxed ? '1px solid #facc1555' : '1px solid var(--line-soil)',
-                      fontSize: 'clamp(10px, 2.6vw, 11px)',
-                      width: '100%',
-                      boxSizing: 'border-box',
-                    }}
-                  >
-                    <span style={{ color: 'var(--root-cream-dim)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {isSelectedOwned
-                        ? (isEn ? '👑 Status: 100% Master Power Active!' : '👑 สถานะ: ครอบครองสมบูรณ์ 100% (ทำงานตลอดเวลา!)')
-                        : (isEn ? '🔒 Status: Dormant Underground' : '🔒 สถานะ: หลับใหลอยู่ใต้พิภพ')}
-                    </span>
-                    <span style={{ fontWeight: 700, color: selectedRelic.color, fontSize: '10.5px', flexShrink: 0 }}>
-                      {isSelectedOwned
-                        ? (isEn ? '100% ACTIVE' : 'สมบูรณ์ 100%')
-                        : (isEn ? 'UNEARTH CHANCE' : 'รอการขุดพบ')}
-                    </span>
-                  </div>
-                </div>
+                <RelicDetailCard
+                  state={state}
+                  relic={selectedRelic}
+                  count={selectedCount}
+                  isMaxed={isSelectedMaxed}
+                  rarityInfo={selectedRarityInfo}
+                  mult={selectedMult}
+                  masterActive={masterActive}
+                  isEn={isEn}
+                />
               </>
             )}
 
@@ -572,66 +256,17 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                     : 'เลือกสลับชั้นชีวนิเวศใต้พิภพเพื่อปรับแต่งฉากหลัง Canvas และรับบัฟสภาพแวดล้อมเฉพาะตัว:'}
                 </div>
 
-                {BIOME_DEFS.map(biome => {
-                  const isUnlocked = ownedCount >= biome.relicRequiredCount;
-                  const isSelected = activeBiome === biome.id;
-
-                  return (
-                    <div
-                      key={biome.id}
-                      style={{
-                        background: biome.bgGradient,
-                        border: isSelected ? '2px solid var(--accent-glow)' : '1px solid var(--line-soil)',
-                        borderRadius: '12px',
-                        padding: '12px 14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '12px',
-                        boxShadow: isSelected ? '0 0 16px rgba(183, 224, 138, 0.25)' : 'none',
-                        opacity: isUnlocked ? 1 : 0.6,
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <span style={{ fontSize: '26px' }}>{biome.icon}</span>
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--root-cream)' }}>
-                            {isEn ? biome.enName : biome.name} {isSelected && <span style={{ color: 'var(--accent-glow)', fontSize: '10.5px' }}>● {isEn ? 'ACTIVE' : 'ใช้งานอยู่'}</span>}
-                          </div>
-                          <div style={{ fontSize: '10.5px', color: 'var(--root-cream-dim)', marginTop: '2px' }}>
-                            {isEn ? biome.enDesc : biome.desc}
-                          </div>
-                          <div style={{ fontSize: '10.5px', color: '#ffd76a', marginTop: '2px', fontWeight: 600 }}>
-                            ⚡ {isEn ? biome.enAmbientBonusDesc : biome.ambientBonusDesc}
-                          </div>
-                          {!isUnlocked && (
-                            <div style={{ fontSize: '10px', color: '#f59e0b', marginTop: '2px', fontWeight: 600 }}>
-                              🔒 {isEn ? `Requires ${biome.relicRequiredCount} Relics (Currently: ${ownedCount}/${biome.relicRequiredCount})` : `ต้องการโบราณวัตถุ ${biome.relicRequiredCount} ชิ้น (ตอนนี้มี ${ownedCount}/${biome.relicRequiredCount})`}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <button
-                        disabled={!isUnlocked || isSelected}
-                        onClick={() => onSelectBiome(biome.id)}
-                        style={{
-                          padding: '6px 12px',
-                          borderRadius: '8px',
-                          background: isSelected ? 'rgba(183, 224, 138, 0.2)' : isUnlocked ? 'var(--accent-glow)' : 'rgba(255,255,255,0.05)',
-                          color: isSelected ? 'var(--accent-glow)' : isUnlocked ? '#12190d' : 'var(--root-cream-dim)',
-                          border: isSelected ? '1px solid var(--accent-glow)' : 'none',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          cursor: isUnlocked && !isSelected ? 'pointer' : 'default',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {isSelected ? (isEn ? 'ACTIVE ✓' : 'ใช้งานอยู่ ✓') : isUnlocked ? (isEn ? 'Select' : 'เลือกใช้') : (isEn ? 'Locked' : 'ล็อกอยู่')}
-                      </button>
-                    </div>
-                  );
-                })}
+                {BIOME_DEFS.map(biome => (
+                  <BiomeRow
+                    key={biome.id}
+                    biome={biome}
+                    isUnlocked={ownedCount >= biome.relicRequiredCount}
+                    isSelected={activeBiome === biome.id}
+                    ownedCount={ownedCount}
+                    isEn={isEn}
+                    onSelectBiome={onSelectBiome}
+                  />
+                ))}
               </div>
             )}
           </div>
