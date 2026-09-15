@@ -7,7 +7,7 @@ export const SEED = 918273;
 export const OFFLINE_CAP_HOURS = [24, 48, 72];
 
 export const EVENT_DURATION_MAX_LEVEL = 4;
-export const EVENT_BONUS_MAX_LEVEL = 500; // Cap at Lv. 500 (+5,000%)
+export const EVENT_BONUS_MAX_LEVEL = 10000; // Cap at Lv. 10,000 (+1,000%)
 export const LUCKY_DURATION_BASE = 5;
 export const LUCKY_DURATION_MAX = 20;
 export const LUCKY_DURATION_MAX_LEVEL = LUCKY_DURATION_MAX - LUCKY_DURATION_BASE; // 15 levels
@@ -79,7 +79,7 @@ export function currentOfflineCapSeconds(state: GameState): number {
 
 export function eventBonusCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.eventBonusLevel || 0);
-  return 500 * (lvl + 1);
+  return Math.floor(150 * Math.pow(lvl + 1, 1.35));
 }
 
 export function eventBonusMaxed(state: GameState): boolean {
@@ -93,7 +93,7 @@ export function eventDurationCost(stateOrLevel: GameState | number): number {
 
 export function eventBonusMult(state: GameState): number {
   const lvl = Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0);
-  return 1 + lvl * 0.10;
+  return 1 + lvl * 0.001; // +0.1% per level
 }
 
 export function eventDurationMaxed(state: GameState): boolean {

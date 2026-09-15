@@ -15,9 +15,10 @@ export const GAIA_CLAIRVOYANCE_MAX_LEVEL = 10;
 export const PRIMORDIAL_SEEDLING_MAX_LEVEL = 5;
 export const DEEP_MEDITATION_MAX_LEVEL = 5;
 export const GAIA_BLESSING_MAX_LEVEL = 500;
-export const HYPERDRIVE_COST = 10000;
-export const AURORA_BLOOM_COST = 10000;
+export const HYPERDRIVE_COST = 100000;
+export const AURORA_BLOOM_COST = 100000;
 export const SEED_TRANSMUTE_COST = 50000000000; // 50 Billion seeds per 1 Astral Petal
+export const ESSENCE_TRANSMUTE_COST = 10000; // 10,000 Gaia Essences per 1 Astral Petal
 
 export const TRIAL_DEFS: TrialDef[] = [
   {
@@ -143,7 +144,7 @@ export function canTranscend(state: GameState): boolean {
 }
 
 export function gaiaBlessingCost(level: number): number {
-  return Math.floor(15 * Math.pow(level + 1, 1.25));
+  return Math.min(10000, Math.floor(8 * Math.pow(level + 1, 1.15)));
 }
 
 export function gaiaBlessingEssenceMultiplier(state: GameState): number {

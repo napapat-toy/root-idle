@@ -58,8 +58,9 @@ export const WardrobeStepper: React.FC<WardrobeStepperProps> = React.memo(({
           {curIndex + 1} / {totalCount}
         </div>
         <div
+          title={curName}
           style={{
-            fontSize: '16px',
+            fontSize: '14.5px',
             fontWeight: 700,
             color: 'var(--root-cream)',
             whiteSpace: 'nowrap',

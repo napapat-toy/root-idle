@@ -697,8 +697,12 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Garland of the Cosmos', desc: 'Accumulate at least 10 Astral Petals' },
   },
   astral_petal_50: {
-    th: { title: 'สวนบุปผาดวงดารานิรันดร์', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 50 กลีบ (พร้อมแลกสกินระดับสูงสุด)' },
-    en: { title: 'Eternal Astral Garden', desc: 'Accumulate 50 Astral Petals (ready for the ultimate skin)' },
+    th: { title: 'สวนบุปผาดวงดารานิรันดร์', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 50 กลีบ (พร้อมแลกธีมหน้าต่างแสงเหนือ)' },
+    en: { title: 'Eternal Astral Garden', desc: 'Accumulate 50 Astral Petals (ready for Borealis Theme)' },
+  },
+  astral_petal_500: {
+    th: { title: 'มหาดวงดาราคอสมิกแห่งไกอา', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 500 กลีบ (พร้อมแลกสกินระดับสูงสุด)' },
+    en: { title: 'Cosmic Star of Gaia', desc: 'Accumulate 500 Astral Petals (ready for the ultimate skin)' },
   },
   skin_first_wardrobe: {
     th: { title: 'อาภรณ์ชิ้นแรก', desc: 'ปลดล็อกสกินรากไม้หรือธีมหน้าต่างตกแต่งชิ้นแรก' },

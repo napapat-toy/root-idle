@@ -8,9 +8,12 @@ interface WardrobeItemActionProps {
   curOwned: boolean;
   isTrialTier: boolean;
   isAstralTier: boolean;
+  isEssenceTier?: boolean;
   canAfford: boolean;
   currentPetalCost: number;
+  currentEssenceCost?: number;
   myPetals: number;
+  myEssences?: number;
   curCost: number;
   eternalSeeds: number;
   isEn: boolean;
@@ -26,9 +29,12 @@ export const WardrobeItemAction: React.FC<WardrobeItemActionProps> = React.memo(
   curOwned,
   isTrialTier,
   isAstralTier,
+  isEssenceTier = false,
   canAfford,
   currentPetalCost,
+  currentEssenceCost = 0,
   myPetals,
+  myEssences = 0,
   curCost,
   eternalSeeds,
   isEn,
@@ -142,6 +148,49 @@ export const WardrobeItemAction: React.FC<WardrobeItemActionProps> = React.memo(
           >
             <span>🔒 {currentPetalCost} 🌸</span>
             <span>{isEn ? 'Need Astral Petals' : 'ต้องการเกสรดวงดาว'}</span>
+          </div>
+        )
+      ) : isEssenceTier ? (
+        canAfford ? (
+          <button
+            onClick={onBuy}
+            style={{
+              flex: 1,
+              padding: '10px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #059669, #10b981)',
+              color: '#ffffff',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '13px',
+              cursor: 'pointer',
+              boxShadow: '0 0 14px rgba(16, 185, 129, 0.5)',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            🛒 {fmtInt(currentEssenceCost)} 🌍 {isEn ? 'Buy & Equip' : 'ซื้อ & สวมใส่'}
+          </button>
+        ) : (
+          <div
+            style={{
+              flex: 1,
+              padding: '10px',
+              borderRadius: '12px',
+              background: 'rgba(52, 211, 153, 0.12)',
+              border: '1px solid rgba(52, 211, 153, 0.35)',
+              color: '#34d399',
+              fontWeight: 700,
+              fontSize: '12px',
+              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+            }}
+            title={isEn ? `Need ${fmtInt(currentEssenceCost - myEssences)} more Gaia Essences` : `ยังขาดอีก ${fmtInt(currentEssenceCost - myEssences)} ละอองชีวิต`}
+          >
+            <span>🔒 {fmtInt(currentEssenceCost)} 🌍</span>
+            <span>{isEn ? 'Need Gaia Essences' : 'ต้องการละอองชีวิต'}</span>
           </div>
         )
       ) : canAfford ? (

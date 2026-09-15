@@ -675,6 +675,7 @@ export function useGameEngine() {
     toggleHyperdrive: transcendenceEngine.toggleHyperdrive,
     buyAuroraBloom: transcendenceEngine.buyAuroraBloom,
     transmuteSeedsToPetals: transcendenceEngine.transmuteSeedsToPetals,
+    transmuteEssencesToPetals: transcendenceEngine.transmuteEssencesToPetals,
     startTrial: transcendenceEngine.startTrial,
     abandonTrial: transcendenceEngine.abandonTrial,
     claimUnearthedRelic,

@@ -24,6 +24,7 @@ import {
   passiveRateCost,
   PASSIVE_RATE_MAX_LEVEL,
   SKIN_COSTS,
+  SKIN_ESSENCE_COSTS,
   SKIN_PETAL_COSTS,
   SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
@@ -280,6 +281,7 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
   const buySkin = useCallback((id: SkinId, autoEquip = false) => {
     const cur = stateRef.current;
     const petalCost = SKIN_PETAL_COSTS[id];
+    const essenceCost = SKIN_ESSENCE_COSTS[id];
     const cost = SKIN_COSTS[id] || 0;
     const prestigeKey = SKIN_PRESTIGE_KEYS[id];
     if (!prestigeKey) return;
@@ -293,6 +295,27 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
         transcendence: {
           ...prev.transcendence,
           astralPetals: (prev.transcendence?.astralPetals || 0) - petalCost,
+        },
+        prestige: {
+          ...prev.prestige,
+          [prestigeKey]: true,
+          ...(autoEquip ? { activeSkin: id } : {}),
+        },
+      }));
+      if (autoEquip && setPreviewSkin) {
+        setPreviewSkin(null);
+      }
+      return;
+    }
+
+    if (essenceCost && essenceCost > 0) {
+      const essences = cur.transcendence?.gaiaEssences || 0;
+      if (essences < essenceCost) return;
+      setState(prev => ({
+        ...prev,
+        transcendence: {
+          ...prev.transcendence,
+          gaiaEssences: (prev.transcendence?.gaiaEssences || 0) - essenceCost,
         },
         prestige: {
           ...prev.prestige,

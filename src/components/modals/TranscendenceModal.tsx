@@ -563,8 +563,8 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                   icon="✨"
                   name={isEn ? 'Aurora Bloom (Subterranean Phenomenon)' : 'ปรากฏการณ์ออโรร่าใต้พิภพ (Aurora Bloom)'}
                   desc={isEn
-                    ? 'Summons rare Aurora Spores that float into the garden awarding Astral Petals (🌸 +1 to +3). Also unlocks the 50B Seed Transmutation sink in Prestige.'
-                    : 'เรียกสปอร์ออโรร่าลอยลงมามอบเกสรดวงดาว (🌸 +1 ถึง +3 ดอก) พร้อมปลดล็อกหลุมหลอมเมล็ด 50,000,000,000 เมล็ดเป็นเกสรดวงดาวในร้าน Prestige'}
+                    ? 'Summons rare Aurora Spores that float into the garden awarding Astral Petals (🌸 +1 to +3). Also unlocks 10k Essence & 50B Seed Astral Transmutation in Prestige.'
+                    : 'เรียกสปอร์ออโรร่าลอยลงมามอบเกสรดวงดาว (🌸 +1 ถึง +3 ดอก) พร้อมปลดล็อกแท่นหลอม 10,000 ละออง & 50B เมล็ดเป็นเกสรดวงดาวในร้าน Prestige'}
                   customBadge={
                     state.transcendence?.auroraBloomUnlocked ? (
                       <span

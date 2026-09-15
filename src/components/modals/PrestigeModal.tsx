@@ -58,6 +58,7 @@ interface PrestigeModalProps {
   onBuyOfflineCapUpgrade: () => void;
   onOpenWardrobe?: () => void;
   onTransmuteSeedsToPetals?: (qty?: number) => void;
+  onTransmuteEssencesToPetals?: (qty?: number) => void;
 }
 
 export const PrestigeModal: React.FC<PrestigeModalProps> = ({
@@ -78,6 +79,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   onBuyLuckyDuration,
   onBuyOfflineCapUpgrade,
   onTransmuteSeedsToPetals,
+  onTransmuteEssencesToPetals,
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -188,12 +190,14 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               {/* ===== Astral Transmutation ===== */}
               {state.transcendence?.auroraBloomUnlocked && (
                 <>
-                  {renderSectionHeader(isEn ? '🌸 Astral Transmutation (Seed Sink)' : '🌸 หลอมมิติเกสรดวงดาว (ระบายเมล็ด)')}
+                  {renderSectionHeader(isEn ? '🌸 Astral Transmutation (Essence & Seed Sink)' : '🌸 หลอมมิติเกสรดวงดาว (ระบายละออง & เมล็ด)')}
                   <SeedTransmuteAltar
                     eternalSeeds={state.eternalSeeds}
+                    gaiaEssences={state.transcendence?.gaiaEssences || 0}
                     astralPetals={state.transcendence?.astralPetals || 0}
                     isEn={isEn}
                     onTransmuteSeedsToPetals={onTransmuteSeedsToPetals}
+                    onTransmuteEssencesToPetals={onTransmuteEssencesToPetals}
                   />
                 </>
               )}
@@ -257,19 +261,25 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
               {/* ===== Events & Buffs ===== */}
               {renderSectionHeader(tr.prestigeSecEvents)}
-              <PrestigeUpgradeRow
-                title={isEn ? '💰 Event Value Booster' : '💰 โบนัสอีเว้น'}
-                badge={isEn ? `Lv.${Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0)} (+${Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0) * 10}%)` : `เลเวล ${Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0)} (+${Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0) * 10}%)`}
-                desc={isEn
-                  ? `Increases reward gains from floating events by +10% (Currently +${Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0) * 10}%)`
-                  : `เพิ่มผลตอบแทนของกล่องสมบัติ/บัฟ/โชคดี ที่ได้จากการคลิกอีเว้นอีก 10% (ตอนนี้ +${Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0) * 10}%)`}
-                costFn={eventBonusCost}
-                currentLevel={Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0)}
-                maxLevel={EVENT_BONUS_MAX_LEVEL}
-                seeds={seeds}
-                onBuy={onBuyEventBonus}
-                isEn={isEn}
-              />
+              {(() => {
+                const curLvl = Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0);
+                const bonusPct = Number((curLvl * 0.1).toFixed(1)).toLocaleString();
+                return (
+                  <PrestigeUpgradeRow
+                    title={isEn ? '💰 Event Value Booster' : '💰 โบนัสอีเว้น'}
+                    badge={isEn ? `Lv.${curLvl.toLocaleString()} (+${bonusPct}%)` : `เลเวล ${curLvl.toLocaleString()} (+${bonusPct}%)`}
+                    desc={isEn
+                      ? `Increases reward gains from floating events by +0.1% (Currently +${bonusPct}%)`
+                      : `เพิ่มผลตอบแทนของกล่องสมบัติ/บัฟ/โชคดี ที่ได้จากการคลิกอีเว้นอีก 0.1% (ตอนนี้ +${bonusPct}%)`}
+                    costFn={eventBonusCost}
+                    currentLevel={curLvl}
+                    maxLevel={EVENT_BONUS_MAX_LEVEL}
+                    seeds={seeds}
+                    onBuy={onBuyEventBonus}
+                    isEn={isEn}
+                  />
+                );
+              })()}
 
               <PrestigeUpgradeRow
                 title={isEn ? '⏳ Extended Surge Duration' : '⏳ ขยายเวลาบัฟ'}

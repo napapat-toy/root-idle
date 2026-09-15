@@ -4,41 +4,50 @@ export const AURA_ROOTS_COST = 100; // Starter skin (100 seeds)
 
 export const SKIN_COSTS: Record<SkinId, number> = {
   none: 0,
-  // 🟢 Starter Tier (100 - 500 Seeds)
+  // 🟢 Tier 1: เมล็ดนิรันดร์ 🌌 (Starter / Natural Tier: 100 - 50,000 Seeds)
   rainbow: 100,
   sakura: 250,
   cafe: 500,
-  // 🟡 Mid-Tier (5,000 - 50,000 Seeds)
   autumn: 5000,
   ocean: 15000,
   frost: 30000,
-  sunset: 50000,
   sameorigin: 50000,
-  // 🟣 Luxury / Endgame Tier (250,000 - 1,000,000 Seeds)
-  mystic: 250000,
-  cyberpunk: 500000,
-  grayscale: 500000,
-  gradient: 750000,
-  nebula: 1000000,
-  imperial: 1000000,
+  // 🟡 Tier 2: ละอองชีวิต 🌍 (Essence Tier: Costs in SKIN_ESSENCE_COSTS)
+  sunset: 0,
+  mystic: 0,
+  grayscale: 0,
+  gradient: 0,
+  cyberpunk: 0,
+  // 🌸 Tier 3: เกสรดวงดาว 🌸 (Astral Petals Tier: Costs in SKIN_PETAL_COSTS)
+  nebula: 0,
+  imperial: 0,
+  timeless_aurora: 0,
+  starlight_prism: 0,
   // 🏆 Subterranean Trials Exclusive Rewards
   drought: 0,
   obsidian: 0,
   eclipse: 0,
   permafrost: 0,
   fulminant: 0,
-  // 🌸 Astral Bloom Mythic Tier (Astral Petals 🌸)
-  timeless_aurora: 0,
-  starlight_prism: 0,
+};
+
+export const SKIN_ESSENCE_COSTS: Partial<Record<SkinId, number>> = {
+  sunset: 200,
+  mystic: 400,
+  grayscale: 600,
+  gradient: 800,
+  cyberpunk: 1000,
 };
 
 export const SKIN_PETAL_COSTS: Partial<Record<SkinId, number>> = {
-  timeless_aurora: 25,
-  starlight_prism: 50,
+  nebula: 100,
+  imperial: 150,
+  timeless_aurora: 250,
+  starlight_prism: 500,
 };
 
 export const UI_THEME_PETAL_COSTS: Partial<Record<UIThemeId, number>> = {
-  subterranean_borealis: 10,
+  subterranean_borealis: 50,
 };
 
 export const SKIN_PRESTIGE_KEYS: Record<SkinId, keyof PrestigeState | null> = {
@@ -66,29 +75,33 @@ export const SKIN_PRESTIGE_KEYS: Record<SkinId, keyof PrestigeState | null> = {
   starlight_prism: 'skinStarlightPrism',
 };
 
-export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid' | 'luxury' | 'trial' | 'astral'; always?: boolean }> = [
+export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid' | 'luxury' | 'trial' | 'astral' | 'essence'; always?: boolean }> = [
   { id: 'none', name: 'ปกติ (ไม่มีสกิน)', tier: 'starter', always: true },
+  // 🟢 Tier 1: เมล็ดนิรันดร์ 🌌
   { id: 'rainbow', name: '🌈 รุ้ง/ทอง', tier: 'starter' },
   { id: 'sakura', name: '🌸 ซากุระราตรี', tier: 'starter' },
   { id: 'cafe', name: '☕ คาเฟ่มัทฉะ', tier: 'starter' },
-  { id: 'autumn', name: '🍂 ใบไม้เปลี่ยนสี', tier: 'mid' },
-  { id: 'ocean', name: '🌊 ห้วงสมุทรลึก', tier: 'mid' },
-  { id: 'frost', name: '❄️ มหานทีเยือกแข็ง', tier: 'mid' },
-  { id: 'sunset', name: '🏜️ อาทิตย์อัสดง', tier: 'mid' },
-  { id: 'sameorigin', name: '🌿 รากเดียวกัน', tier: 'mid' },
-  { id: 'mystic', name: '🔮 ป่ามนตราแดนภูติ', tier: 'luxury' },
-  { id: 'cyberpunk', name: '⚡ ไซเบอร์พังก์', tier: 'luxury' },
-  { id: 'grayscale', name: '⚫ ขาวดำ', tier: 'luxury' },
-  { id: 'gradient', name: '🍃 เขียวมรกต', tier: 'luxury' },
-  { id: 'nebula', name: '🌌 มิติเนบิวลา', tier: 'luxury' },
-  { id: 'imperial', name: '🪙 มรดกทองคำ', tier: 'luxury' },
+  { id: 'autumn', name: '🍂 ใบไม้เปลี่ยนสี', tier: 'starter' },
+  { id: 'ocean', name: '🌊 ห้วงสมุทรลึก', tier: 'starter' },
+  { id: 'frost', name: '❄️ มหานทีเยือกแข็ง', tier: 'starter' },
+  { id: 'sameorigin', name: '🌿 รากเดียวกัน', tier: 'starter' },
+  // 🟡 Tier 2: ละอองชีวิต 🌍
+  { id: 'sunset', name: '🏜️ อาทิตย์อัสดง', tier: 'essence' },
+  { id: 'mystic', name: '🔮 ป่ามนตราแดนภูติ', tier: 'essence' },
+  { id: 'grayscale', name: '⚫ ขาวดำ', tier: 'essence' },
+  { id: 'gradient', name: '🍃 เขียวมรกต', tier: 'essence' },
+  { id: 'cyberpunk', name: '⚡ ไซเบอร์พังก์', tier: 'essence' },
+  // 🌸 Tier 3: เกสรดวงดาว 🌸
+  { id: 'nebula', name: '🌌 มิติเนบิวลา', tier: 'astral' },
+  { id: 'imperial', name: '🪙 มรดกทองคำ', tier: 'astral' },
+  { id: 'timeless_aurora', name: '🌸 ออโรร่าไร้กาลเวลา', tier: 'astral' },
+  { id: 'starlight_prism', name: '✨ ผลึกคริสตัลดวงดาว', tier: 'astral' },
+  // 🏆 Subterranean Trials
   { id: 'drought', name: '🏜️ ซาฮาราโบราณ', tier: 'trial' },
   { id: 'obsidian', name: '🌋 ออบซิเดียนเพลิง', tier: 'trial' },
   { id: 'eclipse', name: '🌑 สุริยคราสอนธการ', tier: 'trial' },
   { id: 'permafrost', name: '❄️ ผลึกเหมันต์นิรันดร์', tier: 'trial' },
   { id: 'fulminant', name: '⚡ สายฟ้าใต้ภพ', tier: 'trial' },
-  { id: 'timeless_aurora', name: '🌸 ออโรร่าไร้กาลเวลา', tier: 'astral' },
-  { id: 'starlight_prism', name: '✨ ผลึกคริสตัลดวงดาว', tier: 'astral' },
 ];
 
 export const SKIN_CYCLE_ORDER: SkinId[] = [

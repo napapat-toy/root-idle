@@ -81,6 +81,7 @@ export default function Home() {
     toggleHyperdrive,
     buyAuroraBloom,
     transmuteSeedsToPetals,
+    transmuteEssencesToPetals,
     startTrial,
     abandonTrial,
     claimUnearthedRelic,
@@ -231,6 +232,7 @@ export default function Home() {
         onBuyLuckyDuration={buyLuckyDuration}
         onBuyOfflineCapUpgrade={buyOfflineCapUpgrade}
         onTransmuteSeedsToPetals={transmuteSeedsToPetals}
+        onTransmuteEssencesToPetals={transmuteEssencesToPetals}
       />
 
       {/* Achievements modal */}

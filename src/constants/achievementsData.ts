@@ -1200,10 +1200,19 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     id: 'astral_petal_50',
     category: 'luck',
     title: 'สวนบุปผาดวงดารานิรันดร์',
-    desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 50 กลีบ (พร้อมแลกสกินระดับสูงสุด)',
+    desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 50 กลีบ (พร้อมแลกธีมหน้าต่างแสงเหนือ)',
     icon: '🌺',
-    bonusPct: 12,
+    bonusPct: 10,
     check: (s) => (s.transcendence?.astralPetals || 0) >= 50,
+  },
+  {
+    id: 'astral_petal_500',
+    category: 'luck',
+    title: 'มหาดวงดาราคอสมิกแห่งไกอา',
+    desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 500 กลีบ (พร้อมแลกสกินระดับสูงสุด)',
+    icon: '✨',
+    bonusPct: 20,
+    check: (s) => (s.transcendence?.astralPetals || 0) >= 500,
   },
 
   // ===== 🎨 หมวด 7: สกิน & แฟชั่นใต้พิภพ (Cosmetics & Aesthetics) =====

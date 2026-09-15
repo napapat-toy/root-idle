@@ -6,6 +6,7 @@ import {
   SKIN_COSTS,
   SKIN_DEFS,
   SKIN_DESCRIPTIONS,
+  SKIN_ESSENCE_COSTS,
   SKIN_PETAL_COSTS,
   SKIN_PRESTIGE_KEYS,
   SKIN_SWATCHES,
@@ -196,12 +197,17 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
   const totalCount = isCurrentTabSkins ? SKIN_DEFS.length : UI_THEME_DEFS.length;
   const isTrialTier = isCurrentTabSkins ? currentSkinDef.tier === 'trial' : currentThemeDef.tier === 'trial';
   const isAstralTier = isCurrentTabSkins ? currentSkinDef.tier === 'astral' : currentThemeDef.tier === 'astral';
+  const isEssenceTier = isCurrentTabSkins && currentSkinDef.tier === 'essence';
   const currentPetalCost = isCurrentTabSkins
     ? (SKIN_PETAL_COSTS[currentSkinId] || 0)
     : (UI_THEME_PETAL_COSTS[currentThemeId] || 0);
+  const currentEssenceCost = isCurrentTabSkins ? (SKIN_ESSENCE_COSTS[currentSkinId] || 0) : 0;
   const myPetals = state.transcendence?.astralPetals || 0;
+  const myEssences = state.transcendence?.gaiaEssences || 0;
   const canAfford = isAstralTier
     ? myPetals >= currentPetalCost
+    : isEssenceTier
+    ? myEssences >= currentEssenceCost
     : (!isTrialTier && state.eternalSeeds >= curCost);
 
   return (
@@ -223,26 +229,38 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         style={{
-          width: 'min(94vw, 440px)',
+          width: 'min(95vw, 480px)',
           background: 'var(--bg-panel)',
           border: '1.5px solid var(--accent-glow-dim)',
           borderRadius: '22px',
           boxShadow: '0 25px 65px rgba(0, 0, 0, 0.85), 0 0 1px 1px rgba(255, 255, 255, 0.12), 0 0 24px rgba(0, 0, 0, 0.5)',
-          padding: '18px 20px',
+          padding: '16px 20px',
           display: 'flex',
           flexDirection: 'column',
           gap: '12px',
           animation: 'modalPopIn 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        {/* Top Bar: Title & Close Button */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '18px' }}>🎨</span>
-            <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--root-cream)' }}>
-              {tr.wardrobeTitle}
+        {/* Top Bar: Title & Right Group (Currency Badge + Close Button) */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+            <span style={{ fontSize: '18px', flexShrink: 0 }}>🎨</span>
+            <span
+              style={{
+                fontSize: '15px',
+                fontWeight: 700,
+                color: 'var(--root-cream)',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {isEn ? 'Wardrobe & Cosmetics' : 'ห้องแต่งตัว & การตกแต่ง'}
             </span>
-            {!!state.transcendence?.auroraBloomUnlocked && (
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            {isAstralTier ? (
               <span
                 style={{
                   fontSize: '11px',
@@ -250,35 +268,114 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
                   color: '#f472b6',
                   background: 'rgba(244, 114, 182, 0.15)',
                   border: '1px solid rgba(244, 114, 182, 0.35)',
-                  padding: '2px 8px',
+                  padding: '3px 10px',
                   borderRadius: '999px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  boxShadow: '0 0 10px rgba(244, 114, 182, 0.2)',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
+                title={isEn ? `Astral Petals: ${fmtInt(myPetals)}` : `เกสรดวงดาว: ${fmtInt(myPetals)}`}
               >
-                {fmtInt(myPetals)} 🌸
+                <span>{fmtInt(myPetals)}</span>
+                <span>🌸</span>
+              </span>
+            ) : isEssenceTier ? (
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#34d399',
+                  background: 'rgba(52, 211, 153, 0.15)',
+                  border: '1px solid rgba(52, 211, 153, 0.35)',
+                  padding: '3px 10px',
+                  borderRadius: '999px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  boxShadow: '0 0 10px rgba(52, 211, 153, 0.2)',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+                title={isEn ? `Gaia Essences: ${fmtInt(myEssences)}` : `ละอองชีวิต: ${fmtInt(myEssences)}`}
+              >
+                <span>{fmtInt(myEssences)}</span>
+                <span>🌍</span>
+              </span>
+            ) : isTrialTier ? (
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#facc15',
+                  background: 'rgba(234, 179, 8, 0.15)',
+                  border: '1px solid rgba(234, 179, 8, 0.35)',
+                  padding: '3px 10px',
+                  borderRadius: '999px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  boxShadow: '0 0 10px rgba(234, 179, 8, 0.2)',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+                title={isEn ? 'Subterranean Trial Reward' : 'รางวัลจากการทดลองแห่งผืนพิภพ'}
+              >
+                <span>⚔️</span>
+                <span>{isEn ? 'Trial' : 'การทดลอง'}</span>
+              </span>
+            ) : (
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#60a5fa',
+                  background: 'rgba(96, 165, 250, 0.15)',
+                  border: '1px solid rgba(96, 165, 250, 0.35)',
+                  padding: '3px 10px',
+                  borderRadius: '999px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  boxShadow: '0 0 10px rgba(96, 165, 250, 0.2)',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+                title={isEn ? `Eternal Seeds: ${fmtInt(state.eternalSeeds)}` : `เมล็ดนิรันดร์: ${fmtInt(state.eternalSeeds)}`}
+              >
+                <span>{fmtInt(state.eternalSeeds)}</span>
+                <span>🌌</span>
               </span>
             )}
-          </div>
 
-          <button
-            onClick={handleClose}
-            style={{
-              width: '30px',
-              height: '30px',
-              borderRadius: '50%',
-              background: 'var(--bg-panel-2)',
-              border: '1px solid var(--line-soil)',
-              color: 'var(--root-cream)',
-              fontSize: '18px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.15s ease',
-            }}
-            title={tr.close}
-          >
-            &times;
-          </button>
+            <button
+              onClick={handleClose}
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '50%',
+                background: 'var(--bg-panel-2)',
+                border: '1px solid var(--line-soil)',
+                color: 'var(--root-cream)',
+                fontSize: '18px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                transition: 'all 0.15s ease',
+              }}
+              title={tr.close}
+            >
+              &times;
+            </button>
+          </div>
         </div>
 
         {/* Tab Switcher Pills */}
@@ -367,9 +464,12 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
           curOwned={curOwned}
           isTrialTier={isTrialTier}
           isAstralTier={isAstralTier}
+          isEssenceTier={isEssenceTier}
           canAfford={canAfford}
           currentPetalCost={currentPetalCost}
+          currentEssenceCost={currentEssenceCost}
           myPetals={myPetals}
+          myEssences={myEssences}
           curCost={curCost}
           eternalSeeds={state.eternalSeeds}
           isEn={isEn}

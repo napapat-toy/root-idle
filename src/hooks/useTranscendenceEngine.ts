@@ -22,6 +22,7 @@ import {
   HYPERDRIVE_COST,
   AURORA_BLOOM_COST,
   SEED_TRANSMUTE_COST,
+  ESSENCE_TRANSMUTE_COST,
   TRIAL_DEFS,
 } from '@/constants/gameData';
 
@@ -144,6 +145,30 @@ export function useTranscendenceEngine({
       eternalSeeds: prev.eternalSeeds - totalCost,
       transcendence: {
         ...prev.transcendence,
+        astralPetals: (prev.transcendence?.astralPetals || 0) + count,
+      },
+    }));
+    const isEn = cur.lang === 'en';
+    showFloatingText(
+      250,
+      180,
+      isEn ? `🌸 +${count} Astral Petal${count > 1 ? 's' : ''}!` : `🌸 +${count} เกสรดวงดาว!`,
+      '#f472b6'
+    );
+  }, [stateRef, setState, showFloatingText]);
+
+  const transmuteEssencesToPetals = useCallback((qty = 1) => {
+    const cur = stateRef.current;
+    if (!cur.transcendence?.auroraBloomUnlocked) return;
+    const count = Math.max(1, Math.floor(qty));
+    const totalCost = count * ESSENCE_TRANSMUTE_COST;
+    if ((cur.transcendence?.gaiaEssences || 0) < totalCost) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: (prev.transcendence?.gaiaEssences || 0) - totalCost,
         astralPetals: (prev.transcendence?.astralPetals || 0) + count,
       },
     }));
@@ -323,6 +348,7 @@ export function useTranscendenceEngine({
     toggleHyperdrive,
     buyAuroraBloom,
     transmuteSeedsToPetals,
+    transmuteEssencesToPetals,
     startTrial,
     abandonTrial,
   };
