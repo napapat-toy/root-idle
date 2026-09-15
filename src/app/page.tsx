@@ -101,11 +101,11 @@ export default function Home() {
   const [wardrobeModalOpen, setWardrobeModalOpen] = useState(false);
   const [relicsModalOpen, setRelicsModalOpen] = useState(false);
   const [automationModalOpen, setAutomationModalOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   React.useEffect(() => {
     if (typeof document !== 'undefined') {

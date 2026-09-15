@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { ActiveBuff, BiomeId, Branch, FloatingTextItem, GameEventItem, Language, SkinId } from '@/types/game';
 import { getBranchColor } from '@/lib/treeGenerator';
 import { BIOME_DEFS, RELIC_DEFS, RELIC_RARITY_INFO, getHighestOwnedRootIndex, getSubterraneanDepthInfo } from '@/constants/gameData';
@@ -268,8 +268,14 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
     return RELIC_DEFS.find(r => r.id === unclaimedRelicId) || null;
   }, [unclaimedRelicId]);
 
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!activeBuff && !activeLuckyBuff) return;
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, [activeBuff, activeLuckyBuff]);
+
   const buffBadges: string[] = [];
-  const now = Date.now();
   if (activeBuff && now < activeBuff.expiresAt) {
     const remain = Math.ceil((activeBuff.expiresAt - now) / 1000);
     buffBadges.push(`⚡ ×${activeBuff.multiplier.toFixed(2)} (${remain}${isEn ? 's' : 'วิ'})`);

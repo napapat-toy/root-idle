@@ -61,7 +61,8 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
 
   // Initialize index to currently equipped items when modal opens
   useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) return;
+    const timer = setTimeout(() => {
       const curSkin = state.prestige.activeSkin;
       const sIdx = SKIN_DEFS.findIndex(s => s.id === curSkin);
       const initSIdx = sIdx !== -1 ? sIdx : 0;
@@ -71,7 +72,8 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
       const tIdx = UI_THEME_DEFS.findIndex(t => t.id === curTheme);
       const initTIdx = tIdx !== -1 ? tIdx : 0;
       setThemeIndex(initTIdx);
-    }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [isOpen, state.prestige.activeSkin, state.prestige.activeUITheme]);
 
   const isSkinOwned = useCallback((id: SkinId) => {
@@ -80,49 +82,50 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
     if (id === 'obsidian') return !!state.transcendence?.completedTrials?.basalt_strata;
     const key = SKIN_PRESTIGE_KEYS[id];
     return key ? !!state.prestige[key as keyof typeof state.prestige] : false;
-  }, [state.prestige, state.transcendence]);
+  }, [state]);
 
   const isUIThemeOwned = useCallback((id: UIThemeId) => {
     if (id === 'classic') return true;
     if (id === 'void_sovereign') return !!state.transcendence?.completedTrials?.void_anomaly;
     const key = UI_THEME_PRESTIGE_KEYS[id];
     return key ? !!state.prestige[key as keyof typeof state.prestige] : false;
-  }, [state.prestige, state.transcendence]);
+  }, [state]);
 
   // Live preview current item as index shifts
   useEffect(() => {
     if (!isOpen) return;
     if (activeTab === 'skins') {
-      const targetSkin = SKIN_DEFS[skinIndex]?.id;
-      if (targetSkin) onStartPreviewSkin(targetSkin);
+      const skin = SKIN_DEFS[skinIndex];
+      if (skin) onStartPreviewSkin(skin.id);
     } else {
-      const targetTheme = UI_THEME_DEFS[themeIndex]?.id;
-      if (targetTheme) onStartPreviewUITheme(targetTheme);
+      const theme = UI_THEME_DEFS[themeIndex];
+      if (theme) onStartPreviewUITheme(theme.id);
     }
-  }, [activeTab, skinIndex, themeIndex, isOpen, onStartPreviewSkin, onStartPreviewUITheme]);
+  }, [isOpen, activeTab, skinIndex, themeIndex, onStartPreviewSkin, onStartPreviewUITheme]);
 
-  const handleClose = () => {
+  // Clean preview on exit
+  const handleClose = useCallback(() => {
     onClearPreview();
     onClose();
-  };
+  }, [onClearPreview, onClose]);
 
   const handlePrev = useCallback(() => {
     if (activeTab === 'skins') {
-      setSkinIndex(prev => (prev === 0 ? SKIN_DEFS.length - 1 : prev - 1));
+      setSkinIndex(prev => (prev > 0 ? prev - 1 : SKIN_DEFS.length - 1));
     } else {
-      setThemeIndex(prev => (prev === 0 ? UI_THEME_DEFS.length - 1 : prev - 1));
+      setThemeIndex(prev => (prev > 0 ? prev - 1 : UI_THEME_DEFS.length - 1));
     }
   }, [activeTab]);
 
   const handleNext = useCallback(() => {
     if (activeTab === 'skins') {
-      setSkinIndex(prev => (prev === SKIN_DEFS.length - 1 ? 0 : prev + 1));
+      setSkinIndex(prev => (prev < SKIN_DEFS.length - 1 ? prev + 1 : 0));
     } else {
-      setThemeIndex(prev => (prev === UI_THEME_DEFS.length - 1 ? 0 : prev + 1));
+      setThemeIndex(prev => (prev < UI_THEME_DEFS.length - 1 ? prev + 1 : 0));
     }
   }, [activeTab]);
 
-  // Keyboard navigation Left / Right
+  // Keyboard navigation: Left/Right arrows or A/D to cycle, Esc to close
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -136,7 +139,7 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, handlePrev, handleNext]);
+  }, [isOpen, handlePrev, handleNext, handleClose]);
 
   // Touch Swipe Handlers for mobile gestures
   const onTouchStart = (e: React.TouchEvent) => {

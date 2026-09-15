@@ -29,9 +29,15 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
   const [floatingTexts, setFloatingTexts] = useState<FloatingTextItem[]>([]);
 
   const activeBuffRef = useRef<ActiveBuff | null>(activeBuff);
-  activeBuffRef.current = activeBuff;
   const activeLuckyBuffRef = useRef<ActiveBuff | null>(activeLuckyBuff);
-  activeLuckyBuffRef.current = activeLuckyBuff;
+
+  useEffect(() => {
+    activeBuffRef.current = activeBuff;
+  }, [activeBuff]);
+
+  useEffect(() => {
+    activeLuckyBuffRef.current = activeLuckyBuff;
+  }, [activeLuckyBuff]);
 
   // Event timers & single-source-of-truth claim protection
   const eventTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -39,6 +45,8 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
   const autoEventClaimRef = useRef<NodeJS.Timeout | null>(null);
   const superJackpotExpireTimerRef = useRef<NodeJS.Timeout | null>(null);
   const claimedEventIdsRef = useRef<Set<number>>(new Set());
+  const scheduleNextEventRef = useRef<() => void>(() => {});
+  const claimEventRef = useRef<(ev: GameEventItem) => void>(() => {});
 
   // Multiplier calculation from active buffs
   const currentBuffMultiplier = useCallback(() => {
@@ -61,8 +69,6 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       setFloatingTexts(prev => prev.filter(item => item.id !== id));
     }, 1600);
   }, []);
-
-  const claimEventRef = useRef<(ev: GameEventItem) => void>(() => {});
 
   // Event trigger & claim
   const claimEvent = useCallback((ev: GameEventItem) => {
@@ -217,7 +223,9 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     }
   }, [showFloatingText, totalRate, setState, stateRef]);
 
-  claimEventRef.current = claimEvent;
+  useEffect(() => {
+    claimEventRef.current = claimEvent;
+  }, [claimEvent]);
 
   // Clean reset function for Prestige / Transcendence / Hard Reset
   const clearEventsAndBuffs = useCallback(() => {
@@ -281,10 +289,14 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       activeEventExpireRef.current = setTimeout(() => {
         setActiveEvents(prev => prev.filter(e => e.id !== id));
         claimedEventIdsRef.current.delete(id);
-        scheduleNextEvent();
+        scheduleNextEventRef.current();
       }, 12000);
     }, delay);
   }, [claimEvent, stateRef]);
+
+  useEffect(() => {
+    scheduleNextEventRef.current = scheduleNextEvent;
+  }, [scheduleNextEvent]);
 
   useEffect(() => {
     scheduleNextEvent();

@@ -87,14 +87,14 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
     return MODULE_DEFS.filter(def => {
       return echoUnlockedFor(state, def.id) || (state.echoes[def.id] || 0) > 0;
     }).map(d => d.id);
-  }, [state.rootUpgrades, state.echoes, state.owned]);
+  }, [state]);
 
   // Unlocked Synergies
   const unlockedSynergyIds = useMemo(() => {
     return MODULE_DEFS.filter(def => {
       return rootSynergyUnlocked(state, def.id);
     }).map(d => d.id);
-  }, [state.owned, state.rootSynergies]);
+  }, [state]);
 
   // Unpurchased Synergies
   const unpurchasedSynergyIds = useMemo(() => {

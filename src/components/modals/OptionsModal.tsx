@@ -65,10 +65,12 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) return;
+    const timer = setTimeout(() => {
       refreshSlots();
       setSubModal('none');
-    }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [isOpen]);
 
   if (!isOpen) return null;

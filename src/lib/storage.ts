@@ -137,7 +137,7 @@ export function payloadToState(payload: SavePayload): GameState {
     rootSynergies: payload.syn || {},
     relics: payload.rel || {},
     unclaimedRelicId: null,
-    activeBiome: (payload.bm as any) || 'topsoil',
+    activeBiome: payload.bm || 'topsoil',
     buyQty: BUY_QTY_OPTIONS.includes(payload.q || 1) ? (payload.q as number) : 1,
     lockGapBackfilled: false,
     totalPlayTimeSeconds: payload.pt || 0,

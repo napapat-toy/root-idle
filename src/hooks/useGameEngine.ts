@@ -53,17 +53,27 @@ import { useAchievementsEngine } from './useAchievementsEngine';
 import { useCosmeticsEngine } from './useCosmeticsEngine';
 
 export function useGameEngine() {
-  const [state, setState] = useState<GameState>(createFreshState);
+  const [state, setState] = useState<GameState>(() => {
+    if (typeof window !== 'undefined') {
+      const loaded = loadFromLocalStorage();
+      if (loaded?.state) return loaded.state;
+    }
+    return createFreshState();
+  });
   const [offlineModal, setOfflineModal] = useState<{ gain: number; dt: number } | null>(null);
 
   const stateRef = useRef<GameState>(state);
-  stateRef.current = state;
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+
   const relicPityMinutesRef = useRef(0);
 
-  // Rate calculation
+  // Rate calculation with decoupled buff multiplier ref
+  const currentBuffMultiplierRef = useRef<() => number>(() => 1);
   const totalRate = useCallback(() => {
     const base = baseTotalRate(stateRef.current);
-    return base * randomEvents.currentBuffMultiplier();
+    return base * currentBuffMultiplierRef.current();
   }, []);
 
   // 1. Random events & temporary buffs sub-hook
@@ -72,6 +82,15 @@ export function useGameEngine() {
     setState,
     totalRate,
   });
+
+  useEffect(() => {
+    currentBuffMultiplierRef.current = randomEvents.currentBuffMultiplier;
+  }, [randomEvents.currentBuffMultiplier]);
+
+  const currentTotalRate = useMemo(() => {
+    const base = baseTotalRate(state);
+    return base * randomEvents.currentBuffMultiplier();
+  }, [state, randomEvents]);
 
   // 2. Cosmetics sub-hook
   const cosmetics = useCosmeticsEngine({
@@ -424,15 +443,14 @@ export function useGameEngine() {
     // Water ripple / visual interaction without clicker nutrient burst
   }, []);
 
-  // INITIAL LOAD & OFFLINE PROGRESS
+  // INITIAL LOAD OFFLINE PROGRESS
   useEffect(() => {
     const loaded = loadFromLocalStorage();
-    if (loaded) {
+    if (loaded && loaded.lastTs) {
       const { state: loadedState, lastTs } = loaded;
-      setState(loadedState);
       stateRef.current = loadedState;
 
-      if (lastTs) {
+      const timer = setTimeout(() => {
         const dt = Math.min((Date.now() - lastTs) / 1000, currentOfflineCapSeconds(loadedState));
         const rate = baseTotalRate(loadedState);
         const permafrostOfflineMult = isTrialCompleted(loadedState, 'permafrost') ? 1.20 : 1.0;
@@ -447,7 +465,8 @@ export function useGameEngine() {
             runEarned: prev.runEarned + gain,
           }));
         }
-      }
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -587,7 +606,7 @@ export function useGameEngine() {
   return {
     state,
     lang: state.lang || 'th',
-    totalRate: totalRate(),
+    totalRate: currentTotalRate,
     activeBuff: randomEvents.activeBuff,
     activeLuckyBuff: randomEvents.activeLuckyBuff,
     activeEvents: randomEvents.activeEvents,
