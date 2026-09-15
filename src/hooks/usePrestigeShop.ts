@@ -3,11 +3,8 @@
 import { useCallback } from 'react';
 import { AutoRootMode, GameState, SkinId } from '@/types/game';
 import {
-  AUTO_EVENT_COST,
   AUTO_RESET_COST,
-  AUTO_ROOT_ALL_COST,
   AUTO_ROOT_COST,
-  AUTO_ROOT_SMART_COST,
   calcBulkPrestigeUpgrade,
   EVENT_BONUS_MAX_LEVEL,
   eventBonusCost,
@@ -15,8 +12,6 @@ import {
   eventDurationMaxed,
   goldenSeedCost,
   GOLDEN_SEED_MAX_LEVEL,
-  LUCKY_CHANCE_MAX,
-  LUCKY_CHANCE_STEP,
   luckyChanceCost,
   luckyChanceMaxed,
   luckyDurationCost,
@@ -34,7 +29,6 @@ import {
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
 } from '@/constants/gameData';
-import { getActiveAutoRootMode, getAvailableAutoRootModes } from '@/lib/autoBuyer';
 
 interface UsePrestigeShopProps {
   stateRef: React.MutableRefObject<GameState>;

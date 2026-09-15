@@ -79,7 +79,6 @@ export function evaluateAutoBuy(
     return { executed: false, waitingForTarget: null };
   }
 
-  const mode = getActiveAutoRootMode(state);
   const isSmart = true;
   const isAll = true;
 

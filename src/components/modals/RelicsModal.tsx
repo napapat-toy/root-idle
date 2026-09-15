@@ -6,7 +6,6 @@ import {
   BIOME_DEFS,
   RELIC_DEFS,
   RELIC_RARITY_INFO,
-  hasRelic,
   isMasterRelicActive,
   relicCount,
   relicCycleResonanceStack,
@@ -223,7 +222,6 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
                   {RELIC_DEFS.map((relic, idx) => {
                     const count = relicCount(state, relic.id);
                     const isOwned = count > 0;
-                    const isMaxed = relicMaxed(state, relic.id);
                     const isSelected = relic.id === selectedRelicId;
                     const rarityInfo = RELIC_RARITY_INFO[relic.rarity];
 

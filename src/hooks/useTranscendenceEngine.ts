@@ -3,11 +3,8 @@
 import { useCallback, useEffect } from 'react';
 import { GameState, TrialId } from '@/types/game';
 import {
-  AUTO_MANAGER_COST,
   GAIA_TOUCH_MAX_LEVEL,
   gaiaTouchCost,
-  goldenSeedCost,
-  passiveRateCost,
   PRIMORDIAL_VIGOR_MAX_LEVEL,
   primordialVigorCost,
   SOIL_MEMORY_MAX_LEVEL,
@@ -25,8 +22,6 @@ import {
   HYPERDRIVE_COST,
   AURORA_BLOOM_COST,
   SEED_TRANSMUTE_COST,
-  STARTER_CULTURE_MAX_LEVEL,
-  starterCultureCost,
   TRIAL_DEFS,
 } from '@/constants/gameData';
 
@@ -35,9 +30,6 @@ interface UseTranscendenceEngineProps {
   setState: React.Dispatch<React.SetStateAction<GameState>>;
   doPrestige: () => number;
   showFloatingText: (x: number, y: number, text: string, color: string) => void;
-  buyPassiveRate: (amount?: number) => void;
-  buyGoldenSeed: (amount?: number) => void;
-  buyStarterCulture: (amount?: number) => void;
 }
 
 export function useTranscendenceEngine({
@@ -45,9 +37,6 @@ export function useTranscendenceEngine({
   setState,
   doPrestige,
   showFloatingText,
-  buyPassiveRate,
-  buyGoldenSeed,
-  buyStarterCulture,
 }: UseTranscendenceEngineProps) {
   const buyPrimordialVigor = useCallback(() => {
     const cur = stateRef.current;

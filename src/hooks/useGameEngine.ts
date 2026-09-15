@@ -7,7 +7,6 @@ import {
   Language,
 } from '@/types/game';
 import {
-  AUTO_RESET_MIN_SEEDS,
   baseTotalRate,
   bulkCostFor,
   calcPrestigeSeeds,
@@ -19,7 +18,6 @@ import {
   echoUnlockedFor,
   isTrialCompleted,
   MODULE_DEFS,
-  prestigeUnlocked,
   rootSynergyCost,
   rootSynergyUnlocked,
   rootUpgradeCost,
@@ -31,9 +29,6 @@ import {
   pickWeightedUnownedRelic,
   relicBonusSproutChance,
   relicBonusTwinSproutChance,
-  relicCount,
-  relicMaxed,
-  relicMult,
   unownedRelicList,
 } from '@/constants/gameData';
 import { buildBranchesFromLog, deriveLog } from '@/lib/treeGenerator';
@@ -48,7 +43,6 @@ import {
   saveSlot,
   saveToLocalStorage,
 } from '@/lib/storage';
-import { fmt, fmtInt } from '@/lib/formatters';
 import { MODULE_TRANSLATIONS } from '@/lib/i18n';
 
 // Sub-hooks
@@ -332,9 +326,6 @@ export function useGameEngine() {
     setState,
     doPrestige,
     showFloatingText: randomEvents.showFloatingText,
-    buyPassiveRate: prestigeShop.buyPassiveRate,
-    buyGoldenSeed: prestigeShop.buyGoldenSeed,
-    buyStarterCulture: prestigeShop.buyStarterCulture,
   });
 
   // 5. Achievements sub-hook

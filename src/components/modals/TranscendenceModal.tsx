@@ -8,12 +8,10 @@ import {
   canTranscend,
   TRANSCENDENCE_REQUIRE_YGGDRASIL,
   primordialVigorCost,
-  primordialVigorMult,
   soilMemoryCost,
   soilMemoryRetainPct,
   gaiaTouchCost,
   gaiaTouchBonusMult,
-  AUTO_MANAGER_COST,
   PRIMORDIAL_VIGOR_MAX_LEVEL,
   SOIL_MEMORY_MAX_LEVEL,
   GAIA_TOUCH_MAX_LEVEL,
@@ -98,7 +96,6 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
   const soilCost = soilMemoryCost(soilLvl);
   const soilMaxed = soilLvl >= SOIL_MEMORY_MAX_LEVEL;
 
-  const autoManagerOwned = !!state.transcendence?.autoManagerUnlocked;
   const blessingLvl = state.transcendence?.gaiaBlessingLevel || 0;
   const blessingCost = gaiaBlessingCost(blessingLvl);
   const blessingMaxed = blessingLvl >= GAIA_BLESSING_MAX_LEVEL;

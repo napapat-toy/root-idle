@@ -1,14 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AutoRootMode, GameState, Language, SkinId, UIThemeId } from '@/types/game';
-import { getActiveAutoRootMode } from '@/lib/autoBuyer';
+import { GameState, Language } from '@/types/game';
 import {
-  AUTO_EVENT_COST,
-  AUTO_RESET_COST,
-  AUTO_ROOT_ALL_COST,
   AUTO_ROOT_COST,
-  AUTO_ROOT_SMART_COST,
   calcBulkPrestigeUpgrade,
   calcPrestigeSeeds,
   EVENT_BONUS_MAX_LEVEL,
@@ -37,11 +32,9 @@ import {
   isSkinUnlocked,
   isUIThemeUnlocked,
   SKIN_DEFS,
-  SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
   UI_THEME_DEFS,
-  UI_THEME_PRESTIGE_KEYS,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { ConfirmModal } from './ConfirmModal';
@@ -57,19 +50,12 @@ interface PrestigeModalProps {
   onBuyPassiveRate: (amount?: number | 'max') => void;
   onBuyAutoRoot: () => void;
   onToggleAutoRoot: () => void;
-  onSetAutoRootMode: (mode: AutoRootMode) => void;
-  onBuyAutoRootSmart: () => void;
-  onBuyAutoRootAll: () => void;
-  onBuyAutoEvent: () => void;
-  onToggleAutoEvent: () => void;
   onBuyEventBonus: (amount?: number | 'max') => void;
   onBuyEventDuration: () => void;
   onBuyLuckyChance: () => void;
   onBuyLuckyMagnitude: (amount?: number | 'max') => void;
   onBuyLuckyDuration: (amount?: number | 'max') => void;
   onBuyOfflineCapUpgrade: () => void;
-  onBuySkin: (skinId: SkinId) => void;
-  onBuyUITheme: (themeId: UIThemeId) => void;
   onOpenWardrobe?: () => void;
   onTransmuteSeedsToPetals?: (qty?: number) => void;
 }
@@ -85,19 +71,12 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   onBuyPassiveRate,
   onBuyAutoRoot,
   onToggleAutoRoot,
-  onSetAutoRootMode,
-  onBuyAutoRootSmart,
-  onBuyAutoRootAll,
-  onBuyAutoEvent,
-  onToggleAutoEvent,
   onBuyEventBonus,
   onBuyEventDuration,
   onBuyLuckyChance,
   onBuyLuckyMagnitude,
   onBuyLuckyDuration,
   onBuyOfflineCapUpgrade,
-  onBuySkin,
-  onBuyUITheme,
   onTransmuteSeedsToPetals,
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { GameState, Language } from '@/types/game';
-import { calcPrestigeSeeds, prestigeUnlocked, isTranscendenceUnlocked, calcTranscendenceEssences, canTranscend } from '@/constants/gameData';
+import { calcPrestigeSeeds, prestigeUnlocked, isTranscendenceUnlocked, calcTranscendenceEssences } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { t } from '@/lib/i18n';
 

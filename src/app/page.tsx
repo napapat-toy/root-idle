@@ -36,7 +36,6 @@ export default function Home() {
     achievementToastQueue,
     dismissAchievementToast,
     setLanguage,
-    toggleLanguage,
     buyModule,
     buyRootUpgrade,
     buyEcho,
@@ -46,10 +45,7 @@ export default function Home() {
     claimOffline,
     doPrestige,
     doHardReset,
-    toggleSkin,
     setSkin,
-    ownedUIThemeList,
-    toggleUITheme,
     setUITheme,
     buyUITheme,
     previewSkin,
@@ -63,15 +59,6 @@ export default function Home() {
     buyGoldenSeed,
     buyPassiveRate,
     buyAutoRoot,
-    buyAutoRootSmart,
-    buyAutoRootAll,
-    setAutoRootMode,
-    cycleAutoRootMode,
-    buyAutoEvent,
-    toggleAutoEvent,
-    buyAutoReset,
-    toggleAutoReset,
-    setAutoResetThreshold,
     toggleAutoRoot,
     buyEventBonus,
     buyEventDuration,
@@ -238,19 +225,12 @@ export default function Home() {
         onBuyPassiveRate={buyPassiveRate}
         onBuyAutoRoot={buyAutoRoot}
         onToggleAutoRoot={toggleAutoRoot}
-        onSetAutoRootMode={setAutoRootMode}
-        onBuyAutoRootSmart={buyAutoRootSmart}
-        onBuyAutoRootAll={buyAutoRootAll}
-        onBuyAutoEvent={buyAutoEvent}
-        onToggleAutoEvent={toggleAutoEvent}
         onBuyEventBonus={buyEventBonus}
         onBuyEventDuration={buyEventDuration}
         onBuyLuckyChance={buyLuckyChance}
         onBuyLuckyMagnitude={buyLuckyMagnitude}
         onBuyLuckyDuration={buyLuckyDuration}
         onBuyOfflineCapUpgrade={buyOfflineCapUpgrade}
-        onBuySkin={buySkin}
-        onBuyUITheme={buyUITheme}
         onTransmuteSeedsToPetals={transmuteSeedsToPetals}
       />
 

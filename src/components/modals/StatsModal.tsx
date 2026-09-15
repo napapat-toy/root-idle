@@ -19,7 +19,6 @@ import {
   isMasterRelicActive,
   hasRelic,
   relicRateBonusMultiplier,
-  RELIC_DEFS,
   BIOME_DEFS,
   TRIAL_DEFS,
   primordialVigorMult,
