@@ -36,6 +36,8 @@ import {
 import { t } from '@/lib/i18n';
 import { fmt, fmtInt } from '@/lib/formatters';
 import { ConfirmModal } from './ConfirmModal';
+import { TrialCard } from './transcendence/TrialCard';
+import { GaiaPerkRow } from './transcendence/GaiaPerkRow';
 
 interface TranscendenceModalProps {
   state: GameState;
@@ -350,571 +352,288 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
               {/* Gaia Perks List */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {/* Perk 1: Primordial Vigor */}
-                <div
-                  style={{
-                    background: 'var(--bg-panel-2)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '10px',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>🌱</span>
-                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk1Name}</span>
-                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
-                        Lv. {vigorLvl}/{PRIMORDIAL_VIGOR_MAX_LEVEL}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk1Desc}</div>
-                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
-                      {isEn ? `Current Effect: +${(vigorLvl * 25).toFixed(0)}% Base Rate` : `ผลปัจจุบัน: เรทพื้นฐาน +${(vigorLvl * 25).toFixed(0)}%`}
-                    </div>
-                  </div>
-                  <button
-                    onClick={onBuyPrimordialVigor}
-                    disabled={vigorMaxed || essences < vigorCost}
-                    style={{
-                      background: vigorMaxed ? 'rgba(255,255,255,0.06)' : essences >= vigorCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                      color: vigorMaxed ? 'rgba(255,255,255,0.3)' : essences >= vigorCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      fontWeight: 700,
-                      fontSize: '12px',
-                      cursor: !vigorMaxed && essences >= vigorCost ? 'pointer' : 'not-allowed',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {vigorMaxed ? tr.maxTag : `${fmtInt(vigorCost)} 🌍`}
-                  </button>
-                </div>
+                <GaiaPerkRow
+                  icon="🌱"
+                  name={tr.transcendPerk1Name}
+                  desc={tr.transcendPerk1Desc}
+                  levelText={`Lv. ${vigorLvl}/${PRIMORDIAL_VIGOR_MAX_LEVEL}`}
+                  effectText={isEn ? `Current Effect: +${(vigorLvl * 25).toFixed(0)}% Base Rate` : `ผลปัจจุบัน: เรทพื้นฐาน +${(vigorLvl * 25).toFixed(0)}%`}
+                  cost={vigorCost}
+                  isMaxed={vigorMaxed}
+                  canAfford={essences >= vigorCost}
+                  onBuy={onBuyPrimordialVigor}
+                  maxTag={tr.maxTag}
+                />
 
                 {/* Perk 2: Soil Memory */}
-                <div
-                  style={{
-                    background: 'var(--bg-panel-2)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '10px',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>📜</span>
-                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk2Name}</span>
-                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
-                        Lv. {soilLvl}/{SOIL_MEMORY_MAX_LEVEL}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk2Desc}</div>
-                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
-                      {isEn ? `Current Effect: Retain ${(soilMemoryRetainPct(state) * 100).toFixed(0)}% Echoes` : `ผลปัจจุบัน: คงสะท้อนราก ${(soilMemoryRetainPct(state) * 100).toFixed(0)}%`}
-                    </div>
-                  </div>
-                  <button
-                    onClick={onBuySoilMemory}
-                    disabled={soilMaxed || essences < soilCost}
-                    style={{
-                      background: soilMaxed ? 'rgba(255,255,255,0.06)' : essences >= soilCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                      color: soilMaxed ? 'rgba(255,255,255,0.3)' : essences >= soilCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      fontWeight: 700,
-                      fontSize: '12px',
-                      cursor: !soilMaxed && essences >= soilCost ? 'pointer' : 'not-allowed',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {soilMaxed ? tr.maxTag : `${fmtInt(soilCost)} 🌍`}
-                  </button>
-                </div>
+                <GaiaPerkRow
+                  icon="📜"
+                  name={tr.transcendPerk2Name}
+                  desc={tr.transcendPerk2Desc}
+                  levelText={`Lv. ${soilLvl}/${SOIL_MEMORY_MAX_LEVEL}`}
+                  effectText={isEn ? `Current Effect: Retain ${(soilMemoryRetainPct(state) * 100).toFixed(0)}% Echoes` : `ผลปัจจุบัน: คงสะท้อนราก ${(soilMemoryRetainPct(state) * 100).toFixed(0)}%`}
+                  cost={soilCost}
+                  isMaxed={soilMaxed}
+                  canAfford={essences >= soilCost}
+                  onBuy={onBuySoilMemory}
+                  maxTag={tr.maxTag}
+                />
 
-                {/* Perk 3: Auto Manager */}
-                {/* Perk 3: Gaia's Blessing (Repeatable Infinite Sink) */}
-                <div
-                  style={{
-                    background: 'var(--bg-panel-2)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '10px',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>🌍</span>
-                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk3Name}</span>
+                {/* Perk 3: Gaia's Blessing */}
+                <GaiaPerkRow
+                  icon="🌍"
+                  name={tr.transcendPerk3Name}
+                  desc={isEn
+                    ? `Increases Gaia Essences earned upon Grand Reset by +1% per level (Currently +${blessingLvl * 1}%, max +500%)`
+                    : `เพิ่มละอองชีวิตที่ได้รับเมื่อรีเซ็ตใหญ่เลเวลละ +1% (ตอนนี้ +${blessingLvl * 1}%, สูงสุด +500%)`}
+                  customBadge={
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        background: 'rgba(52, 211, 153, 0.15)',
+                        color: '#34d399',
+                        padding: '1px 7px',
+                        borderRadius: '999px',
+                      }}
+                    >
+                      Lv. {blessingLvl}/{GAIA_BLESSING_MAX_LEVEL} (+{blessingLvl * 1}%)
+                    </span>
+                  }
+                  cost={blessingCost}
+                  isMaxed={blessingMaxed}
+                  canAfford={essences >= blessingCost}
+                  onBuy={onBuyGaiaBlessing || onBuyAutoManager}
+                  maxTag={tr.maxTag}
+                />
+
+                {/* Perk 4: Gaia's Touch */}
+                <GaiaPerkRow
+                  icon="✨"
+                  name={tr.transcendPerk4Name}
+                  desc={tr.transcendPerk4Desc}
+                  levelText={`Lv. ${touchLvl}/${GAIA_TOUCH_MAX_LEVEL}`}
+                  effectText={isEn ? `Current Effect: ×${gaiaTouchBonusMult(state).toFixed(2)} Lucky Magnitude` : `ผลปัจจุบัน: แจ็กพอตโชคดี ×${gaiaTouchBonusMult(state).toFixed(2)} เท่า`}
+                  cost={touchCost}
+                  isMaxed={touchMaxed}
+                  canAfford={essences >= touchCost}
+                  onBuy={onBuyGaiaTouch}
+                  maxTag={tr.maxTag}
+                />
+
+                {/* Perk 5: Echo Resonance */}
+                <GaiaPerkRow
+                  icon="🌀"
+                  name={tr.transcendPerk5Name}
+                  desc={tr.transcendPerk5Desc}
+                  levelText={`Lv. ${echoResLvl}/${ECHO_RESONANCE_MAX_LEVEL}`}
+                  effectText={isEn ? `Current Effect: Max Echo Cap Lv.${5 + echoResLvl}` : `ผลปัจจุบัน: เพดานสะท้อนรากสูงสุด Lv.${5 + echoResLvl}`}
+                  cost={echoResCost}
+                  isMaxed={echoResMaxed}
+                  canAfford={essences >= echoResCost}
+                  onBuy={onBuyEchoResonance}
+                  maxTag={tr.maxTag}
+                />
+
+                {/* Perk 6: Gaia's Clairvoyance */}
+                <GaiaPerkRow
+                  icon="👁️"
+                  name={tr.transcendPerk6Name}
+                  desc={tr.transcendPerk6Desc}
+                  levelText={`Lv. ${clairvoyanceLvl}/${GAIA_CLAIRVOYANCE_MAX_LEVEL}`}
+                  effectText={isEn ? `Current Effect: +${(clairvoyanceLvl * 0.1).toFixed(1)}% Lucky Chance (Cap: ${(luckyChancePct(state) * 100).toFixed(1)}%)` : `ผลปัจจุบัน: +${(clairvoyanceLvl * 0.1).toFixed(1)}% โอกาสโชคดี (เพดานรวม: ${(luckyChancePct(state) * 100).toFixed(1)}%)`}
+                  cost={clairvoyanceCost}
+                  isMaxed={clairvoyanceMaxed}
+                  canAfford={essences >= clairvoyanceCost}
+                  onBuy={onBuyGaiaClairvoyance}
+                  maxTag={tr.maxTag}
+                />
+
+                {/* Perk 7: Primordial Seedling */}
+                <GaiaPerkRow
+                  icon="🌱"
+                  name={tr.transcendPerk7Name}
+                  desc={tr.transcendPerk7Desc}
+                  levelText={`Lv. ${seedlingLvl}/${PRIMORDIAL_SEEDLING_MAX_LEVEL}`}
+                  effectText={isEn ? `Current Effect: Fine Root Base Rate +${fineRootBaseRate(state).toFixed(2)}/s` : `ผลปัจจุบัน: เรทตั้งต้นรากฝอย +${fineRootBaseRate(state).toFixed(2)}/วิ`}
+                  cost={seedlingCost}
+                  isMaxed={seedlingMaxed}
+                  canAfford={essences >= seedlingCost}
+                  onBuy={onBuyPrimordialSeedling}
+                  maxTag={tr.maxTag}
+                />
+
+                {/* Perk 8: Deep Meditation */}
+                <GaiaPerkRow
+                  icon="🧘"
+                  name={tr.transcendPerk8Name}
+                  desc={tr.transcendPerk8Desc}
+                  levelText={`Lv. ${meditationLvl}/${DEEP_MEDITATION_MAX_LEVEL}`}
+                  effectText={isEn
+                    ? `Current Multiplier: ×${deepMeditationMultiplier(state).toFixed(2)} (+${((deepMeditationMultiplier(state) - 1) * 100).toFixed(0)}% Global Rate)`
+                    : `ตัวคูณปัจจุบัน: ×${deepMeditationMultiplier(state).toFixed(2)} (+${((deepMeditationMultiplier(state) - 1) * 100).toFixed(0)}% เรทผลิตรวม)`}
+                  cost={meditationCost}
+                  isMaxed={meditationMaxed}
+                  canAfford={essences >= meditationCost}
+                  onBuy={onBuyDeepMeditation}
+                  maxTag={tr.maxTag}
+                />
+
+                {/* Perk 9: Hyperdrive Overclock (2x Speed Toggle) */}
+                <GaiaPerkRow
+                  icon="⚡"
+                  name={isEn ? 'Hyperdrive Overclock (2x Speed)' : 'ความเร็วเร่งมิติ (Hyperdrive 2x)'}
+                  desc={isEn
+                    ? 'Permanently unlocks a 2x game speed toggle. Accelerates garden time, production, and timers with zero extra CPU overhead.'
+                    : 'ปลดล็อกสวิตช์เร่งความเร็วเกม 2 เท่าถาวร เร่งเวลาผลผลิตและคูลดาวน์ทั้งหมดโดยไม่กินแรงเครื่อง'}
+                  customBadge={
+                    state.transcendence?.hyperdriveUnlocked ? (
                       <span
                         style={{
                           fontSize: '11px',
                           fontWeight: 700,
-                          background: 'rgba(52, 211, 153, 0.15)',
-                          color: '#34d399',
+                          background: state.transcendence?.hyperdriveEnabled ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                          color: state.transcendence?.hyperdriveEnabled ? '#38bdf8' : 'var(--root-cream-dim)',
                           padding: '1px 7px',
                           borderRadius: '999px',
                         }}
                       >
-                        Lv. {blessingLvl}/{GAIA_BLESSING_MAX_LEVEL} (+{blessingLvl * 1}%)
+                        {state.transcendence?.hyperdriveEnabled ? (isEn ? '⚡ 2x ACTIVE' : '⚡ กำลังเร่ง 2x') : (isEn ? '⏸️ 1x PAUSED' : '⏸️ พัก 1x')}
                       </span>
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>
-                      {isEn
-                        ? `Increases Gaia Essences earned upon Grand Reset by +1% per level (Currently +${blessingLvl * 1}%, max +500%)`
-                        : `เพิ่มละอองชีวิตที่ได้รับเมื่อรีเซ็ตใหญ่เลเวลละ +1% (ตอนนี้ +${blessingLvl * 1}%, สูงสุด +500%)`}
-                    </div>
-                  </div>
-                  <button
-                    onClick={onBuyGaiaBlessing || onBuyAutoManager}
-                    disabled={blessingMaxed || essences < blessingCost}
-                    style={{
-                      background: blessingMaxed ? 'rgba(255,255,255,0.06)' : essences >= blessingCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                      color: blessingMaxed ? 'rgba(255,255,255,0.3)' : essences >= blessingCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      fontWeight: 700,
-                      fontSize: '12px',
-                      cursor: !blessingMaxed && essences >= blessingCost ? 'pointer' : 'not-allowed',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {blessingMaxed ? tr.maxTag : `${fmtInt(blessingCost)} 🌍`}
-                  </button>
-                </div>
-
-                {/* Perk 4: Gaia's Touch */}
-                <div
-                  style={{
-                    background: 'var(--bg-panel-2)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '10px',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>✨</span>
-                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk4Name}</span>
-                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
-                        Lv. {touchLvl}/{GAIA_TOUCH_MAX_LEVEL}
+                    ) : (
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          background: 'rgba(245, 158, 11, 0.15)',
+                          color: '#facc15',
+                          padding: '1px 7px',
+                          borderRadius: '999px',
+                        }}
+                      >
+                        🔒 {isEn ? 'LOCKED' : 'ยังไม่ปลดล็อก'}
                       </span>
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk4Desc}</div>
-                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
-                      {isEn ? `Current Effect: ×${gaiaTouchBonusMult(state).toFixed(2)} Lucky Magnitude` : `ผลปัจจุบัน: แจ็กพอตโชคดี ×${gaiaTouchBonusMult(state).toFixed(2)} เท่า`}
-                    </div>
-                  </div>
-                  <button
-                    onClick={onBuyGaiaTouch}
-                    disabled={touchMaxed || essences < touchCost}
-                    style={{
-                      background: touchMaxed ? 'rgba(255,255,255,0.06)' : essences >= touchCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                      color: touchMaxed ? 'rgba(255,255,255,0.3)' : essences >= touchCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      fontWeight: 700,
-                      fontSize: '12px',
-                      cursor: !touchMaxed && essences >= touchCost ? 'pointer' : 'not-allowed',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {touchMaxed ? tr.maxTag : `${fmtInt(touchCost)} 🌍`}
-                  </button>
-                </div>
-
-                {/* Perk 5: Echo Resonance */}
-                <div
-                  style={{
-                    background: 'var(--bg-panel-2)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '10px',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>🔮</span>
-                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk5Name}</span>
-                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
-                        Lv. {echoResLvl}/{ECHO_RESONANCE_MAX_LEVEL}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk5Desc}</div>
-                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
-                      {isEn ? `Current Effect: Max Echo Cap Lv.${5 + echoResLvl}` : `ผลปัจจุบัน: เพดานสะท้อนรากสูงสุด Lv.${5 + echoResLvl}`}
-                    </div>
-                  </div>
-                  <button
-                    onClick={onBuyEchoResonance}
-                    disabled={echoResMaxed || essences < echoResCost}
-                    style={{
-                      background: echoResMaxed ? 'rgba(255,255,255,0.06)' : essences >= echoResCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                      color: echoResMaxed ? 'rgba(255,255,255,0.3)' : essences >= echoResCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      fontWeight: 700,
-                      fontSize: '12px',
-                      cursor: !echoResMaxed && essences >= echoResCost ? 'pointer' : 'not-allowed',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {echoResMaxed ? tr.maxTag : `${fmtInt(echoResCost)} 🌍`}
-                  </button>
-                </div>
-
-                {/* Perk 6: Gaia's Clairvoyance */}
-                <div
-                  style={{
-                    background: 'var(--bg-panel-2)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '10px',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>👁️</span>
-                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk6Name}</span>
-                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
-                        Lv. {clairvoyanceLvl}/{GAIA_CLAIRVOYANCE_MAX_LEVEL}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk6Desc}</div>
-                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
-                      {isEn ? `Current Effect: +${(clairvoyanceLvl * 0.1).toFixed(1)}% Lucky Chance (Cap: ${(luckyChancePct(state) * 100).toFixed(1)}%)` : `ผลปัจจุบัน: +${(clairvoyanceLvl * 0.1).toFixed(1)}% โอกาสโชคดี (เพดานรวม: ${(luckyChancePct(state) * 100).toFixed(1)}%)`}
-                    </div>
-                  </div>
-                  <button
-                    onClick={onBuyGaiaClairvoyance}
-                    disabled={clairvoyanceMaxed || essences < clairvoyanceCost}
-                    style={{
-                      background: clairvoyanceMaxed ? 'rgba(255,255,255,0.06)' : essences >= clairvoyanceCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                      color: clairvoyanceMaxed ? 'rgba(255,255,255,0.3)' : essences >= clairvoyanceCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      fontWeight: 700,
-                      fontSize: '12px',
-                      cursor: !clairvoyanceMaxed && essences >= clairvoyanceCost ? 'pointer' : 'not-allowed',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {clairvoyanceMaxed ? tr.maxTag : `${fmtInt(clairvoyanceCost)} 🌍`}
-                  </button>
-                </div>
-
-                {/* Perk 7: Primordial Seedling */}
-                <div
-                  style={{
-                    background: 'var(--bg-panel-2)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '10px',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>🌱</span>
-                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk7Name}</span>
-                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
-                        Lv. {seedlingLvl}/{PRIMORDIAL_SEEDLING_MAX_LEVEL}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk7Desc}</div>
-                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
-                      {isEn ? `Current Effect: Fine Root Base Rate +${fineRootBaseRate(state).toFixed(2)}/s` : `ผลปัจจุบัน: เรทตั้งต้นรากฝอย +${fineRootBaseRate(state).toFixed(2)}/วิ`}
-                    </div>
-                  </div>
-                  <button
-                    onClick={onBuyPrimordialSeedling}
-                    disabled={seedlingMaxed || essences < seedlingCost}
-                    style={{
-                      background: seedlingMaxed ? 'rgba(255,255,255,0.06)' : essences >= seedlingCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                      color: seedlingMaxed ? 'rgba(255,255,255,0.3)' : essences >= seedlingCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      fontWeight: 700,
-                      fontSize: '12px',
-                      cursor: !seedlingMaxed && essences >= seedlingCost ? 'pointer' : 'not-allowed',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {seedlingMaxed ? tr.maxTag : `${fmtInt(seedlingCost)} 🌍`}
-                  </button>
-                </div>
-
-                {/* Perk 8: Deep Meditation */}
-                <div
-                  style={{
-                    background: 'var(--bg-panel-2)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '10px',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>🧘</span>
-                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{tr.transcendPerk8Name}</span>
-                      <span style={{ fontSize: '11px', color: '#34d399', background: 'rgba(52, 211, 153, 0.15)', padding: '1px 6px', borderRadius: '4px', flexShrink: 0 }}>
-                        Lv. {meditationLvl}/{DEEP_MEDITATION_MAX_LEVEL}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk8Desc}</div>
-                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
-                      {isEn
-                        ? `Current Multiplier: ×${deepMeditationMultiplier(state).toFixed(2)} (+${((deepMeditationMultiplier(state) - 1) * 100).toFixed(0)}% Global Rate)`
-                        : `ตัวคูณปัจจุบัน: ×${deepMeditationMultiplier(state).toFixed(2)} (+${((deepMeditationMultiplier(state) - 1) * 100).toFixed(0)}% เรทผลิตรวม)`}
-                    </div>
-                  </div>
-                  <button
-                    onClick={onBuyDeepMeditation}
-                    disabled={meditationMaxed || essences < meditationCost}
-                    style={{
-                      background: meditationMaxed ? 'rgba(255,255,255,0.06)' : essences >= meditationCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                      color: meditationMaxed ? 'rgba(255,255,255,0.3)' : essences >= meditationCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      fontWeight: 700,
-                      fontSize: '12px',
-                      cursor: !meditationMaxed && essences >= meditationCost ? 'pointer' : 'not-allowed',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {meditationMaxed ? tr.maxTag : `${fmtInt(meditationCost)} 🌍`}
-                  </button>
-                </div>
-
-                {/* Perk 9: Hyperdrive Overclock (2x Speed Toggle) */}
-                <div
-                  style={{
-                    background: 'var(--bg-panel-2)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '10px',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>⚡</span>
-                      <span style={{ fontWeight: 700, fontSize: '14px' }}>
-                        {isEn ? 'Hyperdrive Overclock (2x Speed)' : 'ความเร็วเร่งมิติ (Hyperdrive 2x)'}
-                      </span>
-                      {state.transcendence?.hyperdriveUnlocked ? (
-                        <span
-                          style={{
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            background: state.transcendence?.hyperdriveEnabled ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                            color: state.transcendence?.hyperdriveEnabled ? '#38bdf8' : 'var(--root-cream-dim)',
-                            padding: '1px 7px',
-                            borderRadius: '999px',
-                          }}
-                        >
-                          {state.transcendence?.hyperdriveEnabled ? (isEn ? '⚡ 2x ACTIVE' : '⚡ กำลังเร่ง 2x') : (isEn ? '⏸️ 1x PAUSED' : '⏸️ พัก 1x')}
-                        </span>
-                      ) : (
-                        <span
-                          style={{
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            background: 'rgba(245, 158, 11, 0.15)',
-                            color: '#facc15',
-                            padding: '1px 7px',
-                            borderRadius: '999px',
-                          }}
-                        >
-                          🔒 {isEn ? 'LOCKED' : 'ยังไม่ปลดล็อก'}
-                        </span>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>
-                      {isEn
-                        ? 'Permanently unlocks a 2x game speed toggle. Accelerates garden time, production, and timers with zero extra CPU overhead.'
-                        : 'ปลดล็อกสวิตช์เร่งความเร็วเกม 2 เท่าถาวร เร่งเวลาผลผลิตและคูลดาวน์ทั้งหมดโดยไม่กินแรงเครื่อง'}
-                    </div>
-                  </div>
-                  {state.transcendence?.hyperdriveUnlocked ? (
-                    <button
-                      onClick={onToggleHyperdrive}
-                      style={{
-                        background: state.transcendence?.hyperdriveEnabled ? 'linear-gradient(135deg, #0284c7, #06b6d4)' : 'rgba(255, 255, 255, 0.1)',
-                        color: state.transcendence?.hyperdriveEnabled ? '#ffffff' : 'var(--root-cream)',
-                        border: '1px solid rgba(56, 189, 248, 0.4)',
-                        borderRadius: '8px',
-                        padding: '8px 14px',
-                        fontWeight: 700,
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
-                        boxShadow: state.transcendence?.hyperdriveEnabled ? '0 0 12px rgba(6, 182, 212, 0.4)' : 'none',
-                      }}
-                    >
-                      {state.transcendence?.hyperdriveEnabled ? (isEn ? '⚡ 2x ON' : '⚡ 2x เปิดอยู่') : (isEn ? '⏸️ 1x OFF' : '⏸️ 1x ปิดอยู่')}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={onBuyHyperdrive}
-                      disabled={essences < HYPERDRIVE_COST}
-                      style={{
-                        background: essences >= HYPERDRIVE_COST ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                        color: essences >= HYPERDRIVE_COST ? '#064e3b' : 'rgba(255,255,255,0.4)',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '8px 12px',
-                        fontWeight: 700,
-                        fontSize: '12px',
-                        cursor: essences >= HYPERDRIVE_COST ? 'pointer' : 'not-allowed',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {`${fmtInt(HYPERDRIVE_COST)} 🌍`}
-                    </button>
-                  )}
-                </div>
+                    )
+                  }
+                  customAction={
+                    state.transcendence?.hyperdriveUnlocked ? (
+                      <button
+                        onClick={onToggleHyperdrive}
+                        style={{
+                          background: state.transcendence?.hyperdriveEnabled ? 'linear-gradient(135deg, #0284c7, #06b6d4)' : 'rgba(255, 255, 255, 0.1)',
+                          color: state.transcendence?.hyperdriveEnabled ? '#ffffff' : 'var(--root-cream)',
+                          border: '1px solid rgba(56, 189, 248, 0.4)',
+                          borderRadius: '8px',
+                          padding: '8px 14px',
+                          fontWeight: 700,
+                          fontSize: '12px',
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0,
+                          boxShadow: state.transcendence?.hyperdriveEnabled ? '0 0 12px rgba(6, 182, 212, 0.4)' : 'none',
+                        }}
+                      >
+                        {state.transcendence?.hyperdriveEnabled ? (isEn ? '⚡ 2x ON' : '⚡ 2x เปิดอยู่') : (isEn ? '⏸️ 1x OFF' : '⏸️ 1x ปิดอยู่')}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={onBuyHyperdrive}
+                        disabled={essences < HYPERDRIVE_COST}
+                        style={{
+                          background: essences >= HYPERDRIVE_COST ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
+                          color: essences >= HYPERDRIVE_COST ? '#064e3b' : 'rgba(255,255,255,0.4)',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '8px 12px',
+                          fontWeight: 700,
+                          fontSize: '12px',
+                          cursor: essences >= HYPERDRIVE_COST ? 'pointer' : 'not-allowed',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {`${fmtInt(HYPERDRIVE_COST)} 🌍`}
+                      </button>
+                    )
+                  }
+                />
 
                 {/* Perk 10: Aurora Bloom */}
-                <div
-                  style={{
-                    background: 'var(--bg-panel-2)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '10px',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>✨</span>
-                      <span style={{ fontWeight: 700, fontSize: '14px' }}>
-                        {isEn ? 'Aurora Bloom (Subterranean Phenomenon)' : 'ปรากฏการณ์ออโรร่าใต้พิภพ (Aurora Bloom)'}
+                <GaiaPerkRow
+                  icon="✨"
+                  name={isEn ? 'Aurora Bloom (Subterranean Phenomenon)' : 'ปรากฏการณ์ออโรร่าใต้พิภพ (Aurora Bloom)'}
+                  desc={isEn
+                    ? 'Summons rare Aurora Spores that float into the garden awarding Astral Petals (🌸 +1 to +3). Also unlocks the 50B Seed Transmutation sink in Prestige.'
+                    : 'เรียกสปอร์ออโรร่าลอยลงมามอบเกสรดวงดาว (🌸 +1 ถึง +3 ดอก) พร้อมปลดล็อกหลุมหลอมเมล็ด 50,000,000,000 เมล็ดเป็นเกสรดวงดาวในร้าน Prestige'}
+                  customBadge={
+                    state.transcendence?.auroraBloomUnlocked ? (
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          background: 'rgba(244, 114, 182, 0.2)',
+                          color: '#f472b6',
+                          padding: '1px 7px',
+                          borderRadius: '999px',
+                        }}
+                      >
+                        🌸 {isEn ? 'UNLOCKED' : 'ปลดล็อกแล้ว'}
                       </span>
-                      {state.transcendence?.auroraBloomUnlocked ? (
-                        <span
-                          style={{
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            background: 'rgba(244, 114, 182, 0.2)',
-                            color: '#f472b6',
-                            padding: '1px 7px',
-                            borderRadius: '999px',
-                          }}
-                        >
-                          🌸 {isEn ? 'UNLOCKED' : 'ปลดล็อกแล้ว'}
-                        </span>
-                      ) : (
-                        <span
-                          style={{
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            background: 'rgba(245, 158, 11, 0.15)',
-                            color: '#facc15',
-                            padding: '1px 7px',
-                            borderRadius: '999px',
-                          }}
-                        >
-                          🔒 {isEn ? 'LOCKED' : 'ยังไม่ปลดล็อก'}
-                        </span>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>
-                      {isEn
-                        ? 'Summons rare Aurora Spores that float into the garden awarding Astral Petals (🌸 +1 to +3). Also unlocks the 50B Seed Transmutation sink in Prestige.'
-                        : 'เรียกสปอร์ออโรร่าลอยลงมามอบเกสรดวงดาว (🌸 +1 ถึง +3 ดอก) พร้อมปลดล็อกหลุมหลอมเมล็ด 50,000,000,000 เมล็ดเป็นเกสรดวงดาวในร้าน Prestige'}
-                    </div>
-                  </div>
-                  {state.transcendence?.auroraBloomUnlocked ? (
-                    <div
-                      style={{
-                        background: 'rgba(244, 114, 182, 0.15)',
-                        color: '#f472b6',
-                        border: '1px solid rgba(244, 114, 182, 0.35)',
-                        borderRadius: '8px',
-                        padding: '8px 12px',
-                        fontWeight: 700,
-                        fontSize: '12px',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
-                      }}
-                    >
-                      ✓ {isEn ? 'ACTIVE' : 'ทำงานอยู่'}
-                    </div>
-                  ) : (
-                    <button
-                      onClick={onBuyAuroraBloom}
-                      disabled={essences < AURORA_BLOOM_COST}
-                      style={{
-                        background: essences >= AURORA_BLOOM_COST ? 'linear-gradient(135deg, #ec4899, #8b5cf6)' : 'rgba(236, 72, 153, 0.2)',
-                        color: essences >= AURORA_BLOOM_COST ? '#ffffff' : 'rgba(255,255,255,0.4)',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '8px 12px',
-                        fontWeight: 700,
-                        fontSize: '12px',
-                        cursor: essences >= AURORA_BLOOM_COST ? 'pointer' : 'not-allowed',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
-                        boxShadow: essences >= AURORA_BLOOM_COST ? '0 0 12px rgba(236, 72, 153, 0.4)' : 'none',
-                      }}
-                    >
-                      {`${fmtInt(AURORA_BLOOM_COST)} 🌍`}
-                    </button>
-                  )}
-                </div>
+                    ) : (
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          background: 'rgba(245, 158, 11, 0.15)',
+                          color: '#facc15',
+                          padding: '1px 7px',
+                          borderRadius: '999px',
+                        }}
+                      >
+                        🔒 {isEn ? 'LOCKED' : 'ยังไม่ปลดล็อก'}
+                      </span>
+                    )
+                  }
+                  customAction={
+                    state.transcendence?.auroraBloomUnlocked ? (
+                      <div
+                        style={{
+                          background: 'rgba(244, 114, 182, 0.15)',
+                          color: '#f472b6',
+                          border: '1px solid rgba(244, 114, 182, 0.35)',
+                          borderRadius: '8px',
+                          padding: '8px 12px',
+                          fontWeight: 700,
+                          fontSize: '12px',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0,
+                        }}
+                      >
+                        ✓ {isEn ? 'ACTIVE' : 'ทำงานอยู่'}
+                      </div>
+                    ) : (
+                      <button
+                        onClick={onBuyAuroraBloom}
+                        disabled={essences < AURORA_BLOOM_COST}
+                        style={{
+                          background: essences >= AURORA_BLOOM_COST ? 'linear-gradient(135deg, #ec4899, #8b5cf6)' : 'rgba(236, 72, 153, 0.2)',
+                          color: essences >= AURORA_BLOOM_COST ? '#ffffff' : 'rgba(255,255,255,0.4)',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '8px 12px',
+                          fontWeight: 700,
+                          fontSize: '12px',
+                          cursor: essences >= AURORA_BLOOM_COST ? 'pointer' : 'not-allowed',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0,
+                          boxShadow: essences >= AURORA_BLOOM_COST ? '0 0 12px rgba(236, 72, 153, 0.4)' : 'none',
+                        }}
+                      >
+                        {`${fmtInt(AURORA_BLOOM_COST)} 🌍`}
+                      </button>
+                    )
+                  }
+                />
               </div>
             </div>
           )}
@@ -990,133 +709,22 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                 </div>
               </div>
 
-              {TRIAL_DEFS.map((def: TrialDef) => {
-                const isCompleted = isTrialCompleted(state, def.id);
-                const isActive = activeTrial === def.id;
-                const curYgg = state.owned['yggdrasil'] || 0;
-
-                return (
-                  <div
-                    key={def.id}
-                    style={{
-                      background: isActive ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(249, 115, 22, 0.08))' : 'var(--bg-panel-2)',
-                      border: isActive ? '1px solid rgba(234, 179, 8, 0.4)' : isCompleted ? '1px solid rgba(52, 211, 153, 0.3)' : '1px solid rgba(255,255,255,0.08)',
-                      borderRadius: '12px',
-                      padding: '14px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '8px',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
-                        <span style={{ fontSize: '24px', flexShrink: 0 }}>{def.icon}</span>
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ fontWeight: 700, fontSize: '15px' }}>{isEn ? def.enName : def.name}</div>
-                          <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)' }}>{isEn ? def.enDesc : def.desc}</div>
-                        </div>
-                      </div>
-                      {isCompleted && (
-                        <span style={{ fontSize: '12px', color: '#34d399', fontWeight: 700, background: 'rgba(52, 211, 153, 0.15)', padding: '2px 8px', borderRadius: '6px', flexShrink: 0 }}>
-                          {tr.trialCompletedBadge}
-                        </span>
-                      )}
-                      {isActive && !isCompleted && (
-                        <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 700, background: 'rgba(245, 158, 11, 0.15)', padding: '2px 8px', borderRadius: '6px', flexShrink: 0 }}>
-                          {tr.trialActiveBadge}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Restriction & Reward */}
-                    <div style={{ fontSize: '12px', background: 'rgba(0,0,0,0.2)', padding: '8px 10px', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <div style={{ color: '#f87171' }}>
-                        <strong>⚠️ {isEn ? 'Restriction: ' : 'ข้อจำกัด: '}</strong>
-                        {isEn ? def.enRestrictionDesc : def.restrictionDesc}
-                        {isCompleted && (
-                          <span style={{ color: '#34d399', marginLeft: '6px', fontSize: '11px', fontWeight: 600 }}>
-                            ({isEn ? 'Inactive · Trial Cleared' : 'สิ้นสุดแล้ว · ไม่ส่งผล'})
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ color: '#34d399' }}>
-                        <strong>🏆 {isEn ? 'Reward: ' : 'รางวัล: '}</strong>
-                        {isEn ? def.enRewardDesc : def.rewardDesc}
-                        {isCompleted && (
-                          <span style={{ color: '#ffd76a', fontWeight: 700, marginLeft: '6px', fontSize: '11px' }}>
-                            ({isEn ? 'Active & Permanent' : 'ทำงานถาวรแล้ว ✨'})
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ color: isCompleted ? '#34d399' : '#38bdf8', marginTop: '2px' }}>
-                        <strong>🎯 {isEn ? 'Status: ' : 'สถานะ: '}</strong>
-                        {isCompleted
-                          ? (isEn ? '✅ Conquered (One-time reward permanently unlocked)' : '✅ พิชิตสำเร็จแล้ว (ปลดล็อกรางวัลถาวรเรียบร้อยแล้ว)')
-                          : (isEn ? `Goal: Grow 25 Yggdrasil Roots (Current: ${curYgg} / 25)` : `เป้าหมาย: ปลูกรากต้นไม้โลกครบ 25 ต้น (ปัจจุบัน: ${curYgg} / 25)`)}
-                      </div>
-                    </div>
-
-                    {/* Action Button */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '4px' }}>
-                      {isActive ? (
-                        <button
-                          onClick={onAbandonTrial}
-                          style={{
-                            background: '#ef4444',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '8px',
-                            padding: '6px 14px',
-                            fontWeight: 700,
-                            fontSize: '12px',
-                            cursor: 'pointer',
-                            flexShrink: 0,
-                          }}
-                        >
-                          {tr.abandonTrialBtn}
-                        </button>
-                      ) : isCompleted ? (
-                        <button
-                          onClick={() => setPendingTrialDef(def)}
-                          title={isEn
-                            ? 'You have already unlocked this permanent reward. Starting again is for optional challenge only.'
-                            : 'คุณได้รับรางวัลถาวรเรียบร้อยแล้ว การเริ่มทดสอบซ้ำเป็นการท้าทายตนเองเท่านั้น (ไม่ได้รับรางวัลซ้ำ)'}
-                          style={{
-                            background: 'rgba(52, 211, 153, 0.12)',
-                            color: '#34d399',
-                            border: '1px solid rgba(52, 211, 153, 0.35)',
-                            borderRadius: '8px',
-                            padding: '6px 14px',
-                            fontWeight: 700,
-                            fontSize: '12px',
-                            cursor: 'pointer',
-                            flexShrink: 0,
-                          }}
-                        >
-                          ✓ {isEn ? 'Conquered (Replay Challenge)' : 'พิชิตแล้ว (ท้าทายซ้ำ)'}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => setPendingTrialDef(def)}
-                          style={{
-                            background: 'linear-gradient(135deg, #eab308, #ca8a04)',
-                            color: '#1c150b',
-                            border: 'none',
-                            borderRadius: '8px',
-                            padding: '6px 14px',
-                            fontWeight: 700,
-                            fontSize: '12px',
-                            cursor: 'pointer',
-                            flexShrink: 0,
-                          }}
-                        >
-                          {tr.startTrialBtn}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+              {TRIAL_DEFS.map((def: TrialDef) => (
+                <TrialCard
+                  key={def.id}
+                  def={def}
+                  isActive={activeTrial === def.id}
+                  isCompleted={isTrialCompleted(state, def.id)}
+                  curYgg={state.owned['yggdrasil'] || 0}
+                  isEn={isEn}
+                  completedBadgeText={tr.trialCompletedBadge}
+                  activeBadgeText={tr.trialActiveBadge}
+                  abandonBtnText={tr.abandonTrialBtn}
+                  startBtnText={tr.startTrialBtn}
+                  onAbandonTrial={onAbandonTrial}
+                  onSelectTrial={setPendingTrialDef}
+                />
+              ))}
             </div>
           )}
         </div>
