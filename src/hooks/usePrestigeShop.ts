@@ -14,17 +14,22 @@ import {
   eventDurationCost,
   eventDurationMaxed,
   goldenSeedCost,
+  GOLDEN_SEED_MAX_LEVEL,
+  LUCKY_CHANCE_MAX,
+  LUCKY_CHANCE_STEP,
   luckyChanceCost,
   luckyChanceMaxed,
   luckyDurationCost,
   luckyDurationMaxed,
   LUCKY_DURATION_MAX_LEVEL,
-  luckyMagnitudeCost,
   LUCKY_MAGNITUDE_MAX_LEVEL,
+  luckyMagnitudeCost,
   offlineCapCost,
   offlineCapMaxed,
   passiveRateCost,
+  PASSIVE_RATE_MAX_LEVEL,
   SKIN_COSTS,
+  SKIN_PETAL_COSTS,
   SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
@@ -63,7 +68,8 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
       cur.prestige.goldenLevel || 0,
       cur.eternalSeeds,
       goldenSeedCost,
-      amount || 1
+      amount || 1,
+      GOLDEN_SEED_MAX_LEVEL
     );
     if (count <= 0) return;
     setState(prev => ({
@@ -79,7 +85,8 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
       cur.prestige.passiveRateLevel || 0,
       cur.eternalSeeds,
       passiveRateCost,
-      amount || 1
+      amount || 1,
+      PASSIVE_RATE_MAX_LEVEL
     );
     if (count <= 0) return;
     setState(prev => ({
@@ -278,10 +285,34 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
 
   const buySkin = useCallback((id: SkinId, autoEquip = false) => {
     const cur = stateRef.current;
+    const petalCost = SKIN_PETAL_COSTS[id];
     const cost = SKIN_COSTS[id] || 0;
     const prestigeKey = SKIN_PRESTIGE_KEYS[id];
-    if (!prestigeKey || cost <= 0) return;
-    if (cur.prestige[prestigeKey as keyof typeof cur.prestige] || cur.eternalSeeds < cost) return;
+    if (!prestigeKey) return;
+    if (cur.prestige[prestigeKey as keyof typeof cur.prestige]) return;
+
+    if (petalCost && petalCost > 0) {
+      const petals = cur.transcendence?.astralPetals || 0;
+      if (petals < petalCost) return;
+      setState(prev => ({
+        ...prev,
+        transcendence: {
+          ...prev.transcendence,
+          astralPetals: (prev.transcendence?.astralPetals || 0) - petalCost,
+        },
+        prestige: {
+          ...prev.prestige,
+          [prestigeKey]: true,
+          ...(autoEquip ? { activeSkin: id } : {}),
+        },
+      }));
+      if (autoEquip && setPreviewSkin) {
+        setPreviewSkin(null);
+      }
+      return;
+    }
+
+    if (cost <= 0 || cur.eternalSeeds < cost) return;
     setState(prev => ({
       ...prev,
       eternalSeeds: prev.eternalSeeds - cost,

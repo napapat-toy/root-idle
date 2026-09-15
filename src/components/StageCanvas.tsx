@@ -100,6 +100,12 @@ const TrunkBase: React.FC<{ totalOwned: number; activeSkin: SkinId }> = React.me
   } else if (activeSkin === 'fulminant') {
     barkFill = '#110b20';
     barkStroke = '#a855f7';
+  } else if (activeSkin === 'timeless_aurora') {
+    barkFill = '#0a0715';
+    barkStroke = '#38bdf8';
+  } else if (activeSkin === 'starlight_prism') {
+    barkFill = '#070b14';
+    barkStroke = '#67e8f9';
   }
 
   const left = 250 - width / 2;
@@ -371,9 +377,10 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
 
       {/* Clickable Floating Events */}
       {activeEvents.map(ev => {
+        const isAurora = ev.type === 'aurora';
         const isLucky = ev.type === 'lucky';
         const isSuper = !!ev.isSuperJackpot;
-        const icon = isLucky ? '🍀' : ev.type === 'buff' ? '⚡' : '🎁';
+        const icon = isAurora ? '🌸' : isLucky ? '🍀' : ev.type === 'buff' ? '⚡' : '🎁';
 
         return (
           <button
@@ -383,8 +390,14 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
               onClaimEvent(ev);
             }}
             style={{ left: `${ev.left}px`, top: `${ev.top}px` }}
-            className={`game-event ${isLucky ? 'lucky' : ''} ${isSuper ? 'super-jackpot' : ''}`}
-            title={isSuper ? (isEn ? '💥 Super Jackpot Box!' : '💥 กล่องแจ็กพอตซ้อนแจ็กพอต!') : undefined}
+            className={`game-event ${isAurora ? 'aurora' : ''} ${isLucky ? 'lucky' : ''} ${isSuper ? 'super-jackpot' : ''}`}
+            title={
+              isAurora
+                ? (isEn ? '🌸 Aurora Spore! (Astral Petals)' : '🌸 สปอร์ออโรร่า! (รับเกสรดวงดาว)')
+                : isSuper
+                ? (isEn ? '💥 Super Jackpot Box!' : '💥 กล่องแจ็กพอตซ้อนแจ็กพอต!')
+                : undefined
+            }
           >
             {icon}
           </button>

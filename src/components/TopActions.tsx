@@ -16,6 +16,7 @@ interface TopActionsProps {
   onOpenRelics?: () => void;
   onOpenAutomation?: () => void;
   onOpenTranscendence?: () => void;
+  onToggleHyperdrive?: () => void;
 }
 
 export const TopActions: React.FC<TopActionsProps> = React.memo(({
@@ -28,6 +29,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onOpenRelics,
   onOpenAutomation,
   onOpenTranscendence,
+  onToggleHyperdrive,
 }) => {
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
@@ -124,6 +126,31 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
       </div>
 
       <div className="utility-btn-group">
+        {state.transcendence?.hyperdriveUnlocked && onToggleHyperdrive && (
+          <button
+            className="utility-icon-btn"
+            onClick={onToggleHyperdrive}
+            title={
+              state.transcendence?.hyperdriveEnabled
+                ? (isEn ? '⚡ 2x Speed Active (Click to toggle 1x)' : '⚡ กำลังเร่งความเร็ว 2 เท่า (คลิกเพื่อสลับเป็น 1x)')
+                : (isEn ? '⏸️ 1x Normal Speed (Click to toggle 2x Hyperdrive)' : '⏸️ ความเร็วปกติ 1x (คลิกเพื่อเร่งความเร็ว 2x)')
+            }
+            style={{
+              background: state.transcendence?.hyperdriveEnabled
+                ? 'linear-gradient(135deg, rgba(2, 132, 199, 0.45), rgba(6, 182, 212, 0.45))'
+                : undefined,
+              borderColor: state.transcendence?.hyperdriveEnabled ? '#38bdf8' : undefined,
+              color: state.transcendence?.hyperdriveEnabled ? '#38bdf8' : undefined,
+              boxShadow: state.transcendence?.hyperdriveEnabled ? '0 0 10px rgba(56, 189, 248, 0.5)' : undefined,
+              fontWeight: 800,
+              fontSize: '11px',
+              padding: '0 6px',
+              minWidth: '38px',
+            }}
+          >
+            {state.transcendence?.hyperdriveEnabled ? '⚡2x' : '⚡1x'}
+          </button>
+        )}
         {hasAnyAuto && onOpenAutomation && (
           <button
             className="utility-icon-btn"

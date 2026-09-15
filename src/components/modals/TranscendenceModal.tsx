@@ -22,6 +22,9 @@ import {
   GAIA_CLAIRVOYANCE_MAX_LEVEL,
   gaiaClairvoyanceCost,
   gaiaBlessingCost,
+  GAIA_BLESSING_MAX_LEVEL,
+  HYPERDRIVE_COST,
+  AURORA_BLOOM_COST,
   PRIMORDIAL_SEEDLING_MAX_LEVEL,
   primordialSeedlingCost,
   fineRootBaseRate,
@@ -49,6 +52,9 @@ interface TranscendenceModalProps {
   onBuyGaiaClairvoyance: () => void;
   onBuyPrimordialSeedling: () => void;
   onBuyDeepMeditation: () => void;
+  onBuyHyperdrive?: () => void;
+  onToggleHyperdrive?: () => void;
+  onBuyAuroraBloom?: () => void;
   onStartTrial: (trialId: TrialId) => void;
   onAbandonTrial: () => void;
 }
@@ -66,6 +72,9 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
   onBuyGaiaClairvoyance,
   onBuyPrimordialSeedling,
   onBuyDeepMeditation,
+  onBuyHyperdrive,
+  onToggleHyperdrive,
+  onBuyAuroraBloom,
   onStartTrial,
   onAbandonTrial,
 }) => {
@@ -92,6 +101,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
   const autoManagerOwned = !!state.transcendence?.autoManagerUnlocked;
   const blessingLvl = state.transcendence?.gaiaBlessingLevel || 0;
   const blessingCost = gaiaBlessingCost(blessingLvl);
+  const blessingMaxed = blessingLvl >= GAIA_BLESSING_MAX_LEVEL;
 
   const touchLvl = state.transcendence?.gaiaTouchLevel || 0;
   const touchCost = gaiaTouchCost(touchLvl);
@@ -132,8 +142,16 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
           <h2 style={{ marginBottom: '4px', background: 'linear-gradient(135deg, #34d399, #38bdf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             {tr.transcendenceTitle}
           </h2>
-          <div className="away-time" style={{ marginBottom: '12px', fontSize: '13px' }}>
-            {isEn ? `Current Essences: ${fmt(essences)} 🌍 · Total Lifetime: ${fmt(totalLifetimeEssences)}` : `ครอบครอง: ${fmt(essences)} 🌍 · สะสมตลอดกาล: ${fmt(totalLifetimeEssences)}`}
+          <div className="away-time" style={{ marginBottom: '12px', fontSize: '13px', display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
+            <span>{isEn ? `Current Essences: ${fmt(essences)} 🌍` : `ครอบครอง: ${fmt(essences)} 🌍`}</span>
+            {!!state.transcendence?.auroraBloomUnlocked && (
+              <span style={{ color: '#f472b6', fontWeight: 700 }}>
+                {isEn ? `Astral Petals: ${fmtInt(state.transcendence?.astralPetals || 0)} 🌸` : `เกสรดวงดาว: ${fmtInt(state.transcendence?.astralPetals || 0)} 🌸`}
+              </span>
+            )}
+            <span style={{ color: 'var(--root-cream-dim)' }}>
+              {isEn ? `Total Lifetime: ${fmt(totalLifetimeEssences)}` : `สะสมตลอดกาล: ${fmt(totalLifetimeEssences)}`}
+            </span>
           </div>
 
           {/* Tab Switcher */}
@@ -454,28 +472,32 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                           borderRadius: '999px',
                         }}
                       >
-                        Lv. {blessingLvl} (+{blessingLvl * 5}%)
+                        Lv. {blessingLvl}/{GAIA_BLESSING_MAX_LEVEL} (+{blessingLvl * 1}%)
                       </span>
                     </div>
-                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{tr.transcendPerk3Desc}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>
+                      {isEn
+                        ? `Increases Gaia Essences earned upon Grand Reset by +1% per level (Currently +${blessingLvl * 1}%, max +500%)`
+                        : `เพิ่มละอองชีวิตที่ได้รับเมื่อรีเซ็ตใหญ่เลเวลละ +1% (ตอนนี้ +${blessingLvl * 1}%, สูงสุด +500%)`}
+                    </div>
                   </div>
                   <button
                     onClick={onBuyGaiaBlessing || onBuyAutoManager}
-                    disabled={essences < blessingCost}
+                    disabled={blessingMaxed || essences < blessingCost}
                     style={{
-                      background: essences >= blessingCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
-                      color: essences >= blessingCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
+                      background: blessingMaxed ? 'rgba(255,255,255,0.06)' : essences >= blessingCost ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
+                      color: blessingMaxed ? 'rgba(255,255,255,0.3)' : essences >= blessingCost ? '#064e3b' : 'rgba(255,255,255,0.4)',
                       border: 'none',
                       borderRadius: '8px',
                       padding: '8px 12px',
                       fontWeight: 700,
                       fontSize: '12px',
-                      cursor: essences >= blessingCost ? 'pointer' : 'not-allowed',
+                      cursor: !blessingMaxed && essences >= blessingCost ? 'pointer' : 'not-allowed',
                       whiteSpace: 'nowrap',
                       flexShrink: 0,
                     }}
                   >
-                    {`${fmtInt(blessingCost)} 🌍`}
+                    {blessingMaxed ? tr.maxTag : `${fmtInt(blessingCost)} 🌍`}
                   </button>
                 </div>
 
@@ -709,6 +731,192 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                   >
                     {meditationMaxed ? tr.maxTag : `${fmtInt(meditationCost)} 🌍`}
                   </button>
+                </div>
+
+                {/* Perk 9: Hyperdrive Overclock (2x Speed Toggle) */}
+                <div
+                  style={{
+                    background: 'var(--bg-panel-2)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '10px',
+                    padding: '12px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>⚡</span>
+                      <span style={{ fontWeight: 700, fontSize: '14px' }}>
+                        {isEn ? 'Hyperdrive Overclock (2x Speed)' : 'ความเร็วเร่งมิติ (Hyperdrive 2x)'}
+                      </span>
+                      {state.transcendence?.hyperdriveUnlocked ? (
+                        <span
+                          style={{
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            background: state.transcendence?.hyperdriveEnabled ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                            color: state.transcendence?.hyperdriveEnabled ? '#38bdf8' : 'var(--root-cream-dim)',
+                            padding: '1px 7px',
+                            borderRadius: '999px',
+                          }}
+                        >
+                          {state.transcendence?.hyperdriveEnabled ? (isEn ? '⚡ 2x ACTIVE' : '⚡ กำลังเร่ง 2x') : (isEn ? '⏸️ 1x PAUSED' : '⏸️ พัก 1x')}
+                        </span>
+                      ) : (
+                        <span
+                          style={{
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            background: 'rgba(245, 158, 11, 0.15)',
+                            color: '#facc15',
+                            padding: '1px 7px',
+                            borderRadius: '999px',
+                          }}
+                        >
+                          🔒 {isEn ? 'LOCKED' : 'ยังไม่ปลดล็อก'}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>
+                      {isEn
+                        ? 'Permanently unlocks a 2x game speed toggle. Accelerates garden time, production, and timers with zero extra CPU overhead.'
+                        : 'ปลดล็อกสวิตช์เร่งความเร็วเกม 2 เท่าถาวร เร่งเวลาผลผลิตและคูลดาวน์ทั้งหมดโดยไม่กินแรงเครื่อง'}
+                    </div>
+                  </div>
+                  {state.transcendence?.hyperdriveUnlocked ? (
+                    <button
+                      onClick={onToggleHyperdrive}
+                      style={{
+                        background: state.transcendence?.hyperdriveEnabled ? 'linear-gradient(135deg, #0284c7, #06b6d4)' : 'rgba(255, 255, 255, 0.1)',
+                        color: state.transcendence?.hyperdriveEnabled ? '#ffffff' : 'var(--root-cream)',
+                        border: '1px solid rgba(56, 189, 248, 0.4)',
+                        borderRadius: '8px',
+                        padding: '8px 14px',
+                        fontWeight: 700,
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0,
+                        boxShadow: state.transcendence?.hyperdriveEnabled ? '0 0 12px rgba(6, 182, 212, 0.4)' : 'none',
+                      }}
+                    >
+                      {state.transcendence?.hyperdriveEnabled ? (isEn ? '⚡ 2x ON' : '⚡ 2x เปิดอยู่') : (isEn ? '⏸️ 1x OFF' : '⏸️ 1x ปิดอยู่')}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={onBuyHyperdrive}
+                      disabled={essences < HYPERDRIVE_COST}
+                      style={{
+                        background: essences >= HYPERDRIVE_COST ? '#34d399' : 'rgba(52, 211, 153, 0.2)',
+                        color: essences >= HYPERDRIVE_COST ? '#064e3b' : 'rgba(255,255,255,0.4)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        fontWeight: 700,
+                        fontSize: '12px',
+                        cursor: essences >= HYPERDRIVE_COST ? 'pointer' : 'not-allowed',
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {`${fmtInt(HYPERDRIVE_COST)} 🌍`}
+                    </button>
+                  )}
+                </div>
+
+                {/* Perk 10: Aurora Bloom */}
+                <div
+                  style={{
+                    background: 'var(--bg-panel-2)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '10px',
+                    padding: '12px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>✨</span>
+                      <span style={{ fontWeight: 700, fontSize: '14px' }}>
+                        {isEn ? 'Aurora Bloom (Subterranean Phenomenon)' : 'ปรากฏการณ์ออโรร่าใต้พิภพ (Aurora Bloom)'}
+                      </span>
+                      {state.transcendence?.auroraBloomUnlocked ? (
+                        <span
+                          style={{
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            background: 'rgba(244, 114, 182, 0.2)',
+                            color: '#f472b6',
+                            padding: '1px 7px',
+                            borderRadius: '999px',
+                          }}
+                        >
+                          🌸 {isEn ? 'UNLOCKED' : 'ปลดล็อกแล้ว'}
+                        </span>
+                      ) : (
+                        <span
+                          style={{
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            background: 'rgba(245, 158, 11, 0.15)',
+                            color: '#facc15',
+                            padding: '1px 7px',
+                            borderRadius: '999px',
+                          }}
+                        >
+                          🔒 {isEn ? 'LOCKED' : 'ยังไม่ปลดล็อก'}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>
+                      {isEn
+                        ? 'Summons rare Aurora Spores that float into the garden awarding Astral Petals (🌸 +1 to +3). Also unlocks the 50B Seed Transmutation sink in Prestige.'
+                        : 'เรียกสปอร์ออโรร่าลอยลงมามอบเกสรดวงดาว (🌸 +1 ถึง +3 ดอก) พร้อมปลดล็อกหลุมหลอมเมล็ด 50,000,000,000 เมล็ดเป็นเกสรดวงดาวในร้าน Prestige'}
+                    </div>
+                  </div>
+                  {state.transcendence?.auroraBloomUnlocked ? (
+                    <div
+                      style={{
+                        background: 'rgba(244, 114, 182, 0.15)',
+                        color: '#f472b6',
+                        border: '1px solid rgba(244, 114, 182, 0.35)',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        fontWeight: 700,
+                        fontSize: '12px',
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0,
+                      }}
+                    >
+                      ✓ {isEn ? 'ACTIVE' : 'ทำงานอยู่'}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={onBuyAuroraBloom}
+                      disabled={essences < AURORA_BLOOM_COST}
+                      style={{
+                        background: essences >= AURORA_BLOOM_COST ? 'linear-gradient(135deg, #ec4899, #8b5cf6)' : 'rgba(236, 72, 153, 0.2)',
+                        color: essences >= AURORA_BLOOM_COST ? '#ffffff' : 'rgba(255,255,255,0.4)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        fontWeight: 700,
+                        fontSize: '12px',
+                        cursor: essences >= AURORA_BLOOM_COST ? 'pointer' : 'not-allowed',
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0,
+                        boxShadow: essences >= AURORA_BLOOM_COST ? '0 0 12px rgba(236, 72, 153, 0.4)' : 'none',
+                      }}
+                    >
+                      {`${fmtInt(AURORA_BLOOM_COST)} 🌍`}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

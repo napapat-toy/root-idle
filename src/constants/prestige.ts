@@ -27,10 +27,13 @@ export const AUTO_RESET_MIN_SEEDS = 3;
 export const AUTO_EVENT_COST = 10000;
 
 export const STARTER_CULTURE_MAX_LEVEL = 50; // Max 500 starter roots upon Prestige
+export const GOLDEN_SEED_MAX_LEVEL = 100000; // Max 100,000 levels (+10,000% seeds)
+export const PASSIVE_RATE_MAX_LEVEL = 1000000; // Max 1,000,000 levels (+100,000% rate)
 
 export function prestigeBonusPct(state: GameState): number {
   if (state.transcendence?.activeTrial === 'null_cycle') return 0;
-  const base = state.prestige.passiveRateLevel || 0;
+  const clamped = Math.min(PASSIVE_RATE_MAX_LEVEL, state.prestige.passiveRateLevel || 0);
+  const base = clamped * 0.1; // +0.1% per level
   const cycleBonus = relicCycleResonanceStack(state);
   return Math.round(base * (1 + cycleBonus * 0.01) * 100) / 100;
 }
@@ -46,12 +49,20 @@ export function starterCultureCost(stateOrLevel: GameState | number): number {
 
 export function goldenSeedCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.goldenLevel || 0);
-  return 500 * (lvl + 1);
+  return Math.floor(250 * Math.pow(lvl + 1, 1.40));
+}
+
+export function goldenSeedMaxed(state: GameState): boolean {
+  return (state.prestige.goldenLevel || 0) >= GOLDEN_SEED_MAX_LEVEL;
 }
 
 export function passiveRateCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.passiveRateLevel || 0);
-  return 100 * (lvl + 1);
+  return Math.floor(50 * Math.pow(lvl + 1, 1.22));
+}
+
+export function passiveRateMaxed(state: GameState): boolean {
+  return (state.prestige.passiveRateLevel || 0) >= PASSIVE_RATE_MAX_LEVEL;
 }
 
 export function offlineCapMaxed(state: GameState): boolean {
@@ -143,7 +154,8 @@ export function calcPrestigeSeeds(state: GameState): number {
   if (state.runEarned < SEED_DIVIDER) return 0;
   const ratio = state.runEarned / SEED_DIVIDER;
   const base = Math.floor(Math.pow(ratio, 0.20) * 10);
-  const bonus = 1 + (state.prestige.goldenLevel || 0) * 0.05;
+  const goldenLvl = Math.min(GOLDEN_SEED_MAX_LEVEL, state.prestige.goldenLevel || 0);
+  const bonus = 1 + goldenLvl * 0.001;
   const biomeBonus = state.activeBiome === 'sunken_ruins' ? 1.20 : 1.0;
   const trialBonus = state.transcendence?.completedTrials?.['null_cycle'] ? 1.25 : 1.0;
   const result = Math.floor(base * bonus * biomeBonus * trialBonus);

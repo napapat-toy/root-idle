@@ -175,6 +175,26 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
           }
         }
       }
+    } else if (ev.type === 'aurora') {
+      const isEn = cur.lang === 'en';
+      const petalsGain = Math.floor(1 + Math.random() * 2.5); // 1, 2, or 3 petals
+      setState(prev => ({
+        ...prev,
+        transcendence: {
+          ...prev.transcendence,
+          astralPetals: (prev.transcendence?.astralPetals || 0) + petalsGain,
+        },
+        stats: {
+          ...prev.stats,
+          totalEventsClaimed: (prev.stats?.totalEventsClaimed || 0) + 1,
+        },
+      }));
+      showFloatingText(
+        ev.left + 26,
+        ev.top + 20,
+        isEn ? `🌸 +${petalsGain} Astral Petals!` : `🌸 +${petalsGain} เกสรดวงดาว!`,
+        '#f472b6'
+      );
     } else {
       const isEn = cur.lang === 'en';
       const baseMult = 2 + Math.random() * 2;
@@ -229,11 +249,17 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     const delay = (105000 + Math.random() * 50000) * cdMult * trialCdMult; // 105–155s scaled by Geode & Permafrost
     eventTimerRef.current = setTimeout(() => {
       const r = Math.random();
-      const luckyPct = luckyChancePct(cur);
-      const nonLuckyPct = 1 - luckyPct;
-      const buffPct = nonLuckyPct * (32 / 92);
-      const type: 'bump' | 'buff' | 'lucky' =
-        r < luckyPct ? 'lucky' : r < luckyPct + buffPct ? 'buff' : 'bump';
+      const hasAurora = !!cur.transcendence?.auroraBloomUnlocked;
+      let type: 'bump' | 'buff' | 'lucky' | 'aurora' = 'bump';
+
+      if (hasAurora && Math.random() < 0.18) {
+        type = 'aurora';
+      } else {
+        const luckyPct = luckyChancePct(cur);
+        const nonLuckyPct = 1 - luckyPct;
+        const buffPct = nonLuckyPct * (32 / 92);
+        type = r < luckyPct ? 'lucky' : r < luckyPct + buffPct ? 'buff' : 'bump';
+      }
 
       const left = 30 + Math.random() * 380;
       const top = 60 + Math.random() * 260;

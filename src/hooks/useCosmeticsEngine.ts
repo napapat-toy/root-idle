@@ -8,6 +8,7 @@ import {
   SKIN_CYCLE_ORDER,
   UI_THEME_COSTS,
   UI_THEME_ORDER,
+  UI_THEME_PETAL_COSTS,
   UI_THEME_PRESTIGE_KEYS,
 } from '@/constants/gameData';
 
@@ -80,10 +81,34 @@ export function useCosmeticsEngine({ state, stateRef, setState }: UseCosmeticsEn
 
   const buyUITheme = useCallback((id: UIThemeId, autoEquip = false) => {
     const cur = stateRef.current;
+    const petalCost = UI_THEME_PETAL_COSTS[id];
     const cost = UI_THEME_COSTS[id] || 0;
     const prestigeKey = UI_THEME_PRESTIGE_KEYS[id];
-    if (!prestigeKey || cost <= 0) return;
-    if (cur.prestige[prestigeKey as keyof typeof cur.prestige] || cur.eternalSeeds < cost) return;
+    if (!prestigeKey) return;
+    if (cur.prestige[prestigeKey as keyof typeof cur.prestige]) return;
+
+    if (petalCost && petalCost > 0) {
+      const petals = cur.transcendence?.astralPetals || 0;
+      if (petals < petalCost) return;
+      setState(prev => ({
+        ...prev,
+        transcendence: {
+          ...prev.transcendence,
+          astralPetals: (prev.transcendence?.astralPetals || 0) - petalCost,
+        },
+        prestige: {
+          ...prev.prestige,
+          [prestigeKey]: true,
+          ...(autoEquip ? { activeUITheme: id } : {}),
+        },
+      }));
+      if (autoEquip) {
+        setPreviewUITheme(null);
+      }
+      return;
+    }
+
+    if (cost <= 0 || cur.eternalSeeds < cost) return;
     setState(prev => ({
       ...prev,
       eternalSeeds: prev.eternalSeeds - cost,

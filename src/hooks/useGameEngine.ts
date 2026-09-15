@@ -477,15 +477,18 @@ export function useGameEngine() {
       lastWallClock = nowWallClock;
 
       if (dt > 0) {
+        const cur = stateRef.current;
+        const speedMult = (cur.transcendence?.hyperdriveUnlocked && cur.transcendence?.hyperdriveEnabled) ? 2.0 : 1.0;
+        const effectiveDt = dt * speedMult;
         const rate = totalRate();
-        const gain = rate * dt;
+        const gain = rate * effectiveDt;
 
         setState(prev => ({
           ...prev,
           nutrients: prev.nutrients + gain,
           runEarned: prev.runEarned + gain,
-          totalPlayTimeSeconds: prev.totalPlayTimeSeconds + dt,
-          runPlayTimeSeconds: prev.runPlayTimeSeconds + dt,
+          totalPlayTimeSeconds: prev.totalPlayTimeSeconds + effectiveDt,
+          runPlayTimeSeconds: prev.runPlayTimeSeconds + effectiveDt,
           stats: {
             ...prev.stats,
             totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
@@ -504,14 +507,17 @@ export function useGameEngine() {
         const nowWall = Date.now();
         const gapSeconds = (nowWall - lastWallClock) / 1000;
         if (gapSeconds > 0.5) {
+          const cur = stateRef.current;
+          const speedMult = (cur.transcendence?.hyperdriveUnlocked && cur.transcendence?.hyperdriveEnabled) ? 2.0 : 1.0;
+          const effectiveGap = gapSeconds * speedMult;
           const rate = totalRate();
-          const gain = rate * gapSeconds;
+          const gain = rate * effectiveGap;
           setState(prev => ({
             ...prev,
             nutrients: prev.nutrients + gain,
             runEarned: prev.runEarned + gain,
-            totalPlayTimeSeconds: prev.totalPlayTimeSeconds + gapSeconds,
-            runPlayTimeSeconds: prev.runPlayTimeSeconds + gapSeconds,
+            totalPlayTimeSeconds: prev.totalPlayTimeSeconds + effectiveGap,
+            runPlayTimeSeconds: prev.runPlayTimeSeconds + effectiveGap,
             stats: {
               ...prev.stats,
               totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
@@ -655,6 +661,10 @@ export function useGameEngine() {
     buyGaiaClairvoyance: transcendenceEngine.buyGaiaClairvoyance,
     buyPrimordialSeedling: transcendenceEngine.buyPrimordialSeedling,
     buyDeepMeditation: transcendenceEngine.buyDeepMeditation,
+    buyHyperdrive: transcendenceEngine.buyHyperdrive,
+    toggleHyperdrive: transcendenceEngine.toggleHyperdrive,
+    buyAuroraBloom: transcendenceEngine.buyAuroraBloom,
+    transmuteSeedsToPetals: transcendenceEngine.transmuteSeedsToPetals,
     startTrial: transcendenceEngine.startTrial,
     abandonTrial: transcendenceEngine.abandonTrial,
     claimUnearthedRelic,

@@ -18,7 +18,9 @@ export type SkinId =
   | 'obsidian'
   | 'eclipse'
   | 'permafrost'
-  | 'fulminant';
+  | 'fulminant'
+  | 'timeless_aurora'
+  | 'starlight_prism';
 
 export type UIThemeId =
   | 'classic'
@@ -37,7 +39,8 @@ export type UIThemeId =
   | 'void_sovereign'
   | 'abyssal_eclipse'
   | 'boreal_tundra'
-  | 'electromagnetic';
+  | 'electromagnetic'
+  | 'subterranean_borealis';
 
 export interface ModuleDef {
   id: string;
@@ -75,6 +78,8 @@ export interface PrestigeState {
   skinGradient: boolean;
   skinNebula?: boolean;
   skinImperial?: boolean;
+  skinTimelessAurora?: boolean;
+  skinStarlightPrism?: boolean;
   activeSkin: SkinId;
   themeSakura?: boolean;
   themeCafe?: boolean;
@@ -88,6 +93,7 @@ export interface PrestigeState {
   themeEmerald?: boolean;
   themeNebula?: boolean;
   themeImperial?: boolean;
+  themeSubterraneanBorealis?: boolean;
   activeUITheme: UIThemeId;
   autoReset: boolean;
   autoResetEnabled: boolean;
@@ -194,7 +200,11 @@ export interface TranscendenceState {
   gaiaClairvoyanceLevel?: number;    // +0.1% lucky chance cap per level (up to 2.0% total)
   primordialSeedlingLevel?: number;  // Base rate of Fine Roots: 0.60 -> 2.00 (5 levels)
   deepMeditationLevel?: number;      // Up to +50% global rate per level over 60m playtime (max +250%)
-  gaiaBlessingLevel?: number;        // Infinite sink: +5% Gaia Essences gained per level
+  gaiaBlessingLevel?: number;        // Infinite sink: +1% Gaia Essences gained per level (cap 500)
+  hyperdriveUnlocked?: boolean;      // ⚡ 2x Game Speed unlocked (10k essences)
+  hyperdriveEnabled?: boolean;       // ⚡ 2x Game Speed active toggle
+  auroraBloomUnlocked?: boolean;     // ✨ Aurora Bloom unlocked (10k essences)
+  astralPetals?: number;             // 🌸 Astral Petals currency
 }
 
 export type Language = 'th' | 'en';
@@ -241,7 +251,7 @@ export interface ActiveBuff {
 
 export interface GameEventItem {
   id: number;
-  type: 'bump' | 'buff' | 'lucky';
+  type: 'bump' | 'buff' | 'lucky' | 'aurora';
   left: number;
   top: number;
   isSuperJackpot?: boolean;

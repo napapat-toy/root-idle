@@ -217,6 +217,8 @@ export function getBranchColor(branches: Branch[], b: Branch, i: number, skin: S
     if (skin === 'eclipse') return '#0a0914';
     if (skin === 'permafrost') return '#0c1b24';
     if (skin === 'fulminant') return '#110b20';
+    if (skin === 'timeless_aurora') return '#0a0715';
+    if (skin === 'starlight_prism') return '#070b14';
     return '#523820'; // Default rich dark wood
   }
 
@@ -363,6 +365,24 @@ export function getBranchColor(branches: Branch[], b: Branch, i: number, skin: S
     const hue = isLightning ? 188 : 280;
     const sat = 95;
     const light = 50 + Math.min(b.depth, 10) * 3.8;
+    return `hsl(${hue}, ${sat}%, ${light}%)`;
+  }
+
+  // 21. timeless_aurora (🌸 ออโรร่าไร้กาลเวลา): Flowing cosmic aurora waves of arctic emerald, violet, and glowing magenta
+  if (skin === 'timeless_aurora') {
+    const wave = (i * 13 + b.depth * 7) % 3;
+    const hue = wave === 0 ? 158 : (wave === 1 ? 275 : 325);
+    const sat = 95;
+    const light = 50 + Math.min(b.depth, 12) * 3.8;
+    return `hsl(${hue}, ${sat}%, ${light}%)`;
+  }
+
+  // 22. starlight_prism (✨ ผลึกคริสตัลดวงดาว): Chromatic diamond dispersion of neon cyan, solar gold, and radiant starlight pink
+  if (skin === 'starlight_prism') {
+    const cycle = (i * 17 + b.depth * 5) % 3;
+    const hue = cycle === 0 ? 185 : (cycle === 1 ? 48 : 340);
+    const sat = 96;
+    const light = 55 + Math.min(b.depth, 12) * 3.6;
     return `hsl(${hue}, ${sat}%, ${light}%)`;
   }
 

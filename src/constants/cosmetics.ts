@@ -27,6 +27,18 @@ export const SKIN_COSTS: Record<SkinId, number> = {
   eclipse: 0,
   permafrost: 0,
   fulminant: 0,
+  // 🌸 Astral Bloom Mythic Tier (Astral Petals 🌸)
+  timeless_aurora: 0,
+  starlight_prism: 0,
+};
+
+export const SKIN_PETAL_COSTS: Partial<Record<SkinId, number>> = {
+  timeless_aurora: 25,
+  starlight_prism: 50,
+};
+
+export const UI_THEME_PETAL_COSTS: Partial<Record<UIThemeId, number>> = {
+  subterranean_borealis: 10,
 };
 
 export const SKIN_PRESTIGE_KEYS: Record<SkinId, keyof PrestigeState | null> = {
@@ -50,9 +62,11 @@ export const SKIN_PRESTIGE_KEYS: Record<SkinId, keyof PrestigeState | null> = {
   eclipse: null,
   permafrost: null,
   fulminant: null,
+  timeless_aurora: 'skinTimelessAurora',
+  starlight_prism: 'skinStarlightPrism',
 };
 
-export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid' | 'luxury' | 'trial'; always?: boolean }> = [
+export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid' | 'luxury' | 'trial' | 'astral'; always?: boolean }> = [
   { id: 'none', name: 'ปกติ (ไม่มีสกิน)', tier: 'starter', always: true },
   { id: 'rainbow', name: '🌈 รุ้ง/ทอง', tier: 'starter' },
   { id: 'sakura', name: '🌸 ซากุระราตรี', tier: 'starter' },
@@ -73,6 +87,8 @@ export const SKIN_DEFS: Array<{ id: SkinId; name: string; tier: 'starter' | 'mid
   { id: 'eclipse', name: '🌑 สุริยคราสอนธการ', tier: 'trial' },
   { id: 'permafrost', name: '❄️ ผลึกเหมันต์นิรันดร์', tier: 'trial' },
   { id: 'fulminant', name: '⚡ สายฟ้าใต้ภพ', tier: 'trial' },
+  { id: 'timeless_aurora', name: '🌸 ออโรร่าไร้กาลเวลา', tier: 'astral' },
+  { id: 'starlight_prism', name: '✨ ผลึกคริสตัลดวงดาว', tier: 'astral' },
 ];
 
 export const SKIN_CYCLE_ORDER: SkinId[] = [
@@ -96,6 +112,8 @@ export const SKIN_CYCLE_ORDER: SkinId[] = [
   'eclipse',
   'permafrost',
   'fulminant',
+  'timeless_aurora',
+  'starlight_prism',
 ];
 
 export const UI_THEME_COSTS: Record<UIThemeId, number> = {
@@ -120,6 +138,8 @@ export const UI_THEME_COSTS: Record<UIThemeId, number> = {
   abyssal_eclipse: 0,
   boreal_tundra: 0,
   electromagnetic: 0,
+  // 🌸 Astral Bloom Mythic Tier (Astral Petals 🌸)
+  subterranean_borealis: 0,
 };
 
 export const UI_THEME_PRESTIGE_KEYS: Record<UIThemeId, keyof PrestigeState | null> = {
@@ -140,9 +160,10 @@ export const UI_THEME_PRESTIGE_KEYS: Record<UIThemeId, keyof PrestigeState | nul
   abyssal_eclipse: null,
   boreal_tundra: null,
   electromagnetic: null,
+  subterranean_borealis: 'themeSubterraneanBorealis',
 };
 
-export const UI_THEME_DEFS: Array<{ id: UIThemeId; name: string; tier: 'starter' | 'mid' | 'luxury' | 'trial'; always?: boolean }> = [
+export const UI_THEME_DEFS: Array<{ id: UIThemeId; name: string; tier: 'starter' | 'mid' | 'luxury' | 'trial' | 'astral'; always?: boolean }> = [
   { id: 'classic', name: '🪵 ดินธรรมชาติคลาสสิก', tier: 'starter', always: true },
   { id: 'sakura', name: '🌸 ซากุระราตรี', tier: 'starter' },
   { id: 'cafe', name: '☕ คาเฟ่มัทฉะ & โกโก้', tier: 'starter' },
@@ -160,6 +181,7 @@ export const UI_THEME_DEFS: Array<{ id: UIThemeId; name: string; tier: 'starter'
   { id: 'abyssal_eclipse', name: '🌑 มหานครรัตติกาล', tier: 'trial' },
   { id: 'boreal_tundra', name: '❄️ ทุนดราเยือกแข็ง', tier: 'trial' },
   { id: 'electromagnetic', name: '⚡ คลื่นแม่เหล็กไฟฟ้านีออน', tier: 'trial' },
+  { id: 'subterranean_borealis', name: '🌌 แสงเหนือใต้พิภพ', tier: 'astral' },
 ];
 
 export const UI_THEME_ORDER: UIThemeId[] = [
@@ -180,6 +202,7 @@ export const UI_THEME_ORDER: UIThemeId[] = [
   'abyssal_eclipse',
   'boreal_tundra',
   'electromagnetic',
+  'subterranean_borealis',
 ];
 
 export function isSkinUnlocked(state: { prestige: PrestigeState; transcendence?: { completedTrials?: Record<string, boolean> } }, id: SkinId): boolean {
@@ -224,6 +247,8 @@ export const SKIN_DESCRIPTIONS: Record<SkinId, { th: string; en: string }> = {
   eclipse: { th: 'ความมืดมิดแห่งสุริยคราสตัดกับแสงโคโรนาทองคำบริสุทธิ์', en: 'Midnight eclipse obsidian infused with solar corona gold arcs' },
   permafrost: { th: 'ผลึกน้ำแข็งบริสุทธิ์ยุคน้ำแข็งโบราณที่ไม่มีวันละลาย', en: 'Perpetual glacial frost crystals refracting pure arctic white' },
   fulminant: { th: 'แก่นไม้ที่มีสายฟ้าฟาดไหลเวียนตามเส้นใยรากตลอดกาล', en: 'Basalt wood channeled with eternal violet-cyan lightning arcs' },
+  timeless_aurora: { th: 'ออโรร่าไร้กาลเวลา ลำต้นหินอวกาศทมิฬแทรกด้วยคลื่นแสงเหนือมรกต ม่วง และมาเจนตาสว่างไสว', en: 'Cosmic obsidian trunk illuminated by flowing waves of emerald, electric violet, and glowing magenta aurora' },
+  starlight_prism: { th: 'ผลึกคริสตัลดวงดาว การหักเหแสงปริซึมเพชรสะท้อนรุ้งนีออน ทองคำบริสุทธิ์ และชมพูดวงดารา', en: 'Chromatic starlight diamond prism dispersing neon cyan, solar gold, and radiant celestial pink' },
 };
 
 export const UI_THEME_DESCRIPTIONS: Record<UIThemeId, { th: string; en: string }> = {
@@ -244,6 +269,7 @@ export const UI_THEME_DESCRIPTIONS: Record<UIThemeId, { th: string; en: string }
   abyssal_eclipse: { th: 'ดำสนิทตัดขอบทองคำสุริยคราส โอ่อ่า สง่างาม เหนือกาลเวลา', en: 'Pitch black abyss bordered by brilliant solar corona gold' },
   boreal_tundra: { th: 'โทนน้ำเงินน้ำแข็งขั้วโลก ขอบคริสตัลฟ้าเรืองแสงและขาวหิมะ', en: 'Glacial arctic blue shell with luminous frost cyan borders' },
   electromagnetic: { th: 'ชาร์โคลดำพายุ ตัดกับขอบนีออนสายฟ้าม่วง-ไซยานสะกดสายตา', en: 'Storm charcoal slate with electric violet-cyan lightning borders' },
+  subterranean_borealis: { th: 'รัตติกาลขั้วโลกใต้พิภพ มืดสนิทตัดกับขอบแสงเหนือออโรร่าไซยาน-มรกตเรืองรองดั่งเวทมนตร์', en: 'Polar midnight abyss framed by mesmerizing boreal cyan and arctic emerald glowing ribbons' },
 };
 
 export const SKIN_SWATCHES: Record<SkinId, string[]> = {
@@ -267,6 +293,8 @@ export const SKIN_SWATCHES: Record<SkinId, string[]> = {
   eclipse: ['#08060c', '#1a1424', '#eab308', '#fef08a'],
   permafrost: ['#051524', '#0284c7', '#7dd3fc', '#f0f9ff'],
   fulminant: ['#0a0814', '#7c3aed', '#a855f7', '#06b6d4'],
+  timeless_aurora: ['#0a0715', '#10b981', '#8b5cf6', '#ec4899'],
+  starlight_prism: ['#070b14', '#06b6d4', '#facc15', '#f43f5e'],
 };
 
 export const THEME_SWATCHES: Record<UIThemeId, string[]> = {
@@ -287,4 +315,5 @@ export const THEME_SWATCHES: Record<UIThemeId, string[]> = {
   abyssal_eclipse: ['#08060a', '#120f17', '#ca8a04', '#fef08a'],
   boreal_tundra: ['#06131f', '#0c2236', '#0284c7', '#bae6fd'],
   electromagnetic: ['#090714', '#130f24', '#9333ea', '#67e8f9'],
+  subterranean_borealis: ['#040914', '#08233a', '#38bdf8', '#34d399'],
 };

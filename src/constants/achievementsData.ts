@@ -1160,6 +1160,103 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     bonusPct: 10,
     check: (s) => (s.transcendence?.gaiaBlessingLevel || 0) >= 10,
   },
+  {
+    id: 'hyperdrive_unlock',
+    category: 'gaia',
+    title: 'เร่งความเร็วมิติกาลเวลา',
+    desc: 'ปลดล็อกตัวเร่งเวลา 2x Hyperdrive Overclock ในผังจิตวิญญาณไกอา',
+    icon: '⚡',
+    bonusPct: 8,
+    check: (s) => !!s.transcendence?.hyperdriveUnlocked,
+  },
+  {
+    id: 'aurora_bloom_unlock',
+    category: 'gaia',
+    title: 'ปรากฏการณ์แสงเหนือใต้พิภพ',
+    desc: 'ปลดล็อกออโรร่าบลูม (Aurora Bloom) เพื่อเรียกสปอร์ออโรร่าและเตาหลอมกลีบดวงดาว',
+    icon: '🌸',
+    bonusPct: 8,
+    check: (s) => !!s.transcendence?.auroraBloomUnlocked,
+  },
+  {
+    id: 'astral_petal_1',
+    category: 'luck',
+    title: 'ละอองกลีบดวงดาราแรก',
+    desc: 'เก็บหรือหลอมกลีบดอกไม้ดวงดาว (Astral Petals) ชิ้นแรกสำเร็จ',
+    icon: '🌸',
+    bonusPct: 4,
+    check: (s) => (s.transcendence?.astralPetals || 0) >= 1,
+  },
+  {
+    id: 'astral_petal_10',
+    category: 'luck',
+    title: 'มาลัยดอกไม้แห่งฟากฟ้า',
+    desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมอย่างน้อย 10 กลีบ',
+    icon: '💐',
+    bonusPct: 6,
+    check: (s) => (s.transcendence?.astralPetals || 0) >= 10,
+  },
+  {
+    id: 'astral_petal_50',
+    category: 'luck',
+    title: 'สวนบุปผาดวงดารานิรันดร์',
+    desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 50 กลีบ (พร้อมแลกสกินระดับสูงสุด)',
+    icon: '🌺',
+    bonusPct: 12,
+    check: (s) => (s.transcendence?.astralPetals || 0) >= 50,
+  },
+
+  // ===== 🎨 หมวด 7: สกิน & แฟชั่นใต้พิภพ (Cosmetics & Aesthetics) =====
+  {
+    id: 'skin_first_wardrobe',
+    category: 'skins',
+    title: 'อาภรณ์ชิ้นแรก',
+    desc: 'ปลดล็อกสกินรากไม้หรือธีมหน้าต่างตกแต่งชิ้นแรก',
+    icon: '👗',
+    bonusPct: 3,
+    check: (s) =>
+      SKIN_DEFS.some(def => def.id !== 'none' && isSkinUnlocked(s, def.id)) ||
+      UI_THEME_DEFS.some(def => def.id !== 'classic' && isUIThemeUnlocked(s, def.id)),
+  },
+  {
+    id: 'theme_subterranean_borealis',
+    category: 'skins',
+    title: 'มงกุฎแสงเหนือใต้พิภพ',
+    desc: 'ปลดล็อกธีมหน้าต่าง UI ระดับ Mythic [🌌 แสงเหนือใต้พิภพ (Subterranean Borealis)]',
+    icon: '🌌',
+    bonusPct: 6,
+    check: (s) => isUIThemeUnlocked(s, 'subterranean_borealis'),
+  },
+  {
+    id: 'skin_timeless_aurora',
+    category: 'skins',
+    title: 'รัตติกาลไร้กาลเวลา',
+    desc: 'ปลดล็อกสกินรากไม้ระดับ Mythic [🌸 ออโรร่าไร้กาลเวลา (Timeless Aurora)]',
+    icon: '🌸',
+    bonusPct: 8,
+    check: (s) => isSkinUnlocked(s, 'timeless_aurora'),
+  },
+  {
+    id: 'skin_starlight_prism',
+    category: 'skins',
+    title: 'ปริซึมผลึกสะท้อนดวงดาว',
+    desc: 'ปลดล็อกสกินรากไม้ขั้นสูงสุดระดับ Mythic [✨ ผลึกคริสตัลดวงดาว (Starlight Prism)]',
+    icon: '✨',
+    bonusPct: 15,
+    check: (s) => isSkinUnlocked(s, 'starlight_prism'),
+  },
+  {
+    id: 'astral_trio_collector',
+    category: 'skins',
+    title: 'จักรพรรดิแห่งดวงดาราและแสงเหนือ',
+    desc: 'ครอบครองเครื่องประดับ Astral Mythic ครบทั้ง 3 ชิ้น (สกิน 2 แบบ + ธีม 1 แบบ)',
+    icon: '👑',
+    bonusPct: 20,
+    check: (s) =>
+      isSkinUnlocked(s, 'timeless_aurora') &&
+      isSkinUnlocked(s, 'starlight_prism') &&
+      isUIThemeUnlocked(s, 'subterranean_borealis'),
+  },
 ];
 
 export const ACHIEVEMENT_BONUS_MAP: Record<string, number> = Object.fromEntries(

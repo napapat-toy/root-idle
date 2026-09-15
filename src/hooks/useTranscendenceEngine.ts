@@ -21,6 +21,10 @@ import {
   DEEP_MEDITATION_MAX_LEVEL,
   deepMeditationCost,
   gaiaBlessingCost,
+  GAIA_BLESSING_MAX_LEVEL,
+  HYPERDRIVE_COST,
+  AURORA_BLOOM_COST,
+  SEED_TRANSMUTE_COST,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
   TRIAL_DEFS,
@@ -82,6 +86,7 @@ export function useTranscendenceEngine({
   const buyGaiaBlessing = useCallback(() => {
     const cur = stateRef.current;
     const lvl = cur.transcendence?.gaiaBlessingLevel || 0;
+    if (lvl >= GAIA_BLESSING_MAX_LEVEL) return;
     const cost = gaiaBlessingCost(lvl);
     if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
 
@@ -94,6 +99,73 @@ export function useTranscendenceEngine({
       },
     }));
   }, [stateRef, setState]);
+
+  const buyHyperdrive = useCallback(() => {
+    const cur = stateRef.current;
+    if (cur.transcendence?.hyperdriveUnlocked) return;
+    if ((cur.transcendence?.gaiaEssences || 0) < HYPERDRIVE_COST) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - HYPERDRIVE_COST,
+        hyperdriveUnlocked: true,
+        hyperdriveEnabled: true,
+      },
+    }));
+  }, [stateRef, setState]);
+
+  const toggleHyperdrive = useCallback(() => {
+    const cur = stateRef.current;
+    if (!cur.transcendence?.hyperdriveUnlocked) return;
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        hyperdriveEnabled: !prev.transcendence?.hyperdriveEnabled,
+      },
+    }));
+  }, [stateRef, setState]);
+
+  const buyAuroraBloom = useCallback(() => {
+    const cur = stateRef.current;
+    if (cur.transcendence?.auroraBloomUnlocked) return;
+    if ((cur.transcendence?.gaiaEssences || 0) < AURORA_BLOOM_COST) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - AURORA_BLOOM_COST,
+        auroraBloomUnlocked: true,
+      },
+    }));
+  }, [stateRef, setState]);
+
+  const transmuteSeedsToPetals = useCallback((qty = 1) => {
+    const cur = stateRef.current;
+    if (!cur.transcendence?.auroraBloomUnlocked) return;
+    const count = Math.max(1, Math.floor(qty));
+    const totalCost = count * SEED_TRANSMUTE_COST;
+    if (cur.eternalSeeds < totalCost) return;
+
+    setState(prev => ({
+      ...prev,
+      eternalSeeds: prev.eternalSeeds - totalCost,
+      transcendence: {
+        ...prev.transcendence,
+        astralPetals: (prev.transcendence?.astralPetals || 0) + count,
+      },
+    }));
+    const isEn = cur.lang === 'en';
+    showFloatingText(
+      250,
+      180,
+      isEn ? `🌸 +${count} Astral Petal${count > 1 ? 's' : ''}!` : `🌸 +${count} เกสรดวงดาว!`,
+      '#f472b6'
+    );
+  }, [stateRef, setState, showFloatingText]);
 
   const buyAutoManager = useCallback(() => {
     buyGaiaBlessing();
@@ -258,6 +330,10 @@ export function useTranscendenceEngine({
     buyGaiaClairvoyance,
     buyPrimordialSeedling,
     buyDeepMeditation,
+    buyHyperdrive,
+    toggleHyperdrive,
+    buyAuroraBloom,
+    transmuteSeedsToPetals,
     startTrial,
     abandonTrial,
   };

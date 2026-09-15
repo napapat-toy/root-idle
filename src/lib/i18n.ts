@@ -153,6 +153,8 @@ export const SKIN_NAMES: Record<SkinId, Record<Language, string>> = {
   eclipse: { th: '🌑 คราสทมิฬ (Abyssal Eclipse)', en: '🌑 Abyssal Eclipse' },
   permafrost: { th: '❄️ เหมันต์นิรันดร์ (Permafrost)', en: '❄️ Permafrost Frostbite' },
   fulminant: { th: '⚡ พายุสายฟ้าฟาด (Fulminant Tempest)', en: '⚡ Fulminant Tempest' },
+  timeless_aurora: { th: '🌸 ออโรร่าไร้กาลเวลา (Timeless Aurora)', en: '🌸 Timeless Aurora' },
+  starlight_prism: { th: '✨ ผลึกคริสตัลดวงดาว (Starlight Prism)', en: '✨ Starlight Prism' },
 };
 
 export const UI_THEME_NAMES: Record<UIThemeId, Record<Language, string>> = {
@@ -173,6 +175,7 @@ export const UI_THEME_NAMES: Record<UIThemeId, Record<Language, string>> = {
   abyssal_eclipse: { th: '🌑 สุริยุปราคาใต้พิภพ (Abyssal Eclipse)', en: '🌑 Abyssal Eclipse' },
   boreal_tundra: { th: '❄️ ทุ่งทุนดราเยือกแข็ง (Boreal Tundra)', en: '❄️ Boreal Tundra' },
   electromagnetic: { th: '⚡ สนามแม่เหล็กไฟฟ้า (Electromagnetic)', en: '⚡ Electromagnetic Storm' },
+  subterranean_borealis: { th: '🌌 แสงเหนือใต้พิภพ (Subterranean Borealis)', en: '🌌 Subterranean Borealis' },
 };
 
 export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, LocalizedAchievement>> = {
@@ -676,6 +679,46 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
   gaia_blessing_10: {
     th: { title: 'พรอันเป็นนิรันดร์', desc: 'อัพเกรดพรแห่งไกอาสะสมครบเลเวล 10 (+50% ละอองไกอา)' },
     en: { title: 'Eternal Blessing', desc: 'Upgrade Gaia\'s Blessing to Level 10 (+50% Essences)' },
+  },
+  hyperdrive_unlock: {
+    th: { title: 'เร่งความเร็วมิติกาลเวลา', desc: 'ปลดล็อกตัวเร่งเวลา 2x Hyperdrive Overclock ในผังจิตวิญญาณไกอา' },
+    en: { title: 'Dimensional Overclock', desc: 'Unlock the 2x Hyperdrive Overclock in the Gaia Tree' },
+  },
+  aurora_bloom_unlock: {
+    th: { title: 'ปรากฏการณ์แสงเหนือใต้พิภพ', desc: 'ปลดล็อกออโรร่าบลูม (Aurora Bloom) เพื่อเรียกสปอร์ออโรร่าและเตาหลอมกลีบดวงดาว' },
+    en: { title: 'Aurora Bloom Awakening', desc: 'Unlock Aurora Bloom to manifest Aurora Spores and the Petal Altar' },
+  },
+  astral_petal_1: {
+    th: { title: 'ละอองกลีบดวงดาราแรก', desc: 'เก็บหรือหลอมกลีบดอกไม้ดวงดาว (Astral Petals) ชิ้นแรกสำเร็จ' },
+    en: { title: 'First Starlight Petal', desc: 'Collect or transmute your first Astral Petal' },
+  },
+  astral_petal_10: {
+    th: { title: 'มาลัยดอกไม้แห่งฟากฟ้า', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมอย่างน้อย 10 กลีบ' },
+    en: { title: 'Garland of the Cosmos', desc: 'Accumulate at least 10 Astral Petals' },
+  },
+  astral_petal_50: {
+    th: { title: 'สวนบุปผาดวงดารานิรันดร์', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 50 กลีบ (พร้อมแลกสกินระดับสูงสุด)' },
+    en: { title: 'Eternal Astral Garden', desc: 'Accumulate 50 Astral Petals (ready for the ultimate skin)' },
+  },
+  skin_first_wardrobe: {
+    th: { title: 'อาภรณ์ชิ้นแรก', desc: 'ปลดล็อกสกินรากไม้หรือธีมหน้าต่างตกแต่งชิ้นแรก' },
+    en: { title: 'First Vestment', desc: 'Unlock your first root skin or UI window theme' },
+  },
+  theme_subterranean_borealis: {
+    th: { title: 'มงกุฎแสงเหนือใต้พิภพ', desc: 'ปลดล็อกธีมหน้าต่าง UI ระดับ Mythic [🌌 แสงเหนือใต้พิภพ (Subterranean Borealis)]' },
+    en: { title: 'Subterranean Borealis Canopy', desc: 'Unlock the Mythic [🌌 Subterranean Borealis] UI Theme' },
+  },
+  skin_timeless_aurora: {
+    th: { title: 'รัตติกาลไร้กาลเวลา', desc: 'ปลดล็อกสกินรากไม้ระดับ Mythic [🌸 ออโรร่าไร้กาลเวลา (Timeless Aurora)]' },
+    en: { title: 'Timeless Aurora Bloom', desc: 'Unlock the Mythic [🌸 Timeless Aurora] Root Skin' },
+  },
+  skin_starlight_prism: {
+    th: { title: 'ปริซึมผลึกสะท้อนดวงดาว', desc: 'ปลดล็อกสกินรากไม้ขั้นสูงสุดระดับ Mythic [✨ ผลึกคริสตัลดวงดาว (Starlight Prism)]' },
+    en: { title: 'Starlight Prism Radiance', desc: 'Unlock the pinnacle Mythic [✨ Starlight Prism] Root Skin' },
+  },
+  astral_trio_collector: {
+    th: { title: 'จักรพรรดิแห่งดวงดาราและแสงเหนือ', desc: 'ครอบครองเครื่องประดับ Astral Mythic ครบทั้ง 3 ชิ้น (สกิน 2 แบบ + ธีม 1 แบบ)' },
+    en: { title: 'Sovereign of the Starlight Aurora', desc: 'Unlock all 3 Astral Mythic cosmetics (both skins & theme)' },
   },
 };
 

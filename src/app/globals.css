@@ -278,6 +278,21 @@
   --prestige-bg: #120a24;
 }
 
+[data-ui-theme="subterranean_borealis"] {
+  --bg-deep: #040914;
+  --bg-panel: #081d2e;
+  --bg-panel-2: #0e2a42;
+  --root-cream: #ecfdf5;
+  --root-cream-dim: #a7f3d0;
+  --accent-glow: #38bdf8;
+  --accent-glow-dim: #0ea5e9;
+  --accent-amber: #34d399;
+  --line-soil: #164e63;
+  --prestige-accent: #2dd4bf;
+  --prestige-accent-dim: #0f766e;
+  --prestige-bg: #051824;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -558,6 +573,18 @@ svg#rootCanvas, .root-svg {
   box-shadow: 0 0 0 2px #fff, 0 0 28px rgba(255, 215, 0, 0.95), 0 0 50px rgba(255, 120, 0, 0.6);
   animation: eventPulseSuper 0.65s ease-in-out infinite;
   z-index: 12;
+}
+
+.game-event.aurora {
+  background: radial-gradient(circle at 35% 30%, #ec4899, #8b5cf6, #06b6d4);
+  box-shadow: 0 0 0 2px #f472b6, 0 0 30px rgba(244, 114, 182, 0.9), 0 0 50px rgba(56, 189, 248, 0.6);
+  animation: eventPulseAurora 0.8s ease-in-out infinite;
+  z-index: 12;
+}
+
+@keyframes eventPulseAurora {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg); }
+  50% { transform: scale(1.16) rotate(6deg); filter: hue-rotate(45deg); }
 }
 
 .game-event.fading {

@@ -14,6 +14,10 @@ export const ECHO_RESONANCE_MAX_LEVEL = 5;
 export const GAIA_CLAIRVOYANCE_MAX_LEVEL = 10;
 export const PRIMORDIAL_SEEDLING_MAX_LEVEL = 5;
 export const DEEP_MEDITATION_MAX_LEVEL = 5;
+export const GAIA_BLESSING_MAX_LEVEL = 500;
+export const HYPERDRIVE_COST = 10000;
+export const AURORA_BLOOM_COST = 10000;
+export const SEED_TRANSMUTE_COST = 50000000000; // 50 Billion seeds per 1 Astral Petal
 
 export const TRIAL_DEFS: TrialDef[] = [
   {
@@ -139,12 +143,24 @@ export function canTranscend(state: GameState): boolean {
 }
 
 export function gaiaBlessingCost(level: number): number {
-  return 15 * (level + 1);
+  return Math.floor(15 * Math.pow(level + 1, 1.25));
 }
 
 export function gaiaBlessingEssenceMultiplier(state: GameState): number {
   const lvl = state.transcendence?.gaiaBlessingLevel || 0;
-  return 1 + lvl * 0.05; // +5% per level, infinite
+  return 1 + Math.min(GAIA_BLESSING_MAX_LEVEL, lvl) * 0.01; // +1% per level, max +500%
+}
+
+export function gaiaBlessingMaxed(state: GameState): boolean {
+  return (state.transcendence?.gaiaBlessingLevel || 0) >= GAIA_BLESSING_MAX_LEVEL;
+}
+
+export function hyperdriveUnlocked(state: GameState): boolean {
+  return !!state.transcendence?.hyperdriveUnlocked;
+}
+
+export function auroraBloomUnlocked(state: GameState): boolean {
+  return !!state.transcendence?.auroraBloomUnlocked;
 }
 
 export function calcTranscendenceEssences(state: GameState): number {

@@ -6,12 +6,14 @@ import {
   SKIN_COSTS,
   SKIN_DEFS,
   SKIN_DESCRIPTIONS,
+  SKIN_PETAL_COSTS,
   SKIN_PRESTIGE_KEYS,
   SKIN_SWATCHES,
   THEME_SWATCHES,
   UI_THEME_COSTS,
   UI_THEME_DEFS,
   UI_THEME_DESCRIPTIONS,
+  UI_THEME_PETAL_COSTS,
   UI_THEME_PRESTIGE_KEYS,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
@@ -188,7 +190,14 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
   const curIndex = isCurrentTabSkins ? skinIndex : themeIndex;
   const totalCount = isCurrentTabSkins ? SKIN_DEFS.length : UI_THEME_DEFS.length;
   const isTrialTier = isCurrentTabSkins ? currentSkinDef.tier === 'trial' : currentThemeDef.tier === 'trial';
-  const canAfford = !isTrialTier && state.eternalSeeds >= curCost;
+  const isAstralTier = isCurrentTabSkins ? currentSkinDef.tier === 'astral' : currentThemeDef.tier === 'astral';
+  const currentPetalCost = isCurrentTabSkins
+    ? (SKIN_PETAL_COSTS[currentSkinId] || 0)
+    : (UI_THEME_PETAL_COSTS[currentThemeId] || 0);
+  const myPetals = state.transcendence?.astralPetals || 0;
+  const canAfford = isAstralTier
+    ? myPetals >= currentPetalCost
+    : (!isTrialTier && state.eternalSeeds >= curCost);
 
   return (
     <div
@@ -223,11 +232,26 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
       >
         {/* Top Bar: Title & Close Button */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '18px' }}>🎨</span>
             <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--root-cream)' }}>
               {tr.wardrobeTitle}
             </span>
+            {!!state.transcendence?.auroraBloomUnlocked && (
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#f472b6',
+                  background: 'rgba(244, 114, 182, 0.15)',
+                  border: '1px solid rgba(244, 114, 182, 0.35)',
+                  padding: '2px 8px',
+                  borderRadius: '999px',
+                }}
+              >
+                {fmtInt(myPetals)} 🌸
+              </span>
+            )}
           </div>
 
           <button
@@ -470,6 +494,56 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
               <span>⚔️</span>
               <span>{isEn ? 'Subterranean Trial Reward' : 'รางวัลจากการทดลองแห่งผืนพิภพ'}</span>
             </div>
+          ) : isAstralTier ? (
+            canAfford ? (
+              <button
+                onClick={() => {
+                  if (isCurrentTabSkins) {
+                    onBuySkin(currentSkinId, true);
+                  } else {
+                    onBuyUITheme(currentThemeId, true);
+                  }
+                  onClearPreview();
+                }}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+                  color: '#ffffff',
+                  border: 'none',
+                  fontWeight: 700,
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 16px rgba(236, 72, 153, 0.5)',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                🛒 {currentPetalCost} 🌸 {isEn ? 'Buy & Equip' : 'ซื้อ & สวมใส่'}
+              </button>
+            ) : (
+              <div
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  borderRadius: '12px',
+                  background: 'rgba(244, 114, 182, 0.12)',
+                  border: '1px solid rgba(244, 114, 182, 0.35)',
+                  color: '#f472b6',
+                  fontWeight: 700,
+                  fontSize: '12px',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+                title={isEn ? `Need ${currentPetalCost - myPetals} more Astral Petals` : `ยังขาดอีก ${currentPetalCost - myPetals} เกสรดวงดาว`}
+              >
+                <span>🔒 {currentPetalCost} 🌸</span>
+                <span>{isEn ? 'Need Astral Petals' : 'ต้องการเกสรดวงดาว'}</span>
+              </div>
+            )
           ) : canAfford ? (
             <button
               onClick={() => {

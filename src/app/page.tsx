@@ -17,7 +17,7 @@ import { WardrobeModal } from '@/components/modals/WardrobeModal';
 import { RelicsModal } from '@/components/modals/RelicsModal';
 import { AutomationModal } from '@/components/modals/AutomationModal';
 import { TranscendenceModal } from '@/components/modals/TranscendenceModal';
-import { SKIN_COSTS, UI_THEME_COSTS } from '@/constants/gameData';
+import { SKIN_COSTS, SKIN_PETAL_COSTS, UI_THEME_COSTS, UI_THEME_PETAL_COSTS } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { SKIN_NAMES, UI_THEME_NAMES } from '@/lib/i18n';
 
@@ -90,6 +90,10 @@ export default function Home() {
     buyGaiaClairvoyance,
     buyPrimordialSeedling,
     buyDeepMeditation,
+    buyHyperdrive,
+    toggleHyperdrive,
+    buyAuroraBloom,
+    transmuteSeedsToPetals,
     startTrial,
     abandonTrial,
     claimUnearthedRelic,
@@ -152,6 +156,7 @@ export default function Home() {
           onOpenOptions={() => setOptionsModalOpen(true)}
           onOpenAchievements={() => setAchievementsModalOpen(true)}
           onOpenStats={() => setStatsModalOpen(true)}
+          onToggleHyperdrive={toggleHyperdrive}
         />
 
         <StageCanvas
@@ -246,6 +251,7 @@ export default function Home() {
         onBuyOfflineCapUpgrade={buyOfflineCapUpgrade}
         onBuySkin={buySkin}
         onBuyUITheme={buyUITheme}
+        onTransmuteSeedsToPetals={transmuteSeedsToPetals}
       />
 
       {/* Achievements modal */}
@@ -299,6 +305,9 @@ export default function Home() {
           onBuyGaiaClairvoyance={buyGaiaClairvoyance}
           onBuyPrimordialSeedling={buyPrimordialSeedling}
           onBuyDeepMeditation={buyDeepMeditation}
+          onBuyHyperdrive={buyHyperdrive}
+          onToggleHyperdrive={toggleHyperdrive}
+          onBuyAuroraBloom={buyAuroraBloom}
           onStartTrial={startTrial}
           onAbandonTrial={abandonTrial}
         />
@@ -313,12 +322,20 @@ export default function Home() {
 
       {/* Floating Live Preview Banner */}
       {!wardrobeModalOpen && (previewSkin || previewUITheme) && (() => {
+        const previewPetalCost = previewSkin
+          ? (SKIN_PETAL_COSTS[previewSkin] || 0)
+          : previewUITheme
+          ? (UI_THEME_PETAL_COSTS[previewUITheme] || 0)
+          : 0;
+        const isPetalItem = previewPetalCost > 0;
         const previewCost = previewSkin
           ? (SKIN_COSTS[previewSkin] || 0)
           : previewUITheme
           ? (UI_THEME_COSTS[previewUITheme] || 0)
           : 0;
-        const canAfford = state.eternalSeeds >= previewCost;
+        const canAfford = isPetalItem
+          ? (state.transcendence?.astralPetals || 0) >= previewPetalCost
+          : state.eternalSeeds >= previewCost;
 
         return (
           <div
@@ -384,17 +401,33 @@ export default function Home() {
                   style={{
                     padding: '5px 14px',
                     borderRadius: '999px',
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    background: isPetalItem
+                      ? 'linear-gradient(135deg, #ec4899, #8b5cf6)'
+                      : 'linear-gradient(135deg, #10b981, #059669)',
                     color: '#ffffff',
                     border: 'none',
                     cursor: 'pointer',
                     fontSize: '12px',
                     fontWeight: 700,
-                    boxShadow: '0 0 10px rgba(16, 185, 129, 0.5)',
+                    boxShadow: isPetalItem ? '0 0 12px rgba(236, 72, 153, 0.5)' : '0 0 10px rgba(16, 185, 129, 0.5)',
                   }}
                 >
-                  🛒 {fmtInt(previewCost)} 🌌 {isEn ? 'Buy & Keep' : 'ซื้อเลย & สวมใส่'}
+                  🛒 {isPetalItem ? `${previewPetalCost} 🌸` : `${fmtInt(previewCost)} 🌌`} {isEn ? 'Buy & Keep' : 'ซื้อเลย & สวมใส่'}
                 </button>
+              ) : isPetalItem ? (
+                <div
+                  style={{
+                    padding: '5px 14px',
+                    borderRadius: '999px',
+                    background: 'rgba(244, 114, 182, 0.15)',
+                    color: '#f472b6',
+                    border: '1px solid rgba(244, 114, 182, 0.35)',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                  }}
+                >
+                  🔒 {previewPetalCost} 🌸 {isEn ? 'Need Petals' : 'ต้องการเกสร'}
+                </div>
               ) : (
                 <button
                   onClick={() => {
@@ -413,7 +446,7 @@ export default function Home() {
                   }}
                   title={isEn ? `Need ${fmtInt(previewCost - state.eternalSeeds)} more seeds` : `ยังขาดอีก ${fmtInt(previewCost - state.eternalSeeds)} เมล็ด`}
                 >
-                  🔒 {fmtInt(previewCost)} 🌌 {isEn ? 'Prestige Shop' : 'ร้าน Prestige'}
+                  🔒 {fmtInt(previewCost)} 🌌 {isEn ? 'Unlock in Prestige' : 'ปลดล็อกในร้าน Prestige'}
                 </button>
               )}
             </div>

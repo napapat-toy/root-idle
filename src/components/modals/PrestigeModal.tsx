@@ -16,6 +16,7 @@ import {
   eventDurationCost,
   eventDurationMaxed,
   goldenSeedCost,
+  GOLDEN_SEED_MAX_LEVEL,
   LUCKY_CHANCE_MAX,
   LUCKY_CHANCE_STEP,
   luckyChanceCost,
@@ -31,6 +32,8 @@ import {
   offlineCapCost,
   offlineCapMaxed,
   passiveRateCost,
+  PASSIVE_RATE_MAX_LEVEL,
+  SEED_TRANSMUTE_COST,
   isSkinUnlocked,
   isUIThemeUnlocked,
   SKIN_DEFS,
@@ -68,6 +71,7 @@ interface PrestigeModalProps {
   onBuySkin: (skinId: SkinId) => void;
   onBuyUITheme: (themeId: UIThemeId) => void;
   onOpenWardrobe?: () => void;
+  onTransmuteSeedsToPetals?: (qty?: number) => void;
 }
 
 export const PrestigeModal: React.FC<PrestigeModalProps> = ({
@@ -94,6 +98,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   onBuyOfflineCapUpgrade,
   onBuySkin,
   onBuyUITheme,
+  onTransmuteSeedsToPetals,
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -281,31 +286,126 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
               {(() => {
                 const gLvl = state.prestige.goldenLevel || 0;
+                const bonusPct = (gLvl * 0.1).toFixed(1);
                 return renderBulkItem(
                   isEn ? '✨ Golden Seeds' : '✨ เมล็ดทองคำ',
-                  isEn ? `Lv.${gLvl} (+${gLvl * 5}%)` : `เลเวล ${gLvl} (+${gLvl * 5}%)`,
+                  isEn ? `Lv.${fmtInt(gLvl)} / ${fmtInt(GOLDEN_SEED_MAX_LEVEL)} (+${bonusPct}%)` : `เลเวล ${fmtInt(gLvl)} / ${fmtInt(GOLDEN_SEED_MAX_LEVEL)} (+${bonusPct}%)`,
                   isEn
-                    ? `Increases Eternal Seeds gained upon Prestige by +5% (Currently +${gLvl * 5}%)`
-                    : `เพิ่มเมล็ดนิรันดร์ที่ได้รับตอน Prestige ครั้งต่อไปอีก 5% (ตอนนี้ +${gLvl * 5}%)`,
+                    ? `Increases Eternal Seeds gained upon Prestige by +0.1% per level (Currently +${bonusPct}%)`
+                    : `เพิ่มเมล็ดนิรันดร์ที่ได้รับตอน Prestige ครั้งต่อไปอีกเลเวลละ +0.1% (ตอนนี้ +${bonusPct}%)`,
                   goldenSeedCost,
                   gLvl,
-                  onBuyGoldenSeed
+                  onBuyGoldenSeed,
+                  GOLDEN_SEED_MAX_LEVEL
                 );
               })()}
 
               {(() => {
                 const pr = state.prestige.passiveRateLevel || 0;
+                const bonusPct = (pr * 0.1).toFixed(1);
                 return renderBulkItem(
                   isEn ? '🌟 Eternal Growth Essence' : '🌟 พลังรากนิรันดร์',
-                  isEn ? `Lv.${pr} (+${pr}%)` : `เลเวล ${pr} (+${pr}%)`,
+                  isEn ? `Lv.${fmtInt(pr)} / ${fmtInt(PASSIVE_RATE_MAX_LEVEL)} (+${bonusPct}%)` : `เลเวล ${fmtInt(pr)} / ${fmtInt(PASSIVE_RATE_MAX_LEVEL)} (+${bonusPct}%)`,
                   isEn
-                    ? `Permanent +1% global production rate bonus across the entire garden (Currently +${pr}%)`
-                    : `เพิ่มเรทรวมทั้งฟาร์มแบบถาวรอีก 1% ไม่จำกัดจำนวนครั้ง (ตอนนี้ +${pr}%)`,
+                    ? `Permanent +0.1% global production rate bonus across the entire garden (Currently +${bonusPct}%)`
+                    : `เพิ่มเรทรวมทั้งฟาร์มแบบถาวรเลเวลละ +0.1% (ตอนนี้ +${bonusPct}%)`,
                   passiveRateCost,
                   pr,
-                  onBuyPassiveRate
+                  onBuyPassiveRate,
+                  PASSIVE_RATE_MAX_LEVEL
                 );
               })()}
+
+              {/* ===== Astral Transmutation ===== */}
+              {state.transcendence?.auroraBloomUnlocked && (
+                <>
+                  {renderSectionHeader(isEn ? '🌸 Astral Transmutation (Seed Sink)' : '🌸 หลอมมิติเกสรดวงดาว (ระบายเมล็ด)')}
+                  <div
+                    className="prestige-item"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(139, 92, 246, 0.12))',
+                      border: '1.5px solid rgba(244, 114, 182, 0.45)',
+                      borderRadius: '12px',
+                      padding: '12px',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    <div className="p-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: '#f472b6', fontWeight: 700, fontSize: '13px' }}>
+                        {isEn ? '🌸 Transmute Seeds into Astral Petals' : '🌸 หลอมเมล็ดเป็นเกสรดวงดาว'}
+                      </span>
+                      <span className="font-mono" style={{ color: '#f472b6', fontWeight: 700, fontSize: '13px' }}>
+                        {fmtInt(state.transcendence?.astralPetals || 0)} 🌸
+                      </span>
+                    </div>
+                    <div className="p-desc" style={{ fontSize: '11px', color: 'var(--root-cream-dim)', margin: '4px 0 8px' }}>
+                      {isEn
+                        ? `Compress 50,000,000,000 (50B) Eternal Seeds into 1 Astral Petal for mythic boutique cosmetics.`
+                        : `บีบอัดเมล็ดนิรันดร์ 50,000,000,000 (50B) เมล็ด เป็นเกสรดวงดาว 1 ดอก เพื่อใช้แลกสกินระดับตำนานในห้องแต่งตัว`}
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        type="button"
+                        disabled={state.eternalSeeds < SEED_TRANSMUTE_COST}
+                        onClick={() => onTransmuteSeedsToPetals?.(1)}
+                        style={{
+                          flex: 1,
+                          padding: '7px 10px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          background: state.eternalSeeds >= SEED_TRANSMUTE_COST ? 'linear-gradient(135deg, #ec4899, #8b5cf6)' : 'rgba(255,255,255,0.1)',
+                          color: '#fff',
+                          fontWeight: 700,
+                          fontSize: '12px',
+                          cursor: state.eternalSeeds >= SEED_TRANSMUTE_COST ? 'pointer' : 'not-allowed',
+                          opacity: state.eternalSeeds >= SEED_TRANSMUTE_COST ? 1 : 0.5,
+                        }}
+                      >
+                        {isEn ? `Transmute 1x (50B 🌰)` : `หลอม 1 ดอก (50B 🌰)`}
+                      </button>
+                      {state.eternalSeeds >= SEED_TRANSMUTE_COST * 5 && (
+                        <button
+                          type="button"
+                          onClick={() => onTransmuteSeedsToPetals?.(5)}
+                          style={{
+                            padding: '7px 12px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, #db2777, #7c3aed)',
+                            color: '#fff',
+                            fontWeight: 700,
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          +5
+                        </button>
+                      )}
+                      {state.eternalSeeds >= SEED_TRANSMUTE_COST * 2 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const maxTransmute = Math.min(100, Math.floor(state.eternalSeeds / SEED_TRANSMUTE_COST));
+                            if (maxTransmute > 0) onTransmuteSeedsToPetals?.(maxTransmute);
+                          }}
+                          style={{
+                            padding: '7px 12px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, #be185d, #6d28d9)',
+                            color: '#fff',
+                            fontWeight: 700,
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          MAX (+{Math.min(100, Math.floor(state.eternalSeeds / SEED_TRANSMUTE_COST))})
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
 
               {/* ===== Automation ===== */}
               {renderSectionHeader(tr.prestigeSecAuto)}
