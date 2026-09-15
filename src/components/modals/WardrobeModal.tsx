@@ -18,6 +18,8 @@ import {
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { SKIN_NAMES, UI_THEME_NAMES, t } from '@/lib/i18n';
+import { WardrobeStepper } from './wardrobe/WardrobeStepper';
+import { WardrobeItemAction } from './wardrobe/WardrobeItemAction';
 
 interface WardrobeModalProps {
   isOpen: boolean;
@@ -327,81 +329,13 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
         </div>
 
         {/* Carousel Stepper Bar */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: 'var(--bg-panel-2)',
-            border: '1px solid var(--line-soil)',
-            borderRadius: '16px',
-            padding: '10px 12px',
-            gap: '10px',
-            boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.3)',
-          }}
-        >
-          <button
-            onClick={handlePrev}
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '10px',
-              background: 'var(--bg-panel)',
-              border: '1px solid var(--line-soil)',
-              color: 'var(--root-cream)',
-              fontSize: '16px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.15s ease',
-              userSelect: 'none',
-            }}
-            aria-label="Previous Item"
-          >
-            ◀
-          </button>
-
-          <div style={{ flex: 1, textAlign: 'center', minWidth: 0 }}>
-            <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>
-              {curIndex + 1} / {totalCount}
-            </div>
-            <div
-              style={{
-                fontSize: '16px',
-                fontWeight: 700,
-                color: 'var(--root-cream)',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {curName}
-            </div>
-          </div>
-
-          <button
-            onClick={handleNext}
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '10px',
-              background: 'var(--bg-panel)',
-              border: '1px solid var(--line-soil)',
-              color: 'var(--root-cream)',
-              fontSize: '16px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.15s ease',
-              userSelect: 'none',
-            }}
-            aria-label="Next Item"
-          >
-            ▶
-          </button>
-        </div>
+        <WardrobeStepper
+          curIndex={curIndex}
+          totalCount={totalCount}
+          curName={curName}
+          onPrev={handlePrev}
+          onNext={handleNext}
+        />
 
         {/* Color Palette Dots & Description */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textAlign: 'center' }}>
@@ -428,190 +362,37 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
         </div>
 
         {/* Action Button Strip */}
-        <div style={{ display: 'flex', gap: '8px', marginTop: '2px' }}>
-          {curEquipped ? (
-            <div
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '12px',
-                background: 'rgba(255, 255, 255, 0.06)',
-                border: '1px solid var(--accent-glow-dim)',
-                color: 'var(--accent-glow)',
-                fontWeight: 700,
-                fontSize: '13px',
-                textAlign: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-              }}
-            >
-              <span>✓</span>
-              <span>{tr.equippedBadge}</span>
-            </div>
-          ) : curOwned ? (
-            <button
-              onClick={() => {
-                if (isCurrentTabSkins) {
-                  onSelectSkin(currentSkinId);
-                } else {
-                  onSelectUITheme(currentThemeId);
-                }
-                onClearPreview();
-              }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '12px',
-                background: 'var(--accent-glow)',
-                color: '#12190d',
-                border: 'none',
-                fontWeight: 700,
-                fontSize: '13px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.3)',
-              }}
-            >
-              ✅ {isEn ? 'Equip This' : 'สวมใส่อันนี้'}
-            </button>
-          ) : isTrialTier ? (
-            <div
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '12px',
-                background: 'rgba(234, 179, 8, 0.12)',
-                border: '1px solid rgba(234, 179, 8, 0.35)',
-                color: '#facc15',
-                fontWeight: 700,
-                fontSize: '12px',
-                textAlign: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-              }}
-            >
-              <span>⚔️</span>
-              <span>{isEn ? 'Subterranean Trial Reward' : 'รางวัลจากการทดลองแห่งผืนพิภพ'}</span>
-            </div>
-          ) : isAstralTier ? (
-            canAfford ? (
-              <button
-                onClick={() => {
-                  if (isCurrentTabSkins) {
-                    onBuySkin(currentSkinId, true);
-                  } else {
-                    onBuyUITheme(currentThemeId, true);
-                  }
-                  onClearPreview();
-                }}
-                style={{
-                  flex: 1,
-                  padding: '10px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
-                  color: '#ffffff',
-                  border: 'none',
-                  fontWeight: 700,
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                  boxShadow: '0 0 16px rgba(236, 72, 153, 0.5)',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                🛒 {currentPetalCost} 🌸 {isEn ? 'Buy & Equip' : 'ซื้อ & สวมใส่'}
-              </button>
-            ) : (
-              <div
-                style={{
-                  flex: 1,
-                  padding: '10px',
-                  borderRadius: '12px',
-                  background: 'rgba(244, 114, 182, 0.12)',
-                  border: '1px solid rgba(244, 114, 182, 0.35)',
-                  color: '#f472b6',
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  textAlign: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                }}
-                title={isEn ? `Need ${currentPetalCost - myPetals} more Astral Petals` : `ยังขาดอีก ${currentPetalCost - myPetals} เกสรดวงดาว`}
-              >
-                <span>🔒 {currentPetalCost} 🌸</span>
-                <span>{isEn ? 'Need Astral Petals' : 'ต้องการเกสรดวงดาว'}</span>
-              </div>
-            )
-          ) : canAfford ? (
-            <button
-              onClick={() => {
-                if (isCurrentTabSkins) {
-                  onBuySkin(currentSkinId, true);
-                } else {
-                  onBuyUITheme(currentThemeId, true);
-                }
-                onClearPreview();
-              }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '12px',
-                background: 'linear-gradient(135deg, #10b981, #059669)',
-                color: '#ffffff',
-                border: 'none',
-                fontWeight: 700,
-                fontSize: '13px',
-                cursor: 'pointer',
-                boxShadow: '0 0 14px rgba(16, 185, 129, 0.5)',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              🛒 {fmtInt(curCost)} 🌌 {isEn ? 'Buy & Equip' : 'ซื้อ & สวมใส่'}
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                handleClose();
-                onOpenPrestige();
-              }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '12px',
-                background: 'rgba(192, 132, 252, 0.15)',
-                border: '1px solid rgba(192, 132, 252, 0.35)',
-                color: '#c084fc',
-                fontWeight: 700,
-                fontSize: '12px',
-                cursor: 'pointer',
-              }}
-              title={isEn ? `Need ${fmtInt(curCost - state.eternalSeeds)} more seeds` : `ยังขาดอีก ${fmtInt(curCost - state.eternalSeeds)} เมล็ด`}
-            >
-              🔒 {fmtInt(curCost)} 🌌 {isEn ? 'Unlock in Prestige' : 'ปลดล็อกในร้าน Prestige'}
-            </button>
-          )}
-
-          <button
-            onClick={handleClose}
-            style={{
-              padding: '10px 16px',
-              borderRadius: '12px',
-              background: 'rgba(255, 255, 255, 0.08)',
-              color: 'var(--root-cream-dim)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              fontWeight: 600,
-              fontSize: '13px',
-              cursor: 'pointer',
-            }}
-          >
-            {isEn ? '✕ Close' : '✕ ปิด'}
-          </button>
-        </div>
+        <WardrobeItemAction
+          curEquipped={curEquipped}
+          curOwned={curOwned}
+          isTrialTier={isTrialTier}
+          isAstralTier={isAstralTier}
+          canAfford={canAfford}
+          currentPetalCost={currentPetalCost}
+          myPetals={myPetals}
+          curCost={curCost}
+          eternalSeeds={state.eternalSeeds}
+          isEn={isEn}
+          equippedBadgeText={tr.equippedBadge}
+          onEquip={() => {
+            if (isCurrentTabSkins) {
+              onSelectSkin(currentSkinId);
+            } else {
+              onSelectUITheme(currentThemeId);
+            }
+            onClearPreview();
+          }}
+          onBuy={() => {
+            if (isCurrentTabSkins) {
+              onBuySkin(currentSkinId, true);
+            } else {
+              onBuyUITheme(currentThemeId, true);
+            }
+            onClearPreview();
+          }}
+          onOpenPrestige={onOpenPrestige}
+          onClose={handleClose}
+        />
 
         {/* Mobile Swipe Hint */}
         <div style={{ textAlign: 'center', fontSize: '10px', color: 'rgba(255, 255, 255, 0.35)' }}>
