@@ -28,6 +28,18 @@ export default function Home() {
     }
   }, [effectiveUITheme]);
 
+  const isAnyModalOpen = activeModal !== null || !!game.offlineModal;
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (isAnyModalOpen) {
+      document.body.classList.add('modal-open');
+      return () => {
+        document.body.classList.remove('modal-open');
+      };
+    }
+  }, [isAnyModalOpen]);
+
   if (!mounted) {
     return <div className="app" style={{ opacity: 0 }} />;
   }

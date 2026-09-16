@@ -57,9 +57,10 @@ export const LivePreviewBanner: React.FC<LivePreviewBannerProps> = React.memo(({
 
   return (
     <div
+      className="live-preview-banner"
       style={{
         position: 'fixed',
-        bottom: '24px',
+        bottom: 'max(16px, env(safe-area-inset-bottom))',
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 9999,
@@ -67,7 +68,6 @@ export const LivePreviewBanner: React.FC<LivePreviewBannerProps> = React.memo(({
         backdropFilter: 'blur(12px)',
         border: '1px solid rgba(56, 189, 248, 0.5)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 16px rgba(56, 189, 248, 0.25)',
-        borderRadius: '999px',
         padding: '8px 18px',
         display: 'flex',
         alignItems: 'center',

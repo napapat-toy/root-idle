@@ -47,7 +47,7 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
   const isEn = lang === 'en';
 
   return (
-    <div className="stats-card" style={{ gridColumn: 'span 2' }}>
+    <div className="stats-card stats-multipliers-card">
       <div className="stats-card-header">
         <span className="stats-card-icon">⚡</span>
         <span className="stats-card-title">
@@ -56,7 +56,7 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
       </div>
 
       {/* Two Column Layout: Base Additive vs Special Multipliers */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px', marginBottom: '12px' }}>
+      <div className="stats-multipliers-subgrid">
         {/* Box 1: Base Additive Bonuses (กลุ่มบวก %) */}
         <div style={{ background: 'rgba(34, 197, 94, 0.04)', border: '1px solid rgba(34, 197, 94, 0.2)', borderRadius: '8px', padding: '12px' }}>
           <div style={{ fontSize: '12px', fontWeight: 700, color: '#4ade80', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>

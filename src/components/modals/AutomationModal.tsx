@@ -36,7 +36,7 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
           &times;
         </button>
 
-        <div className="offline-modal generic-modal" style={{ padding: '20px 24px', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
+        <div className="offline-modal generic-modal" style={{ padding: 'clamp(14px, 3.5vw, 20px)', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
           {/* Header */}
           <div className="icon" style={{ fontSize: '32px', marginBottom: '6px' }}>🤖</div>
           <h2 style={{ marginBottom: '4px' }}>
@@ -77,7 +77,7 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
           )}
 
         {/* Automation Items Container */}
-        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {/* Universal Automation Control */}
           {state.prestige.autoRoot ? (
             <div

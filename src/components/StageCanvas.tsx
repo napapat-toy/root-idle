@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { ActiveBuff, BiomeId, Branch, FloatingTextItem, GameEventItem, Language, SkinId } from '@/types/game';
 import { getBranchColor } from '@/lib/treeGenerator';
 import { BIOME_DEFS, RELIC_DEFS, RELIC_RARITY_INFO, getHighestOwnedRootIndex, getSubterraneanDepthInfo } from '@/constants/gameData';
@@ -285,7 +285,35 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
     buffBadges.push(`🍀 ×${fmtMultiplier(activeLuckyBuff.multiplier)} (${remain}${isEn ? 's' : 'วิ'})`);
   }
 
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const isDraggingRef = useRef(false);
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 1) {
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      isDraggingRef.current = false;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartRef.current && e.touches.length === 1) {
+      const dx = Math.abs(e.touches[0].clientX - touchStartRef.current.x);
+      const dy = Math.abs(e.touches[0].clientY - touchStartRef.current.y);
+      if (dx > 10 || dy > 10) {
+        isDraggingRef.current = true;
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartRef.current = null;
+    setTimeout(() => {
+      isDraggingRef.current = false;
+    }, 80);
+  };
+
   const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isDraggingRef.current) return;
     if (onWaterCanvas) {
       const rect = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -299,6 +327,9 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       className="stage"
       id="stageBox"
       onClick={handleCanvasClick}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       style={{
         background: canvasBackground,
         transition: 'background 1.5s ease-in-out',

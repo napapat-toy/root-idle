@@ -56,7 +56,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
 
   return (
     <div className="top-actions-row">
-      <div className="top-actions-left" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+      <div className="top-actions-left">
         {showPrestigeBtn && (
           <button
             className={`prestige-mini-btn ${pendingSeeds >= 10 ? 'ready-pulse' : ''}`}

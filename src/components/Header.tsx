@@ -23,10 +23,13 @@ export const Header: React.FC<HeaderProps> = React.memo(({ nutrients, totalRate,
             <>ราก<span>มหัศจรรย์</span></>
           )}
         </h1>
-        <div className="subtitle">
+        <div className="subtitle hidden sm:block">
           {isEn
             ? 'Water, wait, and watch roots expand endlessly — purchase root modules to accelerate growth'
             : 'รดน้ำ รอ และดูรากแผ่ขยายเองไปเรื่อยๆ — ซื้อรากเสริมเพื่อเร่งการเติบโต'}
+        </div>
+        <div className="subtitle block sm:hidden text-[11px] text-root-cream-dim">
+          {isEn ? 'Zen Incremental Roots' : 'ปลูกรากไม้สไตล์เซน'}
         </div>
       </div>
 
