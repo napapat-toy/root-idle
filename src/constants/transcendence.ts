@@ -291,3 +291,163 @@ export function trialDeepRootsBonusMultiplier(state: GameState, moduleId: string
   if (!DEEP_ROOT_IDS.has(moduleId)) return 1.0;
   return isTrialCompleted(state, 'geomagnetic_storm') ? 1.20 : 1.0;
 }
+
+export type GaiaPerkId =
+  | 'vigor'
+  | 'soil'
+  | 'blessing'
+  | 'touch'
+  | 'echo_res'
+  | 'clairvoyance'
+  | 'seedling'
+  | 'meditation'
+  | 'hyperdrive'
+  | 'aurora';
+
+export interface GaiaPerkDef {
+  id: GaiaPerkId;
+  icon: string;
+  nameKey: string;
+  descKey: string;
+  type: 'level' | 'toggle' | 'unlock';
+  maxLevel?: number;
+  cost: number | ((level: number) => number);
+  getLevel?: (state: GameState) => number;
+  getEffectText?: (state: GameState, isEn: boolean) => string;
+  isUnlocked?: (state: GameState) => boolean;
+  isToggledOn?: (state: GameState) => boolean;
+}
+
+export const GAIA_PERK_DEFS: GaiaPerkDef[] = [
+  {
+    id: 'vigor',
+    icon: '🌱',
+    nameKey: 'transcendPerk1Name',
+    descKey: 'transcendPerk1Desc',
+    type: 'level',
+    maxLevel: PRIMORDIAL_VIGOR_MAX_LEVEL,
+    cost: primordialVigorCost,
+    getLevel: s => s.transcendence?.primordialVigorLevel || 0,
+    getEffectText: (s, isEn) => {
+      const lvl = s.transcendence?.primordialVigorLevel || 0;
+      return isEn ? `Current Effect: +${(lvl * 25).toFixed(0)}% Base Rate` : `ผลปัจจุบัน: เรทพื้นฐาน +${(lvl * 25).toFixed(0)}%`;
+    },
+  },
+  {
+    id: 'soil',
+    icon: '📜',
+    nameKey: 'transcendPerk2Name',
+    descKey: 'transcendPerk2Desc',
+    type: 'level',
+    maxLevel: SOIL_MEMORY_MAX_LEVEL,
+    cost: soilMemoryCost,
+    getLevel: s => s.transcendence?.soilMemoryLevel || 0,
+    getEffectText: (s, isEn) => {
+      const retain = (soilMemoryRetainPct(s) * 100).toFixed(0);
+      return isEn ? `Current Effect: Retain ${retain}% Echoes` : `ผลปัจจุบัน: คงสะท้อนราก ${retain}%`;
+    },
+  },
+  {
+    id: 'blessing',
+    icon: '🌍',
+    nameKey: 'transcendPerk3Name',
+    descKey: 'transcendPerk3Desc',
+    type: 'level',
+    maxLevel: GAIA_BLESSING_MAX_LEVEL,
+    cost: gaiaBlessingCost,
+    getLevel: s => s.transcendence?.gaiaBlessingLevel || 0,
+    getEffectText: (s, isEn) => {
+      const lvl = s.transcendence?.gaiaBlessingLevel || 0;
+      return isEn ? `+${lvl}% Gaia Essences earned` : `+${lvl}% ละอองชีวิตที่ได้รับ`;
+    },
+  },
+  {
+    id: 'touch',
+    icon: '✨',
+    nameKey: 'transcendPerk4Name',
+    descKey: 'transcendPerk4Desc',
+    type: 'level',
+    maxLevel: GAIA_TOUCH_MAX_LEVEL,
+    cost: gaiaTouchCost,
+    getLevel: s => s.transcendence?.gaiaTouchLevel || 0,
+    getEffectText: (s, isEn) => {
+      const mult = gaiaTouchBonusMult(s).toFixed(2);
+      return isEn ? `Current Effect: ×${mult} Lucky Magnitude` : `ผลปัจจุบัน: แจ็กพอตโชคดี ×${mult} เท่า`;
+    },
+  },
+  {
+    id: 'echo_res',
+    icon: '🌀',
+    nameKey: 'transcendPerk5Name',
+    descKey: 'transcendPerk5Desc',
+    type: 'level',
+    maxLevel: ECHO_RESONANCE_MAX_LEVEL,
+    cost: echoResonanceCost,
+    getLevel: s => s.transcendence?.echoResonanceLevel || 0,
+    getEffectText: (s, isEn) => {
+      const cap = 5 + (s.transcendence?.echoResonanceLevel || 0);
+      return isEn ? `Current Effect: Max Echo Cap Lv.${cap}` : `ผลปัจจุบัน: เพดานสะท้อนรากสูงสุด Lv.${cap}`;
+    },
+  },
+  {
+    id: 'clairvoyance',
+    icon: '👁️',
+    nameKey: 'transcendPerk6Name',
+    descKey: 'transcendPerk6Desc',
+    type: 'level',
+    maxLevel: GAIA_CLAIRVOYANCE_MAX_LEVEL,
+    cost: gaiaClairvoyanceCost,
+    getLevel: s => s.transcendence?.gaiaClairvoyanceLevel || 0,
+    getEffectText: (s, isEn) => {
+      const bonus = ((s.transcendence?.gaiaClairvoyanceLevel || 0) * 0.1).toFixed(1);
+      return isEn ? `Current Effect: +${bonus}% Lucky Chance` : `ผลปัจจุบัน: +${bonus}% โอกาสโชคดี`;
+    },
+  },
+  {
+    id: 'seedling',
+    icon: '🌱',
+    nameKey: 'transcendPerk7Name',
+    descKey: 'transcendPerk7Desc',
+    type: 'level',
+    maxLevel: PRIMORDIAL_SEEDLING_MAX_LEVEL,
+    cost: primordialSeedlingCost,
+    getLevel: s => s.transcendence?.primordialSeedlingLevel || 0,
+    getEffectText: (s, isEn) => {
+      const rate = (0.60 + (s.transcendence?.primordialSeedlingLevel || 0) * 0.28).toFixed(2);
+      return isEn ? `Current Effect: Initial Base Rate ${rate}/s` : `ผลปัจจุบัน: เรทตั้งต้น ${rate}/วิ`;
+    },
+  },
+  {
+    id: 'meditation',
+    icon: '🧘',
+    nameKey: 'transcendPerk8Name',
+    descKey: 'transcendPerk8Desc',
+    type: 'level',
+    maxLevel: DEEP_MEDITATION_MAX_LEVEL,
+    cost: deepMeditationCost,
+    getLevel: s => s.transcendence?.deepMeditationLevel || 0,
+    getEffectText: (s, isEn) => {
+      const cap = (1.0 + (s.transcendence?.deepMeditationLevel || 0) * 0.40).toFixed(1);
+      return isEn ? `Current Max Cap: ×${cap}` : `ผลปัจจุบัน: เพดานสูงสุด ×${cap}`;
+    },
+  },
+  {
+    id: 'hyperdrive',
+    icon: '⚡',
+    nameKey: 'transcendPerk9Name',
+    descKey: 'transcendPerk9Desc',
+    type: 'toggle',
+    cost: HYPERDRIVE_COST,
+    isUnlocked: s => !!s.transcendence?.hyperdriveUnlocked,
+    isToggledOn: s => !!s.transcendence?.hyperdriveEnabled,
+  },
+  {
+    id: 'aurora',
+    icon: '🌸',
+    nameKey: 'transcendPerk10Name',
+    descKey: 'transcendPerk10Desc',
+    type: 'unlock',
+    cost: AURORA_BLOOM_COST,
+    isUnlocked: s => !!s.transcendence?.auroraBloomUnlocked,
+  },
+];

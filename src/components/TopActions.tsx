@@ -16,6 +16,7 @@ interface TopActionsProps {
   onOpenRelics?: () => void;
   onOpenAutomation?: () => void;
   onOpenTranscendence?: () => void;
+  onOpenTrials?: () => void;
   onToggleHyperdrive?: () => void;
 }
 
@@ -29,10 +30,10 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onOpenRelics,
   onOpenAutomation,
   onOpenTranscendence,
+  onOpenTrials,
   onToggleHyperdrive,
 }) => {
   const lang: Language = state.lang || 'th';
-  const isEn = lang === 'en';
   const tr = t(lang);
 
   const pendingSeeds = calcPrestigeSeeds(state);
@@ -76,24 +77,37 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
             className={`prestige-mini-btn ${pendingEssences > 0 ? 'ready-pulse' : ''}`}
             onClick={onOpenTranscendence}
             style={{
-              borderColor: isTrialActive ? 'rgba(245, 158, 11, 0.7)' : 'rgba(52, 211, 153, 0.6)',
-              background: isTrialActive
-                ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(249, 115, 22, 0.2))'
-                : 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.2))',
+              borderColor: 'rgba(52, 211, 153, 0.6)',
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.2))',
             }}
           >
-            {isTrialActive ? '⚔️' : '🌍'}{' '}
+            🌍{' '}
             <span className="action-btn-text">
               {tr.transcendenceBtn}
             </span>
-            {isTrialActive && (
-              <span style={{ color: '#facc15', fontWeight: 700, marginLeft: '5px', fontSize: '10.5px' }}>
-                ({isEn ? 'Trial' : 'ทดสอบ'})
-              </span>
-            )}
-            {pendingEssences > 0 && !isTrialActive && (
+            {pendingEssences > 0 && (
               <span style={{ color: '#34d399', fontWeight: 700, marginLeft: '5px', fontSize: '11px' }}>
                 (+{fmtInt(pendingEssences)} 🌍)
+              </span>
+            )}
+          </button>
+        )}
+
+        {(showTranscendenceBtn || isTrialActive) && onOpenTrials && (
+          <button
+            className={`prestige-mini-btn ${isTrialActive ? 'ready-pulse' : ''}`}
+            onClick={onOpenTrials}
+            style={{
+              borderColor: isTrialActive ? 'rgba(234, 179, 8, 0.85)' : 'rgba(234, 179, 8, 0.45)',
+              background: isTrialActive
+                ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.35), rgba(249, 115, 22, 0.25))'
+                : 'linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(245, 158, 11, 0.1))',
+            }}
+          >
+            ⚔️ <span className="action-btn-text">{tr.trialsBtn}</span>
+            {isTrialActive && (
+              <span style={{ color: '#facc15', fontWeight: 700, marginLeft: '5px', fontSize: '10.5px' }}>
+                ({tr.trialActiveBadge})
               </span>
             )}
           </button>
@@ -103,9 +117,9 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className="prestige-mini-btn"
             onClick={onOpenTranscendence}
-            title={isEn
-              ? `Gaia Awakening requires 100 Yggdrasil roots in current run (${yggOwned}/100)`
-              : `การตื่นรู้แห่งไกอาต้องการรากต้นไม้โลกครบ 100 ต้นในรอบปัจจุบัน (ความคืบหน้า: ${yggOwned}/100)`
+            title={tr.transcendReqBanner
+              .replace('{count}', String(yggOwned))
+              .replace('{req}', '100')
             }
             style={{
               borderColor: 'rgba(52, 211, 153, 0.35)',
@@ -132,8 +146,8 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
             onClick={onToggleHyperdrive}
             title={
               state.transcendence?.hyperdriveEnabled
-                ? (isEn ? '⚡ 2x Speed Active (Click to toggle 1x)' : '⚡ กำลังเร่งความเร็ว 2 เท่า (คลิกเพื่อสลับเป็น 1x)')
-                : (isEn ? '⏸️ 1x Normal Speed (Click to toggle 2x Hyperdrive)' : '⏸️ ความเร็วปกติ 1x (คลิกเพื่อเร่งความเร็ว 2x)')
+                ? tr.hyperdriveActiveTooltip
+                : tr.hyperdriveInactiveTooltip
             }
             style={{
               background: state.transcendence?.hyperdriveEnabled
@@ -157,8 +171,8 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
             onClick={onOpenAutomation}
             title={
               isVoidTrial
-                ? (isEn ? '🤖 Automation Hub (Suppressed by Void Anomaly)' : '🤖 ศูนย์ควบคุมบอท (ถูกปิดกั้นชั่วคราวโดยรอยแยกสูญญะ)')
-                : (isEn ? 'Automation Control Hub' : 'ศูนย์ควบคุมระบบอัตโนมัติ')
+                ? tr.autoHubSuppressedTooltip
+                : tr.autoHubTooltip
             }
             style={{ position: 'relative' }}
           >

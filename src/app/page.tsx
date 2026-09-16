@@ -1,128 +1,38 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useSyncExternalStore } from 'react';
 import { useGameEngine } from '@/hooks/useGameEngine';
 import { Header } from '@/components/Header';
 import { TopActions } from '@/components/TopActions';
 import { StageCanvas } from '@/components/StageCanvas';
 import { ShopPanel } from '@/components/ShopPanel';
-import { OfflineModal } from '@/components/modals/OfflineModal';
-import { PrestigeModal } from '@/components/modals/PrestigeModal';
-import { OptionsModal } from '@/components/modals/OptionsModal';
-import { AchievementsModal } from '@/components/modals/AchievementsModal';
-import { StatsModal } from '@/components/modals/StatsModal';
 import { AchievementToast } from '@/components/AchievementToast';
-
-import { WardrobeModal } from '@/components/modals/WardrobeModal';
-import { RelicsModal } from '@/components/modals/RelicsModal';
-import { AutomationModal } from '@/components/modals/AutomationModal';
-import { TranscendenceModal } from '@/components/modals/TranscendenceModal';
-import { SKIN_COSTS, SKIN_PETAL_COSTS, UI_THEME_COSTS, UI_THEME_PETAL_COSTS } from '@/constants/gameData';
-import { fmtInt } from '@/lib/formatters';
-import { SKIN_NAMES, UI_THEME_NAMES } from '@/lib/i18n';
+import { LivePreviewBanner } from '@/components/LivePreviewBanner';
+import { GameModals, ModalType } from '@/components/modals';
 
 export default function Home() {
-  const {
-    state,
-    lang,
-    totalRate,
-    activeBuff,
-    activeLuckyBuff,
-    activeEvents,
-    floatingTexts,
-    offlineModal,
-    branches,
-    maxY,
-    achievementToastQueue,
-    dismissAchievementToast,
-    setLanguage,
-    buyModule,
-    buyRootUpgrade,
-    buyEcho,
-    buyRootSynergy,
-    setBuyQty,
-    claimEvent,
-    claimOffline,
-    doPrestige,
-    doHardReset,
-    setSkin,
-    setUITheme,
-    buyUITheme,
-    previewSkin,
-    previewUITheme,
-    effectiveSkin,
-    effectiveUITheme,
-    startPreviewSkin,
-    startPreviewUITheme,
-    clearPreview,
-    buyStarterCulture,
-    buyGoldenSeed,
-    buyPassiveRate,
-    buyAutoRoot,
-    toggleAutoRoot,
-    buyEventBonus,
-    buyEventDuration,
-    buyLuckyChance,
-    buyLuckyMagnitude,
-    buyLuckyDuration,
-    buyOfflineCapUpgrade,
-    buySkin,
-    doTranscendence,
-    buyPrimordialVigor,
-    buySoilMemory,
-    buyGaiaBlessing,
-    buyAutoManager,
-    buyGaiaTouch,
-    buyEchoResonance,
-    buyGaiaClairvoyance,
-    buyPrimordialSeedling,
-    buyDeepMeditation,
-    buyHyperdrive,
-    toggleHyperdrive,
-    buyAuroraBloom,
-    transmuteSeedsToPetals,
-    transmuteEssencesToPetals,
-    startTrial,
-    abandonTrial,
-    claimUnearthedRelic,
-    setActiveBiome,
-    onWaterCanvas,
-    importSaveCode,
-    exportSaveCode,
-    saveSlotAction,
-    loadSlotAction,
-    deleteSlotAction,
-  } = useGameEngine();
+  const game = useGameEngine();
+  const [activeModal, setActiveModal] = useState<ModalType | null>(null);
 
-  const [prestigeModalOpen, setPrestigeModalOpen] = useState(false);
-  const [transcendenceModalOpen, setTranscendenceModalOpen] = useState(false);
-  const [optionsModalOpen, setOptionsModalOpen] = useState(false);
-  const [achievementsModalOpen, setAchievementsModalOpen] = useState(false);
-  const [statsModalOpen, setStatsModalOpen] = useState(false);
-  const [wardrobeModalOpen, setWardrobeModalOpen] = useState(false);
-  const [relicsModalOpen, setRelicsModalOpen] = useState(false);
-  const [automationModalOpen, setAutomationModalOpen] = useState(false);
-  const mounted = React.useSyncExternalStore(
+  const mounted = useSyncExternalStore(
     () => () => {},
     () => true,
     () => false
   );
 
-  React.useEffect(() => {
+  const { effectiveUITheme } = game.cosmetics;
+
+  useEffect(() => {
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-ui-theme', effectiveUITheme);
     }
   }, [effectiveUITheme]);
 
   if (!mounted) {
-    return (
-      <div className="app" style={{ opacity: 0 }}>
-        {/* Mount placeholder */}
-      </div>
-    );
+    return <div className="app" style={{ opacity: 0 }} />;
   }
 
-  const isEn = lang === 'en';
+  const { state, lang, totalRate, branches, maxY, events, cosmetics, transcendence, achievements } = game;
 
   return (
     <div className="app" data-ui-theme={effectiveUITheme}>
@@ -135,15 +45,16 @@ export default function Home() {
       <div className="canvas-column">
         <TopActions
           state={state}
-          onOpenPrestige={() => setPrestigeModalOpen(true)}
-          onOpenTranscendence={() => setTranscendenceModalOpen(true)}
-          onOpenWardrobe={() => setWardrobeModalOpen(true)}
-          onOpenRelics={() => setRelicsModalOpen(true)}
-          onOpenAutomation={() => setAutomationModalOpen(true)}
-          onOpenOptions={() => setOptionsModalOpen(true)}
-          onOpenAchievements={() => setAchievementsModalOpen(true)}
-          onOpenStats={() => setStatsModalOpen(true)}
-          onToggleHyperdrive={toggleHyperdrive}
+          onOpenPrestige={() => setActiveModal('prestige')}
+          onOpenTranscendence={() => setActiveModal('transcendence')}
+          onOpenTrials={() => setActiveModal('trials')}
+          onOpenWardrobe={() => setActiveModal('wardrobe')}
+          onOpenRelics={() => setActiveModal('relics')}
+          onOpenAutomation={() => setActiveModal('automation')}
+          onOpenOptions={() => setActiveModal('options')}
+          onOpenAchievements={() => setActiveModal('achievements')}
+          onOpenStats={() => setActiveModal('stats')}
+          onToggleHyperdrive={transcendence.toggleHyperdrive}
         />
 
         <StageCanvas
@@ -151,17 +62,17 @@ export default function Home() {
           owned={state.owned}
           branches={branches}
           maxY={maxY}
-          activeSkin={effectiveSkin}
-          activeBuff={activeBuff}
-          activeLuckyBuff={activeLuckyBuff}
-          activeEvents={activeEvents}
-          floatingTexts={floatingTexts}
+          activeSkin={cosmetics.effectiveSkin}
+          activeBuff={events.activeBuff}
+          activeLuckyBuff={events.activeLuckyBuff}
+          activeEvents={events.activeEvents}
+          floatingTexts={events.floatingTexts}
           unclaimedRelicId={state.unclaimedRelicId}
           activeBiome={state.activeBiome}
           lang={lang}
-          onClaimEvent={claimEvent}
-          onClaimUnearthedRelic={claimUnearthedRelic}
-          onWaterCanvas={onWaterCanvas}
+          onClaimEvent={events.claimEvent}
+          onClaimUnearthedRelic={game.claimUnearthedRelic}
+          onWaterCanvas={game.onWaterCanvas}
         />
       </div>
 
@@ -169,271 +80,41 @@ export default function Home() {
         <ShopPanel
           state={state}
           totalRate={totalRate}
-          onBuyModule={buyModule}
-          onBuyRootUpgrade={buyRootUpgrade}
-          onBuyEcho={buyEcho}
-          onBuyRootSynergy={buyRootSynergy}
-          onSetBuyQty={setBuyQty}
+          onBuyModule={game.buyModule}
+          onBuyRootUpgrade={game.buyRootUpgrade}
+          onBuyEcho={game.buyEcho}
+          onBuyRootSynergy={game.buyRootSynergy}
+          onSetBuyQty={game.setBuyQty}
         />
       </div>
 
-      {/* Offline progress modal */}
-      {offlineModal && (
-        <OfflineModal
-          gain={offlineModal.gain}
-          dt={offlineModal.dt}
-          lang={lang}
-          onClaim={claimOffline}
-        />
-      )}
-
-      {/* Wardrobe Modal */}
-      <WardrobeModal
-        isOpen={wardrobeModalOpen}
-        state={state}
-        previewSkin={previewSkin}
-        previewUITheme={previewUITheme}
-        onClose={() => setWardrobeModalOpen(false)}
-        onSelectSkin={setSkin}
-        onSelectUITheme={setUITheme}
-        onBuySkin={buySkin}
-        onBuyUITheme={buyUITheme}
-        onStartPreviewSkin={startPreviewSkin}
-        onStartPreviewUITheme={startPreviewUITheme}
-        onClearPreview={clearPreview}
-        onOpenPrestige={() => setPrestigeModalOpen(true)}
+      {/* Modals & Overlays */}
+      <GameModals
+        activeModal={activeModal}
+        onClose={() => setActiveModal(null)}
+        onOpenModal={setActiveModal}
+        game={game}
       />
-
-      {/* Relics & Biomes Museum Modal */}
-      {relicsModalOpen && (
-        <RelicsModal
-          state={state}
-          onClose={() => setRelicsModalOpen(false)}
-          onSelectBiome={setActiveBiome}
-        />
-      )}
-
-      {/* Prestige modal */}
-      <PrestigeModal
-        isOpen={prestigeModalOpen}
-        state={state}
-        onClose={() => setPrestigeModalOpen(false)}
-        onOpenWardrobe={() => setWardrobeModalOpen(true)}
-        onConfirmPrestige={doPrestige}
-        onBuyStarterCulture={buyStarterCulture}
-        onBuyGoldenSeed={buyGoldenSeed}
-        onBuyPassiveRate={buyPassiveRate}
-        onBuyAutoRoot={buyAutoRoot}
-        onToggleAutoRoot={toggleAutoRoot}
-        onBuyEventBonus={buyEventBonus}
-        onBuyEventDuration={buyEventDuration}
-        onBuyLuckyChance={buyLuckyChance}
-        onBuyLuckyMagnitude={buyLuckyMagnitude}
-        onBuyLuckyDuration={buyLuckyDuration}
-        onBuyOfflineCapUpgrade={buyOfflineCapUpgrade}
-        onTransmuteSeedsToPetals={transmuteSeedsToPetals}
-        onTransmuteEssencesToPetals={transmuteEssencesToPetals}
-      />
-
-      {/* Achievements modal */}
-      <AchievementsModal
-        isOpen={achievementsModalOpen}
-        state={state}
-        onClose={() => setAchievementsModalOpen(false)}
-      />
-
-      {/* Stats Dashboard modal */}
-      <StatsModal
-        isOpen={statsModalOpen}
-        state={state}
-        onClose={() => setStatsModalOpen(false)}
-      />
-
-      {/* Options & Settings modal */}
-      <OptionsModal
-        isOpen={optionsModalOpen}
-        state={state}
-        onClose={() => setOptionsModalOpen(false)}
-        onExport={exportSaveCode}
-        onImport={importSaveCode}
-        onSaveSlot={saveSlotAction}
-        onLoadSlot={loadSlotAction}
-        onDeleteSlot={deleteSlotAction}
-        onHardReset={doHardReset}
-        onSetLanguage={setLanguage}
-      />
-
-      {/* Automation Control Modal */}
-      <AutomationModal
-        isOpen={automationModalOpen}
-        state={state}
-        onClose={() => setAutomationModalOpen(false)}
-        onToggleAutoRoot={toggleAutoRoot}
-      />
-
-      {/* Gaia Transcendence Modal */}
-      {transcendenceModalOpen && (
-        <TranscendenceModal
-          state={state}
-          onClose={() => setTranscendenceModalOpen(false)}
-          onTranscend={doTranscendence}
-          onBuyPrimordialVigor={buyPrimordialVigor}
-          onBuySoilMemory={buySoilMemory}
-          onBuyGaiaBlessing={buyGaiaBlessing}
-          onBuyAutoManager={buyAutoManager}
-          onBuyGaiaTouch={buyGaiaTouch}
-          onBuyEchoResonance={buyEchoResonance}
-          onBuyGaiaClairvoyance={buyGaiaClairvoyance}
-          onBuyPrimordialSeedling={buyPrimordialSeedling}
-          onBuyDeepMeditation={buyDeepMeditation}
-          onBuyHyperdrive={buyHyperdrive}
-          onToggleHyperdrive={toggleHyperdrive}
-          onBuyAuroraBloom={buyAuroraBloom}
-          onStartTrial={startTrial}
-          onAbandonTrial={abandonTrial}
-        />
-      )}
 
       {/* Achievement Toast Notifications */}
       <AchievementToast
-        queue={achievementToastQueue}
+        queue={achievements.achievementToastQueue}
         lang={lang}
-        onDismiss={dismissAchievementToast}
+        onDismiss={achievements.dismissAchievementToast}
       />
 
       {/* Floating Live Preview Banner */}
-      {!wardrobeModalOpen && (previewSkin || previewUITheme) && (() => {
-        const previewPetalCost = previewSkin
-          ? (SKIN_PETAL_COSTS[previewSkin] || 0)
-          : previewUITheme
-          ? (UI_THEME_PETAL_COSTS[previewUITheme] || 0)
-          : 0;
-        const isPetalItem = previewPetalCost > 0;
-        const previewCost = previewSkin
-          ? (SKIN_COSTS[previewSkin] || 0)
-          : previewUITheme
-          ? (UI_THEME_COSTS[previewUITheme] || 0)
-          : 0;
-        const canAfford = isPetalItem
-          ? (state.transcendence?.astralPetals || 0) >= previewPetalCost
-          : state.eternalSeeds >= previewCost;
-
-        return (
-          <div
-            style={{
-              position: 'fixed',
-              bottom: '24px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 9999,
-              background: 'rgba(15, 23, 42, 0.94)',
-              backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(56, 189, 248, 0.5)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 16px rgba(56, 189, 248, 0.25)',
-              borderRadius: '999px',
-              padding: '8px 18px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '14px',
-              color: '#f8fafc',
-              fontSize: '13px',
-              fontWeight: 600,
-              maxWidth: '92vw',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#38bdf8' }}>✨</span>
-              <span>
-                {previewSkin
-                  ? (isEn ? `Previewing Root Skin: ${SKIN_NAMES[previewSkin]?.[lang]}` : `กำลังทดลองสกินราก: ${SKIN_NAMES[previewSkin]?.[lang]}`)
-                  : (isEn ? `Previewing UI Theme: ${UI_THEME_NAMES[previewUITheme!]?.[lang]}` : `กำลังทดลองธีมหน้าต่าง: ${UI_THEME_NAMES[previewUITheme!]?.[lang]}`)}
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <button
-                onClick={clearPreview}
-                style={{
-                  padding: '5px 12px',
-                  borderRadius: '999px',
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  color: '#f8fafc',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                }}
-              >
-                {isEn ? '✕ Exit' : '✕ ยกเลิก'}
-              </button>
-
-              {canAfford ? (
-                <button
-                  onClick={() => {
-                    if (previewSkin) {
-                      buySkin(previewSkin, true);
-                    } else if (previewUITheme) {
-                      buyUITheme(previewUITheme, true);
-                    }
-                    clearPreview();
-                  }}
-                  style={{
-                    padding: '5px 14px',
-                    borderRadius: '999px',
-                    background: isPetalItem
-                      ? 'linear-gradient(135deg, #ec4899, #8b5cf6)'
-                      : 'linear-gradient(135deg, #10b981, #059669)',
-                    color: '#ffffff',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    boxShadow: isPetalItem ? '0 0 12px rgba(236, 72, 153, 0.5)' : '0 0 10px rgba(16, 185, 129, 0.5)',
-                  }}
-                >
-                  🛒 {isPetalItem ? `${previewPetalCost} 🌸` : `${fmtInt(previewCost)} 🌌`} {isEn ? 'Buy & Keep' : 'ซื้อเลย & สวมใส่'}
-                </button>
-              ) : isPetalItem ? (
-                <div
-                  style={{
-                    padding: '5px 14px',
-                    borderRadius: '999px',
-                    background: 'rgba(244, 114, 182, 0.15)',
-                    color: '#f472b6',
-                    border: '1px solid rgba(244, 114, 182, 0.35)',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                  }}
-                >
-                  🔒 {previewPetalCost} 🌸 {isEn ? 'Need Petals' : 'ต้องการเกสร'}
-                </div>
-              ) : (
-                <button
-                  onClick={() => {
-                    clearPreview();
-                    setPrestigeModalOpen(true);
-                  }}
-                  style={{
-                    padding: '5px 14px',
-                    borderRadius: '999px',
-                    background: 'var(--bg-panel-2)',
-                    color: '#c084fc',
-                    border: '1px solid rgba(192, 132, 252, 0.3)',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                  }}
-                  title={isEn ? `Need ${fmtInt(previewCost - state.eternalSeeds)} more seeds` : `ยังขาดอีก ${fmtInt(previewCost - state.eternalSeeds)} เมล็ด`}
-                >
-                  🔒 {fmtInt(previewCost)} 🌌 {isEn ? 'Unlock in Prestige' : 'ปลดล็อกในร้าน Prestige'}
-                </button>
-              )}
-            </div>
-          </div>
-        );
-      })()}
+      <LivePreviewBanner
+        state={state}
+        lang={lang}
+        previewSkin={cosmetics.previewSkin}
+        previewUITheme={cosmetics.previewUITheme}
+        wardrobeModalOpen={activeModal === 'wardrobe'}
+        onClearPreview={cosmetics.clearPreview}
+        onBuySkin={cosmetics.buySkin}
+        onBuyUITheme={cosmetics.buyUITheme}
+        onOpenPrestige={() => setActiveModal('prestige')}
+      />
     </div>
   );
 }

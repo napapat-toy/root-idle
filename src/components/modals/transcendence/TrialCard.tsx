@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { TrialDef } from '@/types/game';
+import { ModalButton } from '@/components/common/ModalButton';
 
 interface TrialCardProps {
   def: TrialDef;
@@ -37,10 +38,10 @@ export const TrialCard: React.FC<TrialCardProps> = React.memo(({
           ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(249, 115, 22, 0.08))'
           : 'var(--bg-panel-2)',
         border: isActive
-          ? '1px solid rgba(234, 179, 8, 0.4)'
+          ? '1px solid var(--trials-gold-border)'
           : isCompleted
-          ? '1px solid rgba(52, 211, 153, 0.3)'
-          : '1px solid rgba(255,255,255,0.08)',
+          ? '1px solid var(--gaia-green-border)'
+          : '1px solid var(--card-border)',
         borderRadius: '12px',
         padding: '14px',
         display: 'flex',
@@ -57,12 +58,12 @@ export const TrialCard: React.FC<TrialCardProps> = React.memo(({
           </div>
         </div>
         {isCompleted && (
-          <span style={{ fontSize: '12px', color: '#34d399', fontWeight: 700, background: 'rgba(52, 211, 153, 0.15)', padding: '2px 8px', borderRadius: '6px', flexShrink: 0 }}>
+          <span style={{ fontSize: '12px', color: 'var(--gaia-green)', fontWeight: 700, background: 'var(--gaia-green-bg)', padding: '2px 8px', borderRadius: '6px', flexShrink: 0 }}>
             {completedBadgeText}
           </span>
         )}
         {isActive && !isCompleted && (
-          <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 700, background: 'rgba(245, 158, 11, 0.15)', padding: '2px 8px', borderRadius: '6px', flexShrink: 0 }}>
+          <span style={{ fontSize: '12px', color: 'var(--trials-gold)', fontWeight: 700, background: 'var(--trials-gold-bg)', padding: '2px 8px', borderRadius: '6px', flexShrink: 0 }}>
             {activeBadgeText}
           </span>
         )}
@@ -74,21 +75,21 @@ export const TrialCard: React.FC<TrialCardProps> = React.memo(({
           <strong>⚠️ {isEn ? 'Restriction: ' : 'ข้อจำกัด: '}</strong>
           {isEn ? def.enRestrictionDesc : def.restrictionDesc}
           {isCompleted && (
-            <span style={{ color: '#34d399', marginLeft: '6px', fontSize: '11px', fontWeight: 600 }}>
+            <span style={{ color: 'var(--gaia-green)', marginLeft: '6px', fontSize: '11px', fontWeight: 600 }}>
               ({isEn ? 'Inactive · Trial Cleared' : 'สิ้นสุดแล้ว · ไม่ส่งผล'})
             </span>
           )}
         </div>
-        <div style={{ color: '#34d399' }}>
+        <div style={{ color: 'var(--gaia-green)' }}>
           <strong>🏆 {isEn ? 'Reward: ' : 'รางวัล: '}</strong>
           {isEn ? def.enRewardDesc : def.rewardDesc}
           {isCompleted && (
-            <span style={{ color: '#ffd76a', fontWeight: 700, marginLeft: '6px', fontSize: '11px' }}>
+            <span style={{ color: 'var(--trials-gold)', fontWeight: 700, marginLeft: '6px', fontSize: '11px' }}>
               ({isEn ? 'Active & Permanent' : 'ทำงานถาวรแล้ว ✨'})
             </span>
           )}
         </div>
-        <div style={{ color: isCompleted ? '#34d399' : '#38bdf8', marginTop: '2px' }}>
+        <div style={{ color: isCompleted ? 'var(--gaia-green)' : 'var(--astral-cyan)', marginTop: '2px' }}>
           <strong>🎯 {isEn ? 'Status: ' : 'สถานะ: '}</strong>
           {isCompleted
             ? (isEn ? '✅ Conquered (One-time reward permanently unlocked)' : '✅ พิชิตสำเร็จแล้ว (ปลดล็อกรางวัลถาวรเรียบร้อยแล้ว)')
@@ -99,59 +100,17 @@ export const TrialCard: React.FC<TrialCardProps> = React.memo(({
       {/* Action Button */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '4px' }}>
         {isActive ? (
-          <button
-            onClick={onAbandonTrial}
-            style={{
-              background: '#ef4444',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '6px 14px',
-              fontWeight: 700,
-              fontSize: '12px',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
+          <ModalButton variant="danger" size="sm" onClick={onAbandonTrial}>
             {abandonBtnText}
-          </button>
+          </ModalButton>
         ) : isCompleted ? (
-          <button
-            onClick={() => onSelectTrial(def)}
-            title={isEn
-              ? 'You have already unlocked this permanent reward. Starting again is for optional challenge only.'
-              : 'คุณได้รับรางวัลถาวรเรียบร้อยแล้ว การเริ่มทดสอบซ้ำเป็นการท้าทายตนเองเท่านั้น (ไม่ได้รับรางวัลซ้ำ)'}
-            style={{
-              background: 'rgba(52, 211, 153, 0.12)',
-              color: '#34d399',
-              border: '1px solid rgba(52, 211, 153, 0.35)',
-              borderRadius: '8px',
-              padding: '6px 14px',
-              fontWeight: 700,
-              fontSize: '12px',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
-            ✓ {isEn ? 'Conquered (Replay Challenge)' : 'พิชิตแล้ว (ท้าทายซ้ำ)'}
-          </button>
+          <ModalButton variant="secondary" size="sm" onClick={() => onSelectTrial(def)}>
+            {isEn ? 'Re-challenge' : 'ท้าทายใหม่'}
+          </ModalButton>
         ) : (
-          <button
-            onClick={() => onSelectTrial(def)}
-            style={{
-              background: 'linear-gradient(135deg, #eab308, #ca8a04)',
-              color: '#1c150b',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '6px 14px',
-              fontWeight: 700,
-              fontSize: '12px',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
+          <ModalButton variant="gold" size="sm" onClick={() => onSelectTrial(def)}>
             {startBtnText}
-          </button>
+          </ModalButton>
         )}
       </div>
     </div>

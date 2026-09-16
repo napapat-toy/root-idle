@@ -18,7 +18,7 @@ import {
   rootUpgradeRequireOwned,
 } from '@/constants/gameData';
 import { fmt } from '@/lib/formatters';
-import { MODULE_TRANSLATIONS } from '@/lib/i18n';
+import { MODULE_TRANSLATIONS, t } from '@/lib/i18n';
 
 interface UpgradesCatalogProps {
   state: GameState;
@@ -47,6 +47,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
 }) => {
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
+  const tr = t(lang);
   const [activeTab, setActiveTab] = useState<'all' | 'ru' | 'echo' | 'syn'>('all');
 
   const totalAvailableUpgrades = unlockedUpgradeIds.length + unlockedEchoIds.length + unpurchasedSynergyIds.length;
@@ -112,7 +113,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
             cursor: 'pointer',
           }}
         >
-          ← {isEn ? 'Back to Roots' : 'กลับหน้ารากไม้'}
+          ← {tr.backToRoots}
         </button>
 
         <button
@@ -132,7 +133,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
             boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
           }}
         >
-          ⚡ {isEn ? 'Buy All Available' : 'ซื้อทั้งหมดที่ซื้อได้'}
+          ⚡ {tr.buyAllAvailable}
         </button>
       </div>
 
@@ -162,7 +163,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
             color: activeTab === 'all' ? '#12190d' : 'var(--root-cream)',
           }}
         >
-          {isEn ? 'All' : 'ทั้งหมด'} ({totalAvailableUpgrades})
+          {tr.tabAll} ({totalAvailableUpgrades})
         </button>
         <button
           onClick={() => setActiveTab('ru')}
@@ -178,7 +179,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
             color: activeTab === 'ru' ? '#12190d' : 'var(--root-cream)',
           }}
         >
-          ⚡ {isEn ? 'Upgrades' : 'อัปเกรด'} ({unlockedUpgradeIds.length})
+          ⚡ {tr.tabUpgrades} ({unlockedUpgradeIds.length})
         </button>
         <button
           onClick={() => setActiveTab('echo')}
@@ -194,7 +195,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
             color: activeTab === 'echo' ? '#12190d' : 'var(--root-cream)',
           }}
         >
-          ✨ {isEn ? 'Echoes' : 'สะท้อน'} ({unlockedEchoIds.length})
+          ✨ {tr.tabEchoes} ({unlockedEchoIds.length})
         </button>
         <button
           onClick={() => setActiveTab('syn')}
@@ -210,7 +211,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
             color: activeTab === 'syn' ? '#12190d' : 'var(--root-cream)',
           }}
         >
-          🌐 {isEn ? 'Networks' : 'เครือข่าย'} ({unlockedSynergyIds.length})
+          🌐 {tr.tabNetworks} ({unlockedSynergyIds.length})
         </button>
       </div>
 
@@ -220,7 +221,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
         {(activeTab === 'all' || activeTab === 'ru') && unlockedUpgradeIds.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div className="panel-subtitle-row">
-              <span>⚡ {isEn ? 'Species Upgrades (+100% / ×3.00)' : 'อัปเกรดตามชนิดราก (+100% / ×3.00)'}</span>
+              <span>⚡ {tr.speciesUpgradesHeader}</span>
             </div>
             {unlockedUpgradeIds.map(id => {
               const def = MODULE_DEFS.find(m => m.id === id)!;
@@ -236,7 +237,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
               const localizedName = MODULE_TRANSLATIONS[def.id]?.[lang]?.name || def.name;
               const mult = rootUpgradeLevelMult(nextLevel);
               const multText = isMilestone
-                ? isEn ? `×${mult.toFixed(2)} (Milestone)` : `×${mult.toFixed(2)} (หลักชัย)`
+                ? `×${mult.toFixed(2)} (${tr.milestoneLabel})`
                 : `+${Math.round((mult - 1) * 100)}% (×${mult.toFixed(2)})`;
 
               return (
@@ -285,7 +286,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                       </div>
                       {!reqMet && (
                         <div style={{ fontSize: '10.5px', color: '#f59e0b', fontWeight: 600 }}>
-                          ⚠️ {isEn ? `Need ${req} units` : `ต้องการ ${req} ต้น`} ({owned}/{req})
+                          ⚠️ {tr.needUnits.replace('{req}', String(req))} ({owned}/{req})
                         </div>
                       )}
                     </div>
@@ -318,7 +319,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
         {(activeTab === 'all' || activeTab === 'echo') && unlockedEchoIds.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div className="panel-subtitle-row">
-              <span>✨ {isEn ? `Echoes of Growth (×${globalEchoMultiplier(state).toFixed(2)} Multiplier this run)` : `สะท้อนแห่งการเติบโต (ตัวคูณรอบนี้: ×${globalEchoMultiplier(state).toFixed(2)})`}</span>
+              <span>✨ {tr.echoesHeader.replace('{mult}', globalEchoMultiplier(state).toFixed(2))}</span>
             </div>
             {unlockedEchoIds.map(id => {
               const def = MODULE_DEFS.find(m => m.id === id)!;
@@ -367,13 +368,13 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--root-cream)' }}>
                         <span style={{ color: '#67e8f9', marginRight: '4px' }}>✨</span>
-                        {isEn ? 'Echo:' : 'สะท้อน:'} {localizedName}{' '}
+                        {tr.echoLabel} {localizedName}{' '}
                         <span style={{ fontSize: '11px', color: isMaxed ? '#67e8f9' : 'var(--root-cream-dim)', fontWeight: 600 }}>
                           {isMaxed ? '(MAX)' : `Lv.${echoes}/${maxEchoLevel(state)}`}
                         </span>
                       </div>
                       <div style={{ fontSize: '11px', color: '#67e8f9', fontWeight: 600 }}>
-                        +{echoBonusPct}% {isEn ? 'Multiplicative Global Rate (this run)' : 'เรทผลผลิตรวมคูณทับ (ในรอบนี้)'}
+                        +{echoBonusPct}% {tr.echoBonusDesc}
                       </div>
                     </div>
                   </div>
@@ -401,7 +402,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {isMaxed ? (isEn ? 'MAX' : 'เต็มแล้ว ✓') : fmt(cost)}
+                    {isMaxed ? tr.statusMaxed : fmt(cost)}
                   </button>
                 </div>
               );
@@ -413,7 +414,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
         {(activeTab === 'all' || activeTab === 'syn') && unlockedSynergyIds.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div className="panel-subtitle-row">
-              <span>🌐 {isEn ? `Mycorrhizal Networks (+${Number(relicSynergyBonusPerUnit(state).toFixed(2))}%/Unit Global)` : `เครือข่ายไมคอร์ไรซา (+${Number(relicSynergyBonusPerUnit(state).toFixed(2))}%/ต้น)`}</span>
+              <span>🌐 {tr.networksHeader.replace('{bonus}', Number(relicSynergyBonusPerUnit(state).toFixed(2)).toString())}</span>
             </div>
             {unlockedSynergyIds.map(id => {
               const def = MODULE_DEFS.find(m => m.id === id)!;
@@ -431,8 +432,8 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                   key={`catalog-syn-${id}`}
                   style={{
                     background: 'var(--bg-panel)',
-                    border: `1px solid ${isOwned ? '#38bdf8' : 'var(--line-soil)'}`,
-                    borderLeft: `4px solid ${isOwned ? '#38bdf8' : def.color}`,
+                    border: '1px solid var(--line-soil)',
+                    borderLeft: `4px solid #38bdf8`,
                     borderRadius: '10px',
                     padding: '10px 12px',
                     display: 'flex',
@@ -440,6 +441,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                     justifyContent: 'space-between',
                     gap: '10px',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                    opacity: isOwned ? 0.75 : 1,
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
@@ -448,8 +450,8 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                         width: '38px',
                         height: '38px',
                         borderRadius: '10px',
-                        background: isOwned ? 'rgba(56, 189, 248, 0.18)' : `${def.color}18`,
-                        border: `1px solid ${isOwned ? '#38bdf8' : `${def.color}55`}`,
+                        background: 'rgba(56, 189, 248, 0.12)',
+                        border: '1px solid rgba(56, 189, 248, 0.4)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -462,7 +464,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--root-cream)' }}>
                         <span style={{ color: '#38bdf8', marginRight: '4px' }}>🌐</span>
-                        {isEn ? 'Network:' : 'เครือข่าย:'} {localizedName}
+                        {tr.networkLabel} {localizedName}
                       </div>
                       <div style={{ fontSize: '11px', color: isOwned ? '#38bdf8' : 'var(--root-cream-dim)' }}>
                         {isOwned
@@ -487,7 +489,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {isOwned ? (isEn ? 'ACTIVE ✓' : 'เปิดแล้ว ✓') : fmt(cost)}
+                    {isOwned ? tr.statusActive : fmt(cost)}
                   </button>
                 </div>
               );

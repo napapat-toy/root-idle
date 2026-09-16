@@ -892,11 +892,81 @@ export const UI_TEXTS = {
     transcendPerk7Desc: 'เพิ่มเรทผลิตตั้งต้นของรากฝอย +0.28/วิ ต่อเลเวล (จาก 0.60 เป็นสูงสุด 2.00/วิ)',
     transcendPerk8Name: 'ภวังค์แห่งการหยั่งราก (Deep Meditation)',
     transcendPerk8Desc: 'ยิ่งหยั่งรากในรอบนี้นาน ยิ่งได้รับตัวคูณเรทผลิตรวมทวีคูณ (ค่อยๆ ไต่ขึ้นตามเวลา สูงสุดตันที่ ×3.0 เท่า ที่ Lv.5)',
+    transcendPerk9Name: 'ความเร็วเร่งมิติ (Hyperdrive 2x)',
+    transcendPerk9Desc: 'ปลดล็อกสวิตช์เร่งความเร็วเกม 2 เท่าถาวร เร่งเวลาผลผลิตและคูลดาวน์ทั้งหมดโดยไม่กินแรงเครื่อง',
+    transcendPerk10Name: 'บุปผาแสงเหนือแห่งเอกภพ (Aurora Bloom)',
+    transcendPerk10Desc: 'ปลุกบุปผาสวรรค์บนต้นไม้แห่งชีวิต ปลดล็อกแท่นหลอมเกสรดวงดาว (Astral Petals) ในหน้าหว่านเมล็ด และปลดล็อกสกินพิเศษ',
     trialActiveBadge: 'กำลังทดสอบ',
     startTrialBtn: 'เริ่มการทดสอบ',
     abandonTrialBtn: 'ยกเลิกการทดสอบ',
     trialCompletedBadge: '✓ พิชิตสำเร็จ',
     targetGoalText: 'เป้าหมาย: ปลูกรากต้นไม้โลก (Yggdrasil) ครบ {count} ต้น',
+
+    // Grand Reset Banner
+    transcendDescDetailed: 'หลอมรวมพลังรากต้นไม้โลกเพื่อปลุกจิตวิญญาณแห่งโลก รีเซ็ตรอบใหญ่ต้องมีรากต้นไม้โลกครบอย่างน้อย 100 ต้นในรอบปัจจุบัน',
+    transcendGainEssences: '+{amount} ละอองชีวิตดึกดำบรรพ์ (เมื่อรีเซ็ตใหญ่)',
+    transcendFromYgg: '(คำนวณจากต้นไม้โลก {count} ต้นในรอบนี้โดยตรง)',
+    transcendReqBanner: 'ต้องการรากต้นไม้โลกครบ 100 ต้น ในรอบปัจจุบัน ({count}/{req} 🌳)',
+    transcendReqBtn: 'ต้องการ 100 ต้นไม้โลก ({count}/{req})',
+    transcendConfirmDesc: 'ยืนยันการรีเซ็ตใหญ่: หลอมรวมต้นไม้โลก {count} ต้น รับ +{amount} 🌍 (เมล็ดในกระเป๋าจะรีเซ็ตเป็น 0 เพื่อเริ่มยุคใหม่ แต่อัปเกรดร้านค้าจะอยู่ครบถ้วน)',
+    transcendConfirmBtn: '⚠️ ยืนยันการรีเซ็ตใหญ่',
+
+    // Trials Modal
+    trialsConquered: 'พิชิตแล้ว: {count} / {total} การทดสอบ',
+    trialInProgress: '⚔️ กำลังทดสอบอยู่',
+    trialGuideTitle: 'คำแนะนำจังหวะการเล่น: ',
+    trialGuideDesc: 'ตอนนี้คุณมีต้นไม้โลก {count} ต้น (พร้อมตื่นรู้รับ +{amount} 🌍)! แนะนำให้กด "ตื่นรู้แห่งไกอา" เพื่อนำละอองชีวิตไปอัปเกรดพรเทพเจ้าก่อนเริ่มการทดสอบรอบใหม่ จะคุ้มค่าที่สุดและผ่านได้ง่ายขึ้น',
+    goToGaiaBtn: '🌍 ไปหน้าไกอา',
+    trialRulesTitle: 'กติกาการทดลองแห่งผืนพิภพและการรีเซ็ต',
+    trialResetLabel: 'สิ่งที่จะรีเซ็ต: ',
+    trialResetDesc: 'จะทำการหว่านเมล็ดใหม่ (Prestige) รอบปัจจุบัน: รากไม้จะเริ่มใหม่เพื่อเข้าสู่การทดสอบ และสารอาหารทั้งหมดจะถูกแปลงเป็น +{amount} เมล็ดพันธุ์นิรันดร์ 🌰 เข้ากระเป๋าให้ทันที',
+    trialKeepLabel: 'สิ่งที่ไม่หาย (ปลอดภัย 100%): ',
+    trialKeepDesc: 'อัปเกรดร้าน Prestige ทั้งหมด, บัฟไกอา, เมล็ดพันธุ์ในกระเป๋า, ละอองชีวิต (🌍) และโบราณวัตถุ (Relics) ทั้งหมดจะอยู่ครบถ้วน ไม่หาย!',
+    trialGoalLabel: 'เป้าหมายและยกเลิก: ',
+    trialGoalDesc: 'ปลูกรากต้นไม้โลกครบ 25 ต้นภายใต้ข้อจำกัดเพื่อปลดล็อกรางวัลถาวร และสามารถกดยกเลิกการทดสอบได้ตลอดเวลาโดยไม่มีบทลงโทษ',
+    confirmBeginTrialTitle: 'ยืนยันการเริ่มการทดสอบ',
+    confirmBeginTrialBtn: 'เริ่มการทดสอบ',
+    confirmBeginTrialMsg: 'การเข้าสู่การทดสอบ "{name}" จะทำการรีเซ็ตแบบหว่านเมล็ดใหม่ (Prestige Reset) รอบปัจจุบันทันที\n\n✨ สารอาหารสะสมในรอบนี้จะถูกแปลงเป็น +{seeds} เมล็ดพันธุ์นิรันดร์ 🌰 เข้ากระเป๋าให้ทันที!\n🛡️ เมล็ดพันธุ์เดิมในกระเป๋า ({walletSeeds} 🌰), ละอองชีวิต ({essences} 🌍) และโบราณวัตถุจะอยู่ครบ 100% ไม่สูญหาย!\n🌱 มีเพียงรากไม้ในสวนที่จะเริ่มใหม่เพื่อเข้าสู่เงื่อนไขการทดสอบ',
+
+    // Live Preview Banner
+    previewSkinLabel: 'กำลังทดลองสกินราก: {name}',
+    previewThemeLabel: 'กำลังทดลองธีมหน้าต่าง: {name}',
+    previewExitBtn: '✕ ยกเลิก',
+    previewBuyKeep: 'ซื้อเลย & สวมใส่',
+    previewNeedPetals: 'เกสรไม่พอ',
+    previewUnlockInPrestige: 'ไปปลดล็อกในร้าน Prestige',
+    needMoreSeeds: 'ยังขาดอีก {count} เมล็ด',
+
+    // Upgrades Catalog & Quick Bar
+    backToRoots: 'กลับหน้ารากไม้',
+    buyAllAvailable: 'ซื้อทั้งหมดที่ซื้อได้',
+    tabAll: 'ทั้งหมด',
+    tabUpgrades: 'อัปเกรด',
+    tabEchoes: 'สะท้อน',
+    tabNetworks: 'เครือข่าย',
+    speciesUpgradesHeader: 'อัปเกรดตามชนิดราก (+100% / ×3.00)',
+    milestoneLabel: 'หลักชัย',
+    needUnits: 'ต้องการ {req} ต้น',
+    echoesHeader: 'สะท้อนแห่งการเติบโต (ตัวคูณรอบนี้: ×{mult})',
+    echoLabel: 'สะท้อน:',
+    echoBonusDesc: 'เรทผลผลิตรวมคูณทับ (ในรอบนี้)',
+    networksHeader: 'เครือข่ายไมคอร์ไรซา (+{bonus}%/ต้น)',
+    networkLabel: 'เครือข่าย:',
+    statusMaxed: 'เต็มแล้ว ✓',
+    statusActive: 'เปิดแล้ว ✓',
+
+    // Top Actions & Utility
+    trialsBtn: 'การทดสอบ',
+    hyperdriveActiveTooltip: '⚡ กำลังเร่งความเร็ว 2 เท่า (คลิกเพื่อสลับเป็น 1x)',
+    hyperdriveInactiveTooltip: '⏸️ ความเร็วปกติ 1x (คลิกเพื่อเร่งความเร็ว 2x)',
+    autoHubSuppressedTooltip: '🤖 ศูนย์ควบคุมบอท (ถูกปิดกั้นชั่วคราวโดยรอยแยกสูญญะ)',
+    autoHubTooltip: 'ศูนย์ควบคุมระบบอัตโนมัติ',
+    quickUpgradesTitle: 'อัปเกรดด่วน',
+    viewAllWithCount: 'ดูทั้งหมด ({count}) →',
+    openCatalogTooltip: 'เปิดดูคลังอัปเกรดทั้งหมด',
+    viewMore: 'ดูเพิ่ม',
+    networkActive: 'เปิดใช้งานแล้ว',
+    statusActiveShort: 'ทำงานอยู่',
   },
   en: {
     // Header & Currency
@@ -1063,14 +1133,103 @@ export const UI_TEXTS = {
     transcendPerk7Desc: 'Increases initial base production of Fine Roots by +0.28/s per level (from 0.60 up to 2.00/s)',
     transcendPerk8Name: 'Deep Meditation',
     transcendPerk8Desc: 'The longer you stay rooted in this run, the higher your global multiplier grows (gradually ramps up to a maximum of ×3.0 at Lv.5)',
+    transcendPerk9Name: 'Hyperdrive Overclock (2x Speed)',
+    transcendPerk9Desc: 'Permanently unlocks a 2x game speed toggle. Accelerates garden time, production, and timers with zero extra CPU overhead.',
+    transcendPerk10Name: 'Cosmic Aurora Bloom (Altar)',
+    transcendPerk10Desc: 'Awakens the celestial bloom on the Tree of Life. Permanently unlocks the Astral Petal transmute altar and unlocks special cosmic skins.',
     trialActiveBadge: 'In Progress',
     startTrialBtn: 'Begin Trial',
     abandonTrialBtn: 'Abandon Trial',
     trialCompletedBadge: '✓ Conquered',
     targetGoalText: 'Goal: Grow {count} Yggdrasil Roots',
+
+    // Grand Reset Banner
+    transcendDescDetailed: 'Channel the ancient vitality of the World Tree to awaken the planet’s soul. Requires at least 100 Yggdrasil roots in the current run.',
+    transcendGainEssences: '+{amount} Gaia Essences on Grand Reset',
+    transcendFromYgg: '(Calculated directly from {count} World Trees in this run)',
+    transcendReqBanner: 'Requires 100 Yggdrasil World Trees in current run ({count}/{req} 🌳)',
+    transcendReqBtn: 'Requires 100 Yggdrasil ({count}/{req})',
+    transcendConfirmDesc: 'Confirm Grand Reset: Convert {count} World Trees into +{amount} 🌍. Wallet seeds reset to 0 to begin the new era, while all permanent shop upgrades are preserved.',
+    transcendConfirmBtn: '⚠️ Confirm Grand Reset',
+
+    // Trials Modal
+    trialsConquered: 'Conquered: {count} / {total} Trials',
+    trialInProgress: '⚔️ Trial in Progress',
+    trialGuideTitle: 'Recommended Next Step: ',
+    trialGuideDesc: 'You currently have {count} World Trees (+{amount} 🌍 ready)! It is strongly recommended to "Awaken Gaia" first to claim essences and upgrade perks before starting a trial.',
+    goToGaiaBtn: '🌍 Go to Gaia',
+    trialRulesTitle: 'Subterranean Trial Rules & Reset Information',
+    trialResetLabel: 'What gets reset: ',
+    trialResetDesc: 'Triggers a Prestige Reset for current garden: roots reset to 0 to begin the challenge, and current nutrients are converted into +{amount} Eternal Seeds 🌰 immediately.',
+    trialKeepLabel: 'What is kept safe: ',
+    trialKeepDesc: 'All permanent Prestige upgrades, Gaia perks, Eternal Seeds in wallet, Gaia Essences (🌍), and Relics remain completely intact!',
+    trialGoalLabel: 'Goal & Abandon: ',
+    trialGoalDesc: 'Grow 25 Yggdrasil Roots under trial restrictions to claim permanent rewards. You can abandon the trial anytime without penalty.',
+    confirmBeginTrialTitle: 'Confirm Begin Trial',
+    confirmBeginTrialBtn: 'Begin Trial',
+    confirmBeginTrialMsg: 'Entering "{name}" will trigger a Prestige Reset for your current garden.\n\n✨ Current nutrients will be converted into +{seeds} Eternal Seeds 🌰 immediately!\n🛡️ Your wallet seeds ({walletSeeds} 🌰), Gaia Essences ({essences} 🌍), and relics remain 100% safe!\n🌱 Only garden roots and nutrients will reset to start the trial.',
+
+    // Live Preview Banner
+    previewSkinLabel: 'Previewing Root Skin: {name}',
+    previewThemeLabel: 'Previewing UI Theme: {name}',
+    previewExitBtn: '✕ Exit',
+    previewBuyKeep: 'Buy & Keep',
+    previewNeedPetals: 'Need Petals',
+    previewUnlockInPrestige: 'Unlock in Prestige',
+    needMoreSeeds: 'Need {count} more seeds',
+
+    // Upgrades Catalog & Quick Bar
+    backToRoots: 'Back to Roots',
+    buyAllAvailable: 'Buy All Available',
+    tabAll: 'All',
+    tabUpgrades: 'Upgrades',
+    tabEchoes: 'Echoes',
+    tabNetworks: 'Networks',
+    speciesUpgradesHeader: 'Species Upgrades (+100% / ×3.00)',
+    milestoneLabel: 'Milestone',
+    needUnits: 'Need {req} units',
+    echoesHeader: 'Echoes of Growth (×{mult} Multiplier this run)',
+    echoLabel: 'Echo:',
+    echoBonusDesc: 'Multiplicative Global Rate (this run)',
+    networksHeader: 'Mycorrhizal Networks (+{bonus}%/Unit Global)',
+    networkLabel: 'Network:',
+    statusMaxed: 'MAX',
+    statusActive: 'ACTIVE ✓',
+
+    // Top Actions & Utility
+    trialsBtn: 'Trials',
+    hyperdriveActiveTooltip: '⚡ 2x Speed Active (Click to toggle 1x)',
+    hyperdriveInactiveTooltip: '⏸️ 1x Normal Speed (Click to toggle 2x Hyperdrive)',
+    autoHubSuppressedTooltip: '🤖 Automation Hub (Suppressed by Void Anomaly)',
+    autoHubTooltip: 'Automation Control Hub',
+    quickUpgradesTitle: 'Quick Upgrades',
+    viewAllWithCount: 'View All ({count}) →',
+    openCatalogTooltip: 'Open Full Upgrades Catalog',
+    viewMore: 'More',
+    networkActive: 'ACTIVE',
+    statusActiveShort: 'Active',
   },
 };
 
-export function t(lang: Language = 'th') {
+export type UITexts = typeof UI_TEXTS['th'];
+
+export function t(lang: Language = 'th'): UITexts {
   return UI_TEXTS[lang] || UI_TEXTS.th;
 }
+
+/**
+ * Safely resolves entity localized name with guaranteed fallback to prevent undefined
+ */
+export function getEntityName(entity: { name: string; enName?: string } | undefined | null, lang: Language): string {
+  if (!entity) return '';
+  return (lang === 'en' && entity.enName) ? entity.enName : entity.name;
+}
+
+/**
+ * Safely resolves entity localized description with guaranteed fallback to prevent undefined
+ */
+export function getEntityDesc(entity: { desc: string; enDesc?: string } | undefined | null, lang: Language): string {
+  if (!entity) return '';
+  return (lang === 'en' && entity.enDesc) ? entity.enDesc : entity.desc;
+}
+

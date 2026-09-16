@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.33.1';
+export const GAME_VERSION = '1.34.0';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -462,3 +462,29 @@ export function stageName(stateOrTotalOwned: GameState | number, lang: Language 
   }
   return getSubterraneanDepthInfo(stateOrTotalOwned, 0, lang).stageName;
 }
+
+// Unlocked Upgrades Discovery
+export function getUnlockedUpgradeIds(state: GameState): string[] {
+  return MODULE_DEFS.filter(def => {
+    const level = state.rootUpgrades[def.id] || 0;
+    const owned = state.owned[def.id] || 0;
+    return owned >= rootUpgradeRequireOwned(1) || level > 0;
+  }).map(d => d.id);
+}
+
+export function getUnlockedEchoIds(state: GameState): string[] {
+  return MODULE_DEFS.filter(def => {
+    return echoUnlockedFor(state, def.id) || (state.echoes[def.id] || 0) > 0;
+  }).map(d => d.id);
+}
+
+export function getUnlockedSynergyIds(state: GameState): string[] {
+  return MODULE_DEFS.filter(def => {
+    return rootSynergyUnlocked(state, def.id);
+  }).map(d => d.id);
+}
+
+export function getUnpurchasedSynergyIds(state: GameState): string[] {
+  return getUnlockedSynergyIds(state).filter(id => !state.rootSynergies[id]);
+}
+

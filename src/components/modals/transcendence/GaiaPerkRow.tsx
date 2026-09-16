@@ -2,21 +2,32 @@
 
 import React from 'react';
 import { fmtInt } from '@/lib/formatters';
+import { ModalButton } from '@/components/common/ModalButton';
 
-interface GaiaPerkRowProps {
+export interface GaiaPerkRowProps {
   icon: string;
   name: string;
   desc: string;
   effectText?: string;
+  level?: number;
+  maxLevel?: number;
   levelText?: string;
   cost?: number;
   costLabel?: string;
   isMaxed?: boolean;
   canAfford?: boolean;
+  essences?: number;
   onBuy?: () => void;
   maxTag?: string;
   customBadge?: React.ReactNode;
   customAction?: React.ReactNode;
+  isUnlocked?: boolean;
+  isToggle?: boolean;
+  isToggledOn?: boolean;
+  onToggle?: () => void;
+  toggleOnText?: string;
+  toggleOffText?: string;
+  activeTagText?: string;
 }
 
 export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
@@ -24,21 +35,35 @@ export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
   name,
   desc,
   effectText,
-  levelText,
+  level,
+  maxLevel,
+  levelText: customLevelText,
   cost,
   costLabel,
-  isMaxed = false,
-  canAfford = false,
+  isMaxed: customIsMaxed,
+  canAfford: customCanAfford,
+  essences,
   onBuy,
   maxTag = 'MAX',
   customBadge,
   customAction,
+  isUnlocked,
+  isToggle,
+  isToggledOn,
+  onToggle,
+  toggleOnText = 'ON',
+  toggleOffText = 'OFF',
+  activeTagText = 'ACTIVE',
 }) => {
+  const isMaxed = customIsMaxed ?? (level !== undefined && maxLevel !== undefined ? level >= maxLevel : false);
+  const canAfford = customCanAfford ?? (cost !== undefined && essences !== undefined ? essences >= cost : true);
+  const levelText = customLevelText ?? (level !== undefined && maxLevel !== undefined ? `Lv. ${level}/${maxLevel}` : undefined);
+
   return (
     <div
       style={{
         background: 'var(--bg-panel-2)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        border: '1px solid var(--card-border)',
         borderRadius: '10px',
         padding: '12px 14px',
         display: 'flex',
@@ -53,12 +78,25 @@ export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
           <span style={{ fontWeight: 700, fontSize: '14px' }}>{name}</span>
           {customBadge ? (
             customBadge
+          ) : isToggle && isUnlocked ? (
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                background: isToggledOn ? 'var(--astral-cyan-bg)' : 'rgba(255, 255, 255, 0.1)',
+                color: isToggledOn ? 'var(--astral-cyan)' : 'var(--root-cream-dim)',
+                padding: '1px 7px',
+                borderRadius: '999px',
+              }}
+            >
+              {isToggledOn ? `⚡ ${toggleOnText}` : `⏸️ ${toggleOffText}`}
+            </span>
           ) : levelText ? (
             <span
               style={{
                 fontSize: '11px',
-                color: '#34d399',
-                background: 'rgba(52, 211, 153, 0.15)',
+                color: 'var(--gaia-green)',
+                background: 'var(--gaia-green-bg)',
                 padding: '1px 6px',
                 borderRadius: '4px',
                 flexShrink: 0,
@@ -70,7 +108,7 @@ export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
         </div>
         <div style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>{desc}</div>
         {effectText && (
-          <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
+          <div style={{ fontSize: '11px', color: 'var(--astral-cyan)', marginTop: '2px' }}>
             {effectText}
           </div>
         )}
@@ -78,30 +116,36 @@ export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
 
       {customAction ? (
         customAction
-      ) : (
-        <button
-          onClick={onBuy}
-          disabled={isMaxed || !canAfford}
+      ) : isToggle && isUnlocked ? (
+        <ModalButton
+          variant={isToggledOn ? 'cyan' : 'secondary'}
+          size="sm"
+          onClick={onToggle}
+        >
+          {isToggledOn ? `⚡ ${toggleOnText}` : `⏸️ ${toggleOffText}`}
+        </ModalButton>
+      ) : isUnlocked && !isToggle ? (
+        <div
           style={{
-            background: isMaxed
-              ? 'rgba(255,255,255,0.06)'
-              : canAfford
-              ? '#34d399'
-              : 'rgba(52, 211, 153, 0.2)',
-            color: isMaxed
-              ? 'rgba(255,255,255,0.3)'
-              : canAfford
-              ? '#064e3b'
-              : 'rgba(255,255,255,0.4)',
-            border: 'none',
+            background: 'var(--cosmic-pink-bg)',
+            color: 'var(--cosmic-pink)',
+            border: '1px solid var(--cosmic-pink-border)',
             borderRadius: '8px',
-            padding: '8px 12px',
+            padding: '6px 14px',
             fontWeight: 700,
             fontSize: '12px',
-            cursor: !isMaxed && canAfford ? 'pointer' : 'not-allowed',
             whiteSpace: 'nowrap',
             flexShrink: 0,
           }}
+        >
+          ✓ {activeTagText}
+        </div>
+      ) : (
+        <ModalButton
+          variant={isMaxed ? 'locked' : 'primary'}
+          size="sm"
+          disabled={isMaxed || !canAfford}
+          onClick={onBuy}
         >
           {isMaxed
             ? maxTag
@@ -110,7 +154,7 @@ export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
             : cost !== undefined
             ? `${fmtInt(cost)} 🌍`
             : ''}
-        </button>
+        </ModalButton>
       )}
     </div>
   );
