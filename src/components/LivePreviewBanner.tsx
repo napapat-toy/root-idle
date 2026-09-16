@@ -56,30 +56,7 @@ export const LivePreviewBanner: React.FC<LivePreviewBannerProps> = React.memo(({
     : state.eternalSeeds >= previewCost;
 
   return (
-    <div
-      className="live-preview-banner"
-      style={{
-        position: 'fixed',
-        bottom: 'max(16px, env(safe-area-inset-bottom))',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 9999,
-        background: 'rgba(15, 23, 42, 0.94)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(56, 189, 248, 0.5)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 16px rgba(56, 189, 248, 0.25)',
-        padding: '8px 18px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '14px',
-        color: '#f8fafc',
-        fontSize: '13px',
-        fontWeight: 600,
-        maxWidth: '92vw',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-      }}
-    >
+    <div className="live-preview-banner">
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
         <span style={{ color: '#38bdf8' }}>✨</span>
         <span>

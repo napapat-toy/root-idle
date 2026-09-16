@@ -1,0 +1,377 @@
+/* ==========================================================================
+   1. DESIGN TOKENS & TAILWIND v4 THEME INTEGRATION
+   ========================================================================== */
+
+@theme {
+  --color-soil-deep: var(--bg-deep);
+  --color-soil-panel: var(--bg-panel);
+  --color-soil-panel-2: var(--bg-panel-2);
+  --color-soil-line: var(--line-soil);
+  
+  --color-root-cream: var(--root-cream);
+  --color-root-cream-dim: var(--root-cream-dim);
+  
+  --color-accent-glow: var(--accent-glow);
+  --color-accent-glow-dim: var(--accent-glow-dim);
+  --color-accent-amber: var(--accent-amber);
+  
+  --color-prestige-accent: var(--prestige-accent);
+  --color-prestige-accent-dim: var(--prestige-accent-dim);
+  --color-prestige-bg: var(--prestige-bg);
+
+  --color-gaia-green: var(--gaia-green);
+  --color-trials-gold: var(--trials-gold);
+  --color-astral-cyan: var(--astral-cyan);
+  --color-cosmic-pink: var(--cosmic-pink);
+  --color-danger-red: var(--danger-red);
+}
+
+:root, [data-ui-theme="classic"] {
+  --bg-deep: #160f0a;
+  --bg-panel: #20160f;
+  --bg-panel-2: #2a1c12;
+  --root-cream: #eadfc7;
+  --root-cream-dim: #a99a80;
+  --accent-glow: #b7e08a;
+  --accent-glow-dim: #7ea35c;
+  --accent-amber: #e0a94a;
+  --line-soil: #3a2a1c;
+  --prestige-accent: #b78cf0;
+  --prestige-accent-dim: #8a68b8;
+  --prestige-bg: #1c1526;
+  --gaia-green: #34d399;
+  --gaia-green-dark: #064e3b;
+  --gaia-green-bg: rgba(52, 211, 153, 0.15);
+  --gaia-green-border: rgba(52, 211, 153, 0.35);
+  --trials-gold: #facc15;
+  --trials-gold-dark: #713f12;
+  --trials-gold-bg: rgba(250, 204, 21, 0.15);
+  --trials-gold-border: rgba(250, 204, 21, 0.35);
+  --astral-cyan: #38bdf8;
+  --astral-cyan-bg: rgba(56, 189, 248, 0.15);
+  --astral-cyan-border: rgba(56, 189, 248, 0.35);
+  --cosmic-pink: #f472b6;
+  --cosmic-pink-bg: rgba(244, 114, 182, 0.15);
+  --cosmic-pink-border: rgba(244, 114, 182, 0.35);
+  --danger-red: #ef4444;
+  --danger-red-bg: rgba(239, 68, 68, 0.15);
+  --danger-red-border: rgba(239, 68, 68, 0.35);
+  --card-border: rgba(255, 255, 255, 0.08);
+}
+
+[data-ui-theme="sakura"] {
+  --bg-deep: #10121a;
+  --bg-panel: #181926;
+  --bg-panel-2: #222335;
+  --root-cream: #fce7f3;
+  --root-cream-dim: #f472b6;
+  --accent-glow: #f472b6;
+  --accent-glow-dim: #db2777;
+  --accent-amber: #fb7185;
+  --line-soil: #3a384f;
+  --prestige-accent: #e879f9;
+  --prestige-accent-dim: #c084fc;
+  --prestige-bg: #1f1426;
+}
+
+[data-ui-theme="cafe"] {
+  --bg-deep: #140e0a;
+  --bg-panel: #1d1611;
+  --bg-panel-2: #271f18;
+  --root-cream: #f5eedc;
+  --root-cream-dim: #b8a68b;
+  --accent-glow: #86efac;
+  --accent-glow-dim: #4ade80;
+  --accent-amber: #d97706;
+  --line-soil: #3e3226;
+  --prestige-accent: #a3e635;
+  --prestige-accent-dim: #65a30d;
+  --prestige-bg: #1b1c12;
+}
+
+[data-ui-theme="autumn"] {
+  --bg-deep: #160e0a;
+  --bg-panel: #221611;
+  --bg-panel-2: #2e1d15;
+  --root-cream: #ffedd5;
+  --root-cream-dim: #fdba74;
+  --accent-glow: #f97316;
+  --accent-glow-dim: #c2410c;
+  --accent-amber: #eab308;
+  --line-soil: #4d2e20;
+  --prestige-accent: #fb923c;
+  --prestige-accent-dim: #ea580c;
+  --prestige-bg: #221410;
+}
+
+[data-ui-theme="ocean"] {
+  --bg-deep: #051017;
+  --bg-panel: #0a1822;
+  --bg-panel-2: #102433;
+  --root-cream: #e0f2fe;
+  --root-cream-dim: #7dd3fc;
+  --accent-glow: #38bdf8;
+  --accent-glow-dim: #0284c7;
+  --accent-amber: #2dd4bf;
+  --line-soil: #1a3c54;
+  --prestige-accent: #818cf8;
+  --prestige-accent-dim: #4f46e5;
+  --prestige-bg: #0b1526;
+}
+
+[data-ui-theme="frost"] {
+  --bg-deep: #0a1118;
+  --bg-panel: #111a24;
+  --bg-panel-2: #192735;
+  --root-cream: #f0f9ff;
+  --root-cream-dim: #bae6fd;
+  --accent-glow: #67e8f9;
+  --accent-glow-dim: #0891b2;
+  --accent-amber: #93c5fd;
+  --line-soil: #283e52;
+  --prestige-accent: #a5f3fc;
+  --prestige-accent-dim: #38bdf8;
+  --prestige-bg: #0c1724;
+}
+
+[data-ui-theme="sunset"] {
+  --bg-deep: #160c14;
+  --bg-panel: #20131e;
+  --bg-panel-2: #2b1828;
+  --root-cream: #ffe4e6;
+  --root-cream-dim: #f472b6;
+  --accent-glow: #fb7185;
+  --accent-glow-dim: #e11d48;
+  --accent-amber: #f59e0b;
+  --line-soil: #482342;
+  --prestige-accent: #c084fc;
+  --prestige-accent-dim: #9333ea;
+  --prestige-bg: #221020;
+}
+
+[data-ui-theme="mystic"] {
+  --bg-deep: #0b1310;
+  --bg-panel: #121d18;
+  --bg-panel-2: #1b2a24;
+  --root-cream: #e0e7ff;
+  --root-cream-dim: #a5b4fc;
+  --accent-glow: #a7f3d0;
+  --accent-glow-dim: #34d399;
+  --accent-amber: #c084fc;
+  --line-soil: #274238;
+  --prestige-accent: #c084fc;
+  --prestige-accent-dim: #7c3aed;
+  --prestige-bg: #141124;
+}
+
+[data-ui-theme="cyberpunk"] {
+  --bg-deep: #07070b;
+  --bg-panel: #0f0f18;
+  --bg-panel-2: #181826;
+  --root-cream: #f0fdf4;
+  --root-cream-dim: #a7f3d0;
+  --accent-glow: #22d3ee;
+  --accent-glow-dim: #0891b2;
+  --accent-amber: #f43f5e;
+  --line-soil: #2b2b45;
+  --prestige-accent: #c084fc;
+  --prestige-accent-dim: #9333ea;
+  --prestige-bg: #120e24;
+}
+
+[data-ui-theme="grayscale"] {
+  --bg-deep: #0d0d0f;
+  --bg-panel: #17171a;
+  --bg-panel-2: #222226;
+  --root-cream: #f4f4f5;
+  --root-cream-dim: #a1a1aa;
+  --accent-glow: #e4e4e7;
+  --accent-glow-dim: #71717a;
+  --accent-amber: #d4d4d8;
+  --line-soil: #383840;
+  --prestige-accent: #a1a1aa;
+  --prestige-accent-dim: #52525b;
+  --prestige-bg: #18181b;
+}
+
+[data-ui-theme="emerald"] {
+  --bg-deep: #07150d;
+  --bg-panel: #0d2015;
+  --bg-panel-2: #142e1f;
+  --root-cream: #ecfdf5;
+  --root-cream-dim: #a7f3d0;
+  --accent-glow: #34d399;
+  --accent-glow-dim: #059669;
+  --accent-amber: #10b981;
+  --line-soil: #1f4730;
+  --prestige-accent: #6ee7b7;
+  --prestige-accent-dim: #10b981;
+  --prestige-bg: #092014;
+}
+
+[data-ui-theme="nebula"] {
+  --bg-deep: #0c0a18;
+  --bg-panel: #141026;
+  --bg-panel-2: #1e1939;
+  --root-cream: #f3e8ff;
+  --root-cream-dim: #d8b4fe;
+  --accent-glow: #c084fc;
+  --accent-glow-dim: #9333ea;
+  --accent-amber: #e879f9;
+  --line-soil: #352c60;
+  --prestige-accent: #f472b6;
+  --prestige-accent-dim: #db2777;
+  --prestige-bg: #1d0f2b;
+}
+
+[data-ui-theme="imperial"] {
+  --bg-deep: #100f0c;
+  --bg-panel: #1b1812;
+  --bg-panel-2: #262118;
+  --root-cream: #fef3c7;
+  --root-cream-dim: #fde68a;
+  --accent-glow: #fbbf24;
+  --accent-glow-dim: #d97706;
+  --accent-amber: #f59e0b;
+  --line-soil: #453b28;
+  --prestige-accent: #fcd34d;
+  --prestige-accent-dim: #b45309;
+  --prestige-bg: #221c10;
+}
+
+[data-ui-theme="void_sovereign"] {
+  --bg-deep: #080612;
+  --bg-panel: #100d20;
+  --bg-panel-2: #181330;
+  --root-cream: #f5f3ff;
+  --root-cream-dim: #ddd6fe;
+  --accent-glow: #818cf8;
+  --accent-glow-dim: #4f46e5;
+  --accent-amber: #a78bfa;
+  --line-soil: #2d2254;
+  --prestige-accent: #6366f1;
+  --prestige-accent-dim: #4338ca;
+  --prestige-bg: #0d091e;
+}
+
+[data-ui-theme="abyssal_eclipse"] {
+  --bg-deep: #08060a;
+  --bg-panel: #120f17;
+  --bg-panel-2: #1b1622;
+  --root-cream: #fefce8;
+  --root-cream-dim: #fef08a;
+  --accent-glow: #eab308;
+  --accent-glow-dim: #a16207;
+  --accent-amber: #facc15;
+  --line-soil: #3e3215;
+  --prestige-accent: #facc15;
+  --prestige-accent-dim: #854d0e;
+  --prestige-bg: #141008;
+}
+
+[data-ui-theme="boreal_tundra"] {
+  --bg-deep: #06131f;
+  --bg-panel: #0c2236;
+  --bg-panel-2: #122d47;
+  --root-cream: #f0f9ff;
+  --root-cream-dim: #bae6fd;
+  --accent-glow: #38bdf8;
+  --accent-glow-dim: #0284c7;
+  --accent-amber: #7dd3fc;
+  --line-soil: #1e3a5f;
+  --prestige-accent: #0284c7;
+  --prestige-accent-dim: #0369a1;
+  --prestige-bg: #081a2b;
+}
+
+[data-ui-theme="electromagnetic"] {
+  --bg-deep: #090714;
+  --bg-panel: #130f24;
+  --bg-panel-2: #1d1636;
+  --root-cream: #f5f3ff;
+  --root-cream-dim: #c4b5fd;
+  --accent-glow: #06b6d4;
+  --accent-glow-dim: #0891b2;
+  --accent-amber: #c084fc;
+  --line-soil: #382663;
+  --prestige-accent: #a855f7;
+  --prestige-accent-dim: #7e22ce;
+  --prestige-bg: #120a24;
+}
+
+[data-ui-theme="subterranean_borealis"] {
+  --bg-deep: #040914;
+  --bg-panel: #081d2e;
+  --bg-panel-2: #0e2a42;
+  --root-cream: #ecfdf5;
+  --root-cream-dim: #a7f3d0;
+  --accent-glow: #38bdf8;
+  --accent-glow-dim: #0ea5e9;
+  --accent-amber: #34d399;
+  --line-soil: #164e63;
+  --prestige-accent: #2dd4bf;
+  --prestige-accent-dim: #0f766e;
+  --prestige-bg: #051824;
+}
+
+/* ==========================================================================
+   GLOBAL KEYFRAME ANIMATIONS
+   ========================================================================== */
+
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes eventPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+@keyframes eventPulseLucky {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(8deg); }
+}
+
+@keyframes eventPulseSuper {
+  0%, 100% { transform: scale(1.05) rotate(0deg); }
+  50% { transform: scale(1.28) rotate(-6deg); }
+}
+
+@keyframes eventPulseAurora {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg); }
+  50% { transform: scale(1.16) rotate(6deg); filter: hue-rotate(45deg); }
+}
+
+@keyframes floatUp {
+  0% { opacity: 0; transform: translateY(0) scale(0.8); }
+  15% { opacity: 1; transform: translateY(-6px) scale(1.05); }
+  100% { opacity: 0; transform: translateY(-46px) scale(1); }
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(100%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulseIcon {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
