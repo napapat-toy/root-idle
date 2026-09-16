@@ -199,7 +199,7 @@ export interface TranscendenceState {
   echoResonanceLevel?: number;       // +1 max Echo cap per level (e.g. 5 -> 10)
   gaiaClairvoyanceLevel?: number;    // +0.1% lucky chance cap per level (up to 2.0% total)
   primordialSeedlingLevel?: number;  // Base rate of Fine Roots: 0.60 -> 2.00 (5 levels)
-  deepMeditationLevel?: number;      // Up to +50% global rate per level over 60m playtime (max +250%)
+  deepMeditationLevel?: number;      // Up to +40% global rate per level over playtime (max +200% / x3.0)
   gaiaBlessingLevel?: number;        // Infinite sink: +1% Gaia Essences gained per level (cap 500)
   hyperdriveUnlocked?: boolean;      // ⚡ 2x Game Speed unlocked (10k essences)
   hyperdriveEnabled?: boolean;       // ⚡ 2x Game Speed active toggle

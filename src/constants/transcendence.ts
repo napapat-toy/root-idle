@@ -240,12 +240,12 @@ export function deepMeditationIntervalSeconds(level: number): number {
 export function deepMeditationMultiplier(state: GameState): number {
   const lvl = state.transcendence?.deepMeditationLevel || 0;
   if (lvl <= 0) return 1.0;
+  const maxMult = 1.0 + lvl * 0.40; // Lv.1 = 1.4x, Lv.2 = 1.8x, Lv.3 = 2.2x, Lv.4 = 2.6x, Lv.5 = 3.0x max!
   const interval = deepMeditationIntervalSeconds(lvl);
   const runSeconds = state.runPlayTimeSeconds || 0;
-  // Multiplicative ramp: smoothly adds +1.0x (+100%) multiplier per interval
-  // e.g. Lv.1 (10m): 0m=x1.0, 5m=x1.5, 10m=x2.0, 30m=x4.0, 60m=x7.0
-  // e.g. Lv.5 (5m):  0m=x1.0, 5m=x2.0, 10m=x3.0, 30m=x7.0, 60m=x13.0
-  return 1.0 + (runSeconds / interval);
+  // Multiplicative ramp: smoothly ramps +0.25x per interval up to maxMult
+  const rawMult = 1.0 + (runSeconds / interval) * 0.25;
+  return Math.min(maxMult, Math.round(rawMult * 100) / 100);
 }
 
 export function trialRateMultiplier(state: GameState): number {

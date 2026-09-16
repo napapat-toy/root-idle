@@ -6,12 +6,12 @@ import {
   GAME_VERSION,
   stageName,
   echoBonusPct,
+  globalEchoMultiplier,
   totalEchoCount,
   prestigeBonusPct,
   achievementBonusPct,
   totalSynergyBonusPct,
   totalSynergiesCount,
-  totalGlobalBonusPercent,
   globalRateMultiplier,
   totalMilestonesCount,
   relicsCount,
@@ -22,6 +22,8 @@ import {
   BIOME_DEFS,
   TRIAL_DEFS,
   primordialVigorMult,
+  trialCompletionBonusMultiplier,
+  deepMeditationMultiplier,
 } from '@/constants/gameData';
 import { fmt, formatDuration } from '@/lib/formatters';
 import { ACHIEVEMENTS } from '@/constants/achievementsData';
@@ -62,12 +64,24 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
   const lifetimeSeeds = Math.max(stats.totalSeedsEarnedLifetime || 0, state.eternalSeeds || 0);
 
   const echoPct = echoBonusPct(state).toLocaleString(undefined, { maximumFractionDigits: 1 });
+  const echoMult = globalEchoMultiplier(state);
   const prestigePct = prestigeBonusPct(state).toLocaleString(undefined, { maximumFractionDigits: 1 });
   const achPct = achievementBonusPct(state).toLocaleString(undefined, { maximumFractionDigits: 1 });
   const synPct = totalSynergyBonusPct(state).toLocaleString(undefined, { maximumFractionDigits: 1 });
   const synCount = totalSynergiesCount(state);
-  const totalPct = totalGlobalBonusPercent(state).toLocaleString(undefined, { maximumFractionDigits: 1 });
   const globalMult = globalRateMultiplier(state);
+  const trueTotalPct = (globalMult - 1) * 100;
+  const trialBonusMult = trialCompletionBonusMultiplier(state);
+  const meditationMult = deepMeditationMultiplier(state);
+
+  const globalMultFormatted = globalMult >= 1e9
+    ? fmt(globalMult)
+    : globalMult.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const totalPctFormatted = trueTotalPct >= 1e9
+    ? fmt(trueTotalPct)
+    : trueTotalPct.toLocaleString(undefined, { maximumFractionDigits: 1 });
+
   const milestoneCount = totalMilestonesCount(state);
 
   // Relics & Biomes Data
@@ -305,16 +319,18 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
               </div>
               <div style={{ background: 'rgba(255, 215, 106, 0.08)', border: '1px solid rgba(255, 215, 106, 0.25)', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
                 <span style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--root-cream)' }}>
-                  ✨ {isEn ? 'Total Global Bonus (All Farm)' : 'โบนัสพลังผลิตรวมทั้งฟาร์ม (Global Bonus)'}:
+                  ✨ {isEn ? 'Total Global Multiplier (All Farm)' : 'ตัวคูณพลังผลิตรวมทั้งฟาร์ม (Global Multiplier)'}:
                 </span>
                 <span style={{ fontSize: '15px', fontWeight: 700, fontFamily: 'monospace', color: '#ffd76a' }}>
-                  +{totalPct}% <span style={{ fontSize: '12px', opacity: 0.85, fontWeight: 500 }}>(×{globalMult.toFixed(2)})</span>
+                  ×{globalMultFormatted} <span style={{ fontSize: '12px', opacity: 0.85, fontWeight: 500 }}>(+{totalPctFormatted}%)</span>
                 </span>
               </div>
               <div className="stats-card-rows" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '8px 16px' }}>
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Root Echo Bonus' : 'โบนัสสะท้อนราก'}:</span>
-                  <span className="stats-value green">+{echoPct}%</span>
+                  <span className="stats-value green">
+                    +{echoPct}% <span style={{ opacity: 0.7, fontSize: '11px', fontWeight: 500 }}>(×{echoMult.toFixed(2)})</span>
+                  </span>
                 </div>
                 <div className="stats-row">
                   <span className="stats-label">{isEn ? 'Prestige Passive Bonus' : 'โบนัสพลังรากนิรันดร์'}:</span>
@@ -332,7 +348,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                   <div className="stats-row">
                     <span className="stats-label">{isEn ? 'Gaia Primordial Vigor' : 'แกนพลังปฐมกาล (ไกอา)'}:</span>
                     <span className="stats-value" style={{ color: '#34d399' }}>
-                      +{((vigorMult - 1) * 100).toFixed(0)}% <span style={{ opacity: 0.65, fontSize: '10px' }}>(Lv. {vigorLevel})</span>
+                      +{((vigorMult - 1) * 100).toFixed(0)}% <span style={{ opacity: 0.7, fontSize: '11px', fontWeight: 500 }}>(×{vigorMult.toFixed(2)}, Lv. {vigorLevel})</span>
                     </span>
                   </div>
                 )}
@@ -341,6 +357,22 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                     <span className="stats-label">{isEn ? 'Relics Multiplier' : 'ตัวคูณจากโบราณวัตถุ'}:</span>
                     <span className="stats-value highlight" style={{ color: 'var(--accent-glow)' }}>
                       ×{relicRateMult.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+                {trialBonusMult > 1 && (
+                  <div className="stats-row">
+                    <span className="stats-label">{isEn ? 'Trials Master Bonus' : 'โบนัสพิชิตบททดสอบ'}:</span>
+                    <span className="stats-value" style={{ color: '#facc15' }}>
+                      ×{trialBonusMult.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+                {meditationMult > 1 && (
+                  <div className="stats-row">
+                    <span className="stats-label">{isEn ? 'Deep Meditation' : 'สมาธิลึกแห่งไกอา'}:</span>
+                    <span className="stats-value" style={{ color: '#a78bfa' }}>
+                      ×{meditationMult.toFixed(2)}
                     </span>
                   </div>
                 )}

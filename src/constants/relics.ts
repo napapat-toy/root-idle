@@ -121,8 +121,8 @@ export const RELIC_DEFS: RelicDef[] = [
     enDesc: 'Petrified crown boughs of the genesis tree, radiating powerful harmonic echo resonance across the whole garden.',
     rarity: 'epic',
     dropWeight: 8,
-    effectDesc: 'ตัวคูณสะท้อนราก (Echoes) เพิ่มขึ้น +12.5% ต่อระดับ Echo',
-    enEffectDesc: 'Root Echoes grant +12.5% multiplier per echo level',
+    effectDesc: 'ตัวคูณสะท้อนราก (Echoes) เพิ่มขึ้น +1.5% ต่อระดับ Echo',
+    enEffectDesc: 'Root Echoes grant +1.5% multiplier per echo level',
     baseCost: 150_000_000_000_000_000,
     color: '#a855f7',
     maxPieces: 1,
@@ -391,13 +391,13 @@ export function relicSynergyUnlockRequiredCount(state: GameState): number {
 }
 
 /**
- * Crown: Root Echoes grant +12.5% multiplier per echo level scaled by Cycle Resonance.
+ * Crown: Root Echoes grant +1.5% multiplier per echo level scaled by Cycle Resonance.
  */
 export function relicEchoBonusPerEcho(state: GameState): number {
   const m = relicMult(state, 'crown');
-  const baseEcho = m > 0 ? (m === 2 ? 0.25 : 0.125) : 0.05;
+  const baseEcho = m > 0 ? (m === 2 ? 0.020 : 0.015) : 0.010;
   const cycleStack = relicCycleResonanceStack(state);
-  return Math.round(baseEcho * (1 + cycleStack * 0.01) * 1000) / 1000;
+  return Math.round(baseEcho * (1 + cycleStack * 0.0025) * 10000) / 10000;
 }
 
 /**
