@@ -1271,3 +1271,5 @@ export const ACHIEVEMENTS: AchievementDef[] = [
 export const ACHIEVEMENT_BONUS_MAP: Record<string, number> = Object.fromEntries(
   ACHIEVEMENTS.map(a => [a.id, a.bonusPct])
 );
+
+export const TOTAL_ACHIEVEMENTS = ACHIEVEMENTS.length;

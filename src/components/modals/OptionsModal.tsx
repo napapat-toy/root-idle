@@ -7,6 +7,10 @@ import { decodeSave, getSlotMeta } from '@/lib/storage';
 import { fmt, fmtInt, formatDuration } from '@/lib/formatters';
 import { ConfirmModal } from './ConfirmModal';
 import { MODULE_TRANSLATIONS, t } from '@/lib/i18n';
+import { MODULE_DEFS } from '@/constants/modules';
+import { calcPrestigeSeeds } from '@/constants/prestige';
+import { relicsCount } from '@/constants/relics';
+import { TOTAL_ACHIEVEMENTS } from '@/constants/achievementsData';
 
 interface OptionsModalProps {
   isOpen: boolean;
@@ -43,6 +47,12 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
   const tr = t(lang);
+
+  const currentHighestOwned = MODULE_DEFS.slice().reverse().find(d => (state.owned[d.id] || 0) > 0);
+  const currentHighestName = currentHighestOwned
+    ? (MODULE_TRANSLATIONS[currentHighestOwned.id]?.[lang]?.name || currentHighestOwned.id)
+    : null;
+  const currentPendingSeeds = calcPrestigeSeeds(state);
 
   const [confirmState, setConfirmState] = useState<{
     isOpen: boolean;
@@ -271,6 +281,78 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                     <div className="panel-title" style={{ margin: '16px 0 8px', textAlign: 'left' }}>
                       {tr.saveSlotsTitle}
                     </div>
+
+                    {/* Active Game Session Preview */}
+                    <div
+                      className="prestige-item slot-item"
+                      style={{
+                        borderColor: 'rgba(52, 211, 153, 0.45)',
+                        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(6, 78, 59, 0.18))',
+                        marginBottom: '14px',
+                        textAlign: 'left',
+                      }}
+                    >
+                      <div className="p-top">
+                        <span style={{ color: '#34d399', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981' }} />
+                          {isEn ? 'Current Game Progress (Auto-Saved)' : 'ความคืบหน้าปัจจุบัน (Auto-Save ในเครื่อง)'}
+                        </span>
+                        <span style={{ fontSize: '11px', color: 'var(--root-cream-dim)', fontWeight: 400 }}>
+                          ⏱️ {formatDuration(state.totalPlayTimeSeconds || 0, lang)}
+                        </span>
+                      </div>
+                      <div className="p-desc" style={{ marginTop: '4px', lineHeight: 1.5 }}>
+                        <div>
+                          🌱 <b style={{ color: 'var(--accent-amber)' }}>{fmt(state.nutrients)}</b> {isEn ? 'nutrients' : 'สารอาหาร'}
+                          <span style={{ color: 'var(--root-cream-dim)', fontSize: '10.5px' }}>
+                            {' '}({isEn ? 'lifetime' : 'สะสม'} {fmt(state.stats?.totalNutrientsEarnedLifetime || state.runEarned || state.nutrients)})
+                          </span>
+                          {currentHighestName && (
+                            <span> · {isEn ? 'Highest Tier:' : 'ขั้นสูงสุด:'} {currentHighestName} ({isEn ? 'Total' : 'รวม'} {fmtInt(state.totalOwned)} {isEn ? 'roots' : 'ต้น'})</span>
+                          )}
+                        </div>
+                        <div style={{ color: 'var(--prestige-accent)' }}>
+                          🌌 <b>{fmtInt(state.eternalSeeds)}</b> {isEn ? 'Seeds' : 'เมล็ดนิรันดร์'}
+                          {currentPendingSeeds > 0 && (
+                            <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
+                              {' '}(+{fmtInt(currentPendingSeeds)} {isEn ? 'pending' : 'รอรับ ✨'})
+                            </span>
+                          )}
+                          <span style={{ color: '#ffd76a', fontSize: '10.5px' }}>
+                            {' '}· {isEn ? 'all-time' : 'ตลอดกาล'} {fmtInt(state.stats?.totalSeedsEarnedLifetime || state.eternalSeeds)}
+                          </span>
+                          {(state.stats?.prestigeCount || 0) > 0 && (
+                            <span style={{ color: 'var(--root-cream-dim)' }}> · Prestige ×{state.stats?.prestigeCount}</span>
+                          )}
+                        </div>
+                        <div style={{ marginTop: '2px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px', fontSize: '11px' }}>
+                          {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || (state.transcendence?.count || 0) > 0) && (
+                            <span style={{ color: '#34d399', fontWeight: 600 }}>
+                              🌍 {fmt(state.transcendence?.gaiaEssences || 0)} {isEn ? 'Essences' : 'ละอองชีวิต'}
+                              {(state.transcendence?.count || 0) > 0 ? ` (${isEn ? 'Ascent' : 'ตื่นรู้'} ×${state.transcendence?.count})` : ''}
+                            </span>
+                          )}
+                          {relicsCount(state) > 0 && (
+                            <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
+                              {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || (state.transcendence?.count || 0) > 0) ? ' · ' : ''}
+                              🏺 {isEn ? `Relics ${relicsCount(state)}/10` : `โบราณวัตถุ ${relicsCount(state)}/10`}
+                            </span>
+                          )}
+                          {(state.achievements?.length || 0) > 0 && (
+                            <span style={{ color: 'var(--root-cream-dim)' }}>
+                              {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || relicsCount(state) > 0) ? ' · ' : ''}
+                              🏆 {state.achievements?.length}/{TOTAL_ACHIEVEMENTS}
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: '10.5px', color: 'var(--root-cream-dim)', marginTop: '6px', fontStyle: 'italic', opacity: 0.85 }}>
+                          {isEn
+                            ? '💡 The game continuously auto-saves this progress to your browser. Use the slots below to store manual backup checkpoints.'
+                            : '💡 ตัวเกมเซฟความคืบหน้านี้ให้อัตโนมัติตลอดเวลา หากต้องการสำรองข้อมูลไว้เป็นจุดย้อนหลัง สามารถกด "บันทึก" ลงในช่องสล็อตด้านล่างได้'}
+                        </div>
+                      </div>
+                    </div>
+
                     <div style={{ textAlign: 'left' }}>
                       {Array.from({ length: SAVE_SLOT_COUNT }, (_, i) => i + 1).map(slot => {
                         const meta = slotsMeta[slot];
@@ -297,6 +379,10 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                           ? fmtInt(meta.lifetimeSeeds)
                           : null;
 
+                        const hasAscent = Boolean(meta?.gaiaEssences && meta.gaiaEssences > 0) || Boolean(meta?.transcendenceCount && meta.transcendenceCount > 0);
+                        const hasRelics = Boolean(meta?.relicsCount && meta.relicsCount > 0);
+                        const hasAchievements = Boolean(meta?.achievementsCount && meta.achievementsCount > 0);
+
                         return (
                           <div key={slot} className="prestige-item slot-item">
                             <div className="p-top">
@@ -318,7 +404,9 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                                           {' '}({isEn ? 'lifetime' : 'สะสม'} {lifetimeNutrientsText})
                                         </span>
                                       )}
-                                      {highestName && <span> · {highestName} ({fmtInt(meta.totalOwned || 0)} {isEn ? 'roots' : 'ต้น'})</span>}
+                                      {highestName && (
+                                        <span> · {isEn ? 'Highest Tier:' : 'ขั้นสูงสุด:'} {highestName} ({isEn ? 'Total' : 'รวม'} {fmtInt(meta.totalOwned || 0)} {isEn ? 'roots' : 'ต้น'})</span>
+                                      )}
                                     </div>
                                   )}
                                   <div style={{ color: 'var(--prestige-accent)' }}>
@@ -334,28 +422,24 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                                     )}
                                   </div>
                                   {/* Line 3: Gaia Transcendence, Relics, Achievements & Active Trial */}
-                                  {((meta.gaiaEssences && meta.gaiaEssences > 0) ||
-                                    (meta.transcendenceCount && meta.transcendenceCount > 0) ||
-                                    (meta.relicsCount !== undefined && meta.relicsCount > 0) ||
-                                    (meta.achievementsCount !== undefined && meta.achievementsCount > 0) ||
-                                    (meta.activeTrial && meta.activeTrial !== 'none')) && (
+                                  {(hasAscent || hasRelics || hasAchievements || (meta.activeTrial && meta.activeTrial !== 'none')) && (
                                     <div style={{ marginTop: '2px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px', fontSize: '11px' }}>
-                                      {((meta.gaiaEssences && meta.gaiaEssences > 0) || (meta.transcendenceCount && meta.transcendenceCount > 0)) && (
+                                      {hasAscent && (
                                         <span style={{ color: '#34d399', fontWeight: 600 }}>
                                           🌍 {fmt(meta.gaiaEssences || 0)} {isEn ? 'Essences' : 'ละอองชีวิต'}
                                           {meta.transcendenceCount && meta.transcendenceCount > 0 ? ` (${isEn ? 'Ascent' : 'ตื่นรู้'} ×${meta.transcendenceCount})` : ''}
                                         </span>
                                       )}
-                                      {meta.relicsCount !== undefined && meta.relicsCount > 0 && (
+                                      {hasRelics && (
                                         <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
-                                          {((meta.gaiaEssences && meta.gaiaEssences > 0) || (meta.transcendenceCount && meta.transcendenceCount > 0)) ? ' · ' : ''}
+                                          {hasAscent ? ' · ' : ''}
                                           🏺 {isEn ? `Relics ${meta.relicsCount}/10` : `โบราณวัตถุ ${meta.relicsCount}/10`}
                                         </span>
                                       )}
-                                      {meta.achievementsCount !== undefined && meta.achievementsCount > 0 && (
+                                      {hasAchievements && (
                                         <span style={{ color: 'var(--root-cream-dim)' }}>
-                                          {((meta.gaiaEssences && meta.gaiaEssences > 0) || (meta.relicsCount && meta.relicsCount > 0)) ? ' · ' : ''}
-                                          🏆 {meta.achievementsCount}/22
+                                          {(hasAscent || hasRelics) ? ' · ' : ''}
+                                          🏆 {meta.achievementsCount}/{TOTAL_ACHIEVEMENTS}
                                         </span>
                                       )}
                                       {meta.activeTrial && meta.activeTrial !== 'none' && (() => {
