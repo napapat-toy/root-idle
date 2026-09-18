@@ -7,11 +7,13 @@ import {
   calcPrestigeSeeds,
   EVENT_BONUS_MAX_LEVEL,
   eventBonusCost,
+  EVENT_DURATION_MAX_LEVEL,
   eventDurationCost,
   eventDurationMaxed,
   goldenSeedCost,
   GOLDEN_SEED_MAX_LEVEL,
   LUCKY_CHANCE_MAX,
+  LUCKY_CHANCE_MAX_LEVEL,
   LUCKY_CHANCE_STEP,
   luckyChanceCost,
   luckyChanceMaxed,
@@ -71,7 +73,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   onBuyGoldenSeed,
   onBuyPassiveRate,
   onBuyAutoRoot,
-  onToggleAutoRoot,
+  onToggleAutoRoot: _onToggleAutoRoot,
   onBuyEventBonus,
   onBuyEventDuration,
   onBuyLuckyChance,
@@ -130,10 +132,14 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               {tr.currentSeeds.replace('{amount}', fmtInt(seeds))}
             </div>
 
-            <div className="modal-actions">
-              <button onClick={handlePrestigeClick}>{tr.confirmPrestigeBtn}</button>
-              <button className="secondary" onClick={onClose}>
-                {tr.close}
+            <div className="modal-actions" style={{ width: '100%', display: 'flex', justifyContent: 'center', margin: '2px 0 8px' }}>
+              <button
+                type="button"
+                className="btn-prestige-confirm"
+                onClick={handlePrestigeClick}
+              >
+                <span>🌌</span>
+                <span>{tr.confirmPrestigeBtn}</span>
               </button>
             </div>
 
@@ -147,7 +153,11 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               {renderSectionHeader(tr.prestigeSecEconomy)}
               <PrestigeUpgradeRow
                 title={isEn ? '🌱 Starter Culture' : '🌱 หัวเชื้อเริ่มต้น'}
-                badge={isEn ? `Lv.${state.prestige.starterLevel || 0}` : `เลเวล ${state.prestige.starterLevel || 0}`}
+                badge={(state.prestige.starterLevel || 0) >= STARTER_CULTURE_MAX_LEVEL
+                  ? (isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓')
+                  : (isEn
+                      ? `Lv. ${state.prestige.starterLevel || 0} / ${STARTER_CULTURE_MAX_LEVEL}`
+                      : `เลเวล ${state.prestige.starterLevel || 0} / ${STARTER_CULTURE_MAX_LEVEL}`)}
                 desc={isEn
                   ? `Immediately gain +10 Fine Roots and guarantee ${(state.prestige.starterLevel || 0) * 10 + 10} roots upon every future Prestige`
                   : `ได้รากฝอยฟรีทันที +10 ต้น (ใช้ได้เลยรอบนี้) และการันตี ${(state.prestige.starterLevel || 0) * 10 + 10} ต้นทุกครั้งที่หว่านใหม่ต่อจากนี้`}
@@ -161,7 +171,11 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
               <PrestigeUpgradeRow
                 title={isEn ? '✨ Golden Seeds' : '✨ เมล็ดทองคำ'}
-                badge={isEn ? `Lv.${fmtInt(state.prestige.goldenLevel || 0)} / ${fmtInt(GOLDEN_SEED_MAX_LEVEL)} (+${((state.prestige.goldenLevel || 0) * 0.1).toFixed(1)}%)` : `เลเวล ${fmtInt(state.prestige.goldenLevel || 0)} / ${fmtInt(GOLDEN_SEED_MAX_LEVEL)} (+${((state.prestige.goldenLevel || 0) * 0.1).toFixed(1)}%)`}
+                badge={(state.prestige.goldenLevel || 0) >= GOLDEN_SEED_MAX_LEVEL
+                  ? (isEn ? `MAXED ✓ (+${((state.prestige.goldenLevel || 0) * 0.1).toFixed(1)}%)` : `เต็มแล้ว ✓ (+${((state.prestige.goldenLevel || 0) * 0.1).toFixed(1)}%)`)
+                  : (isEn
+                      ? `Lv. ${fmtInt(state.prestige.goldenLevel || 0)} / ${fmtInt(GOLDEN_SEED_MAX_LEVEL)} (+${((state.prestige.goldenLevel || 0) * 0.1).toFixed(1)}%)`
+                      : `เลเวล ${fmtInt(state.prestige.goldenLevel || 0)} / ${fmtInt(GOLDEN_SEED_MAX_LEVEL)} (+${((state.prestige.goldenLevel || 0) * 0.1).toFixed(1)}%)`)}
                 desc={isEn
                   ? `Increases Eternal Seeds gained upon Prestige by +0.1% per level (Currently +${((state.prestige.goldenLevel || 0) * 0.1).toFixed(1)}%)`
                   : `เพิ่มเมล็ดนิรันดร์ที่ได้รับตอน Prestige ครั้งต่อไปอีกเลเวลละ +0.1% (ตอนนี้ +${((state.prestige.goldenLevel || 0) * 0.1).toFixed(1)}%)`}
@@ -175,7 +189,11 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
               <PrestigeUpgradeRow
                 title={isEn ? '🌟 Eternal Growth Essence' : '🌟 พลังรากนิรันดร์'}
-                badge={isEn ? `Lv.${fmtInt(state.prestige.passiveRateLevel || 0)} / ${fmtInt(PASSIVE_RATE_MAX_LEVEL)} (+${((state.prestige.passiveRateLevel || 0) * 0.1).toFixed(1)}%)` : `เลเวล ${fmtInt(state.prestige.passiveRateLevel || 0)} / ${fmtInt(PASSIVE_RATE_MAX_LEVEL)} (+${((state.prestige.passiveRateLevel || 0) * 0.1).toFixed(1)}%)`}
+                badge={(state.prestige.passiveRateLevel || 0) >= PASSIVE_RATE_MAX_LEVEL
+                  ? (isEn ? `MAXED ✓ (+${((state.prestige.passiveRateLevel || 0) * 0.1).toFixed(1)}%)` : `เต็มแล้ว ✓ (+${((state.prestige.passiveRateLevel || 0) * 0.1).toFixed(1)}%)`)
+                  : (isEn
+                      ? `Lv. ${fmtInt(state.prestige.passiveRateLevel || 0)} / ${fmtInt(PASSIVE_RATE_MAX_LEVEL)} (+${((state.prestige.passiveRateLevel || 0) * 0.1).toFixed(1)}%)`
+                      : `เลเวล ${fmtInt(state.prestige.passiveRateLevel || 0)} / ${fmtInt(PASSIVE_RATE_MAX_LEVEL)} (+${((state.prestige.passiveRateLevel || 0) * 0.1).toFixed(1)}%)`)}
                 desc={isEn
                   ? `Permanent +0.1% global production rate bonus across the entire garden (Currently +${((state.prestige.passiveRateLevel || 0) * 0.1).toFixed(1)}%)`
                   : `เพิ่มเรทรวมทั้งฟาร์มแบบถาวรเลเวลละ +0.1% (ตอนนี้ +${((state.prestige.passiveRateLevel || 0) * 0.1).toFixed(1)}%)`}
@@ -238,23 +256,20 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               <PrestigeUpgradeRow
                 title={isEn ? '♾️ Universal Automation' : '♾️ ออโต้สรรพสิ่ง'}
                 badge={state.prestige.autoRoot
-                  ? isVoidTrial
-                    ? (isEn ? '🚫 Suppressed' : '🚫 ถูกระงับชั่วคราว')
-                    : state.prestige.autoRootEnabled
-                    ? (isEn ? '🟢 Active (All Systems)' : '🟢 เปิดอยู่ (ครอบคลุมทุกระบบ)')
-                    : (isEn ? '⚪ Disabled' : '⚪ ปิดอยู่')
-                  : ''}
+                  ? (isEn ? '✓ Unlocked' : '✓ ปลดล็อกแล้ว')
+                  : (isEn ? '✨ One-Time Unlock' : '✨ ซื้อครั้งเดียวจบ')}
                 desc={state.prestige.autoRoot
-                  ? isVoidTrial
-                    ? (isEn ? '⚠️ Automation is temporarily suppressed during the Void Anomaly trial.' : '⚠️ บอทถูกระงับชั่วคราวจากสนามพลังมิติสุญญะ จะกลับมาทำงานเมื่อพิชิตด่านสำเร็จ')
-                    : (isEn ? 'Autonomous Engine: Smart ROI bulk root buying (10-25 packs), upgrades, echoes, species networks & floating events — Click to toggle ON/OFF' : 'ปัญญาประดิษฐ์อัตโนมัติครบวงจร: วิเคราะห์ ROI ซื้อรากไม้แบบเหมา (10-25 ต้น), ซื้ออัปเกรด, ปลุกเสียงสะท้อน, สร้างเครือข่ายรากไม้ และเก็บอีเวนต์ลอยให้อัตโนมัติ — คลิกเพื่อเปิด/ปิด')
-                  : (isEn ? 'All-in-One Automation: Purchases optimal roots (smart bulk buy), milestone upgrades, permanent echoes, root synergy networks, and floating events forever!' : 'ระบบออโต้ครบจบในตัวเดียว: ซื้อรากที่คุ้มที่สุด (คำนวณ ROI ล่วงหน้าและเหมาซื้อ 10-25 ต้น), ซื้ออัปเกรด, สะท้อนราก, เครือข่ายรากไม้ และเก็บอีเวนต์ลอยให้อัตโนมัติทั้งหมดตลอดไป')}
+                  ? (isEn
+                      ? 'Autonomous Engine: Analyzes ROI, bulk buys roots (10-25 packs), upgrades, echoes, species networks & floating events (controlled on main screen).'
+                      : 'ปัญญาประดิษฐ์อัตโนมัติครบวงจร: วิเคราะห์ ROI ซื้อรากไม้แบบเหมา (10-25 ต้น), ซื้ออัปเกรด, ปลุกเสียงสะท้อน, สร้างเครือข่ายรากไม้ และเก็บอีเวนต์ลอยให้อัตโนมัติ (ควบคุมเปิด/ปิดได้ที่หน้าจอหลัก)')
+                  : (isEn
+                      ? 'All-in-One Automation: Purchases optimal roots (smart bulk buy), milestone upgrades, permanent echoes, root synergy networks, and floating events forever!'
+                      : 'ระบบออโต้ครบจบในตัวเดียว: ซื้อรากที่คุ้มที่สุด (คำนวณ ROI ล่วงหน้าและเหมาซื้อ 10-25 ต้น), ซื้ออัปเกรด, สะท้อนราก, เครือข่ายรากไม้ และเก็บอีเวนต์ลอยให้อัตโนมัติทั้งหมดตลอดไป')}
                 costText={state.prestige.autoRoot ? '—' : `${fmtInt(AUTO_ROOT_COST)} 🌌`}
                 isOwned={state.prestige.autoRoot}
+                isMaxed={state.prestige.autoRoot}
                 isDisabled={!state.prestige.autoRoot && seeds < AUTO_ROOT_COST}
-                isToggledOff={state.prestige.autoRoot && (!state.prestige.autoRootEnabled || isVoidTrial)}
-                isActive={state.prestige.autoRoot && (state.prestige.autoRootEnabled && !isVoidTrial)}
-                onClick={state.prestige.autoRoot ? onToggleAutoRoot : onBuyAutoRoot}
+                onClick={state.prestige.autoRoot ? undefined : onBuyAutoRoot}
                 seeds={seeds}
                 isEn={isEn}
               />
@@ -263,11 +278,16 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               {renderSectionHeader(tr.prestigeSecEvents)}
               {(() => {
                 const curLvl = Math.min(EVENT_BONUS_MAX_LEVEL, state.prestige.eventBonusLevel || 0);
+                const isMaxed = curLvl >= EVENT_BONUS_MAX_LEVEL;
                 const bonusPct = Number((curLvl * 0.1).toFixed(1)).toLocaleString();
                 return (
                   <PrestigeUpgradeRow
                     title={isEn ? '💰 Event Value Booster' : '💰 โบนัสอีเว้น'}
-                    badge={isEn ? `Lv.${curLvl.toLocaleString()} (+${bonusPct}%)` : `เลเวล ${curLvl.toLocaleString()} (+${bonusPct}%)`}
+                    badge={isMaxed
+                      ? (isEn ? `MAXED ✓ (+${bonusPct}%)` : `เต็มแล้ว ✓ (+${bonusPct}%)`)
+                      : (isEn
+                          ? `Lv. ${fmtInt(curLvl)} / ${fmtInt(EVENT_BONUS_MAX_LEVEL)} (+${bonusPct}%)`
+                          : `เลเวล ${fmtInt(curLvl)} / ${fmtInt(EVENT_BONUS_MAX_LEVEL)} (+${bonusPct}%)`)}
                     desc={isEn
                       ? `Increases reward gains from floating events by +0.1% (Currently +${bonusPct}%)`
                       : `เพิ่มผลตอบแทนของกล่องสมบัติ/บัฟ/โชคดี ที่ได้จากการคลิกอีเว้นอีก 0.1% (ตอนนี้ +${bonusPct}%)`}
@@ -283,7 +303,11 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
               <PrestigeUpgradeRow
                 title={isEn ? '⏳ Extended Surge Duration' : '⏳ ขยายเวลาบัฟ'}
-                badge={eventDurationMaxed(state) ? (isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓') : (isEn ? `Level ${state.prestige.eventDurationLevel}` : `เลเวล ${state.prestige.eventDurationLevel}`)}
+                badge={eventDurationMaxed(state)
+                  ? (isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓')
+                  : (isEn
+                      ? `Lv. ${state.prestige.eventDurationLevel || 0} / ${EVENT_DURATION_MAX_LEVEL}`
+                      : `เลเวล ${state.prestige.eventDurationLevel || 0} / ${EVENT_DURATION_MAX_LEVEL}`)}
                 desc={eventDurationMaxed(state)
                   ? (isEn ? `Maxed out at +${(state.prestige.eventDurationLevel || 0) * 15}%` : `เต็มแล้วที่ +${(state.prestige.eventDurationLevel || 0) * 15}% (ไม่รวมโชคดี)`)
                   : (isEn ? `Extends surge buff duration by +15% (Currently +${(state.prestige.eventDurationLevel || 0) * 15}%)` : `เพิ่มระยะเวลาของบัฟ/กล่องสมบัติอีก 15% (ตอนนี้ +${(state.prestige.eventDurationLevel || 0) * 15}%, ไม่รวมโชคดี)`)}
@@ -298,7 +322,11 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
               <PrestigeUpgradeRow
                 title={isEn ? '🍀 Lucky Clover Frequency' : '🍀 โอกาสโชคดีเพิ่ม'}
-                badge={luckyChanceMaxed(state) ? (isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓') : (isEn ? `Level ${state.prestige.luckyChanceLevel || 0}` : `เลเวล ${state.prestige.luckyChanceLevel || 0}`)}
+                badge={luckyChanceMaxed(state)
+                  ? (isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓')
+                  : (isEn
+                      ? `Lv. ${state.prestige.luckyChanceLevel || 0} / ${LUCKY_CHANCE_MAX_LEVEL}`
+                      : `เลเวล ${state.prestige.luckyChanceLevel || 0} / ${LUCKY_CHANCE_MAX_LEVEL}`)}
                 desc={luckyChanceMaxed(state)
                   ? (isEn ? `Maxed at ${(luckyChancePct(state) * 100).toFixed(1)}%` : `เต็มแล้วที่ ${(luckyChancePct(state) * 100).toFixed(1)}% (สูงสุด)`)
                   : (isEn
@@ -315,7 +343,11 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
               <PrestigeUpgradeRow
                 title={isEn ? '🍀 Lucky Magnitude Multiplier' : '🍀 โชคดีทวีคูณ'}
-                badge={isEn ? `Lv.${state.prestige.luckyMagnitudeLevel || 0} (×${(state.prestige.luckyMagnitudeLevel || 0) + 1})` : `เลเวล ${state.prestige.luckyMagnitudeLevel || 0} (×${(state.prestige.luckyMagnitudeLevel || 0) + 1})`}
+                badge={(state.prestige.luckyMagnitudeLevel || 0) >= LUCKY_MAGNITUDE_MAX_LEVEL
+                  ? (isEn ? 'MAXED ✓ (×10)' : 'เต็มแล้ว ✓ (×10)')
+                  : (isEn
+                      ? `Lv. ${state.prestige.luckyMagnitudeLevel || 0} / ${LUCKY_MAGNITUDE_MAX_LEVEL} (×${(state.prestige.luckyMagnitudeLevel || 0) + 1})`
+                      : `เลเวล ${state.prestige.luckyMagnitudeLevel || 0} / ${LUCKY_MAGNITUDE_MAX_LEVEL} (×${(state.prestige.luckyMagnitudeLevel || 0) + 1})`)}
                 desc={isEn
                   ? `Stacks Lucky Clover (×777) multiplier — Currently ×${(state.prestige.luckyMagnitudeLevel || 0) + 1}, next level ×${(state.prestige.luckyMagnitudeLevel || 0) + 2} (Cap: ×10)`
                   : `ทบตัวคูณของบัฟโชคดี (×777) เพิ่มอีกชั้น — ตอนนี้ ×${(state.prestige.luckyMagnitudeLevel || 0) + 1} ต่อไปเป็น ×${(state.prestige.luckyMagnitudeLevel || 0) + 2} (สูงสุด ×10)`}
@@ -329,7 +361,11 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
 
               <PrestigeUpgradeRow
                 title={isEn ? '⏳🍀 Extended Lucky Duration' : '⏳🍀 โชคดีอยู่นานขึ้น'}
-                badge={isEn ? `Lv.${state.prestige.luckyDurationLevel || 0} (${Math.min(LUCKY_DURATION_MAX, LUCKY_DURATION_BASE + (state.prestige.luckyDurationLevel || 0))}s)` : `เลเวล ${state.prestige.luckyDurationLevel || 0} (${Math.min(LUCKY_DURATION_MAX, LUCKY_DURATION_BASE + (state.prestige.luckyDurationLevel || 0))}วิ)`}
+                badge={(state.prestige.luckyDurationLevel || 0) >= LUCKY_DURATION_MAX_LEVEL
+                  ? (isEn ? `MAXED ✓ (${LUCKY_DURATION_MAX}s)` : `เต็มแล้ว ✓ (${LUCKY_DURATION_MAX}วิ)`)
+                  : (isEn
+                      ? `Lv. ${state.prestige.luckyDurationLevel || 0} / ${LUCKY_DURATION_MAX_LEVEL} (${Math.min(LUCKY_DURATION_MAX, LUCKY_DURATION_BASE + (state.prestige.luckyDurationLevel || 0))}s)`
+                      : `เลเวล ${state.prestige.luckyDurationLevel || 0} / ${LUCKY_DURATION_MAX_LEVEL} (${Math.min(LUCKY_DURATION_MAX, LUCKY_DURATION_BASE + (state.prestige.luckyDurationLevel || 0))}วิ)`)}
                 desc={isEn
                   ? `Extends Lucky Clover duration (+1s/level) — Currently ${Math.min(LUCKY_DURATION_MAX, LUCKY_DURATION_BASE + (state.prestige.luckyDurationLevel || 0))}s (Cap: ${LUCKY_DURATION_MAX}s)`
                   : `ยืดเวลาบัฟโชคดี (+1 วิ/เลเวล) — ตอนนี้ ${Math.min(LUCKY_DURATION_MAX, LUCKY_DURATION_BASE + (state.prestige.luckyDurationLevel || 0))} วิ (สูงสุด ${LUCKY_DURATION_MAX} วิ)`}
@@ -345,7 +381,11 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
               {renderSectionHeader(tr.prestigeSecSkins)}
               <PrestigeUpgradeRow
                 title={isEn ? '⏰ Expand Offline Rest Cap' : '⏰ ขยายเพดาน Offline'}
-                badge={offlineCapMaxed(state) ? (isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓') : ''}
+                badge={offlineCapMaxed(state)
+                  ? (isEn ? `MAXED ✓ (${OFFLINE_CAP_HOURS[state.prestige.offlineCapLevel || 0]}h)` : `เต็มแล้ว ✓ (${OFFLINE_CAP_HOURS[state.prestige.offlineCapLevel || 0]} ชม.)`)
+                  : (isEn
+                      ? `Lv. ${state.prestige.offlineCapLevel || 0} / ${OFFLINE_CAP_HOURS.length - 1} (${OFFLINE_CAP_HOURS[state.prestige.offlineCapLevel || 0]}h)`
+                      : `เลเวล ${state.prestige.offlineCapLevel || 0} / ${OFFLINE_CAP_HOURS.length - 1} (${OFFLINE_CAP_HOURS[state.prestige.offlineCapLevel || 0]} ชม.)`)}
                 desc={offlineCapMaxed(state)
                   ? (isEn ? `Current cap: ${OFFLINE_CAP_HOURS[state.prestige.offlineCapLevel || 0]} hrs (Maximum)` : `เพดานปัจจุบัน ${OFFLINE_CAP_HOURS[state.prestige.offlineCapLevel || 0]} ชม. (สูงสุดแล้ว)`)
                   : (isEn ? `Expands offline storage cap from ${OFFLINE_CAP_HOURS[state.prestige.offlineCapLevel || 0]}h to ${OFFLINE_CAP_HOURS[(state.prestige.offlineCapLevel || 0) + 1]}h` : `ขยายจาก ${OFFLINE_CAP_HOURS[state.prestige.offlineCapLevel || 0]} ชม. เป็น ${OFFLINE_CAP_HOURS[(state.prestige.offlineCapLevel || 0) + 1]} ชม.`)}

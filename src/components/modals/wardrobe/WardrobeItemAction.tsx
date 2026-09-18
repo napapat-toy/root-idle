@@ -234,22 +234,6 @@ export const WardrobeItemAction: React.FC<WardrobeItemActionProps> = React.memo(
           🔒 {fmtInt(curCost)} 🌌 {isEn ? 'Unlock in Prestige' : 'ปลดล็อกในร้าน Prestige'}
         </button>
       )}
-
-      <button
-        onClick={onClose}
-        style={{
-          padding: '10px 16px',
-          borderRadius: '12px',
-          background: 'rgba(255, 255, 255, 0.08)',
-          color: 'var(--root-cream-dim)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          fontWeight: 600,
-          fontSize: '13px',
-          cursor: 'pointer',
-        }}
-      >
-        {isEn ? '✕ Close' : '✕ ปิด'}
-      </button>
     </div>
   );
 });

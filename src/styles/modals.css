@@ -142,6 +142,23 @@ body.modal-open {
   @apply flex gap-2 justify-center;
 }
 
+.btn-prestige-confirm {
+  @apply w-full max-w-[380px] py-3 px-6 rounded-xl font-bold text-[15px] cursor-pointer inline-flex items-center justify-center gap-2 tracking-[0.02em] transition-all duration-150;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  border: 1px solid rgba(52, 211, 153, 0.45);
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
+}
+
+.btn-prestige-confirm:hover {
+  @apply brightness-110 -translate-y-0.5;
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.55);
+}
+
+.btn-prestige-confirm:active {
+  @apply scale-[0.98];
+}
+
 .generic-modal .modal-actions button.secondary {
   @apply bg-soil-panel-2 text-root-cream border border-soil-line;
 }
@@ -448,7 +465,7 @@ body.modal-open {
 }
 
 .prestige-item .p-top {
-  @apply flex justify-between font-semibold text-[13.5px];
+  @apply flex justify-between items-center gap-1.5 flex-wrap font-semibold text-[13.5px];
 }
 
 .prestige-item .p-desc {

@@ -6,7 +6,7 @@ import { calcBulkPrestigeUpgrade } from '@/constants/gameData';
 
 interface PrestigeUpgradeRowProps {
   title: string;
-  badge: string;
+  badge?: React.ReactNode;
   desc: string;
   costFn?: (lvl: number) => number;
   currentLevel?: number;
@@ -22,6 +22,75 @@ interface PrestigeUpgradeRowProps {
   isActive?: boolean;
   onClick?: () => void;
   isEn: boolean;
+}
+
+function renderPillBadge(badge?: React.ReactNode) {
+  if (!badge) return null;
+  if (typeof badge !== 'string') return badge;
+
+  const text = badge.trim();
+  if (!text) return null;
+
+  let badgeStyle: React.CSSProperties = {
+    fontSize: '11px',
+    fontWeight: 700,
+    padding: '2px 8px',
+    borderRadius: '999px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    whiteSpace: 'nowrap',
+    letterSpacing: '0.02em',
+    lineHeight: '1.25',
+  };
+
+  if (text.includes('ซื้อครั้งเดียว') || text.includes('One-Time') || text.includes('ปลดล็อกถาวร')) {
+    badgeStyle = {
+      ...badgeStyle,
+      color: '#fbbf24',
+      background: 'rgba(251, 191, 36, 0.16)',
+      border: '1px solid rgba(251, 191, 36, 0.45)',
+      boxShadow: '0 0 8px rgba(251, 191, 36, 0.25)',
+    };
+  } else if (text.includes('MAXED') || text.includes('เต็มแล้ว') || text.includes('ปลดล็อกแล้ว') || text.includes('Unlocked')) {
+    badgeStyle = {
+      ...badgeStyle,
+      color: '#4ade80',
+      background: 'rgba(74, 222, 128, 0.16)',
+      border: '1px solid rgba(74, 222, 128, 0.4)',
+    };
+  } else if (text.includes('🟢') || text.includes('Active') || text.includes('เปิดอยู่')) {
+    badgeStyle = {
+      ...badgeStyle,
+      color: '#34d399',
+      background: 'rgba(52, 211, 153, 0.16)',
+      border: '1px solid rgba(52, 211, 153, 0.4)',
+    };
+  } else if (text.includes('⚪') || text.includes('Disabled') || text.includes('ปิดอยู่')) {
+    badgeStyle = {
+      ...badgeStyle,
+      color: 'var(--root-cream-dim)',
+      background: 'rgba(255, 255, 255, 0.08)',
+      border: '1px solid rgba(255, 255, 255, 0.18)',
+    };
+  } else if (text.includes('🚫') || text.includes('Suppressed') || text.includes('ระงับ')) {
+    badgeStyle = {
+      ...badgeStyle,
+      color: '#f87171',
+      background: 'rgba(239, 68, 68, 0.16)',
+      border: '1px solid rgba(239, 68, 68, 0.4)',
+    };
+  } else {
+    // Leveled upgrade pill
+    badgeStyle = {
+      ...badgeStyle,
+      color: '#d8b4fe',
+      background: 'rgba(168, 85, 247, 0.14)',
+      border: '1px solid rgba(168, 85, 247, 0.35)',
+    };
+  }
+
+  return <span style={badgeStyle}>{text}</span>;
 }
 
 export const PrestigeUpgradeRow: React.FC<PrestigeUpgradeRowProps> = React.memo(({
@@ -50,7 +119,7 @@ export const PrestigeUpgradeRow: React.FC<PrestigeUpgradeRowProps> = React.memo(
         <div className="prestige-item owned disabled">
           <div className="p-top">
             <span>{title}</span>
-            <span>{isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓'}</span>
+            {renderPillBadge(isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓')}
           </div>
           <div className="p-desc">{desc}</div>
           <div className="p-cost">—</div>
@@ -69,7 +138,7 @@ export const PrestigeUpgradeRow: React.FC<PrestigeUpgradeRowProps> = React.memo(
       >
         <div className="p-top">
           <span>{title}</span>
-          <span className="font-mono">{badge}</span>
+          {renderPillBadge(badge)}
         </div>
         <div className="p-desc">{desc}</div>
         <div className="p-cost" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', flexWrap: 'wrap', gap: '6px' }}>
@@ -132,7 +201,7 @@ export const PrestigeUpgradeRow: React.FC<PrestigeUpgradeRowProps> = React.memo(
     >
       <div className="p-top">
         <span>{title}</span>
-        <span>{badge}</span>
+        {renderPillBadge(badge)}
       </div>
       <div className="p-desc">{desc}</div>
       <div className="p-cost">{costText || '—'}</div>

@@ -22,12 +22,8 @@ export interface GaiaPerkRowProps {
   customBadge?: React.ReactNode;
   customAction?: React.ReactNode;
   isUnlocked?: boolean;
-  isToggle?: boolean;
-  isToggledOn?: boolean;
-  onToggle?: () => void;
-  toggleOnText?: string;
-  toggleOffText?: string;
   activeTagText?: string;
+  oneTimeText?: string;
 }
 
 export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
@@ -48,16 +44,18 @@ export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
   customBadge,
   customAction,
   isUnlocked,
-  isToggle,
-  isToggledOn,
-  onToggle,
-  toggleOnText = 'ON',
-  toggleOffText = 'OFF',
   activeTagText = 'ACTIVE',
+  oneTimeText,
 }) => {
   const isMaxed = customIsMaxed ?? (level !== undefined && maxLevel !== undefined ? level >= maxLevel : false);
   const canAfford = customCanAfford ?? (cost !== undefined && essences !== undefined ? essences >= cost : true);
-  const levelText = customLevelText ?? (level !== undefined && maxLevel !== undefined ? `Lv. ${level}/${maxLevel}` : undefined);
+  const levelText = customLevelText ?? (
+    level !== undefined && maxLevel !== undefined
+      ? isMaxed
+        ? maxTag
+        : `Lv. ${level}/${maxLevel}`
+      : undefined
+  );
 
   return (
     <div
@@ -78,31 +76,36 @@ export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
           <span style={{ fontWeight: 700, fontSize: '14px' }}>{name}</span>
           {customBadge ? (
             customBadge
-          ) : isToggle && isUnlocked ? (
-            <span
-              style={{
-                fontSize: '11px',
-                fontWeight: 700,
-                background: isToggledOn ? 'var(--astral-cyan-bg)' : 'rgba(255, 255, 255, 0.1)',
-                color: isToggledOn ? 'var(--astral-cyan)' : 'var(--root-cream-dim)',
-                padding: '1px 7px',
-                borderRadius: '999px',
-              }}
-            >
-              {isToggledOn ? `⚡ ${toggleOnText}` : `⏸️ ${toggleOffText}`}
-            </span>
           ) : levelText ? (
             <span
               style={{
                 fontSize: '11px',
-                color: 'var(--gaia-green)',
-                background: 'var(--gaia-green-bg)',
-                padding: '1px 6px',
-                borderRadius: '4px',
+                fontWeight: 700,
+                color: isMaxed ? '#4ade80' : 'var(--gaia-green)',
+                background: isMaxed ? 'rgba(74, 222, 128, 0.16)' : 'var(--gaia-green-bg)',
+                border: isMaxed ? '1px solid rgba(74, 222, 128, 0.4)' : '1px solid rgba(74, 222, 128, 0.2)',
+                padding: '2px 8px',
+                borderRadius: '999px',
                 flexShrink: 0,
               }}
             >
               {levelText}
+            </span>
+          ) : !isUnlocked ? (
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                color: '#fbbf24',
+                background: 'rgba(251, 191, 36, 0.16)',
+                border: '1px solid rgba(251, 191, 36, 0.45)',
+                boxShadow: '0 0 8px rgba(251, 191, 36, 0.25)',
+                padding: '2px 8px',
+                borderRadius: '999px',
+                flexShrink: 0,
+              }}
+            >
+              {oneTimeText || '✨ ซื้อครั้งเดียวจบ'}
             </span>
           ) : null}
         </div>
@@ -116,15 +119,7 @@ export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
 
       {customAction ? (
         customAction
-      ) : isToggle && isUnlocked ? (
-        <ModalButton
-          variant={isToggledOn ? 'cyan' : 'secondary'}
-          size="sm"
-          onClick={onToggle}
-        >
-          {isToggledOn ? `⚡ ${toggleOnText}` : `⏸️ ${toggleOffText}`}
-        </ModalButton>
-      ) : isUnlocked && !isToggle ? (
+      ) : isUnlocked ? (
         <div
           style={{
             background: 'var(--cosmic-pink-bg)',

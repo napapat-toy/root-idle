@@ -26,7 +26,6 @@ interface TranscendenceModalProps {
   onBuyPrimordialSeedling: () => void;
   onBuyDeepMeditation: () => void;
   onBuyHyperdrive?: () => void;
-  onToggleHyperdrive?: () => void;
   onBuyAuroraBloom?: () => void;
 }
 
@@ -44,7 +43,6 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
   onBuyPrimordialSeedling,
   onBuyDeepMeditation,
   onBuyHyperdrive,
-  onToggleHyperdrive,
   onBuyAuroraBloom,
 }) => {
   const lang: Language = state.lang || 'th';
@@ -153,7 +151,6 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                 const cost = typeof def.cost === 'function' ? def.cost(lvl || 0) : def.cost;
                 const effectText = def.getEffectText ? def.getEffectText(state, isEn) : undefined;
                 const isUnlocked = def.isUnlocked ? def.isUnlocked(state) : undefined;
-                const isToggledOn = def.isToggledOn ? def.isToggledOn(state) : undefined;
                 const name = (tr as Record<string, string>)[def.nameKey] || def.nameKey;
                 const desc = (tr as Record<string, string>)[def.descKey] || def.descKey;
 
@@ -168,15 +165,11 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                     cost={cost}
                     effectText={effectText}
                     essences={essences}
-                    maxTag={tr.maxTag}
+                    maxTag={isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓'}
                     isUnlocked={isUnlocked}
-                    isToggle={def.type === 'toggle'}
-                    isToggledOn={isToggledOn}
-                    onToggle={def.id === 'hyperdrive' ? onToggleHyperdrive : undefined}
                     onBuy={handlers[def.id]}
-                    toggleOnText={isEn ? '2x ACTIVE' : 'กำลังเร่ง 2x'}
-                    toggleOffText={isEn ? '1x PAUSED' : 'พัก 1x'}
-                    activeTagText={isEn ? 'ACTIVE' : 'ทำงานอยู่'}
+                    activeTagText={isEn ? 'UNLOCKED' : 'ปลดล็อกแล้ว'}
+                    oneTimeText={isEn ? '✨ One-Time Unlock' : '✨ ซื้อครั้งเดียวจบ'}
                   />
                 );
               })}

@@ -436,10 +436,9 @@ export const GAIA_PERK_DEFS: GaiaPerkDef[] = [
     icon: '⚡',
     nameKey: 'transcendPerk9Name',
     descKey: 'transcendPerk9Desc',
-    type: 'toggle',
+    type: 'unlock',
     cost: HYPERDRIVE_COST,
     isUnlocked: s => !!s.transcendence?.hyperdriveUnlocked,
-    isToggledOn: s => !!s.transcendence?.hyperdriveEnabled,
   },
   {
     id: 'aurora',
