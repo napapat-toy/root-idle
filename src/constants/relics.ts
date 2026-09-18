@@ -178,6 +178,8 @@ export const RELIC_DEFS: RelicDef[] = [
   },
 ];
 
+export const TOTAL_RELICS = RELIC_DEFS.length;
+
 export const BIOME_DEFS: BiomeDef[] = [
   {
     id: 'topsoil',

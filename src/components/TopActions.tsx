@@ -2,7 +2,13 @@
 
 import React from 'react';
 import { GameState, Language } from '@/types/game';
-import { calcPrestigeSeeds, prestigeUnlocked, isTranscendenceUnlocked, calcTranscendenceEssences } from '@/constants/gameData';
+import {
+  calcPrestigeSeeds,
+  prestigeUnlocked,
+  isTranscendenceUnlocked,
+  calcTranscendenceEssences,
+  TRANSCENDENCE_REQUIRE_YGGDRASIL,
+} from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { t } from '@/lib/i18n';
 
@@ -133,7 +139,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
               {tr.transcendenceBtn}
             </span>
             <span style={{ color: '#34d399', fontWeight: 600, marginLeft: '5px', fontSize: '10.5px' }}>
-              ({yggOwned}/100 🌳)
+              ({yggOwned}/{TRANSCENDENCE_REQUIRE_YGGDRASIL} 🌳)
             </span>
           </button>
         )}

@@ -8,6 +8,7 @@ import {
   totalEchoCount,
   totalMilestonesCount,
   relicsCount,
+  TOTAL_RELICS,
   relicCycleResonanceStack,
   isMasterRelicActive,
   hasRelic,
@@ -194,7 +195,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
               items={[
                 {
                   label: isEn ? 'Master Relics Owned' : 'โบราณวัตถุที่ครอบครอง',
-                  value: `${ownedRelicsCount} / 10 ${isEn ? '(1/1 Complete)' : 'ชิ้นสมบูรณ์'}`,
+                  value: `${ownedRelicsCount} / ${TOTAL_RELICS} ${isEn ? '(1/1 Complete)' : 'ชิ้นสมบูรณ์'}`,
                   valueClass: 'highlight',
                   valueStyle: { color: ownedRelicsCount > 0 ? '#ffd76a' : 'var(--root-cream-dim)' },
                 },

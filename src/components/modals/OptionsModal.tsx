@@ -9,7 +9,7 @@ import { ConfirmModal } from './ConfirmModal';
 import { MODULE_TRANSLATIONS, t } from '@/lib/i18n';
 import { MODULE_DEFS } from '@/constants/modules';
 import { calcPrestigeSeeds } from '@/constants/prestige';
-import { relicsCount } from '@/constants/relics';
+import { relicsCount, TOTAL_RELICS } from '@/constants/relics';
 import { TOTAL_ACHIEVEMENTS } from '@/constants/achievementsData';
 
 interface OptionsModalProps {
@@ -335,7 +335,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                           {relicsCount(state) > 0 && (
                             <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
                               {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || (state.transcendence?.count || 0) > 0) ? ' · ' : ''}
-                              🏺 {isEn ? `Relics ${relicsCount(state)}/10` : `โบราณวัตถุ ${relicsCount(state)}/10`}
+                              🏺 {isEn ? `Relics ${relicsCount(state)}/${TOTAL_RELICS}` : `โบราณวัตถุ ${relicsCount(state)}/${TOTAL_RELICS}`}
                             </span>
                           )}
                           {(state.achievements?.length || 0) > 0 && (
@@ -433,7 +433,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                                       {hasRelics && (
                                         <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
                                           {hasAscent ? ' · ' : ''}
-                                          🏺 {isEn ? `Relics ${meta.relicsCount}/10` : `โบราณวัตถุ ${meta.relicsCount}/10`}
+                                          🏺 {isEn ? `Relics ${meta.relicsCount}/${TOTAL_RELICS}` : `โบราณวัตถุ ${meta.relicsCount}/${TOTAL_RELICS}`}
                                         </span>
                                       )}
                                       {hasAchievements && (

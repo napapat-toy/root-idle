@@ -1,5 +1,13 @@
 import { GameState, SavePayload, SaveSlotMeta } from '@/types/game';
-import { BUY_QTY_OPTIONS, calcPrestigeSeeds, EVENT_BONUS_MAX_LEVEL, MODULE_DEFS, relicsCount } from '@/constants/gameData';
+import {
+  BUY_QTY_OPTIONS,
+  calcPrestigeSeeds,
+  EVENT_BONUS_MAX_LEVEL,
+  MODULE_DEFS,
+  relicsCount,
+  TRANSCENDENCE_REQUIRE_PRESTIGES,
+  TRANSCENDENCE_REQUIRE_YGGDRASIL,
+} from '@/constants/gameData';
 
 export const STORAGE_KEY = 'root-idle-state-v1';
 
@@ -30,6 +38,7 @@ export function encodeSave(state: GameState): string {
       maxOfflineTimeSeconds: 0,
       superJackpotClaimed: false,
       totalSeedsEarnedLifetime: 0,
+      totalNutrientsEarnedLifetime: state.runEarned || state.nutrients || 0,
     },
   };
   try {
@@ -87,6 +96,7 @@ export function decodeSave(rawCode: string): SavePayload {
       rpt: payload.runPlayTimeSeconds || 0,
       ach: payload.achievements || [],
       st: payload.stats || {},
+      lang: payload.lang || 'th',
     };
   }
 
@@ -149,6 +159,7 @@ export function payloadToState(payload: SavePayload): GameState {
         starterLevel: 0,
         autoRoot: false,
         autoRootEnabled: true,
+        autoRootMode: 'all',
         autoRootSmart: false,
         autoRootAll: false,
         goldenLevel: 0,
@@ -166,6 +177,8 @@ export function payloadToState(payload: SavePayload): GameState {
         skinGradient: false,
         skinNebula: false,
         skinImperial: false,
+        skinTimelessAurora: false,
+        skinStarlightPrism: false,
         activeSkin: 'none',
         themeSakura: false,
         themeCafe: false,
@@ -179,10 +192,11 @@ export function payloadToState(payload: SavePayload): GameState {
         themeEmerald: false,
         themeNebula: false,
         themeImperial: false,
+        themeSubterraneanBorealis: false,
         activeUITheme: 'classic',
         autoReset: false,
         autoResetEnabled: false,
-        autoResetThreshold: 0,
+        autoResetThreshold: 1000,
         offlineCapLevel: 0,
         eventBonusLevel: 0,
         eventDurationLevel: 0,
@@ -212,6 +226,10 @@ export function payloadToState(payload: SavePayload): GameState {
         primordialSeedlingLevel: 0,
         deepMeditationLevel: 0,
         gaiaBlessingLevel: 0,
+        hyperdriveUnlocked: false,
+        hyperdriveEnabled: false,
+        auroraBloomUnlocked: false,
+        astralPetals: 0,
       },
       payload.ts || {}
     ),
@@ -236,7 +254,10 @@ export function payloadToState(payload: SavePayload): GameState {
     state.prestige.activeSkin = 'rainbow';
   }
 
-  if ((state.owned['yggdrasil'] || 0) >= 100 && (state.stats?.prestigeCount || 0) >= 5) {
+  if (
+    (state.owned['yggdrasil'] || 0) >= TRANSCENDENCE_REQUIRE_YGGDRASIL &&
+    (state.stats?.prestigeCount || 0) >= TRANSCENDENCE_REQUIRE_PRESTIGES
+  ) {
     state.transcendence.everUnlocked = true;
   }
 
@@ -353,26 +374,25 @@ export function getSlotMeta(slotNum: number): SaveSlotMeta | null {
     if (meta && meta.code && (meta.nutrients === undefined || meta.pendingSeeds === undefined || meta.totalPlayTimeSeconds === undefined || meta.relicsCount === undefined || meta.gaiaEssences === undefined)) {
       try {
         const payload = decodeSave(meta.code);
-        const owned = payload.o || {};
+        const hydrated = payloadToState(payload);
+        const owned = hydrated.owned || {};
         const highestOwned = MODULE_DEFS.slice().reverse().find(d => (owned[d.id] || 0) > 0);
-        const runEarned = payload.re || payload.n || 0;
-        const goldenLevel = payload.p?.goldenLevel || 0;
-        const baseSeeds = Math.floor(Math.cbrt(runEarned / 1000000));
-        const pendingSeeds = Math.max(0, Math.floor(baseSeeds * (1 + goldenLevel * 0.05)));
+        const runEarned = hydrated.runEarned || hydrated.nutrients || 0;
+        const pendingSeeds = calcPrestigeSeeds(hydrated);
 
-        meta.nutrients = payload.n || 0;
+        meta.nutrients = hydrated.nutrients || 0;
         meta.pendingSeeds = pendingSeeds;
         meta.highestModuleId = highestOwned ? highestOwned.id : 'fine';
-        meta.prestigeCount = payload.st?.prestigeCount || 0;
-        meta.transcendenceCount = payload.ts?.count || 0;
-        meta.gaiaEssences = payload.ts?.gaiaEssences || 0;
-        meta.activeTrial = payload.ts?.activeTrial || 'none';
-        meta.relicsCount = payload.rel ? Object.values(payload.rel).filter(v => (typeof v === 'number' && v > 0) || v === true).length : 0;
-        meta.achievementsCount = payload.ach?.length || 0;
-        meta.totalOwned = payload.t || Object.values(owned).reduce((a, b) => a + b, 0);
-        meta.totalPlayTimeSeconds = payload.pt || 0;
-        meta.lifetimeSeeds = payload.st?.totalSeedsEarnedLifetime || payload.es || 0;
-        meta.lifetimeNutrients = payload.st?.totalNutrientsEarnedLifetime || runEarned;
+        meta.prestigeCount = hydrated.stats?.prestigeCount || 0;
+        meta.transcendenceCount = hydrated.transcendence?.count || 0;
+        meta.gaiaEssences = hydrated.transcendence?.gaiaEssences || 0;
+        meta.activeTrial = hydrated.transcendence?.activeTrial || 'none';
+        meta.relicsCount = relicsCount(hydrated);
+        meta.achievementsCount = hydrated.achievements?.length || 0;
+        meta.totalOwned = hydrated.totalOwned;
+        meta.totalPlayTimeSeconds = hydrated.totalPlayTimeSeconds || 0;
+        meta.lifetimeSeeds = hydrated.stats?.totalSeedsEarnedLifetime || hydrated.eternalSeeds || 0;
+        meta.lifetimeNutrients = hydrated.stats?.totalNutrientsEarnedLifetime || runEarned;
       } catch {
         // graceful fallback
       }

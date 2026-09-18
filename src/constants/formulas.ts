@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.34.3';
+export const GAME_VERSION = '1.34.4';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -49,10 +49,34 @@ export function createFreshState(): GameState {
       goldenLevel: 0,
       auraRoots: false,
       auraRootsEnabled: false,
+      skinSakura: false,
+      skinCafe: false,
+      skinAutumn: false,
+      skinOcean: false,
+      skinFrost: false,
+      skinSunset: false,
       skinSameOrigin: false,
+      skinMystic: false,
+      skinCyberpunk: false,
       skinGrayscale: false,
       skinGradient: false,
+      skinNebula: false,
+      skinImperial: false,
+      skinTimelessAurora: false,
+      skinStarlightPrism: false,
       activeSkin: 'none',
+      themeSakura: false,
+      themeCafe: false,
+      themeAutumn: false,
+      themeOcean: false,
+      themeFrost: false,
+      themeSunset: false,
+      themeMystic: false,
+      themeCyberpunk: false,
+      themeEmerald: false,
+      themeNebula: false,
+      themeImperial: false,
+      themeSubterraneanBorealis: false,
       activeUITheme: 'classic',
       autoReset: false,
       autoResetEnabled: false,
@@ -82,6 +106,10 @@ export function createFreshState(): GameState {
       primordialSeedlingLevel: 0,
       deepMeditationLevel: 0,
       gaiaBlessingLevel: 0,
+      hyperdriveUnlocked: false,
+      hyperdriveEnabled: false,
+      auroraBloomUnlocked: false,
+      astralPetals: 0,
     },
     achievements: [],
     stats: {

@@ -30,6 +30,8 @@ import {
   relicBonusSproutChance,
   relicBonusTwinSproutChance,
   unownedRelicList,
+  TRANSCENDENCE_REQUIRE_PRESTIGES,
+  TRANSCENDENCE_REQUIRE_YGGDRASIL,
 } from '@/constants/gameData';
 import { buildBranchesFromLog, deriveLog } from '@/lib/treeGenerator';
 import { evaluateAutoBuy } from '@/lib/autoBuyer';
@@ -155,8 +157,8 @@ export function useGameEngine() {
       const nextYgg = (prev.owned[defId] || 0) + addedQty;
       const shouldUnlockTranscend =
         defId === 'yggdrasil' &&
-        nextYgg >= 100 &&
-        (prev.stats?.prestigeCount || 0) >= 5 &&
+        nextYgg >= TRANSCENDENCE_REQUIRE_YGGDRASIL &&
+        (prev.stats?.prestigeCount || 0) >= TRANSCENDENCE_REQUIRE_PRESTIGES &&
         !prev.transcendence?.everUnlocked;
 
       return {
