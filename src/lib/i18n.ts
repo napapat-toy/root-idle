@@ -457,6 +457,22 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'ชีพจรแห่งผืนดิน', desc: 'อัพเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 25' },
     en: { title: 'Pulse of the Earth', desc: 'Upgrade Permanent Passive Rate to Level 25 in Prestige Shop' },
   },
+  passive_rate_50: {
+    th: { title: 'กระแสรากต่อเนื่อง', desc: 'อัพเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 50' },
+    en: { title: 'Enduring Earthcurrent', desc: 'Upgrade Permanent Passive Rate to Level 50 in Prestige Shop' },
+  },
+  starter_culture_10: {
+    th: { title: 'กลิ่นอายหัวเชื้อ', desc: 'อัพเกรดหัวเชื้อเริ่มต้น (Starter Culture) แตะเลเวล 10' },
+    en: { title: 'Culture Essence', desc: 'Upgrade Starter Culture to Level 10' },
+  },
+  starter_culture_25: {
+    th: { title: 'รากฝอยพร้อมสรรพ', desc: 'อัพเกรดหัวเชื้อเริ่มต้น (Starter Culture) แตะเลเวล 25' },
+    en: { title: 'Sprouting Culture', desc: 'Upgrade Starter Culture to Level 25' },
+  },
+  golden_seed_25: {
+    th: { title: 'ประกายทองคำเบ่งบาน', desc: 'อัพเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 25' },
+    en: { title: 'Golden Abundance', desc: 'Upgrade Golden Seeds to Level 25' },
+  },
 
   event_1: {
     th: { title: 'ตาไวคว้าทัน', desc: 'คลิกเก็บอีเวนต์บนจอครั้งแรก' },
@@ -485,6 +501,22 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
   super_jackpot: {
     th: { title: 'แจ็กพอตซ้อนแจ็กพอต', desc: 'เก็บกล่อง 🎁 ได้รับสารอาหารก้อนโตขณะมีบัฟโชคดีทำงานอยู่' },
     en: { title: 'Jackpot Resonance', desc: 'Open a gift 🎁 while Lucky Clover buff is active' },
+  },
+  event_bonus_25: {
+    th: { title: 'ผลตอบแทนงอกเงย', desc: 'อัพเกรดโบนัสอีเวนต์ (Event Value Booster) ในร้านหว่านใหม่แตะเลเวล 25' },
+    en: { title: 'Flourishing Bounty', desc: 'Upgrade Event Value Booster to Level 25' },
+  },
+  event_duration_max: {
+    th: { title: 'เวลาแห่งบัฟ', desc: 'อัพเกรดขยายระยะเวลาบัฟอีเวนต์แตะเลเวล 4 (สูงสุด)' },
+    en: { title: 'Enduring Surge', desc: 'Max out Extended Surge Duration (Level 4)' },
+  },
+  lucky_chance_max: {
+    th: { title: 'ทุ่งโคลเวอร์เบ่งบาน', desc: 'อัพเกรดโอกาสพบเจอโชคดีแตะเลเวล 8 (สูงสุด 1.0%)' },
+    en: { title: 'Blooming Clovers', desc: 'Max out Lucky Clover Frequency (Level 8)' },
+  },
+  lucky_magnitude_max: {
+    th: { title: 'โชคดีสิบเท่าทวีคูณ', desc: 'อัพเกรดโชคดีทวีคูณแตะเลเวล 9 (สูงสุด ทบตัวคูณโชคดี ×10)' },
+    en: { title: 'Decuple Fortune', desc: 'Max out Lucky Magnitude Multiplier to Level 9 (×10 multiplier)' },
   },
 
   skin_equip_custom: {
@@ -687,6 +719,10 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
   aurora_bloom_unlock: {
     th: { title: 'ปรากฏการณ์แสงเหนือใต้พิภพ', desc: 'ปลดล็อกออโรร่าบลูม (Aurora Bloom) เพื่อเรียกสปอร์ออโรร่าและเตาหลอมกลีบดวงดาว' },
     en: { title: 'Aurora Bloom Awakening', desc: 'Unlock Aurora Bloom to manifest Aurora Spores and the Petal Altar' },
+  },
+  gaia_clairvoyance_5: {
+    th: { title: 'เนตรแห่งไกอา', desc: 'อัพเกรดสายตาแห่งไกอา (Gaia Clairvoyance) แตะเลเวล 5' },
+    en: { title: 'Eye of Gaia', desc: 'Upgrade Gaia Clairvoyance to Level 5' },
   },
   astral_petal_1: {
     th: { title: 'ละอองกลีบดวงดาราแรก', desc: 'เก็บหรือหลอมกลีบดอกไม้ดวงดาว (Astral Petals) ชิ้นแรกสำเร็จ' },
