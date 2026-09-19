@@ -44,7 +44,7 @@ export function prestigeRateMultiplier(state: GameState): number {
 
 export function starterCultureCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.starterLevel || 0);
-  return Math.min(1000, 25 * (lvl + 1));
+  return Math.min(3000, 50 * (lvl + 1));
 }
 
 export function goldenSeedCost(stateOrLevel: GameState | number): number {
@@ -70,7 +70,7 @@ export function offlineCapMaxed(state: GameState): boolean {
 }
 
 export function offlineCapCost(state: GameState): number {
-  return state.prestige.offlineCapLevel === 0 ? 80 : 220;
+  return state.prestige.offlineCapLevel === 0 ? 1000 : 4000;
 }
 
 export function currentOfflineCapSeconds(state: GameState): number {
@@ -88,7 +88,7 @@ export function eventBonusMaxed(state: GameState): boolean {
 
 export function eventDurationCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.eventDurationLevel || 0);
-  return 200 * (lvl + 1);
+  return 1500 * (lvl + 1);
 }
 
 export function eventBonusMult(state: GameState): number {

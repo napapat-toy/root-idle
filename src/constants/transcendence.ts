@@ -210,7 +210,7 @@ export function echoResonanceCost(level: number): number {
 }
 
 export function gaiaClairvoyanceCost(level: number): number {
-  return 6 * (level + 1);
+  return 15 * (level + 1);
 }
 
 export function gaiaClairvoyanceBonus(state: GameState): number {

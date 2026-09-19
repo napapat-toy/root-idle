@@ -29,12 +29,8 @@ import {
   offlineCapMaxed,
   passiveRateCost,
   PASSIVE_RATE_MAX_LEVEL,
-  isSkinUnlocked,
-  isUIThemeUnlocked,
-  SKIN_DEFS,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
-  UI_THEME_DEFS,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { ConfirmModal } from './ConfirmModal';
@@ -58,7 +54,6 @@ interface PrestigeModalProps {
   onBuyLuckyMagnitude: (amount?: number | 'max') => void;
   onBuyLuckyDuration: (amount?: number | 'max') => void;
   onBuyOfflineCapUpgrade: () => void;
-  onOpenWardrobe?: () => void;
   onTransmuteSeedsToPetals?: (qty?: number) => void;
   onTransmuteEssencesToPetals?: (qty?: number) => void;
 }
@@ -68,7 +63,6 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   state,
   onClose,
   onConfirmPrestige,
-  onOpenWardrobe,
   onBuyStarterCulture,
   onBuyGoldenSeed,
   onBuyPassiveRate,
@@ -377,8 +371,8 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                 isEn={isEn}
               />
 
-              {/* ===== Other & Aesthetic Skins ===== */}
-              {renderSectionHeader(tr.prestigeSecSkins)}
+              {/* ===== Offline Rest ===== */}
+              {renderSectionHeader(tr.prestigeSecOffline)}
               <PrestigeUpgradeRow
                 title={isEn ? '⏰ Expand Offline Rest Cap' : '⏰ ขยายเพดาน Offline'}
                 badge={offlineCapMaxed(state)
@@ -397,60 +391,6 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                 seeds={seeds}
                 isEn={isEn}
               />
-
-              {/* ===== Wardrobe & Aesthetics ===== */}
-              {renderSectionHeader(isEn ? '🎨 Cosmetics & UI Themes' : '🎨 ห้องแต่งตัว & สกินตกแต่ง')}
-              <div
-                style={{
-                  background: 'var(--bg-panel-2)',
-                  border: '1px solid var(--line-soil)',
-                  borderRadius: '12px',
-                  padding: '14px 16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  textAlign: 'left',
-                  margin: '6px 0 12px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
-                  <span style={{ fontWeight: 700, fontSize: '13.5px', color: 'var(--root-cream)' }}>
-                    🎨 {isEn ? 'Wardrobe & Visual Themes' : 'ห้องแต่งตัว & ธีมหน้าต่าง UI'}
-                  </span>
-                  <span style={{ fontSize: '11px', color: 'var(--accent-glow)', fontWeight: 700 }}>
-                    {SKIN_DEFS.filter(s => isSkinUnlocked(state, s.id)).length}/{SKIN_DEFS.length} 🌳 · {UI_THEME_DEFS.filter(t => isUIThemeUnlocked(state, t.id)).length}/{UI_THEME_DEFS.length} 🖼️
-                  </span>
-                </div>
-                <div style={{ fontSize: '11.5px', color: 'var(--root-cream-dim)', lineHeight: 1.45 }}>
-                  {isEn
-                    ? `Preview all ${SKIN_DEFS.length} root skins & ${UI_THEME_DEFS.length} UI color themes in real-time, customize appearance, and buy directly from the Wardrobe!`
-                    : `ทดลองใส่สกินรากไม้ ${SKIN_DEFS.length} แบบ และธีมหน้าต่าง UI ${UI_THEME_DEFS.length} แบบได้แบบ Real-time พร้อมเลือกซื้อและสวมใส่ได้ทันทีที่ห้องแต่งตัว`}
-                </div>
-                {onOpenWardrobe && (
-                  <button
-                    onClick={() => {
-                      onClose();
-                      onOpenWardrobe();
-                    }}
-                    style={{
-                      marginTop: '4px',
-                      padding: '9px 14px',
-                      background: 'var(--accent-glow)',
-                      color: '#12190d',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontWeight: 700,
-                      fontSize: '12.5px',
-                      cursor: 'pointer',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                      transition: 'all 0.15s ease',
-                      textAlign: 'center',
-                    }}
-                  >
-                    🎨 {isEn ? 'Open Wardrobe (Try & Buy)' : 'เปิดห้องแต่งตัว (ลองใส่ & เลือกซื้อ)'}
-                  </button>
-                )}
-              </div>
             </div>
           </div>
         </div>

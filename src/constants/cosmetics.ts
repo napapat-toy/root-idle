@@ -1,13 +1,13 @@
 import { PrestigeState, SkinId, UIThemeId } from '@/types/game';
 
-export const AURA_ROOTS_COST = 100; // Starter skin (100 seeds)
+export const AURA_ROOTS_COST = 500; // Starter skin (500 seeds)
 
 export const SKIN_COSTS: Record<SkinId, number> = {
   none: 0,
-  // 🟢 Tier 1: เมล็ดนิรันดร์ 🌌 (Starter / Natural Tier: 100 - 50,000 Seeds)
-  rainbow: 100,
-  sakura: 250,
-  cafe: 500,
+  // 🟢 Tier 1: เมล็ดนิรันดร์ 🌌 (Starter / Natural Tier: 500 - 50,000 Seeds)
+  rainbow: 500,
+  sakura: 1000,
+  cafe: 2500,
   autumn: 5000,
   ocean: 15000,
   frost: 30000,

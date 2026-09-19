@@ -84,7 +84,6 @@ export const GameModals: React.FC<GameModalsProps> = React.memo(({
         isOpen={activeModal === 'prestige'}
         state={state}
         onClose={onClose}
-        onOpenWardrobe={() => onOpenModal('wardrobe')}
         onConfirmPrestige={prestige.doPrestige}
         onBuyStarterCulture={prestige.buyStarterCulture}
         onBuyGoldenSeed={prestige.buyGoldenSeed}
