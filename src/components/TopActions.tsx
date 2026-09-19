@@ -82,18 +82,31 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className={`prestige-mini-btn ${pendingEssences > 0 ? 'ready-pulse' : ''}`}
             onClick={onOpenTranscendence}
+            title={
+              pendingEssences > 0
+                ? (lang === 'en' ? `Gaia Awakening Ready (+${fmtInt(pendingEssences)} 🌍)` : `พร้อมตื่นรู้แห่งไกอา (+${fmtInt(pendingEssences)} 🌍)`)
+                : tr.transcendReqBanner
+                    .replace('{count}', String(yggOwned))
+                    .replace('{req}', String(TRANSCENDENCE_REQUIRE_YGGDRASIL))
+            }
             style={{
-              borderColor: 'rgba(52, 211, 153, 0.6)',
-              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.2))',
+              borderColor: pendingEssences > 0 ? 'rgba(52, 211, 153, 0.6)' : 'rgba(52, 211, 153, 0.35)',
+              background: pendingEssences > 0
+                ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.2))'
+                : 'rgba(16, 185, 129, 0.08)',
             }}
           >
             🌍{' '}
             <span className="action-btn-text">
               {tr.transcendenceBtn}
             </span>
-            {pendingEssences > 0 && (
+            {pendingEssences > 0 ? (
               <span style={{ color: '#34d399', fontWeight: 700, marginLeft: '5px', fontSize: '11px' }}>
                 (+{fmtInt(pendingEssences)} 🌍)
+              </span>
+            ) : (
+              <span style={{ color: '#34d399', fontWeight: 600, marginLeft: '5px', fontSize: '10.5px' }}>
+                ({yggOwned}/{TRANSCENDENCE_REQUIRE_YGGDRASIL} 🌳)
               </span>
             )}
           </button>

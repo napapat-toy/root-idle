@@ -2,7 +2,7 @@ import { GameState, TrialDef, TrialId } from '@/types/game';
 import { relicTranscendenceEssenceBonus } from './relics';
 
 export const TRANSCENDENCE_REQUIRE_YGGDRASIL = 100;
-export const TRANSCENDENCE_REQUIRE_PRESTIGES = 5;
+export const TRANSCENDENCE_REQUIRE_PRESTIGES = 3;
 export const ESSENCE_DIVIDER = 1e28; // 10 Octillion (1e28)
 
 export const PRIMORDIAL_VIGOR_MAX_LEVEL = 20;
