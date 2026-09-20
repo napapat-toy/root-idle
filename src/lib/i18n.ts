@@ -904,7 +904,7 @@ export const UI_TEXTS = {
     savedAtText: 'บันทึกเมื่อ {date} · {count} ต้น · {seeds} เมล็ด',
 
     // Transcendence Modal (ตื่นรู้แห่งไกอา)
-    transcendenceBtn: 'ตื่นรู้แห่งไกอา',
+    transcendenceBtn: 'ตื่นรู้',
     transcendenceTitle: 'การตื่นรู้แห่งไกอา (Gaia Transcendence)',
     transcendenceDesc: 'หลอมรวมพลังรากพิภพทั้งหมดเพื่อปลุกพลังจิตวิญญาณแห่งโลก รีเซ็ตรอบใหญ่เพื่อรับ "ละอองชีวิตดึกดำบรรพ์ (Gaia Essences 🌍)"',
     gainedEssences: '+{amount} ละอองชีวิตดึกดำบรรพ์',
@@ -1145,7 +1145,7 @@ export const UI_TEXTS = {
     savedAtText: 'Saved on {date} · {count} roots · {seeds} seeds',
 
     // Transcendence Modal (Gaia Awakening)
-    transcendenceBtn: 'Gaia Awakening',
+    transcendenceBtn: 'Awaken',
     transcendenceTitle: 'Gaia Transcendence',
     transcendenceDesc: 'Channel the collective telluric energy of all root networks to awaken the planetary spirit. Perform a grand reset to earn "Gaia Essences (🌍)".',
     gainedEssences: '+{amount} Gaia Essences',

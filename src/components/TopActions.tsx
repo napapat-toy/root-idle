@@ -84,7 +84,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
             onClick={onOpenTranscendence}
             title={
               pendingEssences > 0
-                ? (lang === 'en' ? `Gaia Awakening Ready (+${fmtInt(pendingEssences)} 🌍)` : `พร้อมตื่นรู้แห่งไกอา (+${fmtInt(pendingEssences)} 🌍)`)
+                ? (lang === 'en' ? `Gaia Awakening Ready (+${fmtInt(pendingEssences)} 🌍)` : `พร้อมตื่นรู้ (+${fmtInt(pendingEssences)} 🌍)`)
                 : tr.transcendReqBanner
                     .replace('{count}', String(yggOwned))
                     .replace('{req}', String(TRANSCENDENCE_REQUIRE_YGGDRASIL))
@@ -100,33 +100,9 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
             <span className="action-btn-text">
               {tr.transcendenceBtn}
             </span>
-            {pendingEssences > 0 ? (
+            {pendingEssences > 0 && (
               <span style={{ color: '#34d399', fontWeight: 700, marginLeft: '5px', fontSize: '11px' }}>
                 (+{fmtInt(pendingEssences)} 🌍)
-              </span>
-            ) : (
-              <span style={{ color: '#34d399', fontWeight: 600, marginLeft: '5px', fontSize: '10.5px' }}>
-                ({yggOwned}/{TRANSCENDENCE_REQUIRE_YGGDRASIL} 🌳)
-              </span>
-            )}
-          </button>
-        )}
-
-        {(showTranscendenceBtn || isTrialActive) && onOpenTrials && (
-          <button
-            className={`prestige-mini-btn ${isTrialActive ? 'ready-pulse' : ''}`}
-            onClick={onOpenTrials}
-            style={{
-              borderColor: isTrialActive ? 'rgba(234, 179, 8, 0.85)' : 'rgba(234, 179, 8, 0.45)',
-              background: isTrialActive
-                ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.35), rgba(249, 115, 22, 0.25))'
-                : 'linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(245, 158, 11, 0.1))',
-            }}
-          >
-            ⚔️ <span className="action-btn-text">{tr.trialsBtn}</span>
-            {isTrialActive && (
-              <span style={{ color: '#facc15', fontWeight: 700, marginLeft: '5px', fontSize: '10.5px' }}>
-                ({tr.trialActiveBadge})
               </span>
             )}
           </button>
@@ -223,6 +199,41 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
                   borderRadius: '50%',
                   background: isVoidTrial ? '#c084fc' : 'var(--accent-glow)',
                   boxShadow: isVoidTrial ? '0 0 8px #c084fc' : '0 0 6px var(--accent-glow)',
+                }}
+              />
+            )}
+          </button>
+        )}
+        {(showTranscendenceBtn || isTrialActive) && onOpenTrials && (
+          <button
+            className={`utility-icon-btn ${isTrialActive ? 'ready-pulse' : ''}`}
+            onClick={onOpenTrials}
+            title={
+              isTrialActive
+                ? `${tr.trialsBtn} (${tr.trialActiveBadge})`
+                : tr.trialsBtn
+            }
+            style={{
+              position: 'relative',
+              borderColor: isTrialActive ? 'rgba(234, 179, 8, 0.85)' : undefined,
+              background: isTrialActive
+                ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.35), rgba(249, 115, 22, 0.25))'
+                : undefined,
+              boxShadow: isTrialActive ? '0 0 10px rgba(234, 179, 8, 0.5)' : undefined,
+            }}
+          >
+            ⚔️
+            {isTrialActive && (
+              <span
+                style={{
+                  position: 'absolute',
+                  top: '-2px',
+                  right: '-2px',
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: '#facc15',
+                  boxShadow: '0 0 6px #facc15',
                 }}
               />
             )}
