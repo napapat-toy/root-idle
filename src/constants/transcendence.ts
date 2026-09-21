@@ -149,7 +149,7 @@ export function gaiaBlessingCost(level: number): number {
 
 export function gaiaBlessingEssenceMultiplier(state: GameState): number {
   const lvl = state.transcendence?.gaiaBlessingLevel || 0;
-  return 1 + Math.min(GAIA_BLESSING_MAX_LEVEL, lvl) * 0.01; // +1% per level, max +500%
+  return 1 + Math.min(GAIA_BLESSING_MAX_LEVEL, lvl) * 0.05; // +5% per level, max +2,500%
 }
 
 export function gaiaBlessingMaxed(state: GameState): boolean {
@@ -358,7 +358,8 @@ export const GAIA_PERK_DEFS: GaiaPerkDef[] = [
     getLevel: s => s.transcendence?.gaiaBlessingLevel || 0,
     getEffectText: (s, isEn) => {
       const lvl = s.transcendence?.gaiaBlessingLevel || 0;
-      return isEn ? `+${lvl}% Gaia Essences earned` : `+${lvl}% ละอองชีวิตที่ได้รับ`;
+      const bonusPct = lvl * 5;
+      return isEn ? `+${bonusPct}% Gaia Essences earned` : `+${bonusPct}% ละอองชีวิตที่ได้รับ`;
     },
   },
   {

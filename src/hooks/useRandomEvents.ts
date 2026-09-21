@@ -118,7 +118,8 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       }
     } else if (ev.type === 'lucky') {
       const isEn = cur.lang === 'en';
-      const mult = (1 + (777 - 1) * bonusMult) * luckyMagnitudeExtra(cur) * gaiaTouchBonusMult(cur);
+      const biomeLuckyMult = cur.activeBiome === 'crystal_caverns' ? 1.35 : 1.0;
+      const mult = (1 + (777 - 1) * bonusMult) * luckyMagnitudeExtra(cur) * gaiaTouchBonusMult(cur) * biomeLuckyMult;
       const seconds = luckyDurationSeconds(cur) * trialDurationMult;
       setActiveLuckyBuff({ multiplier: mult, expiresAt: Date.now() + seconds * 1000 });
       setState(prev => ({

@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.34.10';
+export const GAME_VERSION = '1.34.11';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -168,6 +168,9 @@ export function rootUpgradeMultiplier(state: GameState, moduleId: string): numbe
   const level = state.rootUpgrades[moduleId] || 0;
   let mult = 1;
   for (let i = 1; i <= level; i++) mult *= rootUpgradeLevelMult(i);
+  if (level > 0 && state.activeBiome === 'magma_mantle') {
+    mult *= 1.20;
+  }
   return mult;
 }
 
@@ -267,12 +270,13 @@ export function totalSynergyBonusPct(state: GameState): number {
       totalPct += count * bonusPerUnit;
     }
   }
-  return totalPct;
+  const trialMult = trialSynergyBonusMultiplier(state);
+  const biomeMult = state.activeBiome === 'myco_abyss' ? 1.25 : 1.0;
+  return totalPct * trialMult * biomeMult;
 }
 
 export function totalSynergyMultiplier(state: GameState): number {
-  const trialMult = trialSynergyBonusMultiplier(state);
-  return (1 + totalSynergyBonusPct(state) * 0.01) * trialMult;
+  return 1 + totalSynergyBonusPct(state) * 0.01;
 }
 
 export function baseTotalRate(state: GameState): number {
