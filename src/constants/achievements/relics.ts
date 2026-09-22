@@ -1,0 +1,78 @@
+import { AchievementDef } from '@/types/achievements';
+import { hasRelic, relicsCount, relicCycleResonanceStack } from '../relics';
+
+export const RELICS_ACHIEVEMENTS: AchievementDef[] = [
+// ===== 🏺 หมวด 7: โบราณวัตถุ & ชีวนิเวศ (Relics & Biomes) =====
+  {
+    id: 'relic_1',
+    category: 'relics',
+    title: 'ขุดพบโบราณคดีชิ้นแรก',
+    desc: 'ค้นพบโบราณวัตถุใต้พิภพชิ้นแรก (ครอบครอง 1/1 Master Relic 1 ชิ้น)',
+    icon: '🏺',
+    bonusPct: 2,
+    check: (s) => relicsCount(s) >= 1,
+  },
+  {
+    id: 'relic_5',
+    category: 'relics',
+    title: 'นักสำรวจอารยธรรมโบราณ',
+    desc: 'ครอบครองโบราณวัตถุระดับ Master สะสมครบ 5 ชิ้น',
+    icon: '📜',
+    bonusPct: 5,
+    check: (s) => relicsCount(s) >= 5,
+  },
+  {
+    id: 'relic_10',
+    category: 'relics',
+    title: 'ผู้ครอบครองวัตถุบรรพกาล',
+    desc: 'ครอบครองโบราณวัตถุใต้พิภพครบทั้ง 10 ชิ้นสมบูรณ์',
+    icon: '🏛️',
+    bonusPct: 10,
+    check: (s) => relicsCount(s) >= 10,
+  },
+  {
+    id: 'relic_gaiacore',
+    category: 'relics',
+    title: 'หัวใจแห่งไกอาตื่นรู้',
+    desc: 'ค้นพบ [👑 หัวใจแห่งไกอา] โบราณวัตถุระดับ Mythic (ปลุกพลัง ×2 ทุกชิ้น)',
+    icon: '👑',
+    bonusPct: 10,
+    check: (s) => hasRelic(s, 'gaiacore'),
+  },
+  {
+    id: 'cycle_resonance_50',
+    category: 'relics',
+    title: 'พลังการเวียนว่ายครึ่งทาง',
+    desc: 'สะสมพลังการเวียนว่าย (Cycle Resonance Stack) จากศิลาแก่นเพลิงพิภพแตะ +50%',
+    icon: '🔥',
+    bonusPct: 5,
+    check: (s) => relicCycleResonanceStack(s) >= 50,
+  },
+  {
+    id: 'cycle_resonance_100',
+    category: 'relics',
+    title: 'เสียงสะท้อนแห่งวัฏสงสารสูงสุด',
+    desc: 'สะสมพลังการเวียนว่าย (Cycle Resonance Stack) แตะขีดจำกัดสูงสุด (≥100%)',
+    icon: '🌋',
+    bonusPct: 10,
+    check: (s) => relicCycleResonanceStack(s) >= 100,
+  },
+  {
+    id: 'biome_switch',
+    category: 'relics',
+    title: 'ก้าวสู่ถิ่นฐานใหม่',
+    desc: 'สลับไปใช้ชีวนิเวศใต้พิภพอื่นที่ไม่ใช่ผิวดินชั้นบนเป็นครั้งแรก',
+    icon: '🧭',
+    bonusPct: 2,
+    check: (s) => !!s.activeBiome && s.activeBiome !== 'topsoil',
+  },
+  {
+    id: 'biome_sanctum',
+    category: 'relics',
+    title: 'สู่วิหารแห่งไกอา',
+    desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศระดับสูงสุด [🌌 วิหารแห่งไกอา]',
+    icon: '🌌',
+    bonusPct: 8,
+    check: (s) => s.activeBiome === 'gaia_sanctum',
+  },
+];
