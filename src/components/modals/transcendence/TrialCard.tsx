@@ -93,7 +93,7 @@ export const TrialCard: React.FC<TrialCardProps> = React.memo(({
           <strong>🎯 {isEn ? 'Status: ' : 'สถานะ: '}</strong>
           {isCompleted
             ? (isEn ? '✅ Conquered (One-time reward permanently unlocked)' : '✅ พิชิตสำเร็จแล้ว (ปลดล็อกรางวัลถาวรเรียบร้อยแล้ว)')
-            : (isEn ? `Goal: Grow 25 Yggdrasil Roots (Current: ${curYgg} / 25)` : `เป้าหมาย: ปลูกรากต้นไม้โลกครบ 25 ต้น (ปัจจุบัน: ${curYgg} / 25)`)}
+            : (isEn ? `Goal: Grow ${def.targetYggdrasil} Yggdrasil Roots (Current: ${curYgg} / ${def.targetYggdrasil})` : `เป้าหมาย: ปลูกรากต้นไม้โลกครบ ${def.targetYggdrasil} ต้น (ปัจจุบัน: ${curYgg} / ${def.targetYggdrasil})`)}
         </div>
       </div>
 

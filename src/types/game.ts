@@ -183,6 +183,7 @@ export interface TrialDef {
   targetYggdrasil: number;
   skinReward?: SkinId;
   themeReward?: UIThemeId;
+  essenceReward?: number;
 }
 
 export interface TranscendenceState {

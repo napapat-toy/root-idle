@@ -135,10 +135,13 @@ export function luckyChanceMaxed(state: GameState): boolean {
 }
 
 export function luckyChancePct(state: GameState): number {
+  const inTrial = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
   const prestigeBonus = Math.min(LUCKY_CHANCE_MAX, LUCKY_CHANCE_BASE + (state.prestige.luckyChanceLevel || 0) * LUCKY_CHANCE_STEP);
+  if (inTrial) return prestigeBonus;
   const gaiaBonus = (state.transcendence?.gaiaClairvoyanceLevel || 0) * 0.001;
+  const permafrostBonus = state.transcendence?.completedTrials?.['permafrost'] ? 0.002 : 0;
   const biomeMult = state.activeBiome === 'crystal_caverns' ? 1.35 : 1.0;
-  return (prestigeBonus + gaiaBonus) * biomeMult;
+  return (prestigeBonus + gaiaBonus + permafrostBonus) * biomeMult;
 }
 
 export function luckyChanceCost(stateOrLevel: GameState | number): number {
@@ -157,8 +160,8 @@ export function calcPrestigeSeeds(state: GameState): number {
   const base = Math.floor(Math.pow(ratio, 0.20) * 10);
   const goldenLvl = Math.min(GOLDEN_SEED_MAX_LEVEL, state.prestige.goldenLevel || 0);
   const bonus = 1 + goldenLvl * 0.001;
-  const biomeBonus = state.activeBiome === 'sunken_ruins' ? 1.20 : 1.0;
-  const trialBonus = state.transcendence?.completedTrials?.['null_cycle'] ? 1.25 : 1.0;
+  const biomeBonus = (!state.transcendence?.activeTrial || state.transcendence.activeTrial === 'none') && state.activeBiome === 'sunken_ruins' ? 1.20 : 1.0;
+  const trialBonus = state.transcendence?.completedTrials?.['null_cycle'] ? 1.50 : 1.0;
   const result = Math.floor(base * bonus * biomeBonus * trialBonus);
   return Number.isFinite(result) ? Math.max(0, result) : 1e12;
 }

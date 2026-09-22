@@ -3,7 +3,7 @@ import { ACHIEVEMENT_BONUS_MAP } from './achievementsData';
 import { MODULE_DEFS, moduleMilestoneMultiplier } from './modules';
 import { PRESTIGE_UNLOCK_ECHOES, prestigeBonusPct } from './prestige';
 
-export const GAME_VERSION = '1.34.11';
+export const GAME_VERSION = '1.34.12';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -168,7 +168,7 @@ export function rootUpgradeMultiplier(state: GameState, moduleId: string): numbe
   const level = state.rootUpgrades[moduleId] || 0;
   let mult = 1;
   for (let i = 1; i <= level; i++) mult *= rootUpgradeLevelMult(i);
-  if (level > 0 && state.activeBiome === 'magma_mantle') {
+  if (level > 0 && !isInTrial(state) && state.activeBiome === 'magma_mantle') {
     mult *= 1.20;
   }
   return mult;
@@ -184,6 +184,7 @@ import {
   biomeActiveRateMultiplier,
 } from './relics';
 import {
+  isInTrial,
   primordialVigorMult,
   trialCompletionBonusMultiplier,
   trialCostMultiplier,
@@ -234,8 +235,8 @@ export function echoCost(state: GameState, def: ModuleDef, _currentTotalRate?: n
   return costFor(def, targetRoots, state);
 }
 
-// Achievements
 export function achievementBonusPct(state: GameState): number {
+  if (isInTrial(state)) return 0;
   if (!state.achievements || state.achievements.length === 0) return 0;
   return state.achievements.reduce((sum, id) => sum + (ACHIEVEMENT_BONUS_MAP[id] || 1), 0);
 }
@@ -271,7 +272,7 @@ export function totalSynergyBonusPct(state: GameState): number {
     }
   }
   const trialMult = trialSynergyBonusMultiplier(state);
-  const biomeMult = state.activeBiome === 'myco_abyss' ? 1.25 : 1.0;
+  const biomeMult = (!isInTrial(state) && state.activeBiome === 'myco_abyss') ? 1.25 : 1.0;
   return totalPct * trialMult * biomeMult;
 }
 

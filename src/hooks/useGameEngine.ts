@@ -455,7 +455,7 @@ export function useGameEngine() {
       const timer = setTimeout(() => {
         const dt = Math.min((Date.now() - lastTs) / 1000, currentOfflineCapSeconds(loadedState));
         const rate = baseTotalRate(loadedState);
-        const permafrostOfflineMult = isTrialCompleted(loadedState, 'permafrost') ? 1.20 : 1.0;
+        const permafrostOfflineMult = isTrialCompleted(loadedState, 'permafrost') ? 1.50 : 1.0;
         if (dt > 45) {
           const gain = rate * dt * permafrostOfflineMult;
           setOfflineModal({ gain, dt });

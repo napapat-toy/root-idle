@@ -22,6 +22,7 @@ export interface StatsMultipliersCardProps {
   specialMult: number;
   globalMultFormatted: string;
   totalPctFormatted: string;
+  isInTrial?: boolean;
 }
 
 export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.memo(({
@@ -43,6 +44,7 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
   specialMult,
   globalMultFormatted,
   totalPctFormatted,
+  isInTrial,
 }) => {
   const isEn = lang === 'en';
 
@@ -54,6 +56,34 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
           {isEn ? 'Production Bonuses & Multiplier Architecture' : 'โครงสร้างโบนัสและตัวคูณการผลิตรวม'}
         </span>
       </div>
+
+      {isInTrial && (
+        <div
+          style={{
+            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(245, 158, 11, 0.08))',
+            border: '1px solid rgba(239, 68, 68, 0.35)',
+            borderRadius: '8px',
+            padding: '8px 12px',
+            fontSize: '11.5px',
+            color: '#fca5a5',
+            marginBottom: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            lineHeight: '1.4',
+          }}
+        >
+          <span style={{ fontSize: '16px', flexShrink: 0 }}>⚔️</span>
+          <div>
+            <strong style={{ color: '#ffffff' }}>
+              {isEn ? 'Trial Mode Active: ' : 'กำลังอยู่ระหว่างบททดสอบ: '}
+            </strong>
+            {isEn
+              ? 'External meta-bonuses (Achievements, Gaia perks, Relics & Biomes) are completely suppressed.'
+              : 'โบนัสภายนอกทั้งหมด (เหรียญความสำเร็จ, พรไกอา, โบราณวัตถุ และไบโอม) ถูกระงับชั่วคราว'}
+          </div>
+        </div>
+      )}
 
       {/* Two Column Layout: Base Additive vs Special Multipliers */}
       <div className="stats-multipliers-subgrid">
@@ -69,7 +99,9 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
             </div>
             <div className="stats-row">
               <span className="stats-label">{isEn ? 'Achievement Bonus' : 'โบนัสเหรียญความสำเร็จ'}:</span>
-              <span className="stats-value golden">+{achPct}%</span>
+              <span className="stats-value golden">
+                +{achPct}% {isInTrial && <span style={{ color: '#f87171', fontSize: '10px' }}>({isEn ? 'Suppressed' : 'ถูกระงับ'})</span>}
+              </span>
             </div>
             <div className="stats-row">
               <span className="stats-label">{isEn ? 'Root Networks Bonus' : 'โบนัสเครือข่ายราก'}:</span>

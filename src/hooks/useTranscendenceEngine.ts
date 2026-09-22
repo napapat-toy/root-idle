@@ -300,11 +300,16 @@ export function useTranscendenceEngine({
         const def = TRIAL_DEFS.find(t => t.id === active);
         if (def && (cur.owned['yggdrasil'] || 0) >= def.targetYggdrasil) {
           const isEn = cur.lang === 'en';
+          const alreadyCompleted = !!cur.transcendence?.completedTrials?.[active];
+          const essenceBonus = (!alreadyCompleted && def.essenceReward) ? def.essenceReward : 0;
+
           setState(prev => ({
             ...prev,
             transcendence: {
               ...prev.transcendence,
               activeTrial: 'none',
+              gaiaEssences: (prev.transcendence?.gaiaEssences || 0) + essenceBonus,
+              totalGaiaEssencesLifetime: (prev.transcendence?.totalGaiaEssencesLifetime || 0) + essenceBonus,
               completedTrials: {
                 ...prev.transcendence?.completedTrials,
                 [active]: true,
@@ -317,15 +322,25 @@ export function useTranscendenceEngine({
             isEn ? `🏆 Trial Conquered: ${def.enName}!` : `🏆 พิชิตการทดลอง: ${def.name}!`,
             '#ffd76a'
           );
+          if (essenceBonus > 0) {
+            setTimeout(() => {
+              showFloatingText(
+                250,
+                150,
+                isEn ? `🌍 +${essenceBonus} Gaia Essences Awarded!` : `🌍 ได้รับ +${essenceBonus} ละอองชีวิตแห่งไกอา!`,
+                '#34d399'
+              );
+            }, 350);
+          }
           if (active === 'void_anomaly') {
             setTimeout(() => {
               showFloatingText(
                 250,
-                155,
+                180,
                 isEn ? '🤖 Automation Bots Reactivated!' : '🤖 ระบบบอทอัตโนมัติกลับมาทำงานแล้ว!',
                 '#4ade80'
               );
-            }, 400);
+            }, 700);
           }
         }
       }

@@ -20,6 +20,10 @@ export const AURORA_BLOOM_COST = 100000;
 export const SEED_TRANSMUTE_COST = 50000000000; // 50 Billion seeds per 1 Astral Petal
 export const ESSENCE_TRANSMUTE_COST = 10000; // 10,000 Gaia Essences per 1 Astral Petal
 
+export function isInTrial(state: GameState): boolean {
+  return !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
+}
+
 export const TRIAL_DEFS: TrialDef[] = [
   {
     id: 'arid_drought',
@@ -28,12 +32,13 @@ export const TRIAL_DEFS: TrialDef[] = [
     desc: 'สภาพอากาศแห้งแล้งรุนแรง สารอาหารและเรตผิวดินลดลง 75%',
     enDesc: 'Severe arid climate reducing ambient surface moisture and baseline rate by 75%',
     icon: '🏜️',
-    restrictionDesc: 'เรทการผลิตสารอาหารพื้นฐานลดลง 75%',
-    enRestrictionDesc: 'Base nutrient production rate reduced by 75%',
-    rewardDesc: 'ปลดล็อกสกิน [🏜️ ซาฮาราโบราณ] & เรทผลผลิตถาวร +15%',
-    enRewardDesc: 'Unlocks [🏜️ Ancient Drought] Skin & +15% Global Production',
-    targetYggdrasil: 25,
+    restrictionDesc: 'เรทการผลิตสารอาหารพื้นฐานลดลง 75% (โบนัสภายนอกทั้งหมดถูกระงับ)',
+    enRestrictionDesc: 'Base nutrient production rate reduced by 75% (All external meta-bonuses suppressed)',
+    rewardDesc: 'ปลดล็อกสกิน [🏜️ ซาฮาราโบราณ] & เรทผลผลิตถาวร +35% พร้อมรับทันที +150 🌍',
+    enRewardDesc: 'Unlocks [🏜️ Ancient Drought] Skin, +35% Global Production & +150 🌍 Gaia Essences',
+    targetYggdrasil: 10,
     skinReward: 'drought',
+    essenceReward: 150,
   },
   {
     id: 'basalt_strata',
@@ -42,12 +47,13 @@ export const TRIAL_DEFS: TrialDef[] = [
     desc: 'ชั้นหินภูเขาไฟแข็งแกร่ง รากทุกชนิดและอัปเกรดมีราคาแพงขึ้น 2.5 เท่า',
     enDesc: 'Dense volcanic basalt increasing costs of all roots and upgrades by 2.5x',
     icon: '🌋',
-    restrictionDesc: 'ราคารากและอัปเกรดทุกชนิดแพงขึ้น 2.5 เท่า',
-    enRestrictionDesc: 'Cost of all roots and upgrades increased by 2.5x',
-    rewardDesc: 'ปลดล็อกสกิน [🌋 ออบซิเดียนเพลิง] & โบนัส Synergy +20%',
-    enRewardDesc: 'Unlocks [🌋 Obsidian Magma] Skin & +20% Synergy Bonus',
-    targetYggdrasil: 25,
+    restrictionDesc: 'ราคารากและอัปเกรดทุกชนิดแพงขึ้น 2.5 เท่า (โบนัสภายนอกทั้งหมดถูกระงับ)',
+    enRestrictionDesc: 'Cost of all roots and upgrades increased by 2.5x (All external meta-bonuses suppressed)',
+    rewardDesc: 'ปลดล็อกสกิน [🌋 ออบซิเดียนเพลิง] & โบนัส Synergy +50% พร้อมรับทันที +150 🌍',
+    enRewardDesc: 'Unlocks [🌋 Obsidian Magma] Skin, +50% Synergy Bonus & +150 🌍 Gaia Essences',
+    targetYggdrasil: 10,
     skinReward: 'obsidian',
+    essenceReward: 150,
   },
   {
     id: 'void_anomaly',
@@ -56,12 +62,13 @@ export const TRIAL_DEFS: TrialDef[] = [
     desc: 'สนามพลังมิติสุญญะรบกวน ระบบบอทอัตโนมัติ (Auto-Root/Auto-Reset) ถูกปิดกั้นทั้งหมด',
     enDesc: 'Zero-point dimensional disturbance completely disabling all Automation modules',
     icon: '🌌',
-    restrictionDesc: 'ระบบ Auto-Root, Auto-Event, Auto-Reset ใช้งานไม่ได้ (ไฟสถานะบอทจะเปลี่ยนเป็น 🚫 ถูกระงับชั่วคราว)',
-    enRestrictionDesc: 'Auto-Root, Auto-Event, and Auto-Reset are completely disabled (Bot indicators turn to 🚫 Suppressed)',
-    rewardDesc: 'ปลดล็อกธีม UI [🌌 จอมราชันย์แห่งสุญญะ] & โบนัสสะท้อนราก +25%',
-    enRewardDesc: 'Unlocks [🌌 Void Sovereign] UI Theme & +25% Echo Multiplier',
+    restrictionDesc: 'ระบบบอททั้งหมดถูกระงับ (ต้องกดมือล้วน) และโบนัสภายนอกถูกระงับ',
+    enRestrictionDesc: 'All Automation bots suppressed (pure manual play) and external meta-bonuses suppressed',
+    rewardDesc: 'ปลดล็อกธีม UI [🌌 จอมราชันย์แห่งสุญญะ] & โบนัสสะท้อนราก +50% พร้อมรับทันที +200 🌍',
+    enRewardDesc: 'Unlocks [🌌 Void Sovereign] UI Theme, +50% Echo Multiplier & +200 🌍 Gaia Essences',
     targetYggdrasil: 25,
     themeReward: 'void_sovereign',
+    essenceReward: 200,
   },
   {
     id: 'null_cycle',
@@ -70,13 +77,14 @@ export const TRIAL_DEFS: TrialDef[] = [
     desc: 'วัฏจักรแห่งความว่างเปล่า โบนัสอัตราการผลิตจากคะแนนรีเซ็ต (Prestige Rate Bonus) ไม่ทำงานโดยสิ้นเชิง',
     enDesc: 'Cycle of the Void nullifying all production rate bonuses gained from Prestige',
     icon: '🌑',
-    restrictionDesc: 'โบนัสเรทจาก Prestige กลายเป็น 0% (ไม่เพิ่มการผลิต)',
-    enRestrictionDesc: 'Prestige rate bonus is completely nullified (0%)',
-    rewardDesc: 'ปลดล็อกสกิน [🌑 คราสทมิฬ] & ธีม [🌑 สุริยุปราคาใต้พิภพ] พร้อมรับเมล็ด Prestige +25% และ Gaia Essence +20% เมื่อก้าวข้าม',
-    enRewardDesc: 'Unlocks [🌑 Abyssal Eclipse] Skin & UI Theme, +25% Prestige Seeds & +20% Gaia Essence',
-    targetYggdrasil: 25,
+    restrictionDesc: 'โบนัสเรทจาก Prestige กลายเป็น 0% (ไม่มีตัวช่วยใดๆ ทั้งสิ้น)',
+    enRestrictionDesc: 'Prestige rate bonus is completely nullified (0% and no external helpers)',
+    rewardDesc: 'ปลดล็อกสกิน [🌑 คราสทมิฬ] & ธีม [🌑 สุริยุปราคาใต้พิภพ] พร้อมรับเมล็ด Prestige +50% และ Gaia Essence +50% และ +300 🌍',
+    enRewardDesc: 'Unlocks [🌑 Abyssal Eclipse] Skin & UI Theme, +50% Prestige Seeds, +50% Gaia Essence & +300 🌍',
+    targetYggdrasil: 5,
     skinReward: 'eclipse',
     themeReward: 'abyssal_eclipse',
+    essenceReward: 300,
   },
   {
     id: 'permafrost',
@@ -85,13 +93,14 @@ export const TRIAL_DEFS: TrialDef[] = [
     desc: 'ความหนาวเย็นยะเยือกใต้พิภพ แรนด้อมอีเวนต์เกิดช้าลง 60% และระยะเวลาบัฟนำโชคสั้นลงครึ่งหนึ่ง',
     enDesc: 'Subterranean freezing cold increasing random event cooldowns by 60% and halving lucky buff durations',
     icon: '❄️',
-    restrictionDesc: 'คูลดาวน์อีเวนต์สุ่มนานขึ้น 60% และระยะเวลาของบัฟทุกชนิดลดลง 50%',
-    enRestrictionDesc: 'Random event cooldown increased by 60% and buff duration reduced by 50%',
-    rewardDesc: 'ปลดล็อกสกิน [❄️ เหมันต์นิรันดร์] & ธีม [❄️ ทุ่งทุนดราเยือกแข็ง] พร้อมเพิ่มประสิทธิภาพผลผลิตออฟไลน์ (Offline Gain) +20%',
-    enRewardDesc: 'Unlocks [❄️ Permafrost] Skin & UI Theme, +20% Offline Production Efficiency',
-    targetYggdrasil: 25,
+    restrictionDesc: 'คูลดาวน์อีเวนต์นานขึ้น 60% ระยะเวลาบัฟลดลง 50% และโบนัสภายนอกถูกระงับ',
+    enRestrictionDesc: 'Random event cooldown +60%, buff duration -50% and external meta-bonuses suppressed',
+    rewardDesc: 'ปลดล็อกสกิน [❄️ เหมันต์นิรันดร์] & ธีม [❄️ ทุ่งทุนดราเยือกแข็ง] ผลผลิตออฟไลน์ +50% & โอกาสโชคดี +0.2% และ +200 🌍',
+    enRewardDesc: 'Unlocks [❄️ Permafrost] Skin & UI Theme, +50% Offline Efficiency, +0.2% Lucky Chance & +200 🌍',
+    targetYggdrasil: 20,
     skinReward: 'permafrost',
     themeReward: 'boreal_tundra',
+    essenceReward: 200,
   },
   {
     id: 'geomagnetic_storm',
@@ -100,13 +109,14 @@ export const TRIAL_DEFS: TrialDef[] = [
     desc: 'พายุแม่เหล็กไฟฟ้ารบกวนสนามพลัง ห้องก้องกังวาน (Echo Chamber) ไม่มอบโบนัสสะท้อนผลผลิต',
     enDesc: 'Electromagnetic storm disturbing resonant frequencies, suppressing Echo Chamber passive bonus',
     icon: '⚡',
-    restrictionDesc: 'ผลการสะท้อนของ Echo Chamber ไม่ทำงาน (โบนัส 0%)',
-    enRestrictionDesc: 'Echo Chamber passive resonance provides 0% production bonus',
-    rewardDesc: 'ปลดล็อกสกิน [⚡ พายุสายฟ้าฟาด] & ธีม [⚡ สนามแม่เหล็กไฟฟ้า] พร้อมเพิ่มอัตราการผลิตของรากลึกระดับ 5 ขึ้นไป (Tier 5+) +20%',
-    enRewardDesc: 'Unlocks [⚡ Fulminant Tempest] Skin & UI Theme, +20% production rate for Tier 5+ Deep Roots',
-    targetYggdrasil: 25,
+    restrictionDesc: 'ผลการสะท้อนของ Echo Chamber ไม่ทำงาน (โบนัส 0%) และโบนัสภายนอกถูกระงับ',
+    enRestrictionDesc: 'Echo Chamber passive resonance provides 0% production bonus and external meta-bonuses suppressed',
+    rewardDesc: 'ปลดล็อกสกิน [⚡ พายุสายฟ้าฟาด] & ธีม [⚡ สนามแม่เหล็กไฟฟ้า] รากลึกระดับ Tier 5+ ผลิตแรงขึ้น ×1.50 (+50%) และ +250 🌍',
+    enRewardDesc: 'Unlocks [⚡ Fulminant Tempest] Skin & UI Theme, Tier 5+ Deep Roots rate ×1.50 (+50%) & +250 🌍',
+    targetYggdrasil: 15,
     skinReward: 'fulminant',
     themeReward: 'electromagnetic',
+    essenceReward: 250,
   },
 ];
 
@@ -173,7 +183,7 @@ export function calcTranscendenceEssences(state: GameState): number {
   const bonusRoots = yggOwned - TRANSCENDENCE_REQUIRE_YGGDRASIL;
   const meteoriteMult = relicTranscendenceEssenceBonus(state);
   const blessingMult = gaiaBlessingEssenceMultiplier(state);
-  const trialBonus = isTrialCompleted(state, 'null_cycle') ? 1.20 : 1.0;
+  const trialBonus = isTrialCompleted(state, 'null_cycle') ? 1.50 : 1.0;
   const essences = Math.floor((50 + Math.pow(bonusRoots, 1.12) * 0.8) * meteoriteMult * blessingMult * trialBonus);
   return Math.max(1, essences);
 }
@@ -183,6 +193,7 @@ export function primordialVigorCost(level: number): number {
 }
 
 export function primordialVigorMult(state: GameState): number {
+  if (isInTrial(state)) return 1.0;
   const lvl = state.transcendence?.primordialVigorLevel || 0;
   return 1 + lvl * 0.25; // +25% base rate per level
 }
@@ -192,6 +203,7 @@ export function soilMemoryCost(level: number): number {
 }
 
 export function soilMemoryRetainPct(state: GameState): number {
+  if (isInTrial(state)) return 0;
   const lvl = state.transcendence?.soilMemoryLevel || 0;
   return Math.min(1.0, lvl * 0.10); // 10% per level (up to 100%)
 }
@@ -201,6 +213,7 @@ export function gaiaTouchCost(level: number): number {
 }
 
 export function gaiaTouchBonusMult(state: GameState): number {
+  if (isInTrial(state)) return 1.0;
   const lvl = state.transcendence?.gaiaTouchLevel || 0;
   return 1 + lvl * 0.30; // +30% lucky magnitude per level
 }
@@ -214,6 +227,7 @@ export function gaiaClairvoyanceCost(level: number): number {
 }
 
 export function gaiaClairvoyanceBonus(state: GameState): number {
+  if (isInTrial(state)) return 0;
   const lvl = state.transcendence?.gaiaClairvoyanceLevel || 0;
   return lvl * 0.001; // +0.1% per level (up to +1.0%)
 }
@@ -223,6 +237,7 @@ export function primordialSeedlingCost(level: number): number {
 }
 
 export function fineRootBaseRate(state: GameState): number {
+  if (isInTrial(state)) return 0.60;
   const lvl = state.transcendence?.primordialSeedlingLevel || 0;
   return 0.60 + lvl * 0.28; // 0.60 -> 2.00/s at Lv.5 (+233%!)
 }
@@ -238,6 +253,7 @@ export function deepMeditationIntervalSeconds(level: number): number {
 }
 
 export function deepMeditationMultiplier(state: GameState): number {
+  if (isInTrial(state)) return 1.0;
   const lvl = state.transcendence?.deepMeditationLevel || 0;
   if (lvl <= 0) return 1.0;
   const maxMult = 1.0 + lvl * 0.40; // Lv.1 = 1.4x, Lv.2 = 1.8x, Lv.3 = 2.2x, Lv.4 = 2.6x, Lv.5 = 3.0x max!
@@ -265,20 +281,23 @@ export function isTrialCompleted(state: GameState, trialId: TrialId): boolean {
 }
 
 export function trialCompletionBonusMultiplier(state: GameState): number {
+  if (isInTrial(state)) return 1.0;
   let mult = 1.0;
-  if (isTrialCompleted(state, 'arid_drought')) mult *= 1.15;
+  if (isTrialCompleted(state, 'arid_drought')) mult *= 1.35;
   return mult;
 }
 
 export function trialSynergyBonusMultiplier(state: GameState): number {
+  if (isInTrial(state)) return 1.0;
   let mult = 1.0;
-  if (isTrialCompleted(state, 'basalt_strata')) mult *= 1.20;
+  if (isTrialCompleted(state, 'basalt_strata')) mult *= 1.50;
   return mult;
 }
 
 export function trialEchoBonusMultiplier(state: GameState): number {
+  if (isInTrial(state)) return 1.0;
   let mult = 1.0;
-  if (isTrialCompleted(state, 'void_anomaly')) mult *= 1.25;
+  if (isTrialCompleted(state, 'void_anomaly')) mult *= 1.50;
   return mult;
 }
 
@@ -288,8 +307,8 @@ const DEEP_ROOT_IDS = new Set([
 ]);
 
 export function trialDeepRootsBonusMultiplier(state: GameState, moduleId: string): number {
-  if (!DEEP_ROOT_IDS.has(moduleId)) return 1.0;
-  return isTrialCompleted(state, 'geomagnetic_storm') ? 1.20 : 1.0;
+  if (!DEEP_ROOT_IDS.has(moduleId) || isInTrial(state)) return 1.0;
+  return isTrialCompleted(state, 'geomagnetic_storm') ? 1.50 : 1.0;
 }
 
 export type GaiaPerkId =

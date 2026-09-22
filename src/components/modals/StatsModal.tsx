@@ -277,6 +277,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
               specialMult={specialMult}
               globalMultFormatted={globalMultFormatted}
               totalPctFormatted={totalPctFormatted}
+              isInTrial={!!activeTrial}
             />
           </div>
 
