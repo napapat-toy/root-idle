@@ -50,7 +50,6 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
     (state.transcendence?.count || 0) > 0;
   const showPrestigeBtn = isPrestigeEverUnlocked;
 
-  const unlockedAchCount = state.achievements?.length || 0;
   const hasAnyAuto = !!state.prestige.autoRoot;
 
   const isTrialActive = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
@@ -67,6 +66,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className={`prestige-mini-btn ${pendingSeeds >= 10 ? 'ready-pulse' : ''}`}
             onClick={onOpenPrestige}
+            title={tr.prestigeBtn}
             style={pendingSeeds >= 10 ? { borderColor: 'rgba(251, 191, 36, 0.6)', background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(245, 158, 11, 0.2))' } : undefined}
           >
             🌌 <span className="action-btn-text">{tr.prestigeBtn}</span>
@@ -82,13 +82,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className={`prestige-mini-btn ${pendingEssences > 0 ? 'ready-pulse' : ''}`}
             onClick={onOpenTranscendence}
-            title={
-              pendingEssences > 0
-                ? (lang === 'en' ? `Gaia Awakening Ready (+${fmtInt(pendingEssences)} 🌍)` : `พร้อมตื่นรู้ (+${fmtInt(pendingEssences)} 🌍)`)
-                : tr.transcendReqBanner
-                    .replace('{count}', String(yggOwned))
-                    .replace('{req}', String(TRANSCENDENCE_REQUIRE_YGGDRASIL))
-            }
+            title={tr.transcendenceBtn}
             style={{
               borderColor: pendingEssences > 0 ? 'rgba(52, 211, 153, 0.6)' : 'rgba(52, 211, 153, 0.35)',
               background: pendingEssences > 0
@@ -112,10 +106,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className="prestige-mini-btn"
             onClick={onOpenTranscendence}
-            title={tr.transcendReqBanner
-              .replace('{count}', String(yggOwned))
-              .replace('{req}', '100')
-            }
+            title={tr.transcendenceBtn}
             style={{
               borderColor: 'rgba(52, 211, 153, 0.35)',
               background: 'rgba(16, 185, 129, 0.08)',
@@ -139,11 +130,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className="utility-icon-btn"
             onClick={onToggleHyperdrive}
-            title={
-              state.transcendence?.hyperdriveEnabled
-                ? tr.hyperdriveActiveTooltip
-                : tr.hyperdriveInactiveTooltip
-            }
+            title={tr.hyperdriveTooltip || 'ไฮเปอร์ดรฟ์'}
             style={{
               background: state.transcendence?.hyperdriveEnabled
                 ? 'linear-gradient(135deg, rgba(2, 132, 199, 0.45), rgba(6, 182, 212, 0.45))'
@@ -164,11 +151,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className="utility-icon-btn"
             onClick={onOpenAutomation}
-            title={
-              isVoidTrial
-                ? tr.autoHubSuppressedTooltip
-                : tr.autoHubTooltip
-            }
+            title={tr.autoHubTooltip}
             style={{ position: 'relative' }}
           >
             <span style={{ position: 'relative', display: 'inline-block' }}>
@@ -208,11 +191,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className={`utility-icon-btn ${isTrialActive ? 'ready-pulse' : ''}`}
             onClick={onOpenTrials}
-            title={
-              isTrialActive
-                ? `${tr.trialsBtn} (${tr.trialActiveBadge})`
-                : tr.trialsBtn
-            }
+            title={tr.trialsBtn}
             style={{
               position: 'relative',
               borderColor: isTrialActive ? 'rgba(234, 179, 8, 0.85)' : undefined,
@@ -288,7 +267,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           <button
             className="utility-icon-btn"
             onClick={onOpenAchievements}
-            title={tr.achievementsTooltip.replace('{count}', String(unlockedAchCount))}
+            title={tr.achievementsTooltip}
           >
             🏆
           </button>

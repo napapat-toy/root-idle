@@ -80,7 +80,7 @@ export const RelicPedestal: React.FC<RelicPedestalProps> = React.memo(({
       >
         <span>#{String(idx + 1).padStart(2, '0')}</span>
         <span style={{ color: isOwned ? '#facc15' : 'inherit', fontWeight: 700 }}>
-          {isOwned ? '✓ 1/1' : rarityInfo.icon}
+          {isOwned ? '✓' : rarityInfo.icon}
         </span>
       </div>
 

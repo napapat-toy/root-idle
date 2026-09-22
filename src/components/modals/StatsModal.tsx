@@ -196,7 +196,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
               items={[
                 {
                   label: isEn ? 'Master Relics Owned' : 'โบราณวัตถุที่ครอบครอง',
-                  value: `${ownedRelicsCount} / ${TOTAL_RELICS} ${isEn ? '(1/1 Complete)' : 'ชิ้นสมบูรณ์'}`,
+                  value: `${ownedRelicsCount} / ${TOTAL_RELICS} ${isEn ? 'Relics' : 'ชิ้น'}`,
                   valueClass: 'highlight',
                   valueStyle: { color: ownedRelicsCount > 0 ? '#ffd76a' : 'var(--root-cream-dim)' },
                 },

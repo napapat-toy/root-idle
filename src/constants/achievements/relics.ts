@@ -7,7 +7,7 @@ export const RELICS_ACHIEVEMENTS: AchievementDef[] = [
     id: 'relic_1',
     category: 'relics',
     title: 'ขุดพบโบราณคดีชิ้นแรก',
-    desc: 'ค้นพบโบราณวัตถุใต้พิภพชิ้นแรก (ครอบครอง 1/1 Master Relic 1 ชิ้น)',
+    desc: 'ค้นพบโบราณวัตถุใต้พิภพชิ้นแรก (ครอบครอง Master Relic 1 ชิ้น)',
     icon: '🏺',
     bonusPct: 2,
     check: (s) => relicsCount(s) >= 1,

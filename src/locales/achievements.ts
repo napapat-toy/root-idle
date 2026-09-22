@@ -434,8 +434,8 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
 
   // Relics & Biomes
   relic_1: {
-    th: { title: 'ขุดพบโบราณคดีชิ้นแรก', desc: 'ค้นพบโบราณวัตถุใต้พิภพชิ้นแรก (ครอบครอง 1/1 Master Relic 1 ชิ้น)' },
-    en: { title: 'First Unearthed Relic', desc: 'Discover your first subterranean 1/1 Master Relic' },
+    th: { title: 'ขุดพบโบราณคดีชิ้นแรก', desc: 'ค้นพบโบราณวัตถุใต้พิภพชิ้นแรก (ครอบครอง Master Relic 1 ชิ้น)' },
+    en: { title: 'First Unearthed Relic', desc: 'Discover your first subterranean Master Relic' },
   },
   relic_5: {
     th: { title: 'นักสำรวจอารยธรรมโบราณ', desc: 'ครอบครองโบราณวัตถุระดับ Master สะสมครบ 5 ชิ้น' },

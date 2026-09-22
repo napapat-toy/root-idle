@@ -75,8 +75,8 @@ export const RelicsModal: React.FC<RelicsModalProps> = React.memo(({
           </h2>
           <div className="away-time" style={{ marginBottom: '12px', fontSize: 'clamp(10.5px, 2.6vw, 11.5px)' }}>
             {isEn
-              ? `Discovered: ${ownedCount} / ${totalCount} Master Relics (1/1 Complete)`
-              : `ค้นพบแล้ว: ${ownedCount} / ${totalCount} ชิ้นสมบูรณ์ (1/1 ครบสมบูรณ์)`}
+              ? `Discovered: ${ownedCount} / ${totalCount} Master Relics`
+              : `ค้นพบแล้ว: ${ownedCount} / ${totalCount} ชิ้น`}
           </div>
 
           {/* Tab Switcher */}

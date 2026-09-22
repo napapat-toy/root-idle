@@ -429,7 +429,7 @@ export function useGameEngine() {
       140,
       isEn
         ? `🏺 Unearthed: ${def.enName} (100% Complete!)`
-        : `🏺 ค้นพบโบราณวัตถุ: ${def.name} (สำเร็จ 1/1 สมบูรณ์!)`,
+        : `🏺 ค้นพบโบราณวัตถุ: ${def.name} (สำเร็จ 100%!)`,
       def.color || '#ffd76a'
     );
   }, [randomEvents]);

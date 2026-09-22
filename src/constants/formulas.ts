@@ -26,7 +26,7 @@ import {
 export * from './initialState';
 export * from './depthLayers';
 
-export const GAME_VERSION = '1.34.15';
+export const GAME_VERSION = '1.34.16';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;

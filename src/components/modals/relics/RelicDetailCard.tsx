@@ -21,7 +21,7 @@ export const RelicDetailCard: React.FC<RelicDetailCardProps> = React.memo(({
   state,
   relic,
   count,
-  isMaxed,
+  isMaxed: _isMaxed,
   rarityInfo,
   mult,
   masterActive,
@@ -114,14 +114,14 @@ export const RelicDetailCard: React.FC<RelicDetailCardProps> = React.memo(({
           }}
         >
           {isOwned
-            ? (isEn ? '✓ 1/1 OWNED' : '✓ 1/1 ครอบครองแล้ว')
+            ? (isEn ? '✓ OWNED' : '✓ ครอบครองแล้ว')
             : (isEn ? '🔒 UNDISCOVERED' : '🔒 ยังไม่ค้นพบ')}
         </div>
       </div>
 
-      {/* Master Power Status / Cycle Resonance Section */}
-      <div style={{ marginTop: '1px' }}>
-        {isOwned && relic.id === 'magmastone' ? (
+      {/* Cycle Resonance Section (Only for Magmastone) */}
+      {isOwned && relic.id === 'magmastone' && (
+        <div style={{ marginTop: '1px' }}>
           <div
             style={{
               background: 'rgba(249, 115, 22, 0.12)',
@@ -142,28 +142,8 @@ export const RelicDetailCard: React.FC<RelicDetailCardProps> = React.memo(({
                 : `หว่านใหม่ ${state.stats?.prestigeCount || 0} ครั้ง (+${state.stats?.prestigeCount || 0}%) · ตื่นรู้ ${state.transcendence?.count || 0} ครั้ง (+${(state.transcendence?.count || 0) * 3}%)`}
             </div>
           </div>
-        ) : isOwned ? (
-          <div
-            style={{
-              background: 'rgba(74, 222, 128, 0.08)',
-              border: '1px solid rgba(74, 222, 128, 0.25)',
-              borderRadius: '8px',
-              padding: '6px 10px',
-              fontSize: '10.5px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span style={{ color: 'var(--root-cream-dim)' }}>
-              {isEn ? 'Master Power Status' : 'สถานะพลังโบราณวัตถุ'}:
-            </span>
-            <span style={{ color: '#4ade80', fontWeight: 700 }}>
-              ⚡ {isEn ? 'Active & Permanent' : 'ตื่นรู้สมบูรณ์และทำงานถาวร'}
-            </span>
-          </div>
-        ) : null}
-      </div>
+        </div>
+      )}
 
       {/* Primary Passive Bonus Effect */}
       <div
@@ -218,38 +198,6 @@ export const RelicDetailCard: React.FC<RelicDetailCardProps> = React.memo(({
               : '🌱 คำใบ้: ขยายรากให้ลึกและกว้าง หรือหมุน Lucky Jackpot เพื่อตามหาโบราณวัตถุชิ้นนี้'}
           </>
         )}
-      </div>
-
-      {/* Discovery & Completion Status */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '8px',
-          padding: '6px 10px',
-          borderRadius: '8px',
-          background: isMaxed
-            ? 'rgba(250, 204, 21, 0.1)'
-            : isOwned
-            ? 'rgba(255,255,255,0.03)'
-            : 'rgba(255,255,255,0.02)',
-          border: isMaxed ? '1px solid #facc1555' : '1px solid var(--line-soil)',
-          fontSize: 'clamp(10px, 2.6vw, 11px)',
-          width: '100%',
-          boxSizing: 'border-box',
-        }}
-      >
-        <span style={{ color: 'var(--root-cream-dim)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {isOwned
-            ? (isEn ? '👑 Status: 100% Master Power Active!' : '👑 สถานะ: ครอบครองสมบูรณ์ 100% (ทำงานตลอดเวลา!)')
-            : (isEn ? '🔒 Status: Dormant Underground' : '🔒 สถานะ: หลับใหลอยู่ใต้พิภพ')}
-        </span>
-        <span style={{ fontWeight: 700, color: relic.color, fontSize: '10.5px', flexShrink: 0 }}>
-          {isOwned
-            ? (isEn ? '100% ACTIVE' : 'สมบูรณ์ 100%')
-            : (isEn ? 'UNEARTH CHANCE' : 'รอการขุดพบ')}
-        </span>
       </div>
     </div>
   );
