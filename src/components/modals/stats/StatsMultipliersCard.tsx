@@ -129,10 +129,10 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
           </div>
         </div>
 
-        {/* Box 2: Special Multipliers (กลุ่มคูณ x) */}
+        {/* Box 2: Special Multipliers (กลุ่มบวกสะสม +) */}
         <div style={{ background: 'rgba(245, 158, 11, 0.04)', border: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: '8px', padding: '12px' }}>
           <div style={{ fontSize: '12px', fontWeight: 700, color: '#fbbf24', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <span>⚡</span> {isEn ? '2. Special Multipliers (Independent x)' : 'ก้อนที่ 2: ตัวคูณพิเศษ (คูณทบ ×)'}
+            <span>⚡</span> {isEn ? '2. Special Multipliers (Additive +)' : 'ก้อนที่ 2: ตัวคูณพิเศษ (บวกสะสม +)'}
           </div>
           <div className="stats-card-rows" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div className="stats-row">
@@ -185,7 +185,7 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
           {/* Summary of Box 2 */}
           <div style={{ borderTop: '1px dashed rgba(245, 158, 11, 0.25)', marginTop: '8px', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--root-cream-dim)' }}>
-              {isEn ? 'Special Product Multiplier:' : 'รวมตัวคูณพิเศษทบ:'}
+              {isEn ? 'Total Special Multiplier:' : 'รวมตัวคูณพิเศษสะสม:'}
             </span>
             <span style={{ fontSize: '13px', fontWeight: 700, color: '#fbbf24', fontFamily: 'monospace' }}>
               ×{specialMult.toFixed(2)}

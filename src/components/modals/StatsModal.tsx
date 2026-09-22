@@ -28,6 +28,7 @@ import {
   primordialVigorMult,
   trialCompletionBonusMultiplier,
   deepMeditationMultiplier,
+  specialRateMultiplier,
 } from '@/constants/gameData';
 import { fmt, formatDuration } from '@/lib/formatters';
 import { ACHIEVEMENTS } from '@/constants/achievementsData';
@@ -102,7 +103,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
   const basePctFormatted = baseBonusPct.toLocaleString(undefined, { maximumFractionDigits: 1 });
   const trialRateMult = trialRateMultiplier(state);
   const globalMult = globalRateMultiplier(state);
-  const specialMult = globalMult / (baseMult > 0 ? baseMult : 1);
+  const specialMult = specialRateMultiplier(state);
   const trueTotalPct = (globalMult - 1) * 100;
   const trialBonusMult = trialCompletionBonusMultiplier(state);
   const meditationMult = deepMeditationMultiplier(state);

@@ -26,7 +26,7 @@ import {
 export * from './initialState';
 export * from './depthLayers';
 
-export const GAME_VERSION = '1.34.14';
+export const GAME_VERSION = '1.34.15';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -194,14 +194,24 @@ export function totalGlobalBonusPercent(state: GameState): number {
   return achPct + synPct + prestigePct + biomePct;
 }
 
+export function specialMultiplierBonus(state: GameState): number {
+  const echoBonus = Math.max(0, globalEchoMultiplier(state) - 1);
+  const vigorBonus = Math.max(0, primordialVigorMult(state) - 1);
+  const relicBonus = Math.max(0, relicRateBonusMultiplier(state) - 1);
+  const meditationBonus = Math.max(0, deepMeditationMultiplier(state) - 1);
+  const trialCompletionBonus = Math.max(0, trialCompletionBonusMultiplier(state) - 1);
+  return echoBonus + vigorBonus + relicBonus + meditationBonus + trialCompletionBonus;
+}
+
+export function specialRateMultiplier(state: GameState): number {
+  return 1 + specialMultiplierBonus(state);
+}
+
 export function globalRateMultiplier(state: GameState): number {
-  const vigor = primordialVigorMult(state);
+  const baseMult = 1 + totalGlobalBonusPercent(state) * 0.01;
+  const specialMult = specialRateMultiplier(state);
   const trialRate = trialRateMultiplier(state);
-  const trialBonus = trialCompletionBonusMultiplier(state);
-  const echoMult = globalEchoMultiplier(state);
-  const relicMult = relicRateBonusMultiplier(state);
-  const meditation = deepMeditationMultiplier(state);
-  return (1 + totalGlobalBonusPercent(state) * 0.01) * vigor * trialRate * trialBonus * echoMult * relicMult * meditation;
+  return baseMult * specialMult * trialRate;
 }
 
 // Effective Rates
