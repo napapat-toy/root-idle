@@ -24,6 +24,7 @@ import {
   SEED_TRANSMUTE_COST,
   ESSENCE_TRANSMUTE_COST,
   TRIAL_DEFS,
+  MODULE_DEFS,
 } from '@/constants/gameData';
 
 interface UseTranscendenceEngineProps {
@@ -272,16 +273,28 @@ export function useTranscendenceEngine({
 
   const startTrial = useCallback((trialId: TrialId) => {
     doPrestige();
-    setState(prev => ({
-      ...prev,
-      transcendence: {
-        ...prev.transcendence,
-        activeTrial: trialId,
-      },
-    }));
+    setState(prev => {
+      const freshOwned: Record<string, number> = {};
+      MODULE_DEFS.forEach(d => { freshOwned[d.id] = 0; });
+      return {
+        ...prev,
+        nutrients: 0,
+        runEarned: 0,
+        owned: freshOwned,
+        totalOwned: 0,
+        rootUpgrades: {},
+        echoes: {},
+        rootSynergies: {},
+        transcendence: {
+          ...prev.transcendence,
+          activeTrial: trialId,
+        },
+      };
+    });
   }, [doPrestige, setState]);
 
   const abandonTrial = useCallback(() => {
+    doPrestige();
     setState(prev => ({
       ...prev,
       transcendence: {
@@ -289,7 +302,7 @@ export function useTranscendenceEngine({
         activeTrial: 'none',
       },
     }));
-  }, [setState]);
+  }, [doPrestige, setState]);
 
   // Trial completion check (every 1s)
   useEffect(() => {

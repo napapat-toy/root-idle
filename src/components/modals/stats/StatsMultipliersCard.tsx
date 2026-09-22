@@ -79,8 +79,8 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
               {isEn ? 'Trial Mode Active: ' : 'กำลังอยู่ระหว่างบททดสอบ: '}
             </strong>
             {isEn
-              ? 'External meta-bonuses (Achievements, Gaia perks, Relics & Biomes) are completely suppressed.'
-              : 'โบนัสภายนอกทั้งหมด (เหรียญความสำเร็จ, พรไกอา, โบราณวัตถุ และไบโอม) ถูกระงับชั่วคราว'}
+              ? 'External meta-bonuses (Prestige passive, Achievements, Gaia perks, Relics & Biomes) are completely suppressed.'
+              : 'โบนัสภายนอกทั้งหมด (พลังรากนิรันดร์, เหรียญความสำเร็จ, พรไกอา, โบราณวัตถุ และไบโอม) ถูกระงับชั่วคราว'}
           </div>
         </div>
       )}
@@ -95,7 +95,9 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
           <div className="stats-card-rows" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div className="stats-row">
               <span className="stats-label">{isEn ? 'Prestige Passive Bonus' : 'โบนัสพลังรากนิรันดร์'}:</span>
-              <span className="stats-value purple">+{prestigePct}%</span>
+              <span className="stats-value purple">
+                +{prestigePct}% {isInTrial && <span style={{ color: '#f87171', fontSize: '10px' }}>({isEn ? 'Suppressed' : 'ถูกระงับ'})</span>}
+              </span>
             </div>
             <div className="stats-row">
               <span className="stats-label">{isEn ? 'Achievement Bonus' : 'โบนัสเหรียญความสำเร็จ'}:</span>

@@ -31,7 +31,7 @@ export const GOLDEN_SEED_MAX_LEVEL = 100000; // Max 100,000 levels (+10,000% see
 export const PASSIVE_RATE_MAX_LEVEL = 1000000; // Max 1,000,000 levels (+100,000% rate)
 
 export function prestigeBonusPct(state: GameState): number {
-  if (state.transcendence?.activeTrial === 'null_cycle') return 0;
+  if (state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none') return 0;
   const clamped = Math.min(PASSIVE_RATE_MAX_LEVEL, state.prestige.passiveRateLevel || 0);
   const base = clamped * 0.1; // +0.1% per level
   const cycleBonus = relicCycleResonanceStack(state);
@@ -150,6 +150,7 @@ export function luckyChanceCost(stateOrLevel: GameState | number): number {
 }
 
 export function starterRootsCount(state: GameState): number {
+  if (state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none') return 0;
   return (state.prestige.starterLevel || 0) * 10;
 }
 
