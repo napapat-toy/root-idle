@@ -89,10 +89,12 @@ export const TrialCard: React.FC<TrialCardProps> = React.memo(({
             </span>
           )}
         </div>
-        <div style={{ color: isCompleted ? 'var(--gaia-green)' : 'var(--astral-cyan)', marginTop: '2px' }}>
+        <div style={{ color: isActive ? '#facc15' : isCompleted ? 'var(--gaia-green)' : 'var(--astral-cyan)', marginTop: '2px' }}>
           <strong>🎯 {isEn ? 'Status: ' : 'สถานะ: '}</strong>
-          {isCompleted
-            ? (isEn ? '✅ Conquered (One-time reward permanently unlocked)' : '✅ พิชิตสำเร็จแล้ว (ปลดล็อกรางวัลถาวรเรียบร้อยแล้ว)')
+          {isActive
+            ? (isEn ? `⚔️ In Progress: Grow ${def.targetYggdrasil} Yggdrasil Roots (${curYgg} / ${def.targetYggdrasil} 🌳)` : `⚔️ กำลังทดสอบ: ปลูกรากต้นไม้โลกครบ ${def.targetYggdrasil} ต้น (${curYgg} / ${def.targetYggdrasil} 🌳)`)
+            : isCompleted
+            ? (isEn ? `✅ Conquered · Repeat clear yields +${def.essenceReward} 🌍 Gaia Essences` : `✅ พิชิตแล้ว · ฟาร์มซ้ำได้รับ +${def.essenceReward} 🌍 ละอองชีวิตทุกครั้ง`)
             : (isEn ? `Goal: Grow ${def.targetYggdrasil} Yggdrasil Roots (Current: ${curYgg} / ${def.targetYggdrasil})` : `เป้าหมาย: ปลูกรากต้นไม้โลกครบ ${def.targetYggdrasil} ต้น (ปัจจุบัน: ${curYgg} / ${def.targetYggdrasil})`)}
         </div>
       </div>
@@ -105,7 +107,7 @@ export const TrialCard: React.FC<TrialCardProps> = React.memo(({
           </ModalButton>
         ) : isCompleted ? (
           <ModalButton variant="secondary" size="sm" onClick={() => onSelectTrial(def)}>
-            {isEn ? 'Re-challenge' : 'ท้าทายใหม่'}
+            {isEn ? `Re-challenge (+${def.essenceReward} 🌍)` : `ท้าทายซ้ำ (+${def.essenceReward} 🌍)`}
           </ModalButton>
         ) : (
           <ModalButton variant="gold" size="sm" onClick={() => onSelectTrial(def)}>

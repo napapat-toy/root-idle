@@ -32,6 +32,7 @@ import {
   unownedRelicList,
   TRANSCENDENCE_REQUIRE_PRESTIGES,
   TRANSCENDENCE_REQUIRE_YGGDRASIL,
+  pactRelicDropMultiplier,
 } from '@/constants/gameData';
 import { buildBranchesFromLog, deriveLog } from '@/lib/treeGenerator';
 import { evaluateAutoBuy } from '@/lib/autoBuyer';
@@ -583,8 +584,8 @@ export function useGameEngine() {
         const unowned = unownedRelicList(cur);
         if (unowned.length > 0) {
           relicPityMinutesRef.current += 1;
-          // 2.0% chance per minute, or 100% guaranteed when pity timer reaches 50 minutes!
-          if (Math.random() < 0.020 || relicPityMinutesRef.current >= 50) {
+          // 2.0% chance per minute, or 100% guaranteed when pity timer reaches 50 minutes! (boosted by pact_unstable_aether)
+          if (Math.random() < 0.020 * pactRelicDropMultiplier(cur) || relicPityMinutesRef.current >= 50) {
             relicPityMinutesRef.current = 0;
             const picked = pickWeightedUnownedRelic(unowned);
             if (picked) {

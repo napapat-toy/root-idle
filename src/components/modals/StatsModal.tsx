@@ -15,6 +15,7 @@ import {
   totalSynergiesCount,
   BIOME_DEFS,
   TRIAL_DEFS,
+  PACT_DEFS,
   echoBonusPct,
   globalEchoMultiplier,
   prestigeBonusPct,
@@ -254,6 +255,11 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                     isEn ? 'Normal Growth' : 'เติบโตอิสระ'
                   ),
                   valueStyle: { color: activeTrial ? '#facc15' : 'var(--root-cream-dim)' },
+                },
+                {
+                  label: isEn ? 'Active Pacts' : 'พันธสัญญาที่เปิด',
+                  value: `${PACT_DEFS.filter(p => !!state.pacts?.[p.id]).length} / ${PACT_DEFS.length}`,
+                  valueStyle: { color: PACT_DEFS.some(p => !!state.pacts?.[p.id]) ? '#ffd76a' : 'var(--root-cream-dim)' },
                 },
               ]}
             />

@@ -93,6 +93,7 @@ export function createFreshState(): GameState {
       auroraBloomUnlocked: false,
       astralPetals: 0,
     },
+    pacts: {},
     achievements: [],
     stats: {
       prestigeCount: 0,

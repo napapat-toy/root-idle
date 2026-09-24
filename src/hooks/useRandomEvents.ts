@@ -13,6 +13,8 @@ import {
   relicEventNutrientBonus,
   relicEventCooldownMultiplier,
   unownedRelicList,
+  pactEventIntervalMultiplier,
+  pactRelicDropMultiplier,
 } from '@/constants/gameData';
 import { fmt, fmtInt } from '@/lib/formatters';
 
@@ -167,8 +169,8 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
         }, 1200 + Math.random() * 1000);
       }
 
-      // 20% Chance on Lucky Jackpot to unearth an un-maxed relic fragment!
-      if (!cur.unclaimedRelicId && Math.random() < 0.20) {
+      // 20% Chance on Lucky Jackpot to unearth an un-maxed relic fragment! (boosted by pact_unstable_aether)
+      if (!cur.unclaimedRelicId && Math.random() < 0.20 * pactRelicDropMultiplier(cur)) {
         const unowned = unownedRelicList(cur);
         if (unowned.length > 0) {
           const picked = pickWeightedUnownedRelic(unowned);
@@ -256,7 +258,8 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     const cur = stateRef.current;
     const cdMult = relicEventCooldownMultiplier(cur);
     const trialCdMult = cur.transcendence?.activeTrial === 'permafrost' ? 1.6 : 1.0;
-    const delay = (105000 + Math.random() * 50000) * cdMult * trialCdMult; // 105–155s scaled by Geode & Permafrost
+    const pactCdMult = pactEventIntervalMultiplier(cur);
+    const delay = (105000 + Math.random() * 50000) * cdMult * trialCdMult * pactCdMult; // Scaled by Geode, Permafrost & Unstable Aether
     eventTimerRef.current = setTimeout(() => {
       const r = Math.random();
       const hasAurora = !!cur.transcendence?.auroraBloomUnlocked;

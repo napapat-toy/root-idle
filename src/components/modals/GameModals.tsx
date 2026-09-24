@@ -164,6 +164,7 @@ export const GameModals: React.FC<GameModalsProps> = React.memo(({
         onStartTrial={transcendence.startTrial}
         onAbandonTrial={transcendence.abandonTrial}
         onOpenTranscendence={() => onOpenModal('transcendence')}
+        onTogglePact={transcendence.togglePact}
       />
     </>
   );

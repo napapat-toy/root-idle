@@ -30,6 +30,7 @@ export function encodeSave(state: GameState): string {
     pt: state.totalPlayTimeSeconds,
     rpt: state.runPlayTimeSeconds,
     ach: state.achievements || [],
+    pacts: state.pacts || {},
     lang: state.lang || 'th',
     st: state.stats || {
       prestigeCount: 0,
@@ -95,6 +96,7 @@ export function decodeSave(rawCode: string): SavePayload {
       pt: payload.totalPlayTimeSeconds || 0,
       rpt: payload.runPlayTimeSeconds || 0,
       ach: payload.achievements || [],
+      pacts: payload.pacts || {},
       st: payload.stats || {},
       lang: payload.lang || 'th',
     };
@@ -234,6 +236,7 @@ export function payloadToState(payload: SavePayload): GameState {
       payload.ts || {}
     ),
     achievements: Array.isArray(payload.ach) ? payload.ach : [],
+    pacts: payload.pacts || {},
     stats: Object.assign(
       {
         prestigeCount: 0,
@@ -318,6 +321,7 @@ export function saveToLocalStorage(state: GameState): void {
       runPlayTimeSeconds: state.runPlayTimeSeconds,
       buyQty: state.buyQty,
       achievements: state.achievements || [],
+      pacts: state.pacts || {},
       stats: state.stats,
       lang: state.lang || 'th',
       lastTs: Date.now(),
@@ -352,6 +356,7 @@ export function loadFromLocalStorage(): { state: GameState; lastTs?: number } | 
       pt: data.totalPlayTimeSeconds,
       rpt: data.runPlayTimeSeconds,
       ach: data.achievements,
+      pacts: data.pacts || {},
       st: data.stats,
       lang: data.lang,
     });

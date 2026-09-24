@@ -18,6 +18,7 @@ import {
   rootUpgradeCost,
   rootUpgradeLevelMult,
   rootUpgradeRequireOwned,
+  pactDisableAuto,
 } from '@/constants/gameData';
 
 export interface AutoBuyCandidate {
@@ -75,7 +76,7 @@ export function evaluateAutoBuy(
   totalRate: number,
   setState: React.Dispatch<React.SetStateAction<GameState>>
 ): { executed: boolean; waitingForTarget: string | null } {
-  if (!state.prestige.autoRoot || !state.prestige.autoRootEnabled || state.transcendence?.activeTrial === 'void_anomaly') {
+  if (!state.prestige.autoRoot || !state.prestige.autoRootEnabled || state.transcendence?.activeTrial === 'void_anomaly' || pactDisableAuto(state)) {
     return { executed: false, waitingForTarget: null };
   }
 

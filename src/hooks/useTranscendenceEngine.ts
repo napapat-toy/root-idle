@@ -314,15 +314,15 @@ export function useTranscendenceEngine({
         if (def && (cur.owned['yggdrasil'] || 0) >= def.targetYggdrasil) {
           const isEn = cur.lang === 'en';
           const alreadyCompleted = !!cur.transcendence?.completedTrials?.[active];
-          const essenceBonus = (!alreadyCompleted && def.essenceReward) ? def.essenceReward : 0;
+          const essenceReward = def.essenceReward || 0;
 
           setState(prev => ({
             ...prev,
             transcendence: {
               ...prev.transcendence,
               activeTrial: 'none',
-              gaiaEssences: (prev.transcendence?.gaiaEssences || 0) + essenceBonus,
-              totalGaiaEssencesLifetime: (prev.transcendence?.totalGaiaEssencesLifetime || 0) + essenceBonus,
+              gaiaEssences: (prev.transcendence?.gaiaEssences || 0) + essenceReward,
+              totalGaiaEssencesLifetime: (prev.transcendence?.totalGaiaEssencesLifetime || 0) + essenceReward,
               completedTrials: {
                 ...prev.transcendence?.completedTrials,
                 [active]: true,
@@ -332,15 +332,19 @@ export function useTranscendenceEngine({
           showFloatingText(
             250,
             120,
-            isEn ? `🏆 Trial Conquered: ${def.enName}!` : `🏆 พิชิตการทดลอง: ${def.name}!`,
+            alreadyCompleted
+              ? (isEn ? `✨ Trial Cleared Again: ${def.enName}!` : `🏆 พิชิตการทดสอบ: ${def.name}!`)
+              : (isEn ? `🏆 Trial Conquered: ${def.enName}!` : `🏆 พิชิตการทดลอง: ${def.name}!`),
             '#ffd76a'
           );
-          if (essenceBonus > 0) {
+          if (essenceReward > 0) {
             setTimeout(() => {
               showFloatingText(
                 250,
                 150,
-                isEn ? `🌍 +${essenceBonus} Gaia Essences Awarded!` : `🌍 ได้รับ +${essenceBonus} ละอองชีวิตแห่งไกอา!`,
+                alreadyCompleted
+                  ? (isEn ? `🌍 +${essenceReward} Gaia Essences Harvested!` : `🌍 ได้รับ +${essenceReward} ละอองชีวิตแห่งไกอา!`)
+                  : (isEn ? `🌍 +${essenceReward} Gaia Essences Awarded!` : `🌍 ได้รับ +${essenceReward} ละอองชีวิตแห่งไกอา!`),
                 '#34d399'
               );
             }, 350);
@@ -362,6 +366,19 @@ export function useTranscendenceEngine({
     return () => clearInterval(interval);
   }, [stateRef, setState, showFloatingText]);
 
+  const togglePact = useCallback((pactId: string) => {
+    setState(prev => {
+      const active = !!prev.pacts?.[pactId];
+      return {
+        ...prev,
+        pacts: {
+          ...prev.pacts,
+          [pactId]: !active,
+        },
+      };
+    });
+  }, [setState]);
+
   return {
     buyPrimordialVigor,
     buySoilMemory,
@@ -379,5 +396,6 @@ export function useTranscendenceEngine({
     transmuteEssencesToPetals,
     startTrial,
     abandonTrial,
+    togglePact,
   };
 }

@@ -8,6 +8,8 @@ import {
   isTranscendenceUnlocked,
   calcTranscendenceEssences,
   TRANSCENDENCE_REQUIRE_YGGDRASIL,
+  TRIAL_DEFS,
+  pactDisableAuto,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { t } from '@/lib/i18n';
@@ -48,20 +50,40 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
     state.eternalSeeds > 0 ||
     (state.stats?.prestigeCount || 0) > 0 ||
     (state.transcendence?.count || 0) > 0;
-  const showPrestigeBtn = isPrestigeEverUnlocked;
+  const isTrialActive = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
+  const showPrestigeBtn = isPrestigeEverUnlocked && !isTrialActive;
 
   const hasAnyAuto = !!state.prestige.autoRoot;
 
-  const isTrialActive = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
   const isVoidTrial = state.transcendence?.activeTrial === 'void_anomaly';
-  const showTranscendenceBtn = isTranscendenceUnlocked(state);
+  const isAutoSuppressed = isVoidTrial || pactDisableAuto(state);
+  const showTranscendenceBtn = isTranscendenceUnlocked(state) && !isTrialActive;
   const pendingEssences = calcTranscendenceEssences(state);
   const yggOwned = state.owned['yggdrasil'] || 0;
-  const showTranscendenceProgress = !showTranscendenceBtn && (state.stats?.prestigeCount || 0) >= 3 && yggOwned > 0;
+  const showTranscendenceProgress = !showTranscendenceBtn && !isTrialActive && (state.stats?.prestigeCount || 0) >= 3 && yggOwned > 0;
+  const activeTrialDef = isTrialActive ? TRIAL_DEFS.find(t => t.id === state.transcendence?.activeTrial) : undefined;
 
   return (
     <div className="top-actions-row">
       <div className="top-actions-left">
+        {isTrialActive && onOpenTrials && (
+          <button
+            className="prestige-mini-btn ready-pulse"
+            onClick={onOpenTrials}
+            title={tr.trialsBtn}
+            style={{
+              borderColor: 'rgba(234, 179, 8, 0.85)',
+              background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.3), rgba(249, 115, 22, 0.2))',
+              boxShadow: '0 0 10px rgba(234, 179, 8, 0.4)',
+            }}
+          >
+            ⚔️ <span className="action-btn-text">{lang === 'en' ? 'In Trial' : 'กำลังทดสอบ'}</span>
+            <span style={{ color: '#ffd76a', fontWeight: 700, marginLeft: '5px', fontSize: '11px' }}>
+              ({yggOwned}/{activeTrialDef?.targetYggdrasil || 25} 🌳)
+            </span>
+          </button>
+        )}
+
         {showPrestigeBtn && (
           <button
             className={`prestige-mini-btn ${pendingSeeds >= 10 ? 'ready-pulse' : ''}`}
@@ -156,7 +178,7 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           >
             <span style={{ position: 'relative', display: 'inline-block' }}>
               🤖
-              {isVoidTrial && (
+              {isAutoSuppressed && (
                 <span
                   style={{
                     position: 'absolute',
@@ -180,8 +202,8 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
                   width: '8px',
                   height: '8px',
                   borderRadius: '50%',
-                  background: isVoidTrial ? '#c084fc' : 'var(--accent-glow)',
-                  boxShadow: isVoidTrial ? '0 0 8px #c084fc' : '0 0 6px var(--accent-glow)',
+                  background: isAutoSuppressed ? '#ef4444' : 'var(--accent-glow)',
+                  boxShadow: isAutoSuppressed ? '0 0 8px #ef4444' : '0 0 6px var(--accent-glow)',
                 }}
               />
             )}

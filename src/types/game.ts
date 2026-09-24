@@ -186,6 +186,28 @@ export interface TrialDef {
   essenceReward?: number;
 }
 
+export type PactId =
+  | 'pact_arid_soil'
+  | 'pact_scarcity'
+  | 'pact_manual'
+  | 'pact_dim_resonance'
+  | 'pact_unstable_aether';
+
+export interface PactDef {
+  id: PactId;
+  name: string;
+  enName: string;
+  icon: string;
+  desc: string;
+  enDesc: string;
+  handicapDesc: string;
+  enHandicapDesc: string;
+  rewardDesc: string;
+  enRewardDesc: string;
+  seedsBonusPct: number;
+  essencesBonusPct?: number;
+}
+
 export interface TranscendenceState {
   count: number;
   gaiaEssences: number;
@@ -228,6 +250,7 @@ export interface GameState {
   eternalSeeds: number;
   prestige: PrestigeState;
   transcendence: TranscendenceState;
+  pacts?: Record<string, boolean>;
   achievements: string[];
   stats: GameStats;
   lang?: Language;
@@ -304,6 +327,7 @@ export interface SavePayload {
   rpt?: number;
   rle?: Array<[number, number]>;
   ach?: string[];
+  pacts?: Record<string, boolean>;
   st?: Partial<GameStats>;
   lang?: Language;
 }

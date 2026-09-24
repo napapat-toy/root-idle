@@ -21,12 +21,15 @@ import {
   deepMeditationMultiplier,
   fineRootBaseRate,
   trialDeepRootsBonusMultiplier,
+  pactRateMultiplier,
+  pactCostMultiplier,
+  pactResonanceMultiplier,
 } from './transcendence';
 
 export * from './initialState';
 export * from './depthLayers';
 
-export const GAME_VERSION = '1.34.16';
+export const GAME_VERSION = '1.34.17';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -47,13 +50,13 @@ export const ROOT_SYNERGY_PCT_PER_UNIT = 0.08; // +0.08% per owned unit
 
 // Cost calculations
 export function costFor(def: ModuleDef, ownedCount: number, state?: GameState): number {
-  const trialMult = state ? trialCostMultiplier(state) : 1.0;
+  const trialMult = state ? trialCostMultiplier(state) * pactCostMultiplier(state) : 1.0;
   return Math.ceil(def.baseCost * Math.pow(def.costMult, ownedCount) * trialMult);
 }
 
 export function bulkCostFor(def: ModuleDef, ownedCount: number, qty: number, state?: GameState): number {
   const m = def.costMult;
-  const trialMult = state ? trialCostMultiplier(state) : 1.0;
+  const trialMult = state ? trialCostMultiplier(state) * pactCostMultiplier(state) : 1.0;
   const first = def.baseCost * Math.pow(m, ownedCount) * trialMult;
   const total = Math.abs(m - 1) < 1e-9 ? first * qty : first * (Math.pow(m, qty) - 1) / (m - 1);
   return Math.ceil(total);
@@ -107,7 +110,8 @@ export function globalEchoMultiplier(state: GameState): number {
   if (state.transcendence?.activeTrial === 'geomagnetic_storm') return 1.0;
   const bonusPerEcho = relicEchoBonusPerEcho(state);
   const trialMult = trialEchoBonusMultiplier(state);
-  return (1 + totalEchoCount(state) * bonusPerEcho) * trialMult;
+  const pactRes = pactResonanceMultiplier(state);
+  return (1 + totalEchoCount(state) * bonusPerEcho * pactRes) * trialMult;
 }
 
 export function echoUnlockedFor(state: GameState, moduleId: string): boolean {
@@ -149,7 +153,7 @@ export function rootSynergyUnlocked(state: GameState, moduleId: string): boolean
 }
 
 export function rootSynergyCost(def: ModuleDef, state?: GameState): number {
-  const trialMult = state ? trialCostMultiplier(state) : 1.0;
+  const trialMult = state ? trialCostMultiplier(state) * pactCostMultiplier(state) : 1.0;
   const req = state ? relicSynergyUnlockRequiredCount(state) : ROOT_SYNERGY_REQUIRE_OWNED;
   return Math.ceil(def.baseCost * Math.pow(def.costMult, req) * 10 * trialMult);
 }
@@ -159,7 +163,7 @@ export function speciesSynergyBonusPct(state: GameState, _moduleId?: string): nu
 }
 
 export function totalSynergyBonusPct(state: GameState): number {
-  if (!state.rootSynergies) return 0;
+  if (!state.rootSynergies || state.transcendence?.activeTrial === 'null_cycle') return 0;
   let totalPct = 0;
   const bonusPerUnit = relicSynergyBonusPerUnit(state);
   for (const [id, active] of Object.entries(state.rootSynergies)) {
@@ -169,8 +173,9 @@ export function totalSynergyBonusPct(state: GameState): number {
     }
   }
   const trialMult = trialSynergyBonusMultiplier(state);
+  const pactRes = pactResonanceMultiplier(state);
   const biomeMult = (!isInTrial(state) && state.activeBiome === 'myco_abyss') ? 1.25 : 1.0;
-  return totalPct * trialMult * biomeMult;
+  return totalPct * trialMult * pactRes * biomeMult;
 }
 
 export function totalSynergyMultiplier(state: GameState): number {
@@ -211,7 +216,8 @@ export function globalRateMultiplier(state: GameState): number {
   const baseMult = 1 + totalGlobalBonusPercent(state) * 0.01;
   const specialMult = specialRateMultiplier(state);
   const trialRate = trialRateMultiplier(state);
-  return baseMult * specialMult * trialRate;
+  const pactRate = pactRateMultiplier(state);
+  return baseMult * specialMult * trialRate * pactRate;
 }
 
 // Effective Rates

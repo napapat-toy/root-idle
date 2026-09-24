@@ -2,6 +2,7 @@ import { GameState } from '@/types/game';
 import { relicTranscendenceEssenceBonus } from '../relics';
 import { gaiaBlessingEssenceMultiplier } from './perks';
 import { isTrialCompleted } from './trials';
+import { pactEssenceBonusMultiplier } from './pacts';
 
 export const TRANSCENDENCE_REQUIRE_YGGDRASIL = 100;
 export const TRANSCENDENCE_REQUIRE_PRESTIGES = 3;
@@ -61,6 +62,7 @@ export function calcTranscendenceEssences(state: GameState): number {
   const meteoriteMult = relicTranscendenceEssenceBonus(state);
   const blessingMult = gaiaBlessingEssenceMultiplier(state);
   const trialBonus = isTrialCompleted(state, 'null_cycle') ? 1.50 : 1.0;
-  const essences = Math.floor((50 + Math.pow(bonusRoots, 1.12) * 0.8) * meteoriteMult * blessingMult * trialBonus);
+  const pactBonus = pactEssenceBonusMultiplier(state);
+  const essences = Math.floor((50 + Math.pow(bonusRoots, 1.12) * 0.8) * meteoriteMult * blessingMult * trialBonus * pactBonus);
   return Math.max(1, essences);
 }

@@ -1,5 +1,6 @@
 import { GameState } from '@/types/game';
 import { relicCycleResonanceStack } from './relics';
+import { pactSeedsBonusMultiplier } from './transcendence/pacts';
 
 export const PRESTIGE_UNLOCK_ECHOES = 5;
 export const SEED_DIVIDER = 10000000000; // 10 Billion (1e10)
@@ -163,7 +164,8 @@ export function calcPrestigeSeeds(state: GameState): number {
   const bonus = 1 + goldenLvl * 0.001;
   const biomeBonus = (!state.transcendence?.activeTrial || state.transcendence.activeTrial === 'none') && state.activeBiome === 'sunken_ruins' ? 1.20 : 1.0;
   const trialBonus = state.transcendence?.completedTrials?.['null_cycle'] ? 1.50 : 1.0;
-  const result = Math.floor(base * bonus * biomeBonus * trialBonus);
+  const pactBonus = pactSeedsBonusMultiplier(state);
+  const result = Math.floor(base * bonus * biomeBonus * trialBonus * pactBonus);
   return Number.isFinite(result) ? Math.max(0, result) : 1e12;
 }
 
