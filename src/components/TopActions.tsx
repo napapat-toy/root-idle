@@ -8,7 +8,6 @@ import {
   isTranscendenceUnlocked,
   calcTranscendenceEssences,
   TRANSCENDENCE_REQUIRE_YGGDRASIL,
-  TRIAL_DEFS,
   pactDisableAuto,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
@@ -51,39 +50,20 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
     (state.stats?.prestigeCount || 0) > 0 ||
     (state.transcendence?.count || 0) > 0;
   const isTrialActive = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
-  const showPrestigeBtn = isPrestigeEverUnlocked && !isTrialActive;
+  const showPrestigeBtn = isPrestigeEverUnlocked;
 
   const hasAnyAuto = !!state.prestige.autoRoot;
 
   const isVoidTrial = state.transcendence?.activeTrial === 'void_anomaly';
   const isAutoSuppressed = isVoidTrial || pactDisableAuto(state);
-  const showTranscendenceBtn = isTranscendenceUnlocked(state) && !isTrialActive;
+  const showTranscendenceBtn = isTranscendenceUnlocked(state);
   const pendingEssences = calcTranscendenceEssences(state);
   const yggOwned = state.owned['yggdrasil'] || 0;
-  const showTranscendenceProgress = !showTranscendenceBtn && !isTrialActive && (state.stats?.prestigeCount || 0) >= 3 && yggOwned > 0;
-  const activeTrialDef = isTrialActive ? TRIAL_DEFS.find(t => t.id === state.transcendence?.activeTrial) : undefined;
+  const showTranscendenceProgress = !showTranscendenceBtn && (state.stats?.prestigeCount || 0) >= 3 && yggOwned > 0;
 
   return (
     <div className="top-actions-row">
       <div className="top-actions-left">
-        {isTrialActive && onOpenTrials && (
-          <button
-            className="prestige-mini-btn ready-pulse"
-            onClick={onOpenTrials}
-            title={tr.trialsBtn}
-            style={{
-              borderColor: 'rgba(234, 179, 8, 0.85)',
-              background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.3), rgba(249, 115, 22, 0.2))',
-              boxShadow: '0 0 10px rgba(234, 179, 8, 0.4)',
-            }}
-          >
-            ⚔️ <span className="action-btn-text">{lang === 'en' ? 'In Trial' : 'กำลังทดสอบ'}</span>
-            <span style={{ color: '#ffd76a', fontWeight: 700, marginLeft: '5px', fontSize: '11px' }}>
-              ({yggOwned}/{activeTrialDef?.targetYggdrasil || 25} 🌳)
-            </span>
-          </button>
-        )}
-
         {showPrestigeBtn && (
           <button
             className={`prestige-mini-btn ${pendingSeeds >= 10 ? 'ready-pulse' : ''}`}
