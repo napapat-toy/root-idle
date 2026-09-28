@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { PactDef } from '@/types/game';
-import { ModalButton } from '@/components/common/ModalButton';
 
 interface PactCardProps {
   def: PactDef;
@@ -21,6 +20,17 @@ export const PactCard: React.FC<PactCardProps> = React.memo(({
 }) => {
   return (
     <div
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      className={`pact-card ${isActive ? 'active' : ''} ${disabled ? 'disabled' : ''}`}
+      onClick={!disabled ? onToggle : undefined}
+      onKeyDown={(e) => {
+        if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          onToggle();
+        }
+      }}
+      title={disabled ? (isEn ? 'Cannot toggle pacts during Trials' : 'ไม่สามารถปรับพันธสัญญาได้ระหว่างการทดสอบ') : (isEn ? (isActive ? 'Click to deactivate' : 'Click to activate') : (isActive ? 'คลิกเพื่อปิด' : 'คลิกเพื่อเปิดใช้งาน'))}
       style={{
         background: isActive
           ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(168, 85, 247, 0.08))'
@@ -33,7 +43,7 @@ export const PactCard: React.FC<PactCardProps> = React.memo(({
         display: 'flex',
         flexDirection: 'column',
         gap: '8px',
-        transition: 'all 0.2s ease',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.6 : 1,
       }}
     >
@@ -50,17 +60,36 @@ export const PactCard: React.FC<PactCardProps> = React.memo(({
           </div>
         </div>
 
-        <ModalButton
-          variant={isActive ? 'gold' : 'secondary'}
-          size="sm"
-          onClick={onToggle}
-          disabled={disabled}
-          style={{ minWidth: '95px' }}
+        {/* Status Indicator: Green Checkmark when Active, Muted Gray Dot when Inactive */}
+        <div
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            transition: 'all 0.2s ease',
+            background: isActive ? 'rgba(74, 222, 128, 0.16)' : 'rgba(255, 255, 255, 0.04)',
+            border: isActive ? '1.5px solid #4ade80' : '1.5px solid rgba(255, 255, 255, 0.18)',
+            boxShadow: isActive ? '0 0 10px rgba(74, 222, 128, 0.35)' : 'none',
+          }}
         >
-          {isActive
-            ? (isEn ? '✓ Active' : '✓ เปิดใช้งาน')
-            : (isEn ? 'Inactive' : 'ปิด')}
-        </ModalButton>
+          {isActive ? (
+            <span style={{ fontSize: '16px', fontWeight: 900, color: '#4ade80', lineHeight: 1 }}>✓</span>
+          ) : (
+            <span
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.28)',
+                display: 'inline-block',
+              }}
+            />
+          )}
+        </div>
       </div>
 
       {/* Handicap & Reward Box */}

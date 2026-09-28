@@ -283,8 +283,8 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                           ? `Lv. ${fmtInt(curLvl)} / ${fmtInt(EVENT_BONUS_MAX_LEVEL)} (+${bonusPct}%)`
                           : `เลเวล ${fmtInt(curLvl)} / ${fmtInt(EVENT_BONUS_MAX_LEVEL)} (+${bonusPct}%)`)}
                     desc={isEn
-                      ? `Increases reward gains from floating events by +0.1% (Currently +${bonusPct}%)`
-                      : `เพิ่มผลตอบแทนของกล่องสมบัติ/บัฟ/โชคดี ที่ได้จากการคลิกอีเว้นอีก 0.1% (ตอนนี้ +${bonusPct}%)`}
+                      ? `Increases reward gains from treasure boxes and surge buffs by +0.1% (Currently +${bonusPct}%, excludes lucky clover)`
+                      : `เพิ่มผลตอบแทนของกล่องสมบัติและบัฟเรทอีก +0.1% (ตอนนี้ +${bonusPct}%, ไม่รวมโชคดี)`}
                     costFn={eventBonusCost}
                     currentLevel={curLvl}
                     maxLevel={EVENT_BONUS_MAX_LEVEL}

@@ -122,7 +122,9 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       const isEn = cur.lang === 'en';
       const inTrial = !!cur.transcendence?.activeTrial && cur.transcendence.activeTrial !== 'none';
       const biomeLuckyMult = (!inTrial && cur.activeBiome === 'crystal_caverns') ? 1.35 : 1.0;
-      const mult = (1 + (777 - 1) * bonusMult) * luckyMagnitudeExtra(cur) * gaiaTouchBonusMult(cur) * biomeLuckyMult;
+      const baseLucky = 777;
+      const rawMult = baseLucky * luckyMagnitudeExtra(cur) * gaiaTouchBonusMult(cur) * biomeLuckyMult;
+      const mult = Math.min(77000, rawMult);
       const seconds = luckyDurationSeconds(cur) * trialDurationMult;
       setActiveLuckyBuff({ multiplier: mult, expiresAt: Date.now() + seconds * 1000 });
       setState(prev => ({
@@ -208,7 +210,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     } else {
       const isEn = cur.lang === 'en';
       const baseMult = 2 + Math.random() * 2;
-      const mult = 1 + (baseMult - 1) * bonusMult;
+      const mult = Math.min(77000, 1 + (baseMult - 1) * bonusMult);
       const seconds = (20 + Math.random() * 40) * durationMult;
       setActiveBuff({ multiplier: mult, expiresAt: Date.now() + seconds * 1000 });
       setState(prev => ({
