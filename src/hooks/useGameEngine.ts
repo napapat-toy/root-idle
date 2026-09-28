@@ -500,8 +500,8 @@ export function useGameEngine() {
           ...prev,
           nutrients: prev.nutrients + gain,
           runEarned: prev.runEarned + gain,
-          totalPlayTimeSeconds: prev.totalPlayTimeSeconds + effectiveDt,
-          runPlayTimeSeconds: prev.runPlayTimeSeconds + effectiveDt,
+          totalPlayTimeSeconds: prev.totalPlayTimeSeconds + dt,
+          runPlayTimeSeconds: prev.runPlayTimeSeconds + dt,
           stats: {
             ...prev.stats,
             totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
@@ -518,9 +518,11 @@ export function useGameEngine() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         const nowWall = Date.now();
-        const gapSeconds = (nowWall - lastWallClock) / 1000;
-        if (gapSeconds > 0.5) {
+        const rawGap = (nowWall - lastWallClock) / 1000;
+        if (rawGap > 0.5) {
           const cur = stateRef.current;
+          const maxOfflineCap = currentOfflineCapSeconds(cur);
+          const gapSeconds = Math.min(rawGap, maxOfflineCap);
           const speedMult = (cur.transcendence?.hyperdriveUnlocked && cur.transcendence?.hyperdriveEnabled) ? 2.0 : 1.0;
           const effectiveGap = gapSeconds * speedMult;
           const rate = totalRate();
@@ -529,8 +531,8 @@ export function useGameEngine() {
             ...prev,
             nutrients: prev.nutrients + gain,
             runEarned: prev.runEarned + gain,
-            totalPlayTimeSeconds: prev.totalPlayTimeSeconds + effectiveGap,
-            runPlayTimeSeconds: prev.runPlayTimeSeconds + effectiveGap,
+            totalPlayTimeSeconds: prev.totalPlayTimeSeconds + gapSeconds,
+            runPlayTimeSeconds: prev.runPlayTimeSeconds + gapSeconds,
             stats: {
               ...prev.stats,
               totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,

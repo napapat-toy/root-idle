@@ -50,7 +50,7 @@ export function starterCultureCost(stateOrLevel: GameState | number): number {
 
 export function goldenSeedCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.goldenLevel || 0);
-  return Math.floor(250 * Math.pow(lvl + 1, 1.40));
+  return Math.floor(5 * Math.pow(lvl + 1, 1.14));
 }
 
 export function goldenSeedMaxed(state: GameState): boolean {
@@ -59,7 +59,7 @@ export function goldenSeedMaxed(state: GameState): boolean {
 
 export function passiveRateCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.passiveRateLevel || 0);
-  return Math.floor(50 * Math.pow(lvl + 1, 1.22));
+  return Math.floor(3.5 * Math.pow(lvl + 1, 1.12));
 }
 
 export function passiveRateMaxed(state: GameState): boolean {
@@ -80,7 +80,7 @@ export function currentOfflineCapSeconds(state: GameState): number {
 
 export function eventBonusCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.eventBonusLevel || 0);
-  return Math.floor(150 * Math.pow(lvl + 1, 1.35));
+  return Math.floor(8 * Math.pow(lvl + 1, 1.10));
 }
 
 export function eventBonusMaxed(state: GameState): boolean {
