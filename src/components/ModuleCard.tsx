@@ -109,7 +109,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = React.memo(({
           </div>
         )}
         <div className="mh-row">
-          <span>{isEn ? 'Root Upgrade' : 'อัพเกรดราก'}</span>
+          <span>{isEn ? 'Root Upgrade' : 'อัปเกรดราก'}</span>
           <b className="mh-ru">
             Lv.{ruLevel} ×{ruMult.toFixed(2)}
           </b>

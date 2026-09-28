@@ -237,15 +237,18 @@ body.modal-open {
   filter: brightness(1.08);
 }
 
-.modal-btn-secondary {
-  background: var(--bg-panel-2);
+.modal-btn-secondary,
+.offline-modal button.modal-btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
   color: var(--root-cream-dim);
   border: 1px solid var(--card-border);
 }
 
-.modal-btn-secondary:hover:not(:disabled) {
+.modal-btn-secondary:hover:not(:disabled),
+.offline-modal button.modal-btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
   color: var(--root-cream);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .modal-btn-gold {

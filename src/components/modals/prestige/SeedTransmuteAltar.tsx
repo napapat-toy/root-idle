@@ -55,7 +55,7 @@ export const SeedTransmuteAltar: React.FC<SeedTransmuteAltarProps> = React.memo(
       <div className="p-desc" style={{ fontSize: '11px', color: 'var(--root-cream-dim)', margin: '4px 0 10px' }}>
         {isEn
           ? `Condense 10,000 Gaia Essences (10k 🌍) or 50 Billion Seeds (50B 🌰) into rare Astral Petals for boutique skins.`
-          : `หลอมรวม 10,000 ละอองชีวิต (10k 🌍) หรือ 50,000,000,000 เมล็ด (50B 🌰) เป็นเกสรดวงดาว 1 ดอก เพื่อแลกสกินชั้นเลิศในห้องแต่งตัว`}
+          : `หลอมรวม 10,000 ละอองชีวิต (10k 🌍) หรือ 50,000,000,000 เมล็ด (50B 🌰) เป็นเกสรดวงดาว 1 ดอก เพื่อแลกสกินชั้นเลิศในเมนูสกิน & รูปลักษณ์`}
       </div>
 
       {/* Option 1: Transmute with Gaia Essences (10,000 🌍) */}

@@ -67,7 +67,7 @@ export const BIOME_DEFS: BiomeDef[] = [
     bgGradient: 'radial-gradient(ellipse at 50% 30%, #201328 0%, #150c1b 60%, #09040d 100%)',
     particleType: 'runes',
     particleColor: 'rgba(232, 121, 249, 0.5)',
-    ambientBonusDesc: '+20% เมล็ดพันธุ์นิรันดร์เมื่อหว่านใหม่ (Prestige)',
+    ambientBonusDesc: '+20% เมล็ดนิรันดร์เมื่อหว่านใหม่ (Prestige)',
     enAmbientBonusDesc: '+20% Eternal Seeds upon Re-sow (Prestige)',
     relicRequiredCount: 8,
   },

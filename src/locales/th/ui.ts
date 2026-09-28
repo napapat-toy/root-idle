@@ -3,7 +3,7 @@ export const thUI = {
     nutrientsLabel: 'สารอาหาร',
     perSecond: '/วิ',
     eternalSeeds: 'เมล็ดนิรันดร์',
-    rateBonus: 'โบนัสเรต',
+    rateBonus: 'โบนัสเรท',
     
     // Top Actions
     prestigeBtn: 'Prestige',
@@ -11,7 +11,7 @@ export const thUI = {
     statsTooltip: 'สถิติ',
     achievementsTooltip: 'เหรียญความสำเร็จ',
     skinsTooltip: 'สกินปัจจุบัน: {name}',
-    wardrobeTooltip: 'ห้องแต่งตัว',
+    wardrobeTooltip: 'สกิน & รูปลักษณ์',
     relicsTooltip: 'โบราณวัตถุ & ชีวนิเวศ',
     optionsTooltip: 'การตั้งค่า',
     langToggleTooltip: 'เปลี่ยนภาษา',
@@ -23,7 +23,7 @@ export const thUI = {
     autoReset: 'Reset',
     
     // Wardrobe & Cosmetics Modal
-    wardrobeTitle: 'ห้องแต่งตัว & การตกแต่ง (Wardrobe)',
+    wardrobeTitle: 'สกิน & รูปลักษณ์ (Skins & Cosmetics)',
     tabRootSkins: '🌳 สกินรากไม้',
     tabUIThemes: '🖼️ ธีมหน้าต่าง UI',
     equipBtn: 'สวมใส่',
@@ -38,12 +38,12 @@ export const thUI = {
     modulesTitle: 'รากเสริม',
     level: 'Lv.',
     owned: 'มีอยู่',
-    rate: 'เรต',
+    rate: 'เรท',
     milestoneTag: 'หลักชัย!',
     requires: 'ต้องการ {name} {req} ต้น (ตอนนี้มี {cur})',
     boostAll: 'เพิ่มผลผลิต {name} ทั้งหมด ×{mult}',
     echoTitle: 'สะท้อนราก: {name}',
-    echoDesc: 'หล่อเลี้ยงและสะท้อนพลัง เพื่อรับโบนัสเรตรวมของทุกราก +1% ถาวร',
+    echoDesc: 'หล่อเลี้ยงและสะท้อนพลัง เพื่อรับโบนัสเรทรวมของทุกราก +1% ถาวร',
     echoActive: 'สะท้อนราก ×{count} (โบนัสรวม +{pct}%)',
     echoUnlockHint: 'ต้องมี {name} 20 ต้น & เลเวล 3 ขึ้นไปเพื่อปลดล็อก',
     
@@ -78,7 +78,7 @@ export const thUI = {
     
     // Prestige Modal
     prestigeTitle: 'การหว่านใหม่ (Prestige)',
-    prestigeDesc: 'รีเซ็ตของทุกชนิด สารอาหาร อัพเกรด และปุ๋ยทั้งหมด — แต่ Echo และของร้าน Prestige คงอยู่ถาวร',
+    prestigeDesc: 'รีเซ็ตของทุกชนิด สารอาหาร อัปเกรด และปุ๋ยทั้งหมด — แต่ Echo และของร้าน Prestige คงอยู่ถาวร',
     gainedSeeds: '+{amount} เมล็ดนิรันดร์',
     currentSeeds: 'ตอนนี้มี {amount} เมล็ดนิรันดร์',
     confirmPrestigeBtn: 'ยืนยันหว่านใหม่',
@@ -96,7 +96,7 @@ export const thUI = {
     // Achievements Modal
     achievementsTitle: 'เหรียญความสำเร็จ (Achievements)',
     allCategories: 'ทั้งหมด',
-    unlockedProgress: 'ปลดล็อกแล้ว {unlocked} / {total} อัน (โบนัสเรตรวม +{pct}%)',
+    unlockedProgress: 'ปลดล็อกแล้ว {unlocked} / {total} อัน (โบนัสเรทรวม +{pct}%)',
     achUnlocked: 'สำเร็จ',
     achLocked: 'ยังไม่สำเร็จ',
     
@@ -190,14 +190,14 @@ export const thUI = {
     goToGaiaBtn: '🌍 ไปหน้าไกอา',
     trialRulesTitle: 'กติกาการทดลองแห่งผืนพิภพและการรีเซ็ต',
     trialResetLabel: 'สิ่งที่จะรีเซ็ต: ',
-    trialResetDesc: 'จะทำการหว่านเมล็ดใหม่ (Prestige) รอบปัจจุบัน: รากไม้จะเริ่มใหม่เพื่อเข้าสู่การทดสอบ และสารอาหารทั้งหมดจะถูกแปลงเป็น +{amount} เมล็ดพันธุ์นิรันดร์ 🌰 เข้ากระเป๋าให้ทันที',
+    trialResetDesc: 'จะทำการหว่านเมล็ดใหม่ (Prestige) รอบปัจจุบัน: รากไม้จะเริ่มใหม่เพื่อเข้าสู่การทดสอบ และสารอาหารทั้งหมดจะถูกแปลงเป็น +{amount} เมล็ดนิรันดร์ 🌰 เข้ากระเป๋าให้ทันที',
     trialKeepLabel: 'สิ่งที่ไม่หายและสิ่งที่ถูกระงับ: ',
-    trialKeepDesc: 'เมล็ดพันธุ์ (🌰), ละอองชีวิต (🌍) และของอัปเกรดในกระเป๋าอยู่ครบ 100%! แต่ในระหว่างทดสอบ โบนัสเรท Prestige, รากเริ่มต้น, ความทรงจำผืนดิน, พรไกอา, โบราณวัตถุ และไบโอม จะถูกระงับเป็น 0% เพื่อความท้าทายยุติธรรม โดยระบบบอทออโต้ยังคงทำงานปกติ (ยกเว้นในรอยแยกสุญญะ)',
+    trialKeepDesc: 'เมล็ดนิรันดร์ (🌰), ละอองชีวิต (🌍) และของอัปเกรดในกระเป๋าอยู่ครบ 100%! แต่ในระหว่างทดสอบ โบนัสเรท Prestige, รากเริ่มต้น, ความทรงจำผืนดิน, พรไกอา, โบราณวัตถุ และไบโอม จะถูกระงับเป็น 0% เพื่อความท้าทายยุติธรรม โดยระบบอัตโนมัติยังคงทำงานปกติ (ยกเว้นในรอยแยกสุญญะ)',
     trialGoalLabel: 'เป้าหมายและการฟาร์มซ้ำ: ',
     trialGoalDesc: 'เป้าหมายทุกด่านคือ 25 ต้นไม้โลก (🌳) เมื่อพิชิตสำเร็จจะได้รางวัลถาวร และสามารถเล่นซ้ำเพื่อฟาร์มละอองชีวิต (🌍) ได้เรื่อยๆ ไม่จำกัด!',
     confirmBeginTrialTitle: 'ยืนยันการเริ่มการทดสอบ',
     confirmBeginTrialBtn: 'เริ่มการทดสอบ',
-    confirmBeginTrialMsg: 'การเข้าสู่การทดสอบ "{name}" จะทำการรีเซ็ตแบบหว่านเมล็ดใหม่ (Prestige Reset) รอบปัจจุบันทันที\n\n✨ สารอาหารสะสมในรอบนี้จะถูกแปลงเป็น +{seeds} เมล็ดพันธุ์นิรันดร์ 🌰 เข้ากระเป๋าให้ทันที!\n🛡️ เมล็ดพันธุ์เดิมในกระเป๋า ({walletSeeds} 🌰), ละอองชีวิต ({essences} 🌍) และโบราณวัตถุจะอยู่ครบ 100% ไม่สูญหาย!\n🌱 มีเพียงรากไม้ในสวนที่จะเริ่มใหม่เพื่อเข้าสู่เงื่อนไขการทดสอบ',
+    confirmBeginTrialMsg: 'การเข้าสู่การทดสอบ "{name}" จะทำการรีเซ็ตแบบหว่านเมล็ดใหม่ (Prestige Reset) รอบปัจจุบันทันที\n\n✨ สารอาหารสะสมในรอบนี้จะถูกแปลงเป็น +{seeds} เมล็ดนิรันดร์ 🌰 เข้ากระเป๋าให้ทันที!\n🛡️ เมล็ดนิรันดร์เดิมในกระเป๋า ({walletSeeds} 🌰), ละอองชีวิต ({essences} 🌍) และโบราณวัตถุจะอยู่ครบ 100% ไม่สูญหาย!\n🌱 มีเพียงรากไม้ในสวนที่จะเริ่มใหม่เพื่อเข้าสู่เงื่อนไขการทดสอบ',
 
     // Live Preview Banner
     previewSkinLabel: 'กำลังทดลองสกินราก: {name}',
@@ -231,7 +231,7 @@ export const thUI = {
     hyperdriveTooltip: 'ไฮเปอร์ดรฟ์ (เร่งความเร็ว 2x)',
     hyperdriveActiveTooltip: '⚡ กำลังเร่งความเร็ว 2 เท่า (คลิกเพื่อสลับเป็น 1x)',
     hyperdriveInactiveTooltip: '⏸️ ความเร็วปกติ 1x (คลิกเพื่อเร่งความเร็ว 2x)',
-    autoHubSuppressedTooltip: '🤖 ศูนย์ควบคุมบอท (ถูกปิดกั้นชั่วคราวโดยรอยแยกสูญญะ)',
+    autoHubSuppressedTooltip: '🤖 ศูนย์ควบคุมระบบอัตโนมัติ (ถูกปิดกั้นชั่วคราวโดยรอยแยกสุญญะ)',
     autoHubTooltip: 'ระบบอัตโนมัติ',
     quickUpgradesTitle: 'อัปเกรดด่วน',
     viewAllWithCount: 'ดูทั้งหมด ({count}) →',

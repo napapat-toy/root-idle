@@ -67,11 +67,11 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
               <span style={{ fontSize: '22px', flexShrink: 0 }}>🌌</span>
               <div>
                 <strong style={{ color: '#ffffff' }}>
-                  {isEn ? 'Void Anomaly Active: ' : 'กำลังอยู่ในการทดลอง "รอยแยกสูญญะ": '}
+                  {isEn ? 'Void Anomaly Active: ' : 'กำลังอยู่ในการทดลอง "รอยแยกสุญญะ": '}
                 </strong>
                 {isEn
-                  ? 'All automation bots are temporarily suppressed by dimensional interference until you grow 25 World Trees.'
-                  : 'ระบบบอททั้งหมดถูกสนามพลังมิติสุญญะปิดกั้นชั่วคราว (ไม่ทำงาน) จนกว่าจะปลูกรากต้นไม้โลกครบ 25 ต้นเพื่อพิชิตการทดลอง!'}
+                  ? 'All automation modules are temporarily suppressed by dimensional interference until you grow 25 World Trees.'
+                  : 'ระบบอัตโนมัติทั้งหมดถูกสนามพลังมิติสุญญะปิดกั้นชั่วคราว (ไม่ทำงาน) จนกว่าจะปลูกรากต้นไม้โลกครบ 25 ต้นเพื่อพิชิตการทดลอง!'}
               </div>
             </div>
           )}
@@ -107,8 +107,8 @@ export const AutomationModal: React.FC<AutomationModalProps> = ({
               <div className="p-desc" style={{ margin: '8px 0 12px', fontSize: '12px', lineHeight: '1.5' }}>
                 {isVoidTrial && state.prestige.autoRootEnabled
                   ? (isEn
-                    ? '⚠️ Dimensional interference is currently suppressing this bot. It will automatically reactivate once the trial is conquered.'
-                    : '⚠️ สนามพลังมิติสุญญะกำลังรบกวน บอทถูกระงับชั่วคราวและจะกลับมาทำงานอัตโนมัติเมื่อพิชิตด่านสำเร็จ')
+                    ? '⚠️ Dimensional interference is currently suppressing automation. It will automatically reactivate once the trial is conquered.'
+                    : '⚠️ สนามพลังมิติสุญญะกำลังรบกวน ระบบอัตโนมัติถูกระงับชั่วคราวและจะกลับมาทำงานโดยอัตโนมัติเมื่อพิชิตด่านสำเร็จ')
                   : state.prestige.autoRootEnabled
                   ? (isEn
                     ? 'Autonomous master active: Purchasing high-ROI roots (10-25 packs), upgrades, echoes, species networks & claiming floating events.'

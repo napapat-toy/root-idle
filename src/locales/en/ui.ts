@@ -192,7 +192,7 @@ export const enUI = {
     trialResetLabel: 'What gets reset: ',
     trialResetDesc: 'Triggers a Prestige Reset for current garden: roots reset to 0 to begin the challenge, and current nutrients are converted into +{amount} Eternal Seeds 🌰 immediately.',
     trialKeepLabel: 'What is kept & what is suppressed: ',
-    trialKeepDesc: 'All wallet Seeds (🌰), Gaia Essences (🌍), and purchased upgrades remain 100% safe! However, during trials, external bonuses (Prestige rate, starter roots, soil memory, Gaia perks, relics, and biomes) are suppressed to 0% for fair challenge. Automation bots remain active (except in Void Anomaly).',
+    trialKeepDesc: 'All wallet Seeds (🌰), Gaia Essences (🌍), and purchased upgrades remain 100% safe! However, during trials, external bonuses (Prestige rate, starter roots, soil memory, Gaia perks, relics, and biomes) are suppressed to 0% for fair challenge. Automation modules remain active (except in Void Anomaly).',
     trialGoalLabel: 'Goal & Repeatable Farming: ',
     trialGoalDesc: 'Goal for all trials is 25 Yggdrasil Roots (🌳). Conquering clears grant permanent buffs & skins, and can be re-challenged infinitely to harvest bulk Gaia Essences (🌍)!',
     confirmBeginTrialTitle: 'Confirm Begin Trial',

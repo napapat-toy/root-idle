@@ -87,15 +87,15 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Cosmic Yggdrasil Domain', desc: 'Possess at least 100 Yggdrasil Roots' },
   },
   upgrade_1: {
-    th: { title: 'อัพเกรดรากขั้นแรก', desc: 'อัพเกรดรากเสริมชนิดใดก็ได้แตะเลเวล 1' },
+    th: { title: 'อัปเกรดรากขั้นแรก', desc: 'อัปเกรดรากเสริมชนิดใดก็ได้แตะเลเวล 1' },
     en: { title: 'First Evolution', desc: 'Upgrade any root module to Level 1' },
   },
   upgrade_5: {
-    th: { title: 'ก้าวกระโดด ×2', desc: 'อัพเกรดรากเสริมแตะเลเวล 5 (รับโบนัส ×2 Milestone)' },
+    th: { title: 'ก้าวกระโดด ×2', desc: 'อัปเกรดรากเสริมแตะเลเวล 5 (รับโบนัส ×2 Milestone)' },
     en: { title: 'Milestone Leap ×2', desc: 'Upgrade any root to Level 5 (Claim ×2 Milestone)' },
   },
   upgrade_10: {
-    th: { title: 'พลังแห่งวิวัฒนาการ', desc: 'อัพเกรดรากเสริมชนิดใดก็ได้แตะเลเวล 10' },
+    th: { title: 'พลังแห่งวิวัฒนาการ', desc: 'อัปเกรดรากเสริมชนิดใดก็ได้แตะเลเวล 10' },
     en: { title: 'Apex Mutation', desc: 'Upgrade any root module to Level 10' },
   },
   echo_1: {
@@ -281,35 +281,35 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Full Automation', desc: 'Unlock Auto-Root, Auto-Event, and Auto-Reset' },
   },
   golden_seed_max: {
-    th: { title: 'เมล็ดทองคำเบ่งบาน', desc: 'อัพเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 5' },
+    th: { title: 'เมล็ดทองคำเบ่งบาน', desc: 'อัปเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 5' },
     en: { title: 'Gilded Blooms', desc: 'Max out Golden Seeds upgrade (Level 5)' },
   },
   lucky_duration_max: {
-    th: { title: 'โชคชะตายืนยาว', desc: 'อัพเกรดระยะเวลาบัฟโชคดีครบ 20 วินาทีเต็ม (สูงสุด)' },
+    th: { title: 'โชคชะตายืนยาว', desc: 'อัปเกรดระยะเวลาบัฟโชคดีครบ 20 วินาทีเต็ม (สูงสุด)' },
     en: { title: 'Enduring Fortune', desc: 'Extend Lucky Buff duration to 20 full seconds (Max)' },
   },
   passive_rate_10: {
-    th: { title: 'การดูดซึมไม่หยุดนิ่ง', desc: 'อัพเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 10' },
+    th: { title: 'การดูดซึมไม่หยุดนิ่ง', desc: 'อัปเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 10' },
     en: { title: 'Continuous Absorption', desc: 'Upgrade Permanent Passive Rate to Level 10 in Prestige Shop' },
   },
   passive_rate_25: {
-    th: { title: 'ชีพจรแห่งผืนดิน', desc: 'อัพเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 25' },
+    th: { title: 'ชีพจรแห่งผืนดิน', desc: 'อัปเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 25' },
     en: { title: 'Pulse of the Earth', desc: 'Upgrade Permanent Passive Rate to Level 25 in Prestige Shop' },
   },
   passive_rate_50: {
-    th: { title: 'กระแสรากต่อเนื่อง', desc: 'อัพเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 50' },
+    th: { title: 'กระแสรากต่อเนื่อง', desc: 'อัปเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 50' },
     en: { title: 'Enduring Earthcurrent', desc: 'Upgrade Permanent Passive Rate to Level 50 in Prestige Shop' },
   },
   starter_culture_10: {
-    th: { title: 'กลิ่นอายหัวเชื้อ', desc: 'อัพเกรดหัวเชื้อเริ่มต้น (Starter Culture) แตะเลเวล 10' },
+    th: { title: 'กลิ่นอายหัวเชื้อ', desc: 'อัปเกรดหัวเชื้อเริ่มต้น (Starter Culture) แตะเลเวล 10' },
     en: { title: 'Culture Essence', desc: 'Upgrade Starter Culture to Level 10' },
   },
   starter_culture_25: {
-    th: { title: 'รากฝอยพร้อมสรรพ', desc: 'อัพเกรดหัวเชื้อเริ่มต้น (Starter Culture) แตะเลเวล 25' },
+    th: { title: 'รากฝอยพร้อมสรรพ', desc: 'อัปเกรดหัวเชื้อเริ่มต้น (Starter Culture) แตะเลเวล 25' },
     en: { title: 'Sprouting Culture', desc: 'Upgrade Starter Culture to Level 25' },
   },
   golden_seed_25: {
-    th: { title: 'ประกายทองคำเบ่งบาน', desc: 'อัพเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 25' },
+    th: { title: 'ประกายทองคำเบ่งบาน', desc: 'อัปเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 25' },
     en: { title: 'Golden Abundance', desc: 'Upgrade Golden Seeds to Level 25' },
   },
 
@@ -342,19 +342,19 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Jackpot Resonance', desc: 'Open a gift 🎁 while Lucky Clover buff is active' },
   },
   event_bonus_25: {
-    th: { title: 'ผลตอบแทนงอกเงย', desc: 'อัพเกรดโบนัสอีเวนต์ (Event Value Booster) ในร้านหว่านใหม่แตะเลเวล 25' },
+    th: { title: 'ผลตอบแทนงอกเงย', desc: 'อัปเกรดโบนัสอีเวนต์ (Event Value Booster) ในร้านหว่านใหม่แตะเลเวล 25' },
     en: { title: 'Flourishing Bounty', desc: 'Upgrade Event Value Booster to Level 25' },
   },
   event_duration_max: {
-    th: { title: 'เวลาแห่งบัฟ', desc: 'อัพเกรดขยายระยะเวลาบัฟอีเวนต์แตะเลเวล 4 (สูงสุด)' },
+    th: { title: 'เวลาแห่งบัฟ', desc: 'อัปเกรดขยายระยะเวลาบัฟอีเวนต์แตะเลเวล 4 (สูงสุด)' },
     en: { title: 'Enduring Surge', desc: 'Max out Extended Surge Duration (Level 4)' },
   },
   lucky_chance_max: {
-    th: { title: 'ทุ่งโคลเวอร์เบ่งบาน', desc: 'อัพเกรดโอกาสพบเจอโชคดีแตะเลเวล 8 (สูงสุด 1.0%)' },
+    th: { title: 'ทุ่งโคลเวอร์เบ่งบาน', desc: 'อัปเกรดโอกาสพบเจอโชคดีแตะเลเวล 8 (สูงสุด 1.0%)' },
     en: { title: 'Blooming Clovers', desc: 'Max out Lucky Clover Frequency (Level 8)' },
   },
   lucky_magnitude_max: {
-    th: { title: 'โชคดีสิบเท่าทวีคูณ', desc: 'อัพเกรดโชคดีทวีคูณแตะเลเวล 9 (สูงสุด ทบตัวคูณโชคดี ×10)' },
+    th: { title: 'โชคดีสิบเท่าทวีคูณ', desc: 'อัปเกรดโชคดีทวีคูณแตะเลเวล 9 (สูงสุด ทบตัวคูณโชคดี ×10)' },
     en: { title: 'Decuple Fortune', desc: 'Max out Lucky Magnitude Multiplier to Level 9 (×10 multiplier)' },
   },
 
@@ -363,8 +363,8 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Garden Stylist', desc: 'Equip any custom root skin' },
   },
   skins_all_unlocked: {
-    th: { title: 'ตู้เสื้อผ้ารากไม้', desc: 'ปลดล็อกสกินรากไม้ในห้องแต่งตัวสะสมครบ 4 รูปแบบ' },
-    en: { title: 'Botanical Wardrobe', desc: 'Unlock any 4 root skins in the Wardrobe' },
+    th: { title: 'ตู้เสื้อผ้ารากไม้', desc: 'ปลดล็อกสกินรากไม้สะสมครบ 4 รูปแบบ' },
+    en: { title: 'Botanical Wardrobe', desc: 'Unlock any 4 root skins' },
   },
   theme_equip_custom: {
     th: { title: 'จิตรกรแห่งผืนดิน', desc: 'สวมใส่ธีมหน้าต่าง UI พิเศษรูปแบบใดก็ได้ที่ไม่ใช่คลาสสิก' },
@@ -375,12 +375,12 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Void Sovereign Domain', desc: 'Unlock and equip the [🌌 Void Sovereign] UI Theme from trials' },
   },
   skins_collector_8: {
-    th: { title: 'ผู้คลั่งไคล้แฟชั่นรากไม้', desc: 'ปลดล็อกสกินรากไม้ในห้องแต่งตัวสะสมครบ 8 รูปแบบ' },
-    en: { title: 'Fashion Enthusiast', desc: 'Unlock 8 root skins in the Wardrobe' },
+    th: { title: 'ผู้คลั่งไคล้แฟชั่นรากไม้', desc: 'ปลดล็อกสกินรากไม้สะสมครบ 8 รูปแบบ' },
+    en: { title: 'Fashion Enthusiast', desc: 'Unlock 8 root skins' },
   },
   skins_collector_12: {
-    th: { title: 'รันเวย์ใต้พิภพ', desc: 'ปลดล็อกสกินรากไม้ในห้องแต่งตัวสะสมครบ 12 รูปแบบ' },
-    en: { title: 'Subterranean Runway', desc: 'Unlock 12 root skins in the Wardrobe' },
+    th: { title: 'รันเวย์ใต้พิภพ', desc: 'ปลดล็อกสกินรากไม้สะสมครบ 12 รูปแบบ' },
+    en: { title: 'Subterranean Runway', desc: 'Unlock 12 root skins' },
   },
   skin_nebula_unlocked: {
     th: { title: 'รากไม้แห่งดวงดาว', desc: 'ครอบครองสกินระดับสูง [🌌 มิติเนบิวลา] หรือ [🪙 มรดกทองคำ]' },
@@ -391,12 +391,12 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Conqueror\'s Regalia', desc: 'Unlock at least 1 subterranean trial skin' },
   },
   themes_collector_5: {
-    th: { title: 'สถาปนิกส่วนหน้า', desc: 'ปลดล็อกธีมหน้าต่าง UI ในห้องแต่งตัวสะสมครบ 5 ธีม' },
-    en: { title: 'Visual Architect', desc: 'Unlock 5 UI color themes in the Wardrobe' },
+    th: { title: 'สถาปนิกส่วนหน้า', desc: 'ปลดล็อกธีมหน้าต่าง UI สะสมครบ 5 ธีม' },
+    en: { title: 'Visual Architect', desc: 'Unlock 5 UI color themes' },
   },
   themes_collector_10: {
-    th: { title: 'พหุภพแห่งผืนดิน', desc: 'ปลดล็อกธีมหน้าต่าง UI ในห้องแต่งตัวสะสมครบ 10 ธีม' },
-    en: { title: 'Multiverse of Soils', desc: 'Unlock 10 UI color themes in the Wardrobe' },
+    th: { title: 'พหุภพแห่งผืนดิน', desc: 'ปลดล็อกธีมหน้าต่าง UI สะสมครบ 10 ธีม' },
+    en: { title: 'Multiverse of Soils', desc: 'Unlock 10 UI color themes' },
   },
   skin_theme_match: {
     th: { title: 'คู่สีกลมกลืนแห่งธรรมชาติ', desc: 'สวมใส่สกินรากไม้และธีมหน้าต่าง UI ในเซ็ตธีมเดียวกัน (เช่น ซากุระคู่ซากุระ)' },
@@ -488,11 +488,11 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Ocean of the World Soul', desc: 'Accumulate at least 2,500 Gaia Essences (🌍)' },
   },
   transcend_vigor_max: {
-    th: { title: 'กายาปฐมกาลไร้เทียมทาน', desc: 'อัพเกรดแกนพลังปฐมกาล (Primordial Vigor) แตะเลเวล 20 (สูงสุด)' },
+    th: { title: 'กายาปฐมกาลไร้เทียมทาน', desc: 'อัปเกรดแกนพลังปฐมกาล (Primordial Vigor) แตะเลเวล 20 (สูงสุด)' },
     en: { title: 'Apex Primordial Vigor', desc: 'Upgrade Primordial Vigor to max Level 20' },
   },
   transcend_soil_memory_max: {
-    th: { title: 'ความทรงจำผืนดิน 100%', desc: 'อัพเกรดความทรงจำของผืนดิน (Soil Memory) แตะเลเวล 10 (คง Echoes ไว้ 100%)' },
+    th: { title: 'ความทรงจำผืนดิน 100%', desc: 'อัปเกรดความทรงจำของผืนดิน (Soil Memory) แตะเลเวล 10 (คง Echoes ไว้ 100%)' },
     en: { title: 'Total Soil Memory', desc: 'Upgrade Soil Memory to max Level 10 (retains 100% Echoes)' },
   },
   trial_first_clear: {
@@ -508,7 +508,7 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Basalt Shatterer', desc: 'Conquer the [🌋 Basalt Strata] trial (Grow 25 World Trees)' },
   },
   trial_void_anomaly: {
-    th: { title: 'ผู้พิชิตมิติสูญญะ', desc: 'พิชิตการทดลอง [🌌 รอยแยกสูญญะ] สำเร็จ โดยไม่พึ่งพาระบบบอทอัตโนมัติ' },
+    th: { title: 'ผู้พิชิตมิติสุญญะ', desc: 'พิชิตการทดลอง [🌌 รอยแยกสุญญะ] สำเร็จ โดยไม่พึ่งพาระบบอัตโนมัติ' },
     en: { title: 'Void Defier', desc: 'Conquer the [🌌 Void Anomaly] trial with all automation suppressed' },
   },
   trial_null_cycle: {
@@ -528,27 +528,27 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Conqueror of the Depths', desc: 'Conquer all 6 Subterranean Trials' },
   },
   gaia_touch_max: {
-    th: { title: 'หัตถ์แห่งเทพพิภพ', desc: 'อัพเกรดสัมผัสแห่งไกอา (Gaia Touch) แตะเลเวล 10 (สูงสุด)' },
+    th: { title: 'หัตถ์แห่งเทพพิภพ', desc: 'อัปเกรดสัมผัสแห่งไกอา (Gaia Touch) แตะเลเวล 10 (สูงสุด)' },
     en: { title: 'Touch of the Earth Goddess', desc: 'Upgrade Gaia Touch to max Level 10' },
   },
   echo_resonance_max: {
-    th: { title: 'กังวานคลื่นไร้ขีดจำกัด', desc: 'อัพเกรดความกังวานแห่งเสียงสะท้อน (Echo Resonance) แตะเลเวล 5 (สูงสุด)' },
+    th: { title: 'กังวานคลื่นไร้ขีดจำกัด', desc: 'อัปเกรดความกังวานแห่งเสียงสะท้อน (Echo Resonance) แตะเลเวล 5 (สูงสุด)' },
     en: { title: 'Limitless Resonance', desc: 'Upgrade Echo Resonance to max Level 5' },
   },
   primordial_seedling_max: {
-    th: { title: 'พงไพรจากเศษดิน', desc: 'อัพเกรดต้นกล้าปฐมกาล (Primordial Seedling) แตะเลเวล 5 (สูงสุด)' },
+    th: { title: 'พงไพรจากเศษดิน', desc: 'อัปเกรดต้นกล้าปฐมกาล (Primordial Seedling) แตะเลเวล 5 (สูงสุด)' },
     en: { title: 'Primeval Sprout Master', desc: 'Upgrade Primordial Seedling to max Level 5' },
   },
   gaia_meditation_max: {
-    th: { title: 'สมาธิลึกใต้พิภพ', desc: 'อัพเกรดสมาธิลึก (Deep Meditation) แตะเลเวล 5 (สูงสุด)' },
+    th: { title: 'สมาธิลึกใต้พิภพ', desc: 'อัปเกรดสมาธิลึก (Deep Meditation) แตะเลเวล 5 (สูงสุด)' },
     en: { title: 'Subterranean Nirvana', desc: 'Upgrade Deep Meditation to max Level 5' },
   },
   gaia_blessing_1: {
-    th: { title: 'ก้าวข้ามขีดจำกัดแห่งไกอา', desc: 'อัพเกรดพรแห่งไกอา (Gaia\'s Blessing) แตะเลเวล 1' },
+    th: { title: 'ก้าวข้ามขีดจำกัดแห่งไกอา', desc: 'อัปเกรดพรแห่งไกอา (Gaia\'s Blessing) แตะเลเวล 1' },
     en: { title: 'First Blessing', desc: 'Upgrade Gaia\'s Blessing to Level 1' },
   },
   gaia_blessing_10: {
-    th: { title: 'พรอันเป็นนิรันดร์', desc: 'อัพเกรดพรแห่งไกอาสะสมครบเลเวล 10 (+50% ละอองไกอา)' },
+    th: { title: 'พรอันเป็นนิรันดร์', desc: 'อัปเกรดพรแห่งไกอาสะสมครบเลเวล 10 (+50% ละอองไกอา)' },
     en: { title: 'Eternal Blessing', desc: 'Upgrade Gaia\'s Blessing to Level 10 (+50% Essences)' },
   },
   hyperdrive_unlock: {
@@ -560,7 +560,7 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Aurora Bloom Awakening', desc: 'Unlock Aurora Bloom to manifest Aurora Spores and the Petal Altar' },
   },
   gaia_clairvoyance_5: {
-    th: { title: 'เนตรแห่งไกอา', desc: 'อัพเกรดสายตาแห่งไกอา (Gaia Clairvoyance) แตะเลเวล 5' },
+    th: { title: 'เนตรแห่งไกอา', desc: 'อัปเกรดสายตาแห่งไกอา (Gaia Clairvoyance) แตะเลเวล 5' },
     en: { title: 'Eye of Gaia', desc: 'Upgrade Gaia Clairvoyance to Level 5' },
   },
   astral_petal_1: {

@@ -169,7 +169,6 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                     isUnlocked={isUnlocked}
                     onBuy={handlers[def.id]}
                     activeTagText={isEn ? 'UNLOCKED' : 'ปลดล็อกแล้ว'}
-                    oneTimeText={isEn ? '✨ One-Time Unlock' : '✨ ซื้อครั้งเดียวจบ'}
                   />
                 );
               })}

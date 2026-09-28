@@ -23,7 +23,6 @@ export interface GaiaPerkRowProps {
   customAction?: React.ReactNode;
   isUnlocked?: boolean;
   activeTagText?: string;
-  oneTimeText?: string;
 }
 
 export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
@@ -45,7 +44,6 @@ export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
   customAction,
   isUnlocked,
   activeTagText = 'ACTIVE',
-  oneTimeText,
 }) => {
   const isMaxed = customIsMaxed ?? (level !== undefined && maxLevel !== undefined ? level >= maxLevel : false);
   const canAfford = customCanAfford ?? (cost !== undefined && essences !== undefined ? essences >= cost : true);
@@ -90,22 +88,6 @@ export const GaiaPerkRow: React.FC<GaiaPerkRowProps> = React.memo(({
               }}
             >
               {levelText}
-            </span>
-          ) : !isUnlocked ? (
-            <span
-              style={{
-                fontSize: '11px',
-                fontWeight: 700,
-                color: '#fbbf24',
-                background: 'rgba(251, 191, 36, 0.16)',
-                border: '1px solid rgba(251, 191, 36, 0.45)',
-                boxShadow: '0 0 8px rgba(251, 191, 36, 0.25)',
-                padding: '2px 8px',
-                borderRadius: '999px',
-                flexShrink: 0,
-              }}
-            >
-              {oneTimeText || '✨ ซื้อครั้งเดียวจบ'}
             </span>
           ) : null}
         </div>

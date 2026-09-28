@@ -238,11 +238,11 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                   <span style={{ fontSize: '20px', flexShrink: 0 }}>🌌</span>
                   <div>
                     <strong style={{ color: '#ffffff' }}>
-                      {isEn ? 'Void Anomaly Active: ' : 'กำลังอยู่ในการทดลอง "รอยแยกสูญญะ": '}
+                      {isEn ? 'Void Anomaly Active: ' : 'กำลังอยู่ในการทดลอง "รอยแยกสุญญะ": '}
                     </strong>
                     {isEn
-                      ? 'All automation bots are temporarily suppressed by dimensional disturbance until you grow 25 World Trees.'
-                      : 'ระบบบอททั้งหมดถูกระงับชั่วคราวจากสนามพลังมิติสุญญะ (ไม่ทำงาน) จนกว่าจะปลูกรากต้นไม้โลกครบ 25 ต้น'}
+                      ? 'All automation modules are temporarily suppressed by dimensional disturbance until you grow 25 World Trees.'
+                      : 'ระบบอัตโนมัติทั้งหมดถูกระงับชั่วคราวจากสนามพลังมิติสุญญะ (ไม่ทำงาน) จนกว่าจะปลูกรากต้นไม้โลกครบ 25 ต้น'}
                   </div>
                 </div>
               )}
@@ -251,7 +251,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                 title={isEn ? '♾️ Universal Automation' : '♾️ ออโต้สรรพสิ่ง'}
                 badge={state.prestige.autoRoot
                   ? (isEn ? '✓ Unlocked' : '✓ ปลดล็อกแล้ว')
-                  : (isEn ? '✨ One-Time Unlock' : '✨ ซื้อครั้งเดียวจบ')}
+                  : undefined}
                 desc={state.prestige.autoRoot
                   ? (isEn
                       ? 'Autonomous Engine: Analyzes ROI, bulk buys roots (10-25 packs), upgrades, echoes, species networks & floating events (controlled on main screen).'
@@ -404,7 +404,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
             ? `Re-sowing will reset all nutrients, root modules, and normal upgrades in exchange for +${fmtInt(
                 gained
               )} Eternal Seeds. Proceed?`
-            : `หว่านใหม่จะรีเซ็ตของทุกชนิด สารอาหาร อัพเกรด และปุ๋ยทั้งหมด แลกกับ +${fmtInt(
+            : `หว่านใหม่จะรีเซ็ตของทุกชนิด สารอาหาร อัปเกรด และปุ๋ยทั้งหมด แลกกับ +${fmtInt(
                 gained
               )} เมล็ดนิรันดร์ ยืนยันไหม?`
         }

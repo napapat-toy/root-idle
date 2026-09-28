@@ -63,7 +63,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = React.memo(({
                 {isEn ? 'Progress' : 'ความคืบหน้า'}: <b>{unlockedCount} / {totalCount}</b> ({progressPct}%)
               </span>
               <span className="achievement-bonus-tag">
-                {isEn ? `Current Bonus: +${totalBonus}% Global Rate` : `โบนัสปัจจุบัน: +${totalBonus}% เรตถาวร`}
+                {isEn ? `Current Bonus: +${totalBonus}% Global Rate` : `โบนัสปัจจุบัน: +${totalBonus}% เรทถาวร`}
               </span>
             </div>
             <div className="achievement-progress-bar-bg">

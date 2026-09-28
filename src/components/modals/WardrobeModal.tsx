@@ -255,7 +255,7 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
                 textOverflow: 'ellipsis',
               }}
             >
-              {isEn ? 'Wardrobe & Cosmetics' : 'ห้องแต่งตัว & การตกแต่ง'}
+              {isEn ? 'Wardrobe & Cosmetics' : 'สกิน & รูปลักษณ์ (Skins & Cosmetics)'}
             </span>
           </div>
 

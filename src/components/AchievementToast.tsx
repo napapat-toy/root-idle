@@ -38,7 +38,7 @@ const ToastItem: React.FC<{
       <div className="achievement-toast-icon">{item.icon}</div>
       <div className="achievement-toast-content">
         <div className="achievement-toast-header">
-          🏆 {isEn ? 'Achievement Unlocked! (+1% Global Rate)' : 'ปลดล็อกความสำเร็จ! (+1% เรต)'}
+          🏆 {isEn ? 'Achievement Unlocked! (+1% Global Rate)' : 'ปลดล็อกความสำเร็จ! (+1% เรท)'}
         </div>
         <div className="achievement-toast-title">{localized.title}</div>
         <div className="achievement-toast-desc">{localized.desc}</div>

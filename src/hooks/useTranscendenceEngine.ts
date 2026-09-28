@@ -354,7 +354,7 @@ export function useTranscendenceEngine({
               showFloatingText(
                 250,
                 180,
-                isEn ? '🤖 Automation Bots Reactivated!' : '🤖 ระบบบอทอัตโนมัติกลับมาทำงานแล้ว!',
+                isEn ? '🤖 Automation Reactivated!' : '🤖 ระบบอัตโนมัติกลับมาทำงานแล้ว!',
                 '#4ade80'
               );
             }, 700);
