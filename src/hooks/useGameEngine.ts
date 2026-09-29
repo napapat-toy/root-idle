@@ -86,9 +86,16 @@ export function useGameEngine() {
     totalRate,
   });
 
+  const randomEventsRef = useRef(randomEvents);
+  const lastWallClockRef = useRef<number | null>(null);
+  const sessionStartWallClockRef = useRef<number | null>(null);
+  const sessionBaseRunTimeRef = useRef<number>(0);
+  const sessionBaseTotalTimeRef = useRef<number>(0);
+
   useEffect(() => {
+    randomEventsRef.current = randomEvents;
     currentBuffMultiplierRef.current = randomEvents.currentBuffMultiplier;
-  }, [randomEvents.currentBuffMultiplier]);
+  }, [randomEvents]);
 
   const currentTotalRate = useMemo(() => {
     const base = baseTotalRate(state);
@@ -118,10 +125,14 @@ export function useGameEngine() {
   // Claim offline progress
   const claimOffline = useCallback(() => {
     if (!offlineModal) return;
+    sessionBaseRunTimeRef.current += offlineModal.dt;
+    sessionBaseTotalTimeRef.current += offlineModal.dt;
     setState(prev => ({
       ...prev,
       nutrients: prev.nutrients + offlineModal.gain,
       runEarned: prev.runEarned + offlineModal.gain,
+      totalPlayTimeSeconds: sessionBaseTotalTimeRef.current,
+      runPlayTimeSeconds: sessionBaseRunTimeRef.current,
       stats: {
         ...prev.stats,
         maxOfflineTimeSeconds: Math.max(prev.stats?.maxOfflineTimeSeconds || 0, offlineModal.dt),
@@ -271,6 +282,10 @@ export function useGameEngine() {
 
     const initialNutrients = cur.prestige.autoRoot ? 10 : 0;
 
+    sessionStartWallClockRef.current = Date.now();
+    sessionBaseRunTimeRef.current = 0;
+    sessionBaseTotalTimeRef.current = stateRef.current.totalPlayTimeSeconds || 0;
+
     setState(prev => ({
       ...prev,
       eternalSeeds: prev.eternalSeeds + gained,
@@ -319,6 +334,10 @@ export function useGameEngine() {
     }
     const initialNutrients = cur.prestige.autoRoot ? 10 : 0;
 
+    sessionStartWallClockRef.current = Date.now();
+    sessionBaseRunTimeRef.current = 0;
+    sessionBaseTotalTimeRef.current = stateRef.current.totalPlayTimeSeconds || 0;
+
     setState(prev => ({
       ...prev,
       nutrients: initialNutrients,
@@ -360,6 +379,9 @@ export function useGameEngine() {
   // Hard Reset
   const doHardReset = useCallback(() => {
     randomEvents.clearEventsAndBuffs();
+    sessionStartWallClockRef.current = Date.now();
+    sessionBaseRunTimeRef.current = 0;
+    sessionBaseTotalTimeRef.current = 0;
     setState(createFreshState());
   }, [randomEvents]);
 
@@ -367,6 +389,9 @@ export function useGameEngine() {
   const importSaveCode = useCallback((code: string) => {
     const payload = decodeSave(code);
     const newState = payloadToState(payload);
+    sessionStartWallClockRef.current = Date.now();
+    sessionBaseRunTimeRef.current = newState.runPlayTimeSeconds || 0;
+    sessionBaseTotalTimeRef.current = newState.totalPlayTimeSeconds || 0;
     setState(newState);
     saveToLocalStorage(newState);
   }, []);
@@ -384,6 +409,9 @@ export function useGameEngine() {
     if (!meta) return;
     const payload = decodeSave(meta.code);
     const newState = payloadToState(payload);
+    sessionStartWallClockRef.current = Date.now();
+    sessionBaseRunTimeRef.current = newState.runPlayTimeSeconds || 0;
+    sessionBaseTotalTimeRef.current = newState.totalPlayTimeSeconds || 0;
     setState(newState);
     saveToLocalStorage(newState);
   }, []);
@@ -462,10 +490,19 @@ export function useGameEngine() {
           setOfflineModal({ gain, dt });
         } else if (dt > 1) {
           const gain = rate * dt * permafrostOfflineMult;
+          sessionBaseRunTimeRef.current += dt;
+          sessionBaseTotalTimeRef.current += dt;
           setState(prev => ({
             ...prev,
             nutrients: prev.nutrients + gain,
             runEarned: prev.runEarned + gain,
+            totalPlayTimeSeconds: sessionBaseTotalTimeRef.current,
+            runPlayTimeSeconds: sessionBaseRunTimeRef.current,
+            stats: {
+              ...prev.stats,
+              maxOfflineTimeSeconds: Math.max(prev.stats?.maxOfflineTimeSeconds || 0, dt),
+              totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
+            },
           }));
         }
       }, 0);
@@ -473,92 +510,100 @@ export function useGameEngine() {
     }
   }, []);
 
-  // GAME LOOP (requestAnimationFrame with Wall-Clock Background Catch-up)
+  // CORE GAME TICK (Session Anchor for playtime + Delta for nutrient production)
+  const tick = useCallback(() => {
+    const nowWall = Date.now();
+
+    if (sessionStartWallClockRef.current === null) {
+      sessionStartWallClockRef.current = nowWall;
+      sessionBaseRunTimeRef.current = stateRef.current.runPlayTimeSeconds || 0;
+      sessionBaseTotalTimeRef.current = stateRef.current.totalPlayTimeSeconds || 0;
+    }
+
+    if (lastWallClockRef.current === null) {
+      lastWallClockRef.current = nowWall;
+    }
+
+    // Nutrient production delta (since last tick)
+    const rawDt = Math.max(0, (nowWall - lastWallClockRef.current) / 1000);
+    lastWallClockRef.current = nowWall;
+
+    // Session Anchor Playtime (exact, zero drift)
+    const sessionElapsed = Math.max(0, (nowWall - sessionStartWallClockRef.current) / 1000);
+    const currentRunTime = sessionBaseRunTimeRef.current + sessionElapsed;
+    const currentTotalTime = sessionBaseTotalTimeRef.current + sessionElapsed;
+
+    const cur = stateRef.current;
+    const maxOfflineCap = currentOfflineCapSeconds(cur);
+    const dt = Math.min(rawDt, maxOfflineCap);
+
+    const speedMult = (cur.transcendence?.hyperdriveUnlocked && cur.transcendence?.hyperdriveEnabled) ? 2.0 : 1.0;
+    const effectiveDt = dt * speedMult;
+    const rate = totalRate();
+    const gain = rate * effectiveDt;
+
+    setState(prev => ({
+      ...prev,
+      nutrients: prev.nutrients + gain,
+      runEarned: prev.runEarned + gain,
+      totalPlayTimeSeconds: currentTotalTime,
+      runPlayTimeSeconds: currentRunTime,
+      stats: {
+        ...prev.stats,
+        totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
+      },
+    }));
+
+    randomEventsRef.current.checkBuffExpirations();
+  }, [totalRate]);
+
+  // GAME LOOP (requestAnimationFrame + 1s Background Fallback Interval + Catch-up)
   useEffect(() => {
     let animId: number;
-    let lastTime = performance.now();
-    let lastWallClock = Date.now();
 
-    const loop = (now: number) => {
-      const nowWallClock = Date.now();
-      // If browser throttled rAF while tab was backgrounded, use wall-clock delta
-      const wallElapsed = (nowWallClock - lastWallClock) / 1000;
-      const perfElapsed = (now - lastTime) / 1000;
-      const dt = Math.max(perfElapsed, wallElapsed);
-
-      lastTime = now;
-      lastWallClock = nowWallClock;
-
-      if (dt > 0) {
-        const cur = stateRef.current;
-        const speedMult = (cur.transcendence?.hyperdriveUnlocked && cur.transcendence?.hyperdriveEnabled) ? 2.0 : 1.0;
-        const effectiveDt = dt * speedMult;
-        const rate = totalRate();
-        const gain = rate * effectiveDt;
-
-        setState(prev => ({
-          ...prev,
-          nutrients: prev.nutrients + gain,
-          runEarned: prev.runEarned + gain,
-          totalPlayTimeSeconds: prev.totalPlayTimeSeconds + dt,
-          runPlayTimeSeconds: prev.runPlayTimeSeconds + dt,
-          stats: {
-            ...prev.stats,
-            totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
-          },
-        }));
-
-        // Check expired buffs
-        randomEvents.checkBuffExpirations();
-      }
-
+    const loop = () => {
+      tick();
       animId = requestAnimationFrame(loop);
     };
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        const nowWall = Date.now();
-        const rawGap = (nowWall - lastWallClock) / 1000;
-        if (rawGap > 0.5) {
-          const cur = stateRef.current;
-          const maxOfflineCap = currentOfflineCapSeconds(cur);
-          const gapSeconds = Math.min(rawGap, maxOfflineCap);
-          const speedMult = (cur.transcendence?.hyperdriveUnlocked && cur.transcendence?.hyperdriveEnabled) ? 2.0 : 1.0;
-          const effectiveGap = gapSeconds * speedMult;
-          const rate = totalRate();
-          const gain = rate * effectiveGap;
-          setState(prev => ({
-            ...prev,
-            nutrients: prev.nutrients + gain,
-            runEarned: prev.runEarned + gain,
-            totalPlayTimeSeconds: prev.totalPlayTimeSeconds + gapSeconds,
-            runPlayTimeSeconds: prev.runPlayTimeSeconds + gapSeconds,
-            stats: {
-              ...prev.stats,
-              totalNutrientsEarnedLifetime: (prev.stats?.totalNutrientsEarnedLifetime || 0) + gain,
-            },
-          }));
-        }
-        lastTime = performance.now();
-        lastWallClock = nowWall;
-      }
+    // When tab is hidden/backgrounded, rAF is paused by browsers.
+    // This fallback interval ensures idle progress, playtime, and buffs continue ticking in the background.
+    const backgroundInterval = setInterval(() => {
+      tick();
+    }, 1000);
+
+    const handleCatchUp = () => {
+      tick();
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener('visibilitychange', handleCatchUp);
+    window.addEventListener('focus', handleCatchUp);
     animId = requestAnimationFrame(loop);
 
     return () => {
       cancelAnimationFrame(animId);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearInterval(backgroundInterval);
+      document.removeEventListener('visibilitychange', handleCatchUp);
+      window.removeEventListener('focus', handleCatchUp);
     };
-  }, [totalRate, randomEvents]);
+  }, [tick]);
 
-  // Periodic Auto-save (every 8s)
+  // Periodic Auto-save (every 8s) & save on window beforeunload
   useEffect(() => {
     const interval = setInterval(() => {
       saveToLocalStorage(stateRef.current);
     }, 8000);
-    return () => clearInterval(interval);
+
+    const handleBeforeUnload = () => {
+      saveToLocalStorage(stateRef.current);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, []);
 
   // Auto-root perk (fast responsive loop every 500ms)
