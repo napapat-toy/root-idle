@@ -94,6 +94,7 @@ export function createFreshState(): GameState {
       astralPetals: 0,
     },
     pacts: {},
+    nextPacts: {},
     achievements: [],
     stats: {
       prestigeCount: 0,

@@ -368,11 +368,12 @@ export function useTranscendenceEngine({
 
   const togglePact = useCallback((pactId: string) => {
     setState(prev => {
-      const active = !!prev.pacts?.[pactId];
+      const currentNext = prev.nextPacts || prev.pacts || {};
+      const active = !!currentNext[pactId];
       return {
         ...prev,
-        pacts: {
-          ...prev.pacts,
+        nextPacts: {
+          ...currentNext,
           [pactId]: !active,
         },
       };

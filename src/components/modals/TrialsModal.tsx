@@ -50,13 +50,14 @@ export const TrialsModal: React.FC<TrialsModalProps> = React.memo(({
   const activeTrial = state.transcendence?.activeTrial || 'none';
   const conqueredTrials = Object.keys(state.transcendence?.completedTrials || {}).length;
 
-  const activePactsCount = PACT_DEFS.filter(p => !!state.pacts?.[p.id]).length;
+  const targetPacts = state.nextPacts || state.pacts || {};
+  const activePactsCount = PACT_DEFS.filter(p => !!targetPacts[p.id]).length;
   const totalPactSeedBonus = PACT_DEFS.reduce(
-    (sum, p) => sum + (state.pacts?.[p.id] ? p.seedsBonusPct : 0),
+    (sum, p) => sum + (targetPacts[p.id] ? p.seedsBonusPct : 0),
     0
   );
   const totalPactEssenceBonus = PACT_DEFS.reduce(
-    (sum, p) => sum + (state.pacts?.[p.id] ? (p.essencesBonusPct || 0) : 0),
+    (sum, p) => sum + (targetPacts[p.id] ? (p.essencesBonusPct || 0) : 0),
     0
   );
 
@@ -242,7 +243,7 @@ export const TrialsModal: React.FC<TrialsModalProps> = React.memo(({
                       <span>{isEn ? 'Pacts of Gaia (Risk & Reward)' : 'พันธสัญญาแห่งไกอา (ท้าทายตนเอง)'}</span>
                     </div>
                     <span style={{ fontSize: '12px', color: 'var(--root-cream-dim)' }}>
-                      {isEn ? 'Active Pacts: ' : 'พันธสัญญาที่เปิด: '}
+                      {isEn ? 'Selected for Next Run: ' : 'เลือกไว้สำหรับรอบถัดไป: '}
                       <strong style={{ color: activePactsCount > 0 ? '#4ade80' : 'var(--root-cream)' }}>
                         {activePactsCount} / {PACT_DEFS.length}
                       </strong>
@@ -251,8 +252,8 @@ export const TrialsModal: React.FC<TrialsModalProps> = React.memo(({
 
                   <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', lineHeight: '1.4' }}>
                     {isEn
-                      ? 'Embrace voluntary handicaps in your regular garden to reap boosted Eternal Seeds and Gaia Essences. Modifiers take effect immediately!'
-                      : 'เปิดรับข้อจำกัดท้าทายในสวนปกติเพื่อรับเมล็ดพันธุ์และละอองชีวิตเพิ่มขึ้น! สามารถเปิด/ปิดได้ตลอดเวลา และมีผลทันที'}
+                      ? 'Embrace voluntary handicaps in your regular garden to reap boosted Eternal Seeds and Gaia Essences. Selected pacts take effect after next reset (Prestige / Transcendence).'
+                      : 'เปิดรับข้อจำกัดท้าทายในสวนปกติเพื่อรับเมล็ดพันธุ์และละอองชีวิตเพิ่มขึ้น! พันธสัญญาที่เลือกจะมีผลเมื่อเริ่มรอบใหม่ (Prestige / Transcendence)'}
                   </div>
 
                   {/* Stat Boosts Badge Row */}
@@ -281,7 +282,7 @@ export const TrialsModal: React.FC<TrialsModalProps> = React.memo(({
                   <PactCard
                     key={def.id}
                     def={def}
-                    isActive={!!state.pacts?.[def.id]}
+                    isActive={!!targetPacts[def.id]}
                     isEn={isEn}
                     disabled={inTrial}
                     onToggle={() => onTogglePact?.(def.id)}

@@ -281,6 +281,7 @@ export function useGameEngine() {
     }
 
     const initialNutrients = cur.prestige.autoRoot ? 10 : 0;
+    const nextPactsToApply = cur.nextPacts || cur.pacts || {};
 
     sessionStartWallClockRef.current = Date.now();
     sessionBaseRunTimeRef.current = 0;
@@ -298,6 +299,8 @@ export function useGameEngine() {
       echoes: retainedEchoes,
       rootSynergies: {},
       buyQty: 1,
+      pacts: { ...nextPactsToApply },
+      nextPacts: { ...nextPactsToApply },
       stats: {
         ...prev.stats,
         prestigeCount: (prev.stats?.prestigeCount || 0) + 1,
@@ -333,6 +336,7 @@ export function useGameEngine() {
       freshOwned['fine'] = starterBonus;
     }
     const initialNutrients = cur.prestige.autoRoot ? 10 : 0;
+    const nextPactsToApply = cur.nextPacts || cur.pacts || {};
 
     sessionStartWallClockRef.current = Date.now();
     sessionBaseRunTimeRef.current = 0;
@@ -350,6 +354,8 @@ export function useGameEngine() {
       rootSynergies: {},
       eternalSeeds: 0,
       buyQty: 1,
+      pacts: { ...nextPactsToApply },
+      nextPacts: { ...nextPactsToApply },
       transcendence: {
         ...prev.transcendence,
         count: (prev.transcendence?.count || 0) + 1,

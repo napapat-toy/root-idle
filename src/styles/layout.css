@@ -13,7 +13,7 @@ html, body {
 body {
   background: radial-gradient(ellipse at 50% 0%, var(--bg-panel-2) 0%, var(--bg-deep) 65%);
   color: var(--root-cream);
-  font-family: 'Inter', 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
   @apply min-h-screen flex items-stretch justify-center antialiased;
   touch-action: manipulation;
   transition: background-color 0.4s ease, color 0.3s ease;

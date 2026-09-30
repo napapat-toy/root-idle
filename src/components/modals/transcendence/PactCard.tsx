@@ -30,7 +30,7 @@ export const PactCard: React.FC<PactCardProps> = React.memo(({
           onToggle();
         }
       }}
-      title={disabled ? (isEn ? 'Cannot toggle pacts during Trials' : 'ไม่สามารถปรับพันธสัญญาได้ระหว่างการทดสอบ') : (isEn ? (isActive ? 'Click to deactivate' : 'Click to activate') : (isActive ? 'คลิกเพื่อปิด' : 'คลิกเพื่อเปิดใช้งาน'))}
+      title={disabled ? (isEn ? 'Cannot toggle pacts during Trials' : 'ไม่สามารถปรับพันธสัญญาได้ระหว่างการทดสอบ') : (isEn ? (isActive ? 'Click to deselect for next run' : 'Click to select for next run') : (isActive ? 'คลิกเพื่อยกเลิกสำหรับรอบถัดไป' : 'คลิกเพื่อเลือกสำหรับรอบถัดไป'))}
       style={{
         background: isActive
           ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(168, 85, 247, 0.08))'
@@ -47,12 +47,30 @@ export const PactCard: React.FC<PactCardProps> = React.memo(({
         opacity: disabled ? 0.6 : 1,
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
           <span style={{ fontSize: '24px', flexShrink: 0 }}>{def.icon}</span>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontWeight: 700, fontSize: '14.5px', color: isActive ? 'var(--trials-gold)' : '#ffffff' }}>
-              {isEn ? def.enName : def.name}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <span style={{ fontWeight: 700, fontSize: '14.5px', color: isActive ? 'var(--trials-gold)' : '#ffffff' }}>
+                {isEn ? def.enName : def.name}
+              </span>
+              {isActive && (
+                <span
+                  style={{
+                    fontSize: '10.5px',
+                    fontWeight: 600,
+                    padding: '1px 6px',
+                    borderRadius: '4px',
+                    background: 'rgba(74, 222, 128, 0.15)',
+                    color: '#4ade80',
+                    border: '1px solid rgba(74, 222, 128, 0.3)',
+                    letterSpacing: '0.02em',
+                  }}
+                >
+                  {isEn ? 'Takes effect after reset' : 'มีผลหลังรีเซต'}
+                </span>
+              )}
             </div>
             <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)' }}>
               {isEn ? def.enDesc : def.desc}

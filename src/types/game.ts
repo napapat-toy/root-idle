@@ -251,6 +251,7 @@ export interface GameState {
   prestige: PrestigeState;
   transcendence: TranscendenceState;
   pacts?: Record<string, boolean>;
+  nextPacts?: Record<string, boolean>;
   achievements: string[];
   stats: GameStats;
   lang?: Language;
@@ -328,6 +329,7 @@ export interface SavePayload {
   rle?: Array<[number, number]>;
   ach?: string[];
   pacts?: Record<string, boolean>;
+  nextPacts?: Record<string, boolean>;
   st?: Partial<GameStats>;
   lang?: Language;
 }
