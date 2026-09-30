@@ -109,14 +109,6 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
               <span className="stats-label">{isEn ? 'Root Networks Bonus' : 'โบนัสเครือข่ายราก'}:</span>
               <span className="stats-value" style={{ color: '#38bdf8' }}>+{synPct}%</span>
             </div>
-            {biomeRateMult !== 1 && (
-              <div className="stats-row">
-                <span className="stats-label">{isEn ? 'Biome Environment Bonus' : 'โบนัสไบโอม'}:</span>
-                <span className="stats-value" style={{ color: '#f59e0b' }}>
-                  {biomeRateMult > 1 ? '+' : ''}{((biomeRateMult - 1) * 100).toFixed(1)}%
-                </span>
-              </div>
-            )}
           </div>
           {/* Summary of Box 1 */}
           <div style={{ borderTop: '1px dashed rgba(34, 197, 94, 0.25)', marginTop: '8px', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -181,6 +173,14 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
                 </span>
               </div>
             )}
+            {biomeRateMult > 1 && (
+              <div className="stats-row">
+                <span className="stats-label">{isEn ? 'Sanctum of Gaia Biome' : 'วิหารแห่งไกอา (ไบโอม)'}:</span>
+                <span className="stats-value" style={{ color: '#facc15', fontWeight: 700 }}>
+                  ×{biomeRateMult.toFixed(2)} <span style={{ opacity: 0.7, fontSize: '10.5px', fontWeight: 500 }}>(+{Math.round((biomeRateMult - 1) * 100)}%)</span>
+                </span>
+              </div>
+            )}
           </div>
           {/* Summary of Box 2 */}
           <div style={{ borderTop: '1px dashed rgba(245, 158, 11, 0.25)', marginTop: '8px', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -234,6 +234,14 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
           <span style={{ color: '#fbbf24', fontWeight: 600, background: 'rgba(245, 158, 11, 0.15)', padding: '1px 6px', borderRadius: '4px' }}>
             {isEn ? 'Special' : 'ตัวคูณพิเศษ'} ×{specialMult.toFixed(2)}
           </span>
+          {biomeRateMult > 1 && (
+            <>
+              <span style={{ fontWeight: 700, color: '#ffd76a' }}>×</span>
+              <span style={{ color: '#facc15', fontWeight: 600, background: 'rgba(250, 204, 21, 0.15)', padding: '1px 6px', borderRadius: '4px' }}>
+                {isEn ? 'Biome' : 'ไบโอม'} ×{biomeRateMult.toFixed(2)}
+              </span>
+            </>
+          )}
           <span style={{ fontWeight: 700, color: '#ffd76a' }}>=</span>
           <span style={{ color: '#ffd76a', fontWeight: 700, background: 'rgba(255, 215, 106, 0.2)', padding: '1px 6px', borderRadius: '4px' }}>
             ×{globalMultFormatted}

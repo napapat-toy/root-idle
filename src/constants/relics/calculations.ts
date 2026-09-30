@@ -177,7 +177,7 @@ export function relicBonusTwinSproutChance(state: GameState): number {
 export function biomeActiveRateMultiplier(state: GameState): number {
   if (isStateInTrial(state)) return 1.0;
   const biome = state.activeBiome || 'topsoil';
-  if (biome === 'gaia_sanctum') return 1.30;
+  if (biome === 'gaia_sanctum') return 1.50;
   return 1.0;
 }
 

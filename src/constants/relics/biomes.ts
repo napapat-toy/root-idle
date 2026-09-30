@@ -81,8 +81,8 @@ export const BIOME_DEFS: BiomeDef[] = [
     bgGradient: 'radial-gradient(ellipse at 50% 30%, #2b2410 0%, #1c1709 60%, #0c0a03 100%)',
     particleType: 'stardust',
     particleColor: 'rgba(250, 204, 21, 0.6)',
-    ambientBonusDesc: '+30% เรทการผลิตสารอาหารทั้งหมดในฟาร์ม',
-    enAmbientBonusDesc: '+30% Global Nutrient Production Rate',
+    ambientBonusDesc: '+50% เรทการผลิตสารอาหารทั้งหมดในฟาร์ม',
+    enAmbientBonusDesc: '+50% Global Nutrient Production Rate',
     relicRequiredCount: 10,
   },
 ];

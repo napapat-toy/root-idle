@@ -29,7 +29,7 @@ import {
 export * from './initialState';
 export * from './depthLayers';
 
-export const GAME_VERSION = '1.35.8';
+export const GAME_VERSION = '1.35.9';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -195,8 +195,7 @@ export function totalGlobalBonusPercent(state: GameState): number {
   const achPct = achievementBonusPct(state);
   const synPct = totalSynergyBonusPct(state);
   const prestigePct = prestigeBonusPct(state);
-  const biomePct = (biomeActiveRateMultiplier(state) - 1) * 100;
-  return achPct + synPct + prestigePct + biomePct;
+  return achPct + synPct + prestigePct;
 }
 
 export function specialMultiplierBonus(state: GameState): number {
@@ -217,7 +216,8 @@ export function globalRateMultiplier(state: GameState): number {
   const specialMult = specialRateMultiplier(state);
   const trialRate = trialRateMultiplier(state);
   const pactRate = pactRateMultiplier(state);
-  return baseMult * specialMult * trialRate * pactRate;
+  const biomeMult = biomeActiveRateMultiplier(state);
+  return baseMult * specialMult * trialRate * pactRate * biomeMult;
 }
 
 // Effective Rates
