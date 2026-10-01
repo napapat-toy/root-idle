@@ -407,29 +407,184 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Grand Haute Couture', desc: 'Own every single root skin and UI theme in the game' },
   },
 
-  playtime_10m: {
-    th: { title: 'รดน้ำอย่างใจเย็น', desc: 'เวลาเล่นสะสมรวมครบ 10 นาที' },
-    en: { title: 'Patient Gardener', desc: 'Play for a total of 10 minutes' },
-  },
-  playtime_1h: {
-    th: { title: 'ผู้เฝ้ามองราก', desc: 'เวลาเล่นสะสมรวมครบ 1 ชั่วโมง' },
-    en: { title: 'Root Watcher', desc: 'Play for a total of 1 hour' },
-  },
-  playtime_12h: {
-    th: { title: 'ป่าไม้ตลอดกาล', desc: 'เวลาเล่นสะสมรวมครบ 12 ชั่วโมง' },
-    en: { title: 'Perennial Forest', desc: 'Play for a total of 12 hours' },
-  },
-  playtime_24h: {
-    th: { title: 'ผู้พิทักษ์ผืนป่า', desc: 'เวลาเล่นสะสมรวมครบ 24 ชั่วโมง (1 วันเต็ม)' },
-    en: { title: 'Keeper of the Deep', desc: 'Play for a total of 24 hours' },
-  },
+  // 1. Offline Time Achievements
   offline_1h: {
     th: { title: 'กลับมาดูแล', desc: 'เก็บผลผลิตออฟไลน์ (Offline Gain) ที่หายไปเกิน 1 ชั่วโมง' },
     en: { title: 'Welcome Return', desc: 'Claim offline gains after 1+ hour away' },
   },
+  offline_4h: {
+    th: { title: 'พักสายตาสักครู่', desc: 'เวลาออฟไลน์สะสมครบ 4 ชั่วโมง' },
+    en: { title: 'Brief Respite', desc: 'Accumulate 4 hours of offline time' },
+  },
+  offline_8h: {
+    th: { title: 'นิทราราตรี', desc: 'เวลาออฟไลน์สะสมครบ 8 ชั่วโมง' },
+    en: { title: 'Nocturnal Slumber', desc: 'Accumulate 8 hours of offline time' },
+  },
+  offline_12h: {
+    th: { title: 'ภวังค์แห่งแมกไม้', desc: 'เวลาออฟไลน์สะสมครบ 12 ชั่วโมง' },
+    en: { title: 'Arboreal Trance', desc: 'Accumulate 12 hours of offline time' },
+  },
   offline_24h: {
-    th: { title: 'การหลับใหลอันยาวนาน', desc: 'เก็บผลผลิตออฟไลน์ (Offline Gain) ที่หายไปเกิน 24 ชั่วโมง' },
-    en: { title: 'Deep Slumber', desc: 'Claim offline gains after 24+ hours away' },
+    th: { title: 'การหลับใหลอันยาวนาน', desc: 'เวลาออฟไลน์สะสมครบ 24 ชั่วโมง' },
+    en: { title: 'Deep Slumber', desc: 'Accumulate 24 hours of offline time' },
+  },
+  offline_48h: {
+    th: { title: 'ดำดิ่งใต้ไอหมอก', desc: 'เวลาออฟไลน์สะสมครบ 48 ชั่วโมง (2 วัน)' },
+    en: { title: 'Subterranean Stasis', desc: 'Accumulate 48 hours (2 days) of offline time' },
+  },
+
+  // 2. Online Active Playtime Achievements
+  playtime_10m: {
+    th: { title: 'รดน้ำอย่างใจเย็น', desc: 'เวลาออนไลน์สะสมครบ 10 นาที' },
+    en: { title: 'Patient Gardener', desc: 'Play online for a total of 10 minutes' },
+  },
+  playtime_1h: {
+    th: { title: 'ผู้เฝ้ามองราก', desc: 'เวลาออนไลน์สะสมครบ 1 ชั่วโมง' },
+    en: { title: 'Root Watcher', desc: 'Play online for a total of 1 hour' },
+  },
+  online_2h: {
+    th: { title: 'ผู้เริ่มหยั่งราก', desc: 'เวลาออนไลน์สะสมครบ 2 ชั่วโมง' },
+    en: { title: 'Root Sower', desc: 'Play online for a total of 2 hours' },
+  },
+  online_4h: {
+    th: { title: 'ผู้หมั่นรดน้ำ', desc: 'เวลาออนไลน์สะสมครบ 4 ชั่วโมง' },
+    en: { title: 'Diligent Waterer', desc: 'Play online for a total of 4 hours' },
+  },
+  online_6h: {
+    th: { title: 'ผู้ดูแลผืนดิน', desc: 'เวลาออนไลน์สะสมครบ 6 ชั่วโมง' },
+    en: { title: 'Soil Tender', desc: 'Play online for a total of 6 hours' },
+  },
+  online_8h: {
+    th: { title: 'ผู้เฝ้ามองลำต้น', desc: 'เวลาออนไลน์สะสมครบ 8 ชั่วโมง' },
+    en: { title: 'Trunk Gazer', desc: 'Play online for a total of 8 hours' },
+  },
+  playtime_12h: {
+    th: { title: 'ป่าไม้ตลอดกาล', desc: 'เวลาออนไลน์สะสมครบ 12 ชั่วโมง' },
+    en: { title: 'Perennial Forest', desc: 'Play online for a total of 12 hours' },
+  },
+  online_16h: {
+    th: { title: 'รากหยั่งลึกไม่ไหวติง', desc: 'เวลาออนไลน์สะสมครบ 16 ชั่วโมง' },
+    en: { title: 'Unyielding Roots', desc: 'Play online for a total of 16 hours' },
+  },
+  playtime_24h: {
+    th: { title: 'ผู้พิทักษ์ผืนป่า', desc: 'เวลาออนไลน์สะสมครบ 24 ชั่วโมง (1 วัน)' },
+    en: { title: 'Keeper of the Deep', desc: 'Play online for a total of 24 hours' },
+  },
+  online_36h: {
+    th: { title: 'เจตนารมณ์ไม่สั่นคลอน', desc: 'เวลาออนไลน์สะสมครบ 36 ชั่วโมง' },
+    en: { title: 'Steadfast Will', desc: 'Play online for a total of 36 hours' },
+  },
+  online_48h: {
+    th: { title: 'ศิลาแห่งกาลเวลา', desc: 'เวลาออนไลน์สะสมครบ 48 ชั่วโมง (2 วัน)' },
+    en: { title: 'Stone of Chronos', desc: 'Play online for a total of 48 hours (2 days)' },
+  },
+  online_60h: {
+    th: { title: 'ลมหายใจแห่งผืนดิน', desc: 'เวลาออนไลน์สะสมครบ 60 ชั่วโมง' },
+    en: { title: 'Terra Breath', desc: 'Play online for a total of 60 hours' },
+  },
+  online_72h: {
+    th: { title: 'เจ้าแห่งพฤกษาสามวัน', desc: 'เวลาออนไลน์สะสมครบ 3 วัน (72 ชั่วโมง)' },
+    en: { title: 'Tri-Solar Warden', desc: 'Play online for a total of 3 days (72 hours)' },
+  },
+  online_96h: {
+    th: { title: 'ผู้กลืนกินวันเวลา', desc: 'เวลาออนไลน์สะสมครบ 4 วัน (96 ชั่วโมง)' },
+    en: { title: 'Time Eater', desc: 'Play online for a total of 4 days (96 hours)' },
+  },
+  online_120h: {
+    th: { title: 'ร่มเงาอันไร้สิ้นสุด', desc: 'เวลาออนไลน์สะสมครบ 5 วัน (120 ชั่วโมง)' },
+    en: { title: 'Boundless Canopy', desc: 'Play online for a total of 5 days (120 hours)' },
+  },
+  online_144h: {
+    th: { title: 'ตำนานใต้พิภพที่ยังมีชีวิต', desc: 'เวลาออนไลน์สะสมครบ 6 วัน (144 ชั่วโมง)' },
+    en: { title: 'Living Subterranean Myth', desc: 'Play online for a total of 6 days (144 hours)' },
+  },
+  online_168h: {
+    th: { title: 'สหัสวรรษแห่งไกอา', desc: 'เวลาออนไลน์สะสมครบ 7 วันเต็ม (168 ชั่วโมง)!' },
+    en: { title: 'Millennium of Gaia', desc: 'Play online for a total of 7 full days (168 hours)!' },
+  },
+
+  // 3. Total Journey Age Achievements
+  age_4h: {
+    th: { title: 'ต้นกล้าแรกแย้ม', desc: 'เริ่มต้นการเดินทางครบ 4 ชั่วโมง' },
+    en: { title: 'Budding Sprout', desc: 'Begin your botanical journey for 4 hours' },
+  },
+  age_8h: {
+    th: { title: 'กิ่งก้านผลิใบ', desc: 'เริ่มต้นการเดินทางครบ 8 ชั่วโมง' },
+    en: { title: 'Spreading Boughs', desc: 'Begin your botanical journey for 8 hours' },
+  },
+  age_12h: {
+    th: { title: 'รอยเท้าก้าวแรก', desc: 'เริ่มต้นการเดินทางครบ 12 ชั่วโมง' },
+    en: { title: 'First Footprints', desc: 'Begin your botanical journey for 12 hours' },
+  },
+  age_16h: {
+    th: { title: 'ผืนดินที่คุ้นเคย', desc: 'เริ่มต้นการเดินทางครบ 16 ชั่วโมง' },
+    en: { title: 'Familiar Soil', desc: 'Begin your botanical journey for 16 hours' },
+  },
+  age_20h: {
+    th: { title: 'สายธารแห่งชีวิต', desc: 'เริ่มต้นการเดินทางครบ 20 ชั่วโมง' },
+    en: { title: 'Stream of Life', desc: 'Begin your botanical journey for 20 hours' },
+  },
+  age_24h: {
+    th: { title: 'ก้าวพ้นวันแรก', desc: 'เริ่มต้นการเดินทางครบ 1 วัน (24 ชั่วโมง)' },
+    en: { title: 'Beyond Day One', desc: 'Begin your botanical journey for 1 day (24 hours)' },
+  },
+  age_36h: {
+    th: { title: 'บันทึกความทรงจำ', desc: 'เริ่มต้นการเดินทางครบ 36 ชั่วโมง' },
+    en: { title: 'Memory Chronicle', desc: 'Begin your botanical journey for 36 hours' },
+  },
+  age_48h: {
+    th: { title: 'รากฐานมั่นคง', desc: 'เริ่มต้นการเดินทางครบ 2 วัน (48 ชั่วโมง)' },
+    en: { title: 'Firm Foundation', desc: 'Begin your botanical journey for 2 days (48 hours)' },
+  },
+  age_72h: {
+    th: { title: 'วันวานอันงดงาม', desc: 'เริ่มต้นการเดินทางครบ 3 วัน (72 ชั่วโมง)' },
+    en: { title: 'Golden Yesterday', desc: 'Begin your botanical journey for 3 days (72 hours)' },
+  },
+  age_96h: {
+    th: { title: 'เส้นทางแห่งพฤกษชาติ', desc: 'เริ่มต้นการเดินทางครบ 4 วัน (96 ชั่วโมง)' },
+    en: { title: 'Botanical Trail', desc: 'Begin your botanical journey for 4 days (96 hours)' },
+  },
+  age_120h: {
+    th: { title: 'อนุสรณ์สถานดึกดำบรรพ์', desc: 'เริ่มต้นการเดินทางครบ 5 วัน (120 ชั่วโมง)' },
+    en: { title: 'Primordial Monolith', desc: 'Begin your botanical journey for 5 days (120 hours)' },
+  },
+  age_144h: {
+    th: { title: 'วงปีที่ไม่อาจลบเลือน', desc: 'เริ่มต้นการเดินทางครบ 6 วัน (144 ชั่วโมง)' },
+    en: { title: 'Indelible Tree Rings', desc: 'Begin your botanical journey for 6 days (144 hours)' },
+  },
+  age_168h: {
+    th: { title: 'สัปดาห์แรกแห่งปาฏิหาริย์', desc: 'เริ่มต้นการเดินทางครบ 1 สัปดาห์เต็ม (7 วัน)!' },
+    en: { title: 'Miraculous First Week', desc: 'Begin your botanical journey for 1 full week (7 days)!' },
+  },
+
+  // 4. Current Run Duration Achievements
+  run_30m: {
+    th: { title: 'ปลูกแช่ครึ่งชั่วโมง', desc: 'ฟาร์มในรอบปัจจุบันต่อเนื่องครบ 30 นาที' },
+    en: { title: 'Half-Hour Soak', desc: 'Farm continuously in current run for 30 minutes' },
+  },
+  run_1h: {
+    th: { title: 'สายแช่ตัวจริง', desc: 'ฟาร์มในรอบปัจจุบันต่อเนื่องครบ 1 ชั่วโมง' },
+    en: { title: 'True Soaker', desc: 'Farm continuously in current run for 1 hour' },
+  },
+  run_2h: {
+    th: { title: 'ต้นไม้ไม่ยอมหว่าน', desc: 'ฟาร์มในรอบปัจจุบันต่อเนื่องครบ 2 ชั่วโมง' },
+    en: { title: 'Stubborn Sapling', desc: 'Farm continuously in current run for 2 hours' },
+  },
+  run_3h: {
+    th: { title: 'ปล่อยใจใต้เงาไม้', desc: 'ฟาร์มในรอบปัจจุบันต่อเนื่องครบ 3 ชั่วโมง' },
+    en: { title: 'Zen Boughs', desc: 'Farm continuously in current run for 3 hours' },
+  },
+  run_4h: {
+    th: { title: 'ดื่มด่ำรสชาติเซน', desc: 'ฟาร์มในรอบปัจจุบันต่อเนื่องครบ 4 ชั่วโมง' },
+    en: { title: 'Deep Zen Meditation', desc: 'Farm continuously in current run for 4 hours' },
+  },
+  run_6h: {
+    th: { title: 'รากฝังแน่นไม่คิดรีเซ็ต', desc: 'ฟาร์มในรอบปัจจุบันต่อเนื่องครบ 6 ชั่วโมง' },
+    en: { title: 'Anchored Roots', desc: 'Farm continuously in current run for 6 hours' },
+  },
+  run_8h: {
+    th: { title: 'ฟาร์มข้ามกะมาราธอน', desc: 'ฟาร์มในรอบปัจจุบันต่อเนื่องครบ 8 ชั่วโมง!' },
+    en: { title: 'Marathon Harvester', desc: 'Farm continuously in current run for 8 hours!' },
   },
 
   // Relics & Biomes
