@@ -179,8 +179,10 @@ export function calcBulkPrestigeUpgrade(
   let count = 0;
   let totalCost = 0;
   let lvl = currentLevel;
-  const targetCount = qty === 'max' ? 1000 : Math.min(1000, qty);
-  const effectiveSeeds = Number.isFinite(seeds) ? seeds : 1e12;
+  const targetCount = qty === 'max'
+    ? Math.min(maxLevel - currentLevel, 100000)
+    : Math.min(maxLevel - currentLevel, qty);
+  const effectiveSeeds = Number.isFinite(seeds) ? Math.max(0, seeds) : 1e12;
 
   while (count < targetCount && lvl < maxLevel) {
     const nextCost = costFn(lvl);

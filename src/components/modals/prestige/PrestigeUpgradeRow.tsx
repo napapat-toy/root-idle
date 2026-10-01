@@ -131,6 +131,8 @@ export const PrestigeUpgradeRow: React.FC<PrestigeUpgradeRowProps> = React.memo(
     const { count: maxBuyable } = calcBulkPrestigeUpgrade(currentLevel, seeds, costFn, 'max', maxLevel);
     const disabled = seeds < cost1 || isDisabled;
 
+    const isHighCap = maxLevel >= 1000;
+
     return (
       <div
         className={`prestige-item ${disabled ? 'disabled' : ''}`}
@@ -146,44 +148,80 @@ export const PrestigeUpgradeRow: React.FC<PrestigeUpgradeRowProps> = React.memo(
             {fmtInt(cost1)} 🌌
           </span>
           <div className="passive-bulk-row" onClick={e => e.stopPropagation()}>
-            <button
-              type="button"
-              className="btn-passive-bulk"
-              disabled={disabled}
-              onClick={() => onBuy(1)}
-              title={isEn ? 'Buy 1 Level' : 'ซื้อ 1 เลเวล'}
-            >
-              +1
-            </button>
-            {maxBuyable >= 5 && (
-              <button
-                type="button"
-                className="btn-passive-bulk"
-                onClick={() => onBuy(5)}
-                title={isEn ? 'Buy 5 Levels' : 'ซื้อ 5 เลเวล'}
-              >
-                +5
-              </button>
-            )}
-            {maxBuyable >= 20 && (
-              <button
-                type="button"
-                className="btn-passive-bulk"
-                onClick={() => onBuy(10)}
-                title={isEn ? 'Buy 10 Levels' : 'ซื้อ 10 เลเวล'}
-              >
-                +10
-              </button>
-            )}
-            {maxBuyable > 1 && (
-              <button
-                type="button"
-                className="btn-passive-bulk btn-passive-max"
-                onClick={() => onBuy('max')}
-                title={isEn ? `Buy Max Possible (+${maxBuyable} Levels)` : `ซื้อสูงสุดเท่าที่ทำได้ (+${maxBuyable} เลเวล)`}
-              >
-                MAX (+{maxBuyable})
-              </button>
+            {isHighCap ? (
+              <>
+                <button
+                  type="button"
+                  className="btn-passive-bulk"
+                  disabled={disabled || maxBuyable < 1}
+                  onClick={() => onBuy(1)}
+                  title={isEn ? 'Buy 1 Level' : 'ซื้อ 1 เลเวล'}
+                >
+                  +1
+                </button>
+                <button
+                  type="button"
+                  className="btn-passive-bulk"
+                  disabled={maxBuyable < 1000}
+                  onClick={() => onBuy(1000)}
+                  title={isEn ? 'Buy 1,000 Levels' : 'ซื้อ 1,000 เลเวล'}
+                >
+                  +1000
+                </button>
+                <button
+                  type="button"
+                  className="btn-passive-bulk btn-passive-max"
+                  disabled={maxBuyable <= 0}
+                  onClick={() => onBuy('max')}
+                  title={isEn ? `Buy all affordable levels (+${fmtInt(maxBuyable)})` : `ซื้อจนหมดเมล็ดที่มี (+${fmtInt(maxBuyable)} เลเวล)`}
+                >
+                  {isEn
+                    ? (maxBuyable > 0 ? `Buy All (+${fmtInt(maxBuyable)})` : 'Buy All')
+                    : (maxBuyable > 0 ? `ซื้อจนหมด (+${fmtInt(maxBuyable)})` : 'ซื้อจนหมด')}
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="btn-passive-bulk"
+                  disabled={disabled || maxBuyable < 1}
+                  onClick={() => onBuy(1)}
+                  title={isEn ? 'Buy 1 Level' : 'ซื้อ 1 เลเวล'}
+                >
+                  +1
+                </button>
+                {maxBuyable >= 5 && maxLevel >= 10 && (
+                  <button
+                    type="button"
+                    className="btn-passive-bulk"
+                    onClick={() => onBuy(5)}
+                    title={isEn ? 'Buy 5 Levels' : 'ซื้อ 5 เลเวล'}
+                  >
+                    +5
+                  </button>
+                )}
+                {maxBuyable >= 20 && maxLevel >= 30 && (
+                  <button
+                    type="button"
+                    className="btn-passive-bulk"
+                    onClick={() => onBuy(10)}
+                    title={isEn ? 'Buy 10 Levels' : 'ซื้อ 10 เลเวล'}
+                  >
+                    +10
+                  </button>
+                )}
+                {maxBuyable > 1 && (
+                  <button
+                    type="button"
+                    className="btn-passive-bulk btn-passive-max"
+                    onClick={() => onBuy('max')}
+                    title={isEn ? `Buy all affordable levels (+${maxBuyable})` : `ซื้อจนหมดเมล็ดที่มี (+${maxBuyable} เลเวล)`}
+                  >
+                    {isEn ? `Buy All (+${maxBuyable})` : `ซื้อจนหมด (+${maxBuyable})`}
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>

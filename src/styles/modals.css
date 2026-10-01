@@ -505,6 +505,10 @@ body.modal-open {
   @apply bg-[rgba(255,215,106,0.35)] border-[#ffe494] text-[#fff9e6] shadow-[0_0_10px_rgba(255,215,106,0.4)];
 }
 
+.btn-passive-bulk.btn-passive-max:disabled {
+  @apply opacity-30 cursor-not-allowed border-transparent bg-transparent text-[#8a7a5a] shadow-none;
+}
+
 /* ==========================================================================
    9. ACHIEVEMENTS SYSTEM
    ========================================================================== */
