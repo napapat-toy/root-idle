@@ -19,6 +19,8 @@ export function createFreshState(): GameState {
     lockGapBackfilled: true,
     totalPlayTimeSeconds: 0,
     runPlayTimeSeconds: 0,
+    totalOfflineTimeSeconds: 0,
+    saveCreatedAt: Date.now(),
     runEarned: 0,
     eternalSeeds: 0,
     prestige: {

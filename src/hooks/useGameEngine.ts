@@ -126,13 +126,12 @@ export function useGameEngine() {
   const claimOffline = useCallback(() => {
     if (!offlineModal) return;
     sessionBaseRunTimeRef.current += offlineModal.dt;
-    sessionBaseTotalTimeRef.current += offlineModal.dt;
     setState(prev => ({
       ...prev,
       nutrients: prev.nutrients + offlineModal.gain,
       runEarned: prev.runEarned + offlineModal.gain,
-      totalPlayTimeSeconds: sessionBaseTotalTimeRef.current,
       runPlayTimeSeconds: sessionBaseRunTimeRef.current,
+      totalOfflineTimeSeconds: (prev.totalOfflineTimeSeconds || 0) + offlineModal.dt,
       stats: {
         ...prev.stats,
         maxOfflineTimeSeconds: Math.max(prev.stats?.maxOfflineTimeSeconds || 0, offlineModal.dt),
@@ -497,13 +496,12 @@ export function useGameEngine() {
         } else if (dt > 1) {
           const gain = rate * dt * permafrostOfflineMult;
           sessionBaseRunTimeRef.current += dt;
-          sessionBaseTotalTimeRef.current += dt;
           setState(prev => ({
             ...prev,
             nutrients: prev.nutrients + gain,
             runEarned: prev.runEarned + gain,
-            totalPlayTimeSeconds: sessionBaseTotalTimeRef.current,
             runPlayTimeSeconds: sessionBaseRunTimeRef.current,
+            totalOfflineTimeSeconds: (prev.totalOfflineTimeSeconds || 0) + dt,
             stats: {
               ...prev.stats,
               maxOfflineTimeSeconds: Math.max(prev.stats?.maxOfflineTimeSeconds || 0, dt),

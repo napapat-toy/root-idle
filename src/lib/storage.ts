@@ -29,6 +29,8 @@ export function encodeSave(state: GameState): string {
     ts: state.transcendence,
     pt: state.totalPlayTimeSeconds,
     rpt: state.runPlayTimeSeconds,
+    tot: state.totalOfflineTimeSeconds || 0,
+    cat: state.saveCreatedAt || Date.now(),
     ach: state.achievements || [],
     pacts: state.pacts || {},
     nextPacts: state.nextPacts || state.pacts || {},
@@ -96,6 +98,8 @@ export function decodeSave(rawCode: string): SavePayload {
       ts: payload.transcendence || {},
       pt: payload.totalPlayTimeSeconds || 0,
       rpt: payload.runPlayTimeSeconds || 0,
+      tot: payload.totalOfflineTimeSeconds || 0,
+      cat: payload.saveCreatedAt,
       ach: payload.achievements || [],
       pacts: payload.pacts || {},
       nextPacts: payload.nextPacts || payload.pacts || {},
@@ -142,6 +146,23 @@ export function payloadToState(payload: SavePayload): GameState {
     if (!(d.id in owned)) owned[d.id] = 0;
   });
 
+  let totalPlayTime = payload.pt || 0;
+  let totalOfflineTime = payload.tot || 0;
+  const achs = payload.ach || [];
+
+  // Smart recovery for existing saves:
+  // If player already has 24h playtime achievement, ensure totalPlayTime is at least 86400s (24h)
+  if (achs.includes('playtime_24h') && totalPlayTime < 86400) {
+    totalPlayTime = 86400;
+  }
+  // If player already has 24h offline achievement, ensure totalOfflineTime is at least 86400s (24h)
+  if (achs.includes('offline_24h') && totalOfflineTime < 86400) {
+    totalOfflineTime = 86400;
+  }
+
+  // If saveCreatedAt is not recorded yet, backfill it from known lifetime time
+  const saveCreatedAt = payload.cat || (Date.now() - Math.max(48 * 3600, totalPlayTime + totalOfflineTime) * 1000);
+
   const state: GameState = {
     nutrients: payload.n || 0,
     owned,
@@ -154,8 +175,10 @@ export function payloadToState(payload: SavePayload): GameState {
     activeBiome: payload.bm || 'topsoil',
     buyQty: BUY_QTY_OPTIONS.includes(payload.q || 1) ? (payload.q as number) : 1,
     lockGapBackfilled: false,
-    totalPlayTimeSeconds: payload.pt || 0,
+    totalPlayTimeSeconds: totalPlayTime,
     runPlayTimeSeconds: payload.rpt || 0,
+    totalOfflineTimeSeconds: totalOfflineTime,
+    saveCreatedAt,
     runEarned: payload.re || 0,
     eternalSeeds: payload.es || 0,
     prestige: Object.assign(
@@ -322,6 +345,8 @@ export function saveToLocalStorage(state: GameState): void {
       lockGapBackfilled: state.lockGapBackfilled,
       totalPlayTimeSeconds: state.totalPlayTimeSeconds,
       runPlayTimeSeconds: state.runPlayTimeSeconds,
+      totalOfflineTimeSeconds: state.totalOfflineTimeSeconds || 0,
+      saveCreatedAt: state.saveCreatedAt,
       buyQty: state.buyQty,
       achievements: state.achievements || [],
       pacts: state.pacts || {},
@@ -359,6 +384,8 @@ export function loadFromLocalStorage(): { state: GameState; lastTs?: number } | 
       ts: data.transcendence,
       pt: data.totalPlayTimeSeconds,
       rpt: data.runPlayTimeSeconds,
+      tot: data.totalOfflineTimeSeconds,
+      cat: data.saveCreatedAt,
       ach: data.achievements,
       pacts: data.pacts || {},
       nextPacts: data.nextPacts || data.pacts || {},

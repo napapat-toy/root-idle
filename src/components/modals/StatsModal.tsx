@@ -121,6 +121,13 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
   const vigorLevel = state.transcendence?.primordialVigorLevel || 0;
   const vigorMult = primordialVigorMult(state);
 
+  const totalSaveAgeSeconds = state.saveCreatedAt
+    ? Math.max(
+        (Date.now() - state.saveCreatedAt) / 1000,
+        (state.totalPlayTimeSeconds || 0) + (state.totalOfflineTimeSeconds || 0)
+      )
+    : (state.totalPlayTimeSeconds || 0) + (state.totalOfflineTimeSeconds || 0);
+
   return (
     <div className="offline-backdrop" onClick={onClose}>
       <div className="modal-wrapper stats-modal-wrapper" onClick={e => e.stopPropagation()}>
@@ -143,9 +150,11 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
               icon="⏱️"
               title={tr.cardTimeTitle}
               items={[
-                { label: tr.statTotalPlayTime, value: formatDuration(state.totalPlayTimeSeconds, lang) },
+                { label: tr.statTotalJourneyAge, value: formatDuration(totalSaveAgeSeconds, lang), valueClass: 'highlight' },
+                { label: tr.statOnlineTime, value: formatDuration(state.totalPlayTimeSeconds, lang) },
+                { label: tr.statOfflineTime, value: formatDuration(state.totalOfflineTimeSeconds || 0, lang) },
                 { label: tr.statRunPlayTime, value: formatDuration(state.runPlayTimeSeconds, lang) },
-                { label: tr.statGrowthStage, value: stageName(state, lang), valueClass: 'highlight' },
+                { label: tr.statGrowthStage, value: stageName(state, lang), valueClass: 'golden' },
                 { label: tr.statMaxOffline, value: formatDuration(stats.maxOfflineTimeSeconds, lang) },
               ]}
             />

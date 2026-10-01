@@ -246,6 +246,8 @@ export interface GameState {
   lockGapBackfilled: boolean;
   totalPlayTimeSeconds: number;
   runPlayTimeSeconds: number;
+  totalOfflineTimeSeconds?: number;
+  saveCreatedAt?: number;
   runEarned: number;
   eternalSeeds: number;
   prestige: PrestigeState;
@@ -326,6 +328,8 @@ export interface SavePayload {
   bm?: BiomeId;
   pt?: number;
   rpt?: number;
+  tot?: number;
+  cat?: number;
   rle?: Array<[number, number]>;
   ach?: string[];
   pacts?: Record<string, boolean>;

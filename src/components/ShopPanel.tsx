@@ -195,11 +195,11 @@ export const ShopPanel: React.FC<ShopPanelProps> = React.memo(({
           </div>
         )}
 
-        {/* Playtime note */}
+        {/* Playtime note - only current run time on main page */}
         <div className="footer-note playtime-note">
           {isEn
-            ? `Playtime: ${formatDuration(state.totalPlayTimeSeconds || 0)} · Current run: ${formatDuration(state.runPlayTimeSeconds || 0)}`
-            : `เล่นทั้งหมด ${formatDuration(state.totalPlayTimeSeconds || 0)} · รอบนี้ ${formatDuration(state.runPlayTimeSeconds || 0)}`}
+            ? `Current run: ${formatDuration(state.runPlayTimeSeconds || 0)}`
+            : `เวลาในรอบนี้: ${formatDuration(state.runPlayTimeSeconds || 0)}`}
         </div>
       </div>
     </div>
