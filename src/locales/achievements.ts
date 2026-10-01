@@ -494,45 +494,69 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'นักแต่งสวน', desc: 'สวมใส่สกินพิเศษรูปแบบใดก็ได้' },
     en: { title: 'Garden Stylist', desc: 'Equip any custom root skin' },
   },
-  skins_all_unlocked: {
-    th: { title: 'ตู้เสื้อผ้ารากไม้', desc: 'ปลดล็อกสกินรากไม้สะสมครบ 4 รูปแบบ' },
-    en: { title: 'Botanical Wardrobe', desc: 'Unlock any 4 root skins' },
-  },
   theme_equip_custom: {
     th: { title: 'จิตรกรแห่งผืนดิน', desc: 'สวมใส่ธีมหน้าต่าง UI พิเศษรูปแบบใดก็ได้ที่ไม่ใช่คลาสสิก' },
     en: { title: 'Subterranean Palette', desc: 'Equip any custom UI theme other than classic' },
   },
-  theme_void_sovereign: {
-    th: { title: 'ราชันย์แห่งมิติสุญญะ', desc: 'ปลดล็อกและสวมใส่ธีม UI [🌌 จอมราชันย์แห่งสุญญะ] จากการพิชิตการทดลอง' },
-    en: { title: 'Void Sovereign Domain', desc: 'Unlock and equip the [🌌 Void Sovereign] UI Theme from trials' },
+  skin_first_wardrobe: {
+    th: { title: 'อาภรณ์ชิ้นแรก', desc: 'ปลดล็อกสกินรากไม้หรือธีมหน้าต่างตกแต่งชิ้นแรก' },
+    en: { title: 'First Fitting', desc: 'Unlock your first root skin or UI theme' },
   },
-  skins_collector_8: {
-    th: { title: 'ผู้คลั่งไคล้แฟชั่นรากไม้', desc: 'ปลดล็อกสกินรากไม้สะสมครบ 8 รูปแบบ' },
-    en: { title: 'Fashion Enthusiast', desc: 'Unlock 8 root skins' },
+  skin_theme_match: {
+    th: { title: 'คู่สีกลมกลืนแห่งธรรมชาติ', desc: 'สวมใส่สกินรากไม้และธีมหน้าต่าง UI ในเซ็ตธีมเดียวกัน (เช่น ซากุระคู่ซากุระ)' },
+    en: { title: 'Harmonic Ensemble', desc: 'Equip a matching root skin and UI theme pair' },
   },
-  skins_collector_12: {
-    th: { title: 'รันเวย์ใต้พิภพ', desc: 'ปลดล็อกสกินรากไม้สะสมครบ 12 รูปแบบ' },
-    en: { title: 'Subterranean Runway', desc: 'Unlock 12 root skins' },
-  },
-  skin_nebula_unlocked: {
-    th: { title: 'รากไม้แห่งดวงดาว', desc: 'ครอบครองสกินระดับสูง [🌌 มิติเนบิวลา] หรือ [🪙 มรดกทองคำ]' },
-    en: { title: 'Astral Arborist', desc: 'Own luxury skin [🌌 Nebula] or [🪙 Golden Legacy]' },
-  },
-  skin_trial_champions: {
-    th: { title: 'อาภรณ์แห่งผู้พิชิต', desc: 'ปลดล็อกสกินพิเศษจากการพิชิตการทดลองใต้พิภพอย่างน้อย 1 รูปแบบ' },
-    en: { title: 'Conqueror\'s Regalia', desc: 'Unlock at least 1 subterranean trial skin' },
+  skins_all_unlocked: {
+    th: { title: 'ตู้เสื้อผ้ารากไม้', desc: 'ปลดล็อกสกินรากไม้สะสมครบ 4 รูปแบบ' },
+    en: { title: 'Botanical Wardrobe', desc: 'Unlock any 4 root skins' },
   },
   themes_collector_5: {
     th: { title: 'สถาปนิกส่วนหน้า', desc: 'ปลดล็อกธีมหน้าต่าง UI สะสมครบ 5 ธีม' },
     en: { title: 'Visual Architect', desc: 'Unlock 5 UI color themes' },
   },
+  skins_collector_8: {
+    th: { title: 'ผู้คลั่งไคล้แฟชั่นรากไม้', desc: 'ปลดล็อกสกินรากไม้สะสมครบ 8 รูปแบบ' },
+    en: { title: 'Fashion Enthusiast', desc: 'Unlock 8 root skins' },
+  },
   themes_collector_10: {
     th: { title: 'พหุภพแห่งผืนดิน', desc: 'ปลดล็อกธีมหน้าต่าง UI สะสมครบ 10 ธีม' },
     en: { title: 'Multiverse of Soils', desc: 'Unlock 10 UI color themes' },
   },
-  skin_theme_match: {
-    th: { title: 'คู่สีกลมกลืนแห่งธรรมชาติ', desc: 'สวมใส่สกินรากไม้และธีมหน้าต่าง UI ในเซ็ตธีมเดียวกัน (เช่น ซากุระคู่ซากุระ)' },
-    en: { title: 'Harmonic Ensemble', desc: 'Equip a matching root skin and UI theme pair' },
+  skin_nebula_unlocked: {
+    th: { title: 'รากไม้แห่งดวงดาว', desc: 'ครอบครองสกินระดับสูง [🌌 มิติเนบิวลา] หรือ [🪙 มรดกทองคำ]' },
+    en: { title: 'Astral Arborist', desc: 'Own luxury skin [🌌 Nebula] or [🪙 Golden Legacy]' },
+  },
+  skins_collector_12: {
+    th: { title: 'รันเวย์ใต้พิภพ', desc: 'ปลดล็อกสกินรากไม้สะสมครบ 12 รูปแบบ' },
+    en: { title: 'Subterranean Runway', desc: 'Unlock 12 root skins' },
+  },
+  skin_trial_champions: {
+    th: { title: 'อาภรณ์แห่งผู้พิชิต', desc: 'ปลดล็อกสกินพิเศษจากการพิชิตการทดลองใต้พิภพอย่างน้อย 1 รูปแบบ' },
+    en: { title: 'Conqueror\'s Regalia', desc: 'Unlock at least 1 subterranean trial skin' },
+  },
+  theme_void_sovereign: {
+    th: { title: 'ราชันย์แห่งมิติสุญญะ', desc: 'ปลดล็อกและสวมใส่ธีม UI [🌌 จอมราชันย์แห่งสุญญะ] จากการพิชิตการทดลอง' },
+    en: { title: 'Void Sovereign Domain', desc: 'Unlock and equip the [🌌 Void Sovereign] UI Theme from trials' },
+  },
+  skins_collector_16: {
+    th: { title: 'มหาตระกูลอาภรณ์', desc: 'ปลดล็อกสกินรากไม้สะสมครบ 16 รูปแบบ' },
+    en: { title: 'Haute Couture Dynasty', desc: 'Unlock 16 root skins' },
+  },
+  theme_subterranean_borealis: {
+    th: { title: 'มงกุฎแสงเหนือใต้พิภพ', desc: 'ปลดล็อกธีมหน้าต่าง UI ระดับ Mythic [🌌 แสงเหนือใต้พิภพ (Subterranean Borealis)]' },
+    en: { title: 'Crown of Subterranean Borealis', desc: 'Unlock the Mythic [🌌 Subterranean Borealis] UI theme' },
+  },
+  skin_timeless_aurora: {
+    th: { title: 'รัตติกาลไร้กาลเวลา', desc: 'ปลดล็อกสกินรากไม้ระดับ Mythic [🌸 ออโรร่าไร้กาลเวลา (Timeless Aurora)]' },
+    en: { title: 'Timeless Aurora Nocturne', desc: 'Unlock the Mythic [🌸 Timeless Aurora] root skin' },
+  },
+  skin_starlight_prism: {
+    th: { title: 'ปริซึมผลึกสะท้อนดวงดาว', desc: 'ปลดล็อกสกินรากไม้ขั้นสูงสุดระดับ Mythic [✨ ผลึกคริสตัลดวงดาว (Starlight Prism)]' },
+    en: { title: 'Starlight Prism Apex', desc: 'Unlock the supreme Mythic [✨ Starlight Prism] root skin' },
+  },
+  astral_trio_collector: {
+    th: { title: 'จักรพรรดิแห่งดวงดาราและแสงเหนือ', desc: 'ครอบครองเครื่องประดับ Astral Mythic ครบทั้ง 3 ชิ้น (สกิน 2 แบบ + ธีม 1 แบบ)' },
+    en: { title: 'Astral Triumvirate', desc: 'Own all 3 Astral Mythic cosmetics (2 skins + 1 theme)' },
   },
   wardrobe_grand_master: {
     th: { title: 'มหาจักรพรรดิแห่งแฟชั่นรากไม้', desc: 'ครอบครองสกินรากไม้ครบทุกแบบ และธีมหน้าต่างครบทุกแบบในเกม' },
@@ -901,25 +925,5 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
   pact_5: {
     th: { title: 'ผู้แบกรับชะตากรรมทมิฬ', desc: 'ทำพันธสัญญา (Pact) พร้อมกัน 5 สัญญาขึ้นไปในการตื่นรู้' },
     en: { title: 'Bearer of the Void Fate', desc: 'Bind 5 or more Dark Pacts simultaneously' },
-  },
-  skin_first_wardrobe: {
-    th: { title: 'อาภรณ์ชิ้นแรก', desc: 'ปลดล็อกสกินรากไม้หรือธีมหน้าต่างตกแต่งชิ้นแรก' },
-    en: { title: 'First Vestment', desc: 'Unlock your first root skin or UI window theme' },
-  },
-  theme_subterranean_borealis: {
-    th: { title: 'มงกุฎแสงเหนือใต้พิภพ', desc: 'ปลดล็อกธีมหน้าต่าง UI ระดับ Mythic [🌌 แสงเหนือใต้พิภพ (Subterranean Borealis)]' },
-    en: { title: 'Subterranean Borealis Canopy', desc: 'Unlock the Mythic [🌌 Subterranean Borealis] UI Theme' },
-  },
-  skin_timeless_aurora: {
-    th: { title: 'รัตติกาลไร้กาลเวลา', desc: 'ปลดล็อกสกินรากไม้ระดับ Mythic [🌸 ออโรร่าไร้กาลเวลา (Timeless Aurora)]' },
-    en: { title: 'Timeless Aurora Bloom', desc: 'Unlock the Mythic [🌸 Timeless Aurora] Root Skin' },
-  },
-  skin_starlight_prism: {
-    th: { title: 'ปริซึมผลึกสะท้อนดวงดาว', desc: 'ปลดล็อกสกินรากไม้ขั้นสูงสุดระดับ Mythic [✨ ผลึกคริสตัลดวงดาว (Starlight Prism)]' },
-    en: { title: 'Starlight Prism Radiance', desc: 'Unlock the pinnacle Mythic [✨ Starlight Prism] Root Skin' },
-  },
-  astral_trio_collector: {
-    th: { title: 'จักรพรรดิแห่งดวงดาราและแสงเหนือ', desc: 'ครอบครองเครื่องประดับ Astral Mythic ครบทั้ง 3 ชิ้น (สกิน 2 แบบ + ธีม 1 แบบ)' },
-    en: { title: 'Sovereign of the Starlight Aurora', desc: 'Unlock all 3 Astral Mythic cosmetics (both skins & theme)' },
   },
 };
