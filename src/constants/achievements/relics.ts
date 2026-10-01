@@ -2,7 +2,8 @@ import { AchievementDef } from '@/types/achievements';
 import { hasRelic, relicsCount, relicCycleResonanceStack } from '../relics';
 
 export const RELICS_ACHIEVEMENTS: AchievementDef[] = [
-// ===== 🏺 หมวด 7: โบราณวัตถุ & ชีวนิเวศ (Relics & Biomes) =====
+// ===== 🏺 หมวด 5: โบราณวัตถุ & ชีวนิเวศ (Relics & Biomes) =====
+  // --- โบราณวัตถุใต้พิภพ (Master Relics) ---
   {
     id: 'relic_1',
     category: 'relics',
@@ -13,13 +14,31 @@ export const RELICS_ACHIEVEMENTS: AchievementDef[] = [
     check: (s) => relicsCount(s) >= 1,
   },
   {
+    id: 'relic_3',
+    category: 'relics',
+    title: 'คลังโบราณคดีใต้พิภพ',
+    desc: 'ครอบครองโบราณวัตถุระดับ Master สะสมครบ 3 ชิ้น',
+    icon: '📦',
+    bonusPct: 5,
+    check: (s) => relicsCount(s) >= 3,
+  },
+  {
     id: 'relic_5',
     category: 'relics',
     title: 'นักสำรวจอารยธรรมโบราณ',
     desc: 'ครอบครองโบราณวัตถุระดับ Master สะสมครบ 5 ชิ้น',
     icon: '📜',
-    bonusPct: 5,
+    bonusPct: 8,
     check: (s) => relicsCount(s) >= 5,
+  },
+  {
+    id: 'relic_8',
+    category: 'relics',
+    title: 'มรดกบรรพกาลเกือบสมบูรณ์',
+    desc: 'ครอบครองโบราณวัตถุระดับ Master สะสมครบ 8 ชิ้น',
+    icon: '🔮',
+    bonusPct: 15,
+    check: (s) => relicsCount(s) >= 8,
   },
   {
     id: 'relic_10',
@@ -27,7 +46,7 @@ export const RELICS_ACHIEVEMENTS: AchievementDef[] = [
     title: 'ผู้ครอบครองวัตถุบรรพกาล',
     desc: 'ครอบครองโบราณวัตถุใต้พิภพครบทั้ง 10 ชิ้นสมบูรณ์',
     icon: '🏛️',
-    bonusPct: 10,
+    bonusPct: 24,
     check: (s) => relicsCount(s) >= 10,
   },
   {
@@ -36,16 +55,18 @@ export const RELICS_ACHIEVEMENTS: AchievementDef[] = [
     title: 'หัวใจแห่งไกอาตื่นรู้',
     desc: 'ค้นพบ [👑 หัวใจแห่งไกอา] โบราณวัตถุระดับ Mythic (ปลุกพลัง ×2 ทุกชิ้น)',
     icon: '👑',
-    bonusPct: 10,
+    bonusPct: 30,
     check: (s) => hasRelic(s, 'gaiacore'),
   },
+
+  // --- พลังการเวียนว่าย (Cycle Resonance) ---
   {
     id: 'cycle_resonance_50',
     category: 'relics',
     title: 'พลังการเวียนว่ายครึ่งทาง',
     desc: 'สะสมพลังการเวียนว่าย (Cycle Resonance Stack) จากศิลาแก่นเพลิงพิภพแตะ +50%',
     icon: '🔥',
-    bonusPct: 5,
+    bonusPct: 8,
     check: (s) => relicCycleResonanceStack(s) >= 50,
   },
   {
@@ -54,9 +75,11 @@ export const RELICS_ACHIEVEMENTS: AchievementDef[] = [
     title: 'เสียงสะท้อนแห่งวัฏสงสารสูงสุด',
     desc: 'สะสมพลังการเวียนว่าย (Cycle Resonance Stack) แตะขีดจำกัดสูงสุด (≥100%)',
     icon: '🌋',
-    bonusPct: 10,
+    bonusPct: 18,
     check: (s) => relicCycleResonanceStack(s) >= 100,
   },
+
+  // --- ชีวนิเวศใต้พิภพ (Subterranean Biomes) ---
   {
     id: 'biome_switch',
     category: 'relics',
@@ -67,12 +90,48 @@ export const RELICS_ACHIEVEMENTS: AchievementDef[] = [
     check: (s) => !!s.activeBiome && s.activeBiome !== 'topsoil',
   },
   {
+    id: 'biome_myco',
+    category: 'relics',
+    title: 'ถิ่นสปอร์เรืองแสง',
+    desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศ [หุบเหวเห็ดราเรืองแสง]',
+    icon: '🍄',
+    bonusPct: 4,
+    check: (s) => s.activeBiome === 'myco_abyss',
+  },
+  {
+    id: 'biome_crystal',
+    category: 'relics',
+    title: 'มิติผลึกเรืองแสง',
+    desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศ [ถ้ำผลึกคริสตัลใต้พิภพ]',
+    icon: '💎',
+    bonusPct: 6,
+    check: (s) => s.activeBiome === 'crystal_caverns',
+  },
+  {
+    id: 'biome_magma',
+    category: 'relics',
+    title: 'แก่นเพลิงปฐพี',
+    desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศ [แก่นหินหลอมเหลวแมกมา]',
+    icon: '🌋',
+    bonusPct: 9,
+    check: (s) => s.activeBiome === 'magma_mantle',
+  },
+  {
+    id: 'biome_ruins',
+    category: 'relics',
+    title: 'รอยอารยธรรมจมบาดาล',
+    desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศ [ซากอารยธรรมโบราณจมบาดาล]',
+    icon: '🏛️',
+    bonusPct: 13,
+    check: (s) => s.activeBiome === 'sunken_ruins',
+  },
+  {
     id: 'biome_sanctum',
     category: 'relics',
     title: 'สู่วิหารแห่งไกอา',
     desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศระดับสูงสุด [🌌 วิหารแห่งไกอา]',
     icon: '🌌',
-    bonusPct: 8,
+    bonusPct: 20,
     check: (s) => s.activeBiome === 'gaia_sanctum',
   },
 ];

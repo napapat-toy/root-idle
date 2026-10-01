@@ -104,6 +104,7 @@ export function createFreshState(): GameState {
       luckyJackpotCount: 0,
       maxOfflineTimeSeconds: 0,
       superJackpotClaimed: false,
+      superJackpotCount: 0,
       totalSeedsEarnedLifetime: 0,
       totalNutrientsEarnedLifetime: 0,
       totalRootsPurchasedLifetime: 0,

@@ -105,6 +105,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
           ...prev.stats,
           totalEventsClaimed: (prev.stats?.totalEventsClaimed || 0) + 1,
           superJackpotClaimed: isLuckyActive ? true : (prev.stats?.superJackpotClaimed || false),
+          superJackpotCount: (prev.stats?.superJackpotCount || (prev.stats?.superJackpotClaimed ? 1 : 0)) + (isLuckyActive ? 1 : 0),
         },
       }));
 

@@ -115,6 +115,7 @@ export interface GameStats {
   luckyJackpotCount: number;
   maxOfflineTimeSeconds: number;
   superJackpotClaimed: boolean;
+  superJackpotCount?: number;
   totalSeedsEarnedLifetime: number;
   totalNutrientsEarnedLifetime?: number;
   totalRootsPurchasedLifetime?: number;

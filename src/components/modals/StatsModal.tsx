@@ -250,9 +250,11 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 { label: tr.statEventsClaimed, value: `${stats.totalEventsClaimed} ${isEn ? 'times' : 'ครั้ง'}` },
                 { label: tr.statLuckyCount, value: `${stats.luckyJackpotCount} ${isEn ? 'times' : 'ครั้ง'}`, valueClass: 'golden' },
                 {
-                  label: isEn ? 'Super Jackpot' : 'ซูเปอร์แจ็กพอต',
-                  value: stats.superJackpotClaimed ? (isEn ? 'Claimed ✨' : 'ค้นพบแล้ว ✨') : (isEn ? 'Not Yet' : 'ยังไม่เคยได้'),
-                  valueStyle: { color: stats.superJackpotClaimed ? '#ffd76a' : 'var(--root-cream-dim)' },
+                  label: isEn ? 'Super Jackpot' : 'แจ็กพอตซ้อนแจ็กพอต',
+                  value: (stats.superJackpotCount || (stats.superJackpotClaimed ? 1 : 0)) > 0
+                    ? `${(stats.superJackpotCount || (stats.superJackpotClaimed ? 1 : 0)).toLocaleString()} ${isEn ? 'times' : 'ครั้ง'} ✨`
+                    : (isEn ? 'Not Yet' : 'ยังไม่เคยได้'),
+                  valueStyle: { color: (stats.superJackpotCount || (stats.superJackpotClaimed ? 1 : 0)) > 0 ? '#ffd76a' : 'var(--root-cream-dim)' },
                 },
                 {
                   label: isEn ? 'Challenge Status' : 'สถานะการทดสอบ',

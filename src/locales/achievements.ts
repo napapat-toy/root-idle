@@ -405,6 +405,14 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'มือเก็บเกี่ยวแห่งตำนาน', desc: 'เก็บอีเวนต์สะสมครบ 500 ครั้ง' },
     en: { title: 'Legendary Collector', desc: 'Claim 500 total floating events' },
   },
+  event_1500: {
+    th: { title: 'ปรมาจารย์นักคว้าโอกาส', desc: 'เก็บอีเวนต์สะสมครบ 1,500 ครั้ง' },
+    en: { title: 'Omnipresent Harvester', desc: 'Claim 1,500 total floating events' },
+  },
+  event_5000: {
+    th: { title: 'เจ้าแห่งห้วงมิติเหตุการณ์', desc: 'เก็บอีเวนต์สะสมครบ 5,000 ครั้ง' },
+    en: { title: 'Lord of Epochs', desc: 'Claim 5,000 total floating events' },
+  },
   lucky_1: {
     th: { title: 'แจ็กพอตแห่งโชคชะตา', desc: 'ได้รับบัฟโชคดี 🍀 (×777) ครั้งแรก' },
     en: { title: 'Stroke of Luck', desc: 'Trigger the Lucky Clover 🍀 (×777) buff' },
@@ -413,13 +421,41 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'เทพแห่งโชคลาภ', desc: 'ได้รับบัฟโชคดี 🍀 (×777) สะสมครบ 10 ครั้ง' },
     en: { title: 'Favored by Fortune', desc: 'Trigger the Lucky Clover 🍀 buff 10 times' },
   },
+  lucky_50: {
+    th: { title: 'ลูกรักแห่งโชคชะตา', desc: 'ได้รับบัฟโชคดี 🍀 (×777) สะสมครบ 50 ครั้ง' },
+    en: { title: 'Child of Fortune', desc: 'Trigger the Lucky Clover 🍀 buff 50 times' },
+  },
+  lucky_100: {
+    th: { title: 'ผู้กำหนดดวงดาวนำโชค', desc: 'ได้รับบัฟโชคดี 🍀 (×777) สะสมครบ 100 ครั้ง' },
+    en: { title: 'Destiny Weaver', desc: 'Trigger the Lucky Clover 🍀 buff 100 times' },
+  },
   super_jackpot: {
     th: { title: 'แจ็กพอตซ้อนแจ็กพอต', desc: 'เก็บกล่อง 🎁 ได้รับสารอาหารก้อนโตขณะมีบัฟโชคดีทำงานอยู่' },
     en: { title: 'Jackpot Resonance', desc: 'Open a gift 🎁 while Lucky Clover buff is active' },
   },
+  super_jackpot_5: {
+    th: { title: 'ดับเบิลแจ็กพอตช่ำชอง', desc: 'ได้รับแจ็กพอตซ้อนแจ็กพอตสะสมครบ 5 ครั้ง' },
+    en: { title: 'Resonance Adept', desc: 'Trigger Super Jackpot 5 times' },
+  },
+  super_jackpot_10: {
+    th: { title: 'ดวงดาวบรรจบสองสาย', desc: 'ได้รับแจ็กพอตซ้อนแจ็กพอตสะสมครบ 10 ครั้ง' },
+    en: { title: 'Twin Constellations', desc: 'Trigger Super Jackpot 10 times' },
+  },
+  super_jackpot_25: {
+    th: { title: 'มหาโชคสองชั้นสะท้านภพ', desc: 'ได้รับแจ็กพอตซ้อนแจ็กพอตสะสมครบ 25 ครั้ง' },
+    en: { title: 'Apex Super Jackpot', desc: 'Trigger Super Jackpot 25 times' },
+  },
   event_bonus_25: {
-    th: { title: 'ผลตอบแทนงอกเงย', desc: 'อัปเกรดโบนัสอีเวนต์ (Event Value Booster) ในร้านหว่านใหม่แตะเลเวล 25' },
+    th: { title: 'ผลตอบแทนงอกเงย', desc: 'อัปเกรดโบนัสอีเวนต์ (Event Value Booster) แตะเลเวล 25' },
     en: { title: 'Flourishing Bounty', desc: 'Upgrade Event Value Booster to Level 25' },
+  },
+  event_bonus_100: {
+    th: { title: 'มหาขุมทรัพย์ลอยฟ้า', desc: 'อัปเกรดโบนัสอีเวนต์ (Event Value Booster) แตะเลเวล 100' },
+    en: { title: 'Sky Vault Bounty', desc: 'Upgrade Event Value Booster to Level 100' },
+  },
+  event_bonus_500: {
+    th: { title: 'ปรากฏการณ์พร่างพราย', desc: 'อัปเกรดโบนัสอีเวนต์ (Event Value Booster) แตะเลเวล 500' },
+    en: { title: 'Prismatic Celestial Bounty', desc: 'Upgrade Event Value Booster to Level 500' },
   },
   event_duration_max: {
     th: { title: 'เวลาแห่งบัฟ', desc: 'อัปเกรดขยายระยะเวลาบัฟอีเวนต์แตะเลเวล 4 (สูงสุด)' },
@@ -432,6 +468,26 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
   lucky_magnitude_max: {
     th: { title: 'โชคดีสิบเท่าทวีคูณ', desc: 'อัปเกรดโชคดีทวีคูณแตะเลเวล 9 (สูงสุด ทบตัวคูณโชคดี ×10)' },
     en: { title: 'Decuple Fortune', desc: 'Max out Lucky Magnitude Multiplier to Level 9 (×10 multiplier)' },
+  },
+  astral_petal_1: {
+    th: { title: 'ละอองกลีบดวงดาราแรก', desc: 'เก็บหรือหลอมกลีบดอกไม้ดวงดาว (Astral Petals) ชิ้นแรกสำเร็จ' },
+    en: { title: 'First Starlight Petal', desc: 'Collect or transmute your first Astral Petal' },
+  },
+  astral_petal_10: {
+    th: { title: 'มาลัยดอกไม้แห่งฟากฟ้า', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมอย่างน้อย 10 กลีบ' },
+    en: { title: 'Garland of the Cosmos', desc: 'Accumulate at least 10 Astral Petals' },
+  },
+  astral_petal_50: {
+    th: { title: 'สวนบุปผาดวงดารานิรันดร์', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 50 กลีบ' },
+    en: { title: 'Eternal Astral Garden', desc: 'Accumulate 50 Astral Petals' },
+  },
+  astral_petal_200: {
+    th: { title: 'ดาราจักรบุปผาพร่างพราว', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 200 กลีบ' },
+    en: { title: 'Celestial Nebula Meadow', desc: 'Accumulate 200 Astral Petals' },
+  },
+  astral_petal_500: {
+    th: { title: 'มหาดวงดาราคอสมิกแห่งไกอา', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 500 กลีบ' },
+    en: { title: 'Cosmic Blossom Sovereign', desc: 'Accumulate 500 Astral Petals' },
   },
 
   skin_equip_custom: {
@@ -668,9 +724,17 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'ขุดพบโบราณคดีชิ้นแรก', desc: 'ค้นพบโบราณวัตถุใต้พิภพชิ้นแรก (ครอบครอง Master Relic 1 ชิ้น)' },
     en: { title: 'First Unearthed Relic', desc: 'Discover your first subterranean Master Relic' },
   },
+  relic_3: {
+    th: { title: 'คลังโบราณคดีใต้พิภพ', desc: 'ครอบครองโบราณวัตถุระดับ Master สะสมครบ 3 ชิ้น' },
+    en: { title: 'Subterranean Museum', desc: 'Amass 3 Master Relics in your museum' },
+  },
   relic_5: {
     th: { title: 'นักสำรวจอารยธรรมโบราณ', desc: 'ครอบครองโบราณวัตถุระดับ Master สะสมครบ 5 ชิ้น' },
     en: { title: 'Subterranean Explorer', desc: 'Amass 5 Master Relics in your museum' },
+  },
+  relic_8: {
+    th: { title: 'มรดกบรรพกาลเกือบสมบูรณ์', desc: 'ครอบครองโบราณวัตถุระดับ Master สะสมครบ 8 ชิ้น' },
+    en: { title: 'Keeper of Ancient Heritage', desc: 'Amass 8 Master Relics in your museum' },
   },
   relic_10: {
     th: { title: 'ผู้ครอบครองวัตถุบรรพกาล', desc: 'ครอบครองโบราณวัตถุใต้พิภพครบทั้ง 10 ชิ้นสมบูรณ์' },
@@ -692,6 +756,22 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'ก้าวสู่ถิ่นฐานใหม่', desc: 'สลับไปใช้ชีวนิเวศใต้พิภพอื่นที่ไม่ใช่ผิวดินชั้นบนเป็นครั้งแรก' },
     en: { title: 'New Subterranean Horizon', desc: 'Switch your active canvas biome away from standard topsoil' },
   },
+  biome_myco: {
+    th: { title: 'ถิ่นสปอร์เรืองแสง', desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศ [หุบเหวเห็ดราเรืองแสง]' },
+    en: { title: 'Myco Abyss Domain', desc: 'Unlock and activate the [Bioluminescent Myco Abyss] biome' },
+  },
+  biome_crystal: {
+    th: { title: 'มิติผลึกเรืองแสง', desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศ [ถ้ำผลึกคริสตัลใต้พิภพ]' },
+    en: { title: 'Crystal Cavern Domain', desc: 'Unlock and activate the [Subterranean Crystal Caverns] biome' },
+  },
+  biome_magma: {
+    th: { title: 'แก่นเพลิงปฐพี', desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศ [แก่นหินหลอมเหลวแมกมา]' },
+    en: { title: 'Magmatic Mantle Domain', desc: 'Unlock and activate the [Magmatic Molten Mantle] biome' },
+  },
+  biome_ruins: {
+    th: { title: 'รอยอารยธรรมจมบาดาล', desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศ [ซากอารยธรรมโบราณจมบาดาล]' },
+    en: { title: 'Sunken Ruins Domain', desc: 'Unlock and activate the [Ancient Sunken Ruins] biome' },
+  },
   biome_sanctum: {
     th: { title: 'สู่วิหารแห่งไกอา', desc: 'ปลดล็อกและเปิดใช้งานชีวนิเวศระดับสูงสุด [🌌 วิหารแห่งไกอา]' },
     en: { title: 'Sanctum of the World Soul', desc: 'Unlock and activate the pinnacle [🌌 Sanctum of Gaia] biome' },
@@ -706,6 +786,14 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'จิตวิญญาณแห่งผืนพิภพ', desc: 'ทำการตื่นรู้แห่งไกอาสะสมครบ 5 ครั้ง' },
     en: { title: 'Avatar of the Living Earth', desc: 'Perform 5 total Gaia Transcendences' },
   },
+  transcend_15: {
+    th: { title: 'สายใยแห่งจิตวิญญาณโลก', desc: 'ทำการตื่นรู้แห่งไกอาสะสมครบ 15 ครั้ง' },
+    en: { title: 'Tapestry of Gaia', desc: 'Perform 15 total Gaia Transcendences' },
+  },
+  transcend_30: {
+    th: { title: 'ปรมาจารย์แห่งการตื่นรู้', desc: 'ทำการตื่นรู้แห่งไกอาสะสมครบ 30 ครั้ง' },
+    en: { title: 'Pinnacle Gaia Ascendant', desc: 'Perform 30 total Gaia Transcendences' },
+  },
   gaia_essences_50: {
     th: { title: 'ประกายชีวิตดึกดำบรรพ์', desc: 'ครอบครองละอองชีวิตดึกดำบรรพ์ (Gaia Essences) อย่างน้อย 50 ละออง' },
     en: { title: 'Primordial Spark', desc: 'Possess at least 50 Gaia Essences (🌍)' },
@@ -717,6 +805,14 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
   gaia_essences_2500: {
     th: { title: 'มหาสมุทรวิญญาณแห่งโลก', desc: 'ครอบครองละอองชีวิตดึกดำบรรพ์ (Gaia Essences) สะสมอย่างน้อย 2,500 ละออง' },
     en: { title: 'Ocean of the World Soul', desc: 'Accumulate at least 2,500 Gaia Essences (🌍)' },
+  },
+  gaia_essences_10000: {
+    th: { title: 'มหาแก่นพลังชีวิตปฐมกาล', desc: 'ครอบครองละอองชีวิตดึกดำบรรพ์ (Gaia Essences) สะสมอย่างน้อย 10,000 ละออง' },
+    en: { title: 'Cosmic Primal Reservoir', desc: 'Accumulate at least 10,000 Gaia Essences (🌍)' },
+  },
+  gaia_essences_50000: {
+    th: { title: 'เอกภพแห่งละอองชีวิตนิรันดร์', desc: 'ครอบครองละอองชีวิตดึกดำบรรพ์ (Gaia Essences) สะสมอย่างน้อย 50,000 ละออง' },
+    en: { title: 'Infinite Gaia Singularity', desc: 'Accumulate at least 50,000 Gaia Essences (🌍)' },
   },
   transcend_vigor_max: {
     th: { title: 'กายาปฐมกาลไร้เทียมทาน', desc: 'อัปเกรดแกนพลังปฐมกาล (Primordial Vigor) แตะเลเวล 20 (สูงสุด)' },
@@ -782,6 +878,10 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'พรอันเป็นนิรันดร์', desc: 'อัปเกรดพรแห่งไกอาสะสมครบเลเวล 10 (+50% ละอองไกอา)' },
     en: { title: 'Eternal Blessing', desc: 'Upgrade Gaia\'s Blessing to Level 10 (+50% Essences)' },
   },
+  gaia_blessing_25: {
+    th: { title: 'พรสูงสุดแห่งสรรพสิ่ง', desc: 'อัปเกรดพรแห่งไกอาสะสมครบเลเวล 25' },
+    en: { title: 'Supreme Gaia Blessing', desc: 'Upgrade Gaia\'s Blessing to Level 25' },
+  },
   hyperdrive_unlock: {
     th: { title: 'เร่งความเร็วมิติกาลเวลา', desc: 'ปลดล็อกตัวเร่งเวลา 2x Hyperdrive Overclock ในผังจิตวิญญาณไกอา' },
     en: { title: 'Dimensional Overclock', desc: 'Unlock the 2x Hyperdrive Overclock in the Gaia Tree' },
@@ -794,21 +894,13 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'เนตรแห่งไกอา', desc: 'อัปเกรดสายตาแห่งไกอา (Gaia Clairvoyance) แตะเลเวล 5' },
     en: { title: 'Eye of Gaia', desc: 'Upgrade Gaia Clairvoyance to Level 5' },
   },
-  astral_petal_1: {
-    th: { title: 'ละอองกลีบดวงดาราแรก', desc: 'เก็บหรือหลอมกลีบดอกไม้ดวงดาว (Astral Petals) ชิ้นแรกสำเร็จ' },
-    en: { title: 'First Starlight Petal', desc: 'Collect or transmute your first Astral Petal' },
+  pact_first: {
+    th: { title: 'ข้อตกลงแห่งความมืด', desc: 'ทำพันธสัญญา (Pact) อย่างน้อย 1 สัญญาในการตื่นรู้' },
+    en: { title: 'Dark Bargain', desc: 'Bind at least 1 Dark Pact in Transcendence' },
   },
-  astral_petal_10: {
-    th: { title: 'มาลัยดอกไม้แห่งฟากฟ้า', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมอย่างน้อย 10 กลีบ' },
-    en: { title: 'Garland of the Cosmos', desc: 'Accumulate at least 10 Astral Petals' },
-  },
-  astral_petal_50: {
-    th: { title: 'สวนบุปผาดวงดารานิรันดร์', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 50 กลีบ (พร้อมแลกธีมหน้าต่างแสงเหนือ)' },
-    en: { title: 'Eternal Astral Garden', desc: 'Accumulate 50 Astral Petals (ready for Borealis Theme)' },
-  },
-  astral_petal_500: {
-    th: { title: 'มหาดวงดาราคอสมิกแห่งไกอา', desc: 'ครอบครองกลีบดอกไม้ดวงดาวสะสมครบ 500 กลีบ (พร้อมแลกสกินระดับสูงสุด)' },
-    en: { title: 'Cosmic Star of Gaia', desc: 'Accumulate 500 Astral Petals (ready for the ultimate skin)' },
+  pact_5: {
+    th: { title: 'ผู้แบกรับชะตากรรมทมิฬ', desc: 'ทำพันธสัญญา (Pact) พร้อมกัน 5 สัญญาขึ้นไปในการตื่นรู้' },
+    en: { title: 'Bearer of the Void Fate', desc: 'Bind 5 or more Dark Pacts simultaneously' },
   },
   skin_first_wardrobe: {
     th: { title: 'อาภรณ์ชิ้นแรก', desc: 'ปลดล็อกสกินรากไม้หรือธีมหน้าต่างตกแต่งชิ้นแรก' },
