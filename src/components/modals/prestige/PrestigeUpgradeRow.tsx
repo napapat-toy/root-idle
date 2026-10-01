@@ -173,11 +173,11 @@ export const PrestigeUpgradeRow: React.FC<PrestigeUpgradeRowProps> = React.memo(
                   className="btn-passive-bulk btn-passive-max"
                   disabled={maxBuyable <= 0}
                   onClick={() => onBuy('max')}
-                  title={isEn ? `Buy all affordable levels (+${fmtInt(maxBuyable)})` : `ซื้อจนหมดเมล็ดที่มี (+${fmtInt(maxBuyable)} เลเวล)`}
+                  title={isEn ? `Buy all affordable levels (+${fmtInt(maxBuyable)})` : `ซื้อทั้งหมดเท่าที่ทำได้ (+${fmtInt(maxBuyable)} เลเวล)`}
                 >
                   {isEn
                     ? (maxBuyable > 0 ? `Buy All (+${fmtInt(maxBuyable)})` : 'Buy All')
-                    : (maxBuyable > 0 ? `ซื้อจนหมด (+${fmtInt(maxBuyable)})` : 'ซื้อจนหมด')}
+                    : (maxBuyable > 0 ? `ซื้อทั้งหมด (+${fmtInt(maxBuyable)})` : 'ซื้อทั้งหมด')}
                 </button>
               </>
             ) : (
@@ -216,9 +216,9 @@ export const PrestigeUpgradeRow: React.FC<PrestigeUpgradeRowProps> = React.memo(
                     type="button"
                     className="btn-passive-bulk btn-passive-max"
                     onClick={() => onBuy('max')}
-                    title={isEn ? `Buy all affordable levels (+${maxBuyable})` : `ซื้อจนหมดเมล็ดที่มี (+${maxBuyable} เลเวล)`}
+                    title={isEn ? `Buy all affordable levels (+${maxBuyable})` : `ซื้อทั้งหมดเท่าที่ทำได้ (+${maxBuyable} เลเวล)`}
                   >
-                    {isEn ? `Buy All (+${maxBuyable})` : `ซื้อจนหมด (+${maxBuyable})`}
+                    {isEn ? `Buy All (+${maxBuyable})` : `ซื้อทั้งหมด (+${maxBuyable})`}
                   </button>
                 )}
               </>
