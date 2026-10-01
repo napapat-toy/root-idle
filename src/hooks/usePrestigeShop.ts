@@ -54,6 +54,10 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
       prestige: { ...prev.prestige, starterLevel: (prev.prestige.starterLevel || 0) + count },
       owned: { ...prev.owned, fine: (prev.owned['fine'] || 0) + 10 * count },
       totalOwned: prev.totalOwned + 10 * count,
+      stats: {
+        ...prev.stats,
+        totalRootsPurchasedLifetime: (prev.stats?.totalRootsPurchasedLifetime || prev.totalOwned || 0) + 10 * count,
+      },
     }));
   }, [stateRef, setState]);
 

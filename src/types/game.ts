@@ -117,6 +117,8 @@ export interface GameStats {
   superJackpotClaimed: boolean;
   totalSeedsEarnedLifetime: number;
   totalNutrientsEarnedLifetime?: number;
+  totalRootsPurchasedLifetime?: number;
+  totalYggdrasilPurchasedLifetime?: number;
 }
 
 export type BiomeId =

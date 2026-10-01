@@ -106,6 +106,8 @@ export function createFreshState(): GameState {
       superJackpotClaimed: false,
       totalSeedsEarnedLifetime: 0,
       totalNutrientsEarnedLifetime: 0,
+      totalRootsPurchasedLifetime: 0,
+      totalYggdrasilPurchasedLifetime: 0,
     },
     lang: 'th',
   };

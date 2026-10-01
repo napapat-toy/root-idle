@@ -35,14 +35,16 @@ export function encodeSave(state: GameState): string {
     pacts: state.pacts || {},
     nextPacts: state.nextPacts || state.pacts || {},
     lang: state.lang || 'th',
-    st: state.stats || {
-      prestigeCount: 0,
-      totalEventsClaimed: 0,
-      luckyJackpotCount: 0,
-      maxOfflineTimeSeconds: 0,
-      superJackpotClaimed: false,
-      totalSeedsEarnedLifetime: 0,
-      totalNutrientsEarnedLifetime: state.runEarned || state.nutrients || 0,
+    st: {
+      prestigeCount: state.stats?.prestigeCount || 0,
+      totalEventsClaimed: state.stats?.totalEventsClaimed || 0,
+      luckyJackpotCount: state.stats?.luckyJackpotCount || 0,
+      maxOfflineTimeSeconds: state.stats?.maxOfflineTimeSeconds || 0,
+      superJackpotClaimed: state.stats?.superJackpotClaimed || false,
+      totalSeedsEarnedLifetime: state.stats?.totalSeedsEarnedLifetime || 0,
+      totalNutrientsEarnedLifetime: state.stats?.totalNutrientsEarnedLifetime ?? (state.runEarned || state.nutrients || 0),
+      totalRootsPurchasedLifetime: state.stats?.totalRootsPurchasedLifetime || state.totalOwned || 0,
+      totalYggdrasilPurchasedLifetime: state.stats?.totalYggdrasilPurchasedLifetime || state.owned?.yggdrasil || 0,
     },
   };
   try {
@@ -272,11 +274,25 @@ export function payloadToState(payload: SavePayload): GameState {
         superJackpotClaimed: false,
         totalSeedsEarnedLifetime: 0,
         totalNutrientsEarnedLifetime: payload.st?.totalNutrientsEarnedLifetime ?? (payload.re || 0),
+        totalRootsPurchasedLifetime: payload.st?.totalRootsPurchasedLifetime ?? 0,
+        totalYggdrasilPurchasedLifetime: payload.st?.totalYggdrasilPurchasedLifetime ?? 0,
       },
       payload.st || {}
     ),
     lang: payload.lang === 'en' ? 'en' : 'th',
   };
+
+  // Backfill lifetime roots from current owned / totalOwned if higher
+  if (state.stats) {
+    state.stats.totalRootsPurchasedLifetime = Math.max(
+      state.stats.totalRootsPurchasedLifetime || 0,
+      state.totalOwned || 0
+    );
+    state.stats.totalYggdrasilPurchasedLifetime = Math.max(
+      state.stats.totalYggdrasilPurchasedLifetime || 0,
+      state.owned['yggdrasil'] || 0
+    );
+  }
 
   const prestigeRecord = state.prestige as unknown as Record<string, unknown>;
   if (state.prestige.activeSkin === 'none' && state.prestige.auraRoots && Boolean(prestigeRecord.auraRootsEnabled)) {

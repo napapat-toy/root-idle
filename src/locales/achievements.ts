@@ -23,68 +23,92 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'First Rootlet', desc: 'Purchase 1 total root module' },
   },
   root_50: {
-    th: { title: 'รากแตกแขนง', desc: 'มีรากเสริมรวมสะสม 50 ต้น' },
-    en: { title: 'Branching Out', desc: 'Amass 50 total root modules' },
+    th: { title: 'รากแตกแขนง', desc: 'มีรากเสริมสะสมตลอดกาล 50 ต้น' },
+    en: { title: 'Branching Out', desc: 'Amass 50 lifetime root modules' },
   },
   root_250: {
-    th: { title: 'รากไม้พันปี', desc: 'มีรากเสริมรวมสะสม 250 ต้น' },
-    en: { title: 'Centennial Roots', desc: 'Amass 250 total root modules' },
+    th: { title: 'รากไม้พันปี', desc: 'มีรากเสริมสะสมตลอดกาล 250 ต้น' },
+    en: { title: 'Centennial Roots', desc: 'Amass 250 lifetime root modules' },
   },
   root_1000: {
-    th: { title: 'พฤกษานิรันดร์', desc: 'มีรากเสริมรวมสะสม 1,000 ต้น' },
-    en: { title: 'Evergreen Canopy', desc: 'Amass 1,000 total root modules' },
+    th: { title: 'พฤกษานิรันดร์', desc: 'มีรากเสริมสะสมตลอดกาล 1,000 ต้น' },
+    en: { title: 'Evergreen Canopy', desc: 'Amass 1,000 lifetime root modules' },
   },
   root_2500: {
-    th: { title: 'อาณาจักรราก', desc: 'มีรากเสริมรวมสะสม 2,500 ต้น' },
-    en: { title: 'Subterranean Empire', desc: 'Amass 2,500 total root modules' },
+    th: { title: 'อาณาจักรราก', desc: 'มีรากเสริมสะสมตลอดกาล 2,500 ต้น' },
+    en: { title: 'Subterranean Empire', desc: 'Amass 2,500 lifetime root modules' },
   },
   root_5000: {
-    th: { title: 'เครือข่ายรากไร้ขอบเขต', desc: 'มีรากเสริมรวมสะสม 5,000 ต้น' },
-    en: { title: 'Boundless Network', desc: 'Amass 5,000 total root modules' },
+    th: { title: 'เครือข่ายรากไร้ขอบเขต', desc: 'มีรากเสริมสะสมตลอดกาล 5,000 ต้น' },
+    en: { title: 'Boundless Network', desc: 'Amass 5,000 lifetime root modules' },
   },
   root_10000: {
-    th: { title: 'ผืนป่าครอบพิภพ', desc: 'มีรากเสริมรวมสะสม 10,000 ต้น' },
-    en: { title: 'Planet of Roots', desc: 'Amass 10,000 total root modules' },
+    th: { title: 'ผืนป่าครอบพิภพ', desc: 'มีรากเสริมสะสมตลอดกาล 10,000 ต้น' },
+    en: { title: 'Planet of Roots', desc: 'Amass 10,000 lifetime root modules' },
   },
   root_25000: {
-    th: { title: 'ผืนพิภพแห่งรากไม้', desc: 'มีรากเสริมรวมสะสม 25,000 ต้น' },
-    en: { title: 'World of Deep Roots', desc: 'Amass 25,000 total root modules' },
+    th: { title: 'ผืนพิภพแห่งรากไม้', desc: 'มีรากเสริมสะสมตลอดกาล 25,000 ต้น' },
+    en: { title: 'World of Deep Roots', desc: 'Amass 25,000 lifetime root modules' },
   },
   root_50000: {
-    th: { title: 'รากไม้โอบล้อมจักรวาล', desc: 'มีรากเสริมรวมสะสม 50,000 ต้น' },
-    en: { title: 'Cosmic Canopy', desc: 'Amass 50,000 total root modules' },
+    th: { title: 'รากไม้โอบล้อมจักรวาล', desc: 'มีรากเสริมสะสมตลอดกาล 50,000 ต้น' },
+    en: { title: 'Cosmic Canopy', desc: 'Amass 50,000 lifetime root modules' },
+  },
+  root_100000: {
+    th: { title: 'แสนรากประสานมิติ', desc: 'มีรากเสริมสะสมตลอดกาล 100,000 ต้น' },
+    en: { title: 'Grand Arboreal Network', desc: 'Amass 100,000 lifetime root modules' },
+  },
+  run_roots_500: {
+    th: { title: 'มหาอาณาจักรรากเดี่ยว', desc: 'มีรากเสริมพร้อมกันในรอบเดียวแตะ 500 ต้น' },
+    en: { title: 'Monolithic Grove', desc: 'Possess 500 root modules simultaneously in a single run' },
   },
   fine_root_100: {
-    th: { title: 'ทุ่งรากฝอย', desc: 'มีรากฝอย (Fine Roots) สะสม 100 ต้น' },
-    en: { title: 'Meadow of Rootlets', desc: 'Amass 100 Fine Roots' },
+    th: { title: 'ทุ่งรากฝอย', desc: 'มีรากฝอย (Fine Roots) สะสมในรอบ 100 ต้น' },
+    en: { title: 'Meadow of Rootlets', desc: 'Amass 100 Fine Roots in a run' },
+  },
+  fine_root_250: {
+    th: { title: 'พรมรากฝอยใต้ดิน', desc: 'มีรากฝอย (Fine Roots) สะสมในรอบ 250 ต้น' },
+    en: { title: 'Subterranean Tapestry', desc: 'Amass 250 Fine Roots in a run' },
   },
   fine_root_500: {
-    th: { title: 'พรมรากฝอยใต้ดิน', desc: 'มีรากฝอย (Fine Roots) สะสม 500 ต้น' },
-    en: { title: 'Subterranean Tapestry', desc: 'Amass 500 Fine Roots' },
+    th: { title: 'มหาสมุทรรากฝอย', desc: 'มีรากฝอย (Fine Roots) สะสมในรอบ 500 ต้น' },
+    en: { title: 'Ocean of Rootlets', desc: 'Amass 500 Fine Roots in a run' },
   },
   fine_root_1000: {
-    th: { title: 'มหาสมุทรรากฝอย', desc: 'มีรากฝอย (Fine Roots) สะสม 1,000 ต้น' },
-    en: { title: 'Ocean of Rootlets', desc: 'Amass 1,000 Fine Roots' },
+    th: { title: 'มหาสมุทรรากฝอยชั้นสูง', desc: 'มีรากฝอย (Fine Roots) สะสมในรอบ 500 ต้นขึ้นไป' },
+    en: { title: 'Apex Rootlet Depths', desc: 'Amass 500+ Fine Roots in a run' },
   },
   all_modules_unlocked: {
-    th: { title: 'นักสะสมสายพันธุ์', desc: 'ปลดล็อกรากเสริมครบทุกชนิดในร้านค้า (21 สายพันธุ์)' },
-    en: { title: 'Botanical Collector', desc: 'Unlock all 21 root species in the nursery' },
+    th: { title: 'นักสะสมสายพันธุ์', desc: 'ปลดล็อกรากเสริมครบทุกชนิดในร้านค้า (20 สายพันธุ์)' },
+    en: { title: 'Botanical Collector', desc: 'Unlock all 20 root species in the nursery' },
   },
   apex_root_1: {
     th: { title: 'กำเนิดรากต้นไม้โลก', desc: 'มีรากต้นไม้โลก (Yggdrasil) รากขั้นสูงสุดอย่างน้อย 1 ต้น' },
     en: { title: 'World Tree Sprout', desc: 'Possess at least 1 Yggdrasil Root' },
   },
   apex_root_10: {
-    th: { title: 'เสาค้ำจุนใต้พิภพ', desc: 'มีรากต้นไม้โลก (Yggdrasil) อย่างน้อย 10 ต้น' },
-    en: { title: 'Pillar of the Deep', desc: 'Possess at least 10 Yggdrasil Roots' },
+    th: { title: 'เสาค้ำจุนใต้พิภพ', desc: 'สะสมรากต้นไม้โลก (Yggdrasil) รวมตลอดกาล 10 ต้น' },
+    en: { title: 'Pillar of the Deep', desc: 'Amass 10 lifetime Yggdrasil Roots' },
   },
   apex_root_50: {
-    th: { title: 'จักรพรรดิแห่งพฤกษาอนันต์', desc: 'มีรากต้นไม้โลก (Yggdrasil) อย่างน้อย 50 ต้น' },
-    en: { title: 'Emperor of Yggdrasil', desc: 'Possess at least 50 Yggdrasil Roots' },
+    th: { title: 'จักรพรรดิแห่งพฤกษาอนันต์', desc: 'สะสมรากต้นไม้โลก (Yggdrasil) รวมตลอดกาล 50 ต้น' },
+    en: { title: 'Emperor of Yggdrasil', desc: 'Amass 50 lifetime Yggdrasil Roots' },
   },
   apex_root_100: {
-    th: { title: 'อิกดราซิลค้ำจุนทุกมิติ', desc: 'มีรากต้นไม้โลก (Yggdrasil) อย่างน้อย 100 ต้น' },
-    en: { title: 'Cosmic Yggdrasil Domain', desc: 'Possess at least 100 Yggdrasil Roots' },
+    th: { title: 'อิกดราซิลค้ำจุนทุกมิติ', desc: 'สะสมรากต้นไม้โลก (Yggdrasil) รวมตลอดกาล 100 ต้น' },
+    en: { title: 'Cosmic Yggdrasil Domain', desc: 'Amass 100 lifetime Yggdrasil Roots' },
+  },
+  apex_root_500: {
+    th: { title: 'พฤกษาอิกดราซิลร้อยภพ', desc: 'สะสมรากต้นไม้โลก (Yggdrasil) รวมตลอดกาล 500 ต้น' },
+    en: { title: 'Yggdrasil of Hundred Realms', desc: 'Amass 500 lifetime Yggdrasil Roots' },
+  },
+  apex_root_1500: {
+    th: { title: 'พฤกษาอิกดราซิลไร้ขอบเขต', desc: 'สะสมรากต้นไม้โลก (Yggdrasil) รวมตลอดกาล 1,500 ต้น' },
+    en: { title: 'Boundless World Tree', desc: 'Amass 1,500 lifetime Yggdrasil Roots' },
+  },
+  apex_root_5000: {
+    th: { title: 'มหาพฤกษาค้ำจุนจักรวาล', desc: 'สะสมรากต้นไม้โลก (Yggdrasil) รวมตลอดกาล 5,000 ต้น' },
+    en: { title: 'Universal World Tree Pillar', desc: 'Amass 5,000 lifetime Yggdrasil Roots' },
   },
   upgrade_1: {
     th: { title: 'อัปเกรดรากขั้นแรก', desc: 'อัปเกรดรากเสริมชนิดใดก็ได้แตะเลเวล 1' },
@@ -98,6 +122,10 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'พลังแห่งวิวัฒนาการ', desc: 'อัปเกรดรากเสริมชนิดใดก็ได้แตะเลเวล 10' },
     en: { title: 'Apex Mutation', desc: 'Upgrade any root module to Level 10' },
   },
+  upgrade_25: {
+    th: { title: 'การเติบโตเหนือขีดจำกัด', desc: 'อัปเกรดรากเสริมชนิดใดก็ได้แตะเลเวล 25' },
+    en: { title: 'Hyper-Evolution', desc: 'Upgrade any root module to Level 25' },
+  },
   echo_1: {
     th: { title: 'สะท้อนรากแรก', desc: 'ซื้อสะท้อนราก (Echo) ครั้งแรก' },
     en: { title: 'First Resonance', desc: 'Purchase your first Root Echo' },
@@ -107,8 +135,12 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Harmonic Chorus', desc: 'Purchase 10 total Root Echoes' },
   },
   echo_all: {
-    th: { title: 'เสียงก้องกังวานทั้งผืนดิน', desc: 'ปลดล็อกสะท้อนราก (Echo) ครบทั้ง 21 สายพันธุ์' },
-    en: { title: 'Telluric Symphony', desc: 'Unlock Root Echo for all 21 species' },
+    th: { title: 'เสียงก้องกังวานทั้งผืนดิน', desc: 'ปลดล็อกสะท้อนราก (Echo) ครบทั้ง 20 สายพันธุ์' },
+    en: { title: 'Telluric Symphony', desc: 'Unlock Root Echo for all 20 species' },
+  },
+  echo_50: {
+    th: { title: 'ท่วงทำนองแห่งปฐพี', desc: 'ซื้อสะท้อนรากสะสมรวม 50 ครั้ง' },
+    en: { title: 'Celestial Root Choir', desc: 'Purchase 50 total Root Echoes' },
   },
   synergy_1: {
     th: { title: 'สายสัมพันธ์แรก', desc: 'เปิดใช้งานเครือข่ายราก (Synergy) ชนิดใดก็ได้ 1 ชนิด' },
@@ -119,8 +151,8 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Mycorrhizal Web', desc: 'Activate Root Synergy for 10 species' },
   },
   synergy_all: {
-    th: { title: 'เอกภาพแห่งผืนดิน', desc: 'เปิดใช้งานเครือข่ายราก (Synergy) ครบทั้ง 21 สายพันธุ์' },
-    en: { title: 'Unified Biosphere', desc: 'Activate Root Synergy for all 21 species' },
+    th: { title: 'เอกภาพแห่งผืนดิน', desc: 'เปิดใช้งานเครือข่ายราก (Synergy) ครบทั้ง 20 สายพันธุ์' },
+    en: { title: 'Unified Biosphere', desc: 'Activate Root Synergy for all 20 species' },
   },
 
   nutrients_1k: {
@@ -252,6 +284,14 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'วัฏสงสารนิรันดร์', desc: 'Prestige หว่านใหม่สะสมครบ 50 ครั้ง' },
     en: { title: 'Samsara of Roots', desc: 'Perform 50 total Prestiges' },
   },
+  prestige_100: {
+    th: { title: 'ผู้เจนจัดในสังสารวัฏ', desc: 'Prestige หว่านใหม่สะสมครบ 100 ครั้ง' },
+    en: { title: 'Century of Rebirth', desc: 'Perform 100 total Prestiges' },
+  },
+  prestige_250: {
+    th: { title: 'ปรมาจารย์แห่งการเกิดใหม่', desc: 'Prestige หว่านใหม่สะสมครบ 250 ครั้ง' },
+    en: { title: 'Master of Samsara', desc: 'Perform 250 total Prestiges' },
+  },
   seeds_10: {
     th: { title: 'เก็บเกี่ยวเมล็ดพันธุ์', desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 10 เมล็ด' },
     en: { title: 'Seed Harvester', desc: 'Hold at least 10 Eternal Seeds' },
@@ -265,28 +305,60 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     en: { title: 'Seed Tycoon', desc: 'Hold at least 100,000 Eternal Seeds' },
   },
   seeds_1m: {
-    th: { title: 'สวนแห่งเทพนิรันดร์', desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 1,000,000 เมล็ด' },
+    th: { title: 'สวนแห่งเทพนิรันดร์', desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 1,000,000 เมล็ด (1M)' },
     en: { title: 'Garden of Eden', desc: 'Hold at least 1,000,000 Eternal Seeds' },
   },
   seeds_10m: {
-    th: { title: 'ดาราจักรเมล็ดพันธุ์', desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 10,000,000 เมล็ด' },
+    th: { title: 'ดาราจักรเมล็ดพันธุ์', desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 10,000,000 เมล็ด (10M)' },
     en: { title: 'Cosmic Germination', desc: 'Hold at least 10,000,000 Eternal Seeds' },
   },
   seeds_50m: {
-    th: { title: 'จอมราชันย์แห่งเมล็ดพันธุ์', desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 50,000,000 เมล็ด' },
+    th: { title: 'จอมราชันย์แห่งเมล็ดพันธุ์', desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 50,000,000 เมล็ด (50M)' },
     en: { title: 'Sovereign of Seeds', desc: 'Hold at least 50,000,000 Eternal Seeds' },
   },
+  seeds_1b: {
+    th: { title: 'ขุมทรัพย์เมล็ดพันล้าน', desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 1,000,000,000 เมล็ด (1B)' },
+    en: { title: 'Billion Seed Silo', desc: 'Hold at least 1,000,000,000 Eternal Seeds' },
+  },
+  seeds_100b: {
+    th: { title: 'เทพเจ้าแห่งการหว่านเมล็ด', desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 100,000,000,000 เมล็ด (100B)' },
+    en: { title: 'Celestial Sower', desc: 'Hold at least 100,000,000,000 Eternal Seeds' },
+  },
+  seeds_1t: {
+    th: { title: 'เมล็ดพันธุ์อนันต์มหาเอกภพ', desc: 'มีเมล็ดนิรันดร์สะสมอย่างน้อย 1,000,000,000,000 เมล็ด (1T)' },
+    en: { title: 'Cosmic Seed Singularity', desc: 'Hold at least 1 Trillion Eternal Seeds' },
+  },
   full_auto_unlocked: {
-    th: { title: 'สายออโต้เต็มรูปแบบ', desc: 'ปลดล็อก ออโต้ราก + ออโต้อีเวนต์ + ออโต้หว่านใหม่ ครบทั้ง 3 สาย' },
-    en: { title: 'Full Automation', desc: 'Unlock Auto-Root, Auto-Event, and Auto-Reset' },
+    th: { title: 'สายออโต้เต็มรูปแบบ', desc: 'ปลดล็อก ออโต้สรรพสิ่ง (Universal Automation) ในร้านค้าหว่านใหม่' },
+    en: { title: 'Full Automation', desc: 'Unlock Universal Automation in the Prestige Shop' },
+  },
+  starter_culture_10: {
+    th: { title: 'กลิ่นอายหัวเชื้อ', desc: 'อัปเกรดหัวเชื้อเริ่มต้น (Starter Culture) แตะเลเวล 10' },
+    en: { title: 'Culture Essence', desc: 'Upgrade Starter Culture to Level 10' },
+  },
+  starter_culture_25: {
+    th: { title: 'รากฝอยพร้อมสรรพ', desc: 'อัปเกรดหัวเชื้อเริ่มต้น (Starter Culture) แตะเลเวล 25' },
+    en: { title: 'Sprouting Culture', desc: 'Upgrade Starter Culture to Level 25' },
+  },
+  starter_culture_50: {
+    th: { title: 'จุดเริ่มต้นอันเกรียงไกร', desc: 'อัปเกรดหัวเชื้อเริ่มต้น (Starter Culture) เต็มเพดาน (Lv. 50)' },
+    en: { title: 'Flourishing Origin', desc: 'Max out Starter Culture to Level 50' },
   },
   golden_seed_max: {
     th: { title: 'เมล็ดทองคำเบ่งบาน', desc: 'อัปเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 5' },
-    en: { title: 'Gilded Blooms', desc: 'Max out Golden Seeds upgrade (Level 5)' },
+    en: { title: 'Gilded Blooms', desc: 'Upgrade Golden Seeds to Level 5' },
   },
-  lucky_duration_max: {
-    th: { title: 'โชคชะตายืนยาว', desc: 'อัปเกรดระยะเวลาบัฟโชคดีครบ 20 วินาทีเต็ม (สูงสุด)' },
-    en: { title: 'Enduring Fortune', desc: 'Extend Lucky Buff duration to 20 full seconds (Max)' },
+  golden_seed_25: {
+    th: { title: 'ประกายทองคำเบ่งบาน', desc: 'อัปเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 25' },
+    en: { title: 'Golden Abundance', desc: 'Upgrade Golden Seeds to Level 25' },
+  },
+  golden_seed_100: {
+    th: { title: 'ทองคำแห่งผืนพิภพ', desc: 'อัปเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 100' },
+    en: { title: 'Telluric Gold', desc: 'Upgrade Golden Seeds to Level 100' },
+  },
+  golden_seed_500: {
+    th: { title: 'ทุ่งทองคำอร่ามจักรวาล', desc: 'อัปเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 500' },
+    en: { title: 'Golden Sovereign Domain', desc: 'Upgrade Golden Seeds to Level 500' },
   },
   passive_rate_10: {
     th: { title: 'การดูดซึมไม่หยุดนิ่ง', desc: 'อัปเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 10' },
@@ -300,17 +372,21 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'กระแสรากต่อเนื่อง', desc: 'อัปเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 50' },
     en: { title: 'Enduring Earthcurrent', desc: 'Upgrade Permanent Passive Rate to Level 50 in Prestige Shop' },
   },
-  starter_culture_10: {
-    th: { title: 'กลิ่นอายหัวเชื้อ', desc: 'อัปเกรดหัวเชื้อเริ่มต้น (Starter Culture) แตะเลเวล 10' },
-    en: { title: 'Culture Essence', desc: 'Upgrade Starter Culture to Level 10' },
+  passive_rate_100: {
+    th: { title: 'กระแสชีพจรอนันต์', desc: 'อัปเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 100' },
+    en: { title: 'Infinite Biosurge', desc: 'Upgrade Permanent Passive Rate to Level 100 in Prestige Shop' },
   },
-  starter_culture_25: {
-    th: { title: 'รากฝอยพร้อมสรรพ', desc: 'อัปเกรดหัวเชื้อเริ่มต้น (Starter Culture) แตะเลเวล 25' },
-    en: { title: 'Sprouting Culture', desc: 'Upgrade Starter Culture to Level 25' },
+  passive_rate_500: {
+    th: { title: 'มหาพลังงานดูดซึมจักรวาล', desc: 'อัปเกรดเรทสารอาหารพื้นฐานถาวร (Passive Rate) ในร้านหว่านใหม่แตะเลเวล 500' },
+    en: { title: 'Cosmic Absorption Singularity', desc: 'Upgrade Permanent Passive Rate to Level 500 in Prestige Shop' },
   },
-  golden_seed_25: {
-    th: { title: 'ประกายทองคำเบ่งบาน', desc: 'อัปเกรดเมล็ดพันธุ์ทองคำ (Golden Seeds) แตะเลเวล 25' },
-    en: { title: 'Golden Abundance', desc: 'Upgrade Golden Seeds to Level 25' },
+  lucky_duration_max: {
+    th: { title: 'โชคชะตายืนยาว', desc: 'อัปเกรดระยะเวลาบัฟโชคดีครบ 20 วินาทีเต็ม (สูงสุด)' },
+    en: { title: 'Enduring Fortune', desc: 'Extend Lucky Buff duration to 20 full seconds (Max)' },
+  },
+  offline_cap_max: {
+    th: { title: 'หลับใหลอย่างสงบใต้พสุธา', desc: 'ปลดล็อกเพดานเวลาออฟไลน์ครบ 72 ชั่วโมง (สูงสุด)' },
+    en: { title: 'Deep Subterranean Hibernation', desc: 'Unlock max offline progress cap of 72 hours' },
   },
 
   event_1: {

@@ -180,6 +180,13 @@ export function useGameEngine() {
           [defId]: nextYgg,
         },
         totalOwned: prev.totalOwned + addedQty,
+        stats: {
+          ...prev.stats,
+          totalRootsPurchasedLifetime: (prev.stats?.totalRootsPurchasedLifetime || prev.totalOwned || 0) + addedQty,
+          ...(defId === 'yggdrasil'
+            ? { totalYggdrasilPurchasedLifetime: (prev.stats?.totalYggdrasilPurchasedLifetime || (prev.owned?.yggdrasil || 0)) + addedQty }
+            : {}),
+        },
         transcendence: shouldUnlockTranscend
           ? { ...prev.transcendence, everUnlocked: true }
           : prev.transcendence,

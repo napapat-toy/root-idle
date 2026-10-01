@@ -150,6 +150,13 @@ export function evaluateAutoBuy(
             nutrients: Math.max(0, prev.nutrients - buyCost),
             owned: { ...prev.owned, [def.id]: (prev.owned[def.id] || 0) + added },
             totalOwned: prev.totalOwned + added,
+            stats: {
+              ...prev.stats,
+              totalRootsPurchasedLifetime: (prev.stats?.totalRootsPurchasedLifetime || prev.totalOwned || 0) + added,
+              ...(def.id === 'yggdrasil'
+                ? { totalYggdrasilPurchasedLifetime: (prev.stats?.totalYggdrasilPurchasedLifetime || (prev.owned?.yggdrasil || 0)) + added }
+                : {}),
+            },
           }));
         },
       });

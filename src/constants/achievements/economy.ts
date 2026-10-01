@@ -62,7 +62,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'พลังแห่งจักรวาล',
     desc: 'สะสมสารอาหารครบ 1Qa (Quadrillion)',
     icon: '🌌',
-    bonusPct: 7,
+    bonusPct: 8,
     check: (s) => s.nutrients >= 1e15 || s.runEarned >= 1e15 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e15,
   },
   {
@@ -71,7 +71,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'มหาสมุทรแห่งชีวิต',
     desc: 'สะสมสารอาหารครบ 100Qa (100 Quadrillion)',
     icon: '🪐',
-    bonusPct: 8,
+    bonusPct: 10,
     check: (s) => s.nutrients >= 1e17 || s.runEarned >= 1e17 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e17,
   },
   {
@@ -80,7 +80,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'แก่นแท้แห่งสรรพสิ่ง',
     desc: 'สะสมสารอาหารครบ 1Qi (Quintillion)',
     icon: '☀️',
-    bonusPct: 9,
+    bonusPct: 12,
     check: (s) => s.nutrients >= 1e18 || s.runEarned >= 1e18 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e18,
   },
   {
@@ -89,7 +89,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'กำเนิดจักรวาลใหม่',
     desc: 'สะสมสารอาหารครบ 1Sx (Sextillion)',
     icon: '💫',
-    bonusPct: 10,
+    bonusPct: 14,
     check: (s) => s.nutrients >= 1e21 || s.runEarned >= 1e21 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e21,
   },
   {
@@ -98,7 +98,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'มหันตภัยสารอาหาร',
     desc: 'สะสมสารอาหารครบ 1Sp (Septillion)',
     icon: '🪐',
-    bonusPct: 10,
+    bonusPct: 16,
     check: (s) => s.nutrients >= 1e24 || s.runEarned >= 1e24 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e24,
   },
   {
@@ -107,7 +107,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'ขุมพลังไร้ที่สิ้นสุด',
     desc: 'สะสมสารอาหารครบ 1Oc (Octillion)',
     icon: '👑',
-    bonusPct: 10,
+    bonusPct: 18,
     check: (s) => s.nutrients >= 1e27 || s.runEarned >= 1e27 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e27,
   },
   {
@@ -116,7 +116,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'มหาพิภพไร้ขอบเขต',
     desc: 'สะสมสารอาหารครบ 1No (Nonillion)',
     icon: '🪐',
-    bonusPct: 10,
+    bonusPct: 20,
     check: (s) => s.nutrients >= 1e30 || s.runEarned >= 1e30 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e30,
   },
   {
@@ -125,7 +125,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'แก่นสารอาหารจักรวาล',
     desc: 'สะสมสารอาหารครบ 1Dc (Decillion)',
     icon: '🔮',
-    bonusPct: 12,
+    bonusPct: 23,
     check: (s) => s.nutrients >= 1e33 || s.runEarned >= 1e33 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e33,
   },
   {
@@ -134,7 +134,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'มหาสมุทรพลังงานอนันต์',
     desc: 'สะสมสารอาหารครบ 1UDc (Undecillion)',
     icon: '🌌',
-    bonusPct: 15,
+    bonusPct: 26,
     check: (s) => s.nutrients >= 1e36 || s.runEarned >= 1e36 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e36,
   },
   {
@@ -143,7 +143,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'พฤกษากลืนมิติเวลา',
     desc: 'สะสมสารอาหารครบ 1QaDc (Quattuordecillion)',
     icon: '⏳',
-    bonusPct: 18,
+    bonusPct: 28,
     check: (s) => s.nutrients >= 1e45 || s.runEarned >= 1e45 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e45,
   },
   {
@@ -152,7 +152,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'ผู้สร้างจักรวาลปฐมกาล',
     desc: 'สะสมสารอาหารครบ 1Vg (Vigintillion)',
     icon: '👑',
-    bonusPct: 20,
+    bonusPct: 30,
     check: (s) => s.nutrients >= 1e63 || s.runEarned >= 1e63 || (s.stats?.totalNutrientsEarnedLifetime || 0) >= 1e63,
   },
   {
@@ -197,7 +197,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'ดัชนีการเติบโตระดับดวงดาว',
     desc: 'ผลิตสารอาหารเกิน 1Qa / วินาที (Quadrillion/วิ)',
     icon: '🌠',
-    bonusPct: 8,
+    bonusPct: 9,
     check: (_, rate) => rate >= 1e15,
   },
   {
@@ -206,7 +206,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'พลังขับเคลื่อนแห่งอนันต์',
     desc: 'ผลิตสารอาหารเกิน 1Qi / วินาที (Quintillion/วิ)',
     icon: '🌌',
-    bonusPct: 9,
+    bonusPct: 12,
     check: (_, rate) => rate >= 1e18,
   },
   {
@@ -215,7 +215,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'คลื่นพลังเซกทิลเลียน',
     desc: 'ผลิตสารอาหารเกิน 1Sx / วินาที (Sextillion/วิ)',
     icon: '⚡',
-    bonusPct: 10,
+    bonusPct: 15,
     check: (_, rate) => rate >= 1e21,
   },
   {
@@ -224,7 +224,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'อัตราการเติบโตระดับดาราจักร',
     desc: 'ผลิตสารอาหารเกิน 1Sp / วินาที (Septillion/วิ)',
     icon: '🌌',
-    bonusPct: 10,
+    bonusPct: 18,
     check: (_, rate) => rate >= 1e24,
   },
   {
@@ -233,7 +233,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'การระเบิดแห่งบิ๊กแบง',
     desc: 'ผลิตสารอาหารเกิน 1Oc / วินาที (Octillion/วิ)',
     icon: '💥',
-    bonusPct: 12,
+    bonusPct: 21,
     check: (_, rate) => rate >= 1e27,
   },
   {
@@ -242,7 +242,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'อัตราเร่งแห่งเอกภพ',
     desc: 'ผลิตสารอาหารเกิน 1No / วินาที (Nonillion/วิ)',
     icon: '🪐',
-    bonusPct: 15,
+    bonusPct: 25,
     check: (_, rate) => rate >= 1e30,
   },
   {
@@ -251,7 +251,7 @@ export const ECONOMY_ACHIEVEMENTS: AchievementDef[] = [
     title: 'มหาพฤกษาเหนือจักรวาล',
     desc: 'ผลิตสารอาหารเกิน 1Dc / วินาที (Decillion/วิ)',
     icon: '🌟',
-    bonusPct: 20,
+    bonusPct: 30,
     check: (_, rate) => rate >= 1e33,
   },
 ];
