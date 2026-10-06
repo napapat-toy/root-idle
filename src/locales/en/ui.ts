@@ -92,6 +92,24 @@ export const enUI = {
     prestigeSecPassive: 'Passive Growth',
     ownedTag: 'OWNED',
     maxTag: 'MAX',
+
+    // Sanctuary Modal & Reset separation
+    sanctuaryBtn: 'Sanctuary',
+    sanctuaryTitle: 'Evolution Sanctuary',
+    sanctuaryDesc: 'Center for permanent meta-upgrades fueled by Eternal Seeds, Gaia Essences & Astral Petals',
+    tabSeeds: 'Eternal Seeds',
+    tabGaia: 'Gaia Perks',
+    tabAstral: 'Astral Petals',
+    goToShopSeeds: '🏛️ Open Seed Shop ➔',
+    goToShopGaia: '🏛️ Open Gaia Perks ➔',
+    goToPrestige: '🌌 Go to Re-sow (Prestige)',
+    goToTranscendence: '🌍 Go to Transcendence',
+    whatResetsLabel: 'What will be reset:',
+    whatResetsPrestige: 'Accumulated nutrients and all current root modules in the garden',
+    whatResetsTranscend: 'Nutrients, root modules, and seeds (except those protected by Soil Memory)',
+    whatPersistsLabel: 'What persists permanently:',
+    whatPersistsPrestige: 'Eternal Seeds, Relics, Achievements, and all Sanctuary upgrades',
+    whatPersistsTranscend: 'Gaia Perks, Relics, Astral Petals, and all Sanctuary upgrades',
     
     // Achievements Modal
     achievementsTitle: 'Achievements',

@@ -8,11 +8,19 @@ import { StageCanvas } from '@/components/StageCanvas';
 import { ShopPanel } from '@/components/ShopPanel';
 import { AchievementToast } from '@/components/AchievementToast';
 import { LivePreviewBanner } from '@/components/LivePreviewBanner';
-import { GameModals, ModalType } from '@/components/modals';
+import { GameModals, ModalType, SanctuaryTab } from '@/components/modals';
 
 export default function Home() {
   const game = useGameEngine();
   const [activeModal, setActiveModal] = useState<ModalType | null>(null);
+  const [sanctuaryTab, setSanctuaryTab] = useState<SanctuaryTab>('seeds');
+
+  const handleOpenModal = (modal: ModalType, tab?: SanctuaryTab) => {
+    if (tab) {
+      setSanctuaryTab(tab);
+    }
+    setActiveModal(modal);
+  };
 
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -57,15 +65,16 @@ export default function Home() {
       <div className="canvas-column">
         <TopActions
           state={state}
-          onOpenPrestige={() => setActiveModal('prestige')}
-          onOpenTranscendence={() => setActiveModal('transcendence')}
-          onOpenTrials={() => setActiveModal('trials')}
-          onOpenWardrobe={() => setActiveModal('wardrobe')}
-          onOpenRelics={() => setActiveModal('relics')}
-          onOpenAutomation={() => setActiveModal('automation')}
-          onOpenOptions={() => setActiveModal('options')}
-          onOpenAchievements={() => setActiveModal('achievements')}
-          onOpenStats={() => setActiveModal('stats')}
+          onOpenPrestige={() => handleOpenModal('prestige')}
+          onOpenTranscendence={() => handleOpenModal('transcendence')}
+          onOpenSanctuary={() => handleOpenModal('sanctuary')}
+          onOpenTrials={() => handleOpenModal('trials')}
+          onOpenWardrobe={() => handleOpenModal('wardrobe')}
+          onOpenRelics={() => handleOpenModal('relics')}
+          onOpenAutomation={() => handleOpenModal('automation')}
+          onOpenOptions={() => handleOpenModal('options')}
+          onOpenAchievements={() => handleOpenModal('achievements')}
+          onOpenStats={() => handleOpenModal('stats')}
           onToggleHyperdrive={transcendence.toggleHyperdrive}
         />
 
@@ -103,8 +112,9 @@ export default function Home() {
       {/* Modals & Overlays */}
       <GameModals
         activeModal={activeModal}
+        sanctuaryTab={sanctuaryTab}
         onClose={() => setActiveModal(null)}
-        onOpenModal={setActiveModal}
+        onOpenModal={handleOpenModal}
         game={game}
       />
 
@@ -125,7 +135,7 @@ export default function Home() {
         onClearPreview={cosmetics.clearPreview}
         onBuySkin={cosmetics.buySkin}
         onBuyUITheme={cosmetics.buyUITheme}
-        onOpenPrestige={() => setActiveModal('prestige')}
+        onOpenPrestige={() => handleOpenModal('sanctuary', 'seeds')}
       />
     </div>
   );

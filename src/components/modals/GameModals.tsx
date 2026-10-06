@@ -13,11 +13,14 @@ import {
   AutomationModal,
   TranscendenceModal,
   TrialsModal,
+  SanctuaryModal,
+  SanctuaryTab,
 } from './index';
 
 export type ModalType =
   | 'prestige'
   | 'transcendence'
+  | 'sanctuary'
   | 'trials'
   | 'wardrobe'
   | 'relics'
@@ -28,13 +31,15 @@ export type ModalType =
 
 export interface GameModalsProps {
   activeModal: ModalType | null;
+  sanctuaryTab?: SanctuaryTab;
   onClose: () => void;
-  onOpenModal: (modal: ModalType) => void;
+  onOpenModal: (modal: ModalType, tab?: SanctuaryTab) => void;
   game: GameEngine;
 }
 
 export const GameModals: React.FC<GameModalsProps> = React.memo(({
   activeModal,
+  sanctuaryTab,
   onClose,
   onOpenModal,
   game,
@@ -67,7 +72,7 @@ export const GameModals: React.FC<GameModalsProps> = React.memo(({
         onStartPreviewSkin={cosmetics.startPreviewSkin}
         onStartPreviewUITheme={cosmetics.startPreviewUITheme}
         onClearPreview={cosmetics.clearPreview}
-        onOpenPrestige={() => onOpenModal('prestige')}
+        onOpenPrestige={() => onOpenModal('sanctuary', 'seeds')}
       />
 
       {/* Relics & Biomes Museum Modal */}
@@ -79,12 +84,23 @@ export const GameModals: React.FC<GameModalsProps> = React.memo(({
         />
       )}
 
-      {/* Prestige modal */}
+      {/* Prestige Re-sow reset modal */}
       <PrestigeModal
         isOpen={activeModal === 'prestige'}
         state={state}
         onClose={onClose}
         onConfirmPrestige={prestige.doPrestige}
+        onOpenSanctuaryShop={() => onOpenModal('sanctuary', 'seeds')}
+      />
+
+      {/* Evolution Sanctuary Modal (Meta Shop) */}
+      <SanctuaryModal
+        isOpen={activeModal === 'sanctuary'}
+        initialTab={sanctuaryTab}
+        state={state}
+        onClose={onClose}
+        onOpenPrestige={() => onOpenModal('prestige')}
+        onOpenTranscendence={() => onOpenModal('transcendence')}
         onBuyStarterCulture={prestige.buyStarterCulture}
         onBuyGoldenSeed={prestige.buyGoldenSeed}
         onBuyPassiveRate={prestige.buyPassiveRate}
@@ -96,6 +112,17 @@ export const GameModals: React.FC<GameModalsProps> = React.memo(({
         onBuyLuckyMagnitude={prestige.buyLuckyMagnitude}
         onBuyLuckyDuration={prestige.buyLuckyDuration}
         onBuyOfflineCapUpgrade={prestige.buyOfflineCapUpgrade}
+        onBuyPrimordialVigor={transcendence.buyPrimordialVigor}
+        onBuySoilMemory={transcendence.buySoilMemory}
+        onBuyGaiaBlessing={transcendence.buyGaiaBlessing}
+        onBuyAutoManager={transcendence.buyAutoManager}
+        onBuyGaiaTouch={transcendence.buyGaiaTouch}
+        onBuyEchoResonance={transcendence.buyEchoResonance}
+        onBuyGaiaClairvoyance={transcendence.buyGaiaClairvoyance}
+        onBuyPrimordialSeedling={transcendence.buyPrimordialSeedling}
+        onBuyDeepMeditation={transcendence.buyDeepMeditation}
+        onBuyHyperdrive={transcendence.buyHyperdrive}
+        onBuyAuroraBloom={transcendence.buyAuroraBloom}
         onTransmuteSeedsToPetals={transcendence.transmuteSeedsToPetals}
         onTransmuteEssencesToPetals={transcendence.transmuteEssencesToPetals}
         onBuyAstralResonance={transcendence.buyAstralResonance}
@@ -137,23 +164,13 @@ export const GameModals: React.FC<GameModalsProps> = React.memo(({
         onToggleAutoRoot={prestige.toggleAutoRoot}
       />
 
-      {/* Gaia Transcendence Modal */}
+      {/* Gaia Transcendence Reset Modal */}
       {activeModal === 'transcendence' && (
         <TranscendenceModal
           state={state}
           onClose={onClose}
           onTranscend={transcendence.doTranscendence}
-          onBuyPrimordialVigor={transcendence.buyPrimordialVigor}
-          onBuySoilMemory={transcendence.buySoilMemory}
-          onBuyGaiaBlessing={transcendence.buyGaiaBlessing}
-          onBuyAutoManager={transcendence.buyAutoManager}
-          onBuyGaiaTouch={transcendence.buyGaiaTouch}
-          onBuyEchoResonance={transcendence.buyEchoResonance}
-          onBuyGaiaClairvoyance={transcendence.buyGaiaClairvoyance}
-          onBuyPrimordialSeedling={transcendence.buyPrimordialSeedling}
-          onBuyDeepMeditation={transcendence.buyDeepMeditation}
-          onBuyHyperdrive={transcendence.buyHyperdrive}
-          onBuyAuroraBloom={transcendence.buyAuroraBloom}
+          onOpenSanctuaryShop={() => onOpenModal('sanctuary', 'gaia')}
         />
       )}
 

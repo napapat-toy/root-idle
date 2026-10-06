@@ -2,49 +2,23 @@
 
 import React from 'react';
 import { GameState, Language } from '@/types/game';
-import {
-  calcTranscendenceEssences,
-  calcMaxGaiaBlessing,
-  GAIA_PERK_DEFS,
-  GaiaPerkId,
-} from '@/constants/transcendence';
+import { calcTranscendenceEssences } from '@/constants/transcendence';
 import { t } from '@/lib/i18n';
 import { fmt, fmtInt } from '@/lib/formatters';
-import { GaiaPerkRow } from './transcendence/GaiaPerkRow';
 import { GrandResetBanner } from './transcendence/GrandResetBanner';
 
-interface TranscendenceModalProps {
+export interface TranscendenceModalProps {
   state: GameState;
   onClose: () => void;
   onTranscend: () => void;
-  onBuyPrimordialVigor: () => void;
-  onBuySoilMemory: () => void;
-  onBuyAutoManager?: () => void;
-  onBuyGaiaBlessing?: (qty?: number | 'max') => void;
-  onBuyGaiaTouch: () => void;
-  onBuyEchoResonance: () => void;
-  onBuyGaiaClairvoyance: () => void;
-  onBuyPrimordialSeedling: () => void;
-  onBuyDeepMeditation: () => void;
-  onBuyHyperdrive?: () => void;
-  onBuyAuroraBloom?: () => void;
+  onOpenSanctuaryShop?: () => void;
 }
 
 export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(({
   state,
   onClose,
   onTranscend,
-  onBuyPrimordialVigor,
-  onBuySoilMemory,
-  onBuyAutoManager,
-  onBuyGaiaBlessing,
-  onBuyGaiaTouch,
-  onBuyEchoResonance,
-  onBuyGaiaClairvoyance,
-  onBuyPrimordialSeedling,
-  onBuyDeepMeditation,
-  onBuyHyperdrive,
-  onBuyAuroraBloom,
+  onOpenSanctuaryShop,
 }) => {
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
@@ -54,25 +28,12 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
   const totalLifetimeEssences = state.transcendence?.totalGaiaEssencesLifetime || 0;
   const pendingEssences = calcTranscendenceEssences(state);
 
-  const handlers: Record<GaiaPerkId, (() => void) | undefined> = {
-    vigor: onBuyPrimordialVigor,
-    soil: onBuySoilMemory,
-    blessing: onBuyGaiaBlessing || onBuyAutoManager,
-    touch: onBuyGaiaTouch,
-    echo_res: onBuyEchoResonance,
-    clairvoyance: onBuyGaiaClairvoyance,
-    seedling: onBuyPrimordialSeedling,
-    meditation: onBuyDeepMeditation,
-    hyperdrive: onBuyHyperdrive,
-    aurora: onBuyAuroraBloom,
-  };
-
   return (
     <div className="offline-backdrop" onClick={onClose} style={{ zIndex: 2100 }}>
       <div
         className="modal-wrapper transcendence-modal-wrapper"
         onClick={e => e.stopPropagation()}
-        style={{ maxWidth: '600px', width: '100%' }}
+        style={{ maxWidth: '480px', width: '100%' }}
       >
         <button className="modal-close-x" onClick={onClose} aria-label={tr.close}>
           &times;
@@ -80,15 +41,16 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
 
         <div
           className="offline-modal generic-modal custom-scrollbar transcendence-modal-content"
-          style={{ maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}
+          style={{ padding: '20px 22px', textAlign: 'center' }}
         >
           {/* Header */}
-          <div className="icon" style={{ fontSize: '36px', marginBottom: '4px' }}>
+          <div className="icon" style={{ fontSize: '38px', marginBottom: '4px' }}>
             🌍
           </div>
           <h2
             style={{
               marginBottom: '4px',
+              fontSize: '22px',
               background: 'linear-gradient(135deg, var(--gaia-green), var(--astral-cyan))',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -101,10 +63,10 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
             className="away-time"
             style={{
               marginBottom: '14px',
-              fontSize: '13px',
+              fontSize: '12px',
               display: 'flex',
               justifyContent: 'center',
-              gap: '14px',
+              gap: '12px',
               flexWrap: 'wrap',
             }}
           >
@@ -114,117 +76,78 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
             {!!state.transcendence?.auroraBloomUnlocked && (
               <span style={{ color: 'var(--cosmic-pink)', fontWeight: 700 }}>
                 {isEn
-                  ? `Astral Petals: ${fmtInt(state.transcendence?.astralPetals || 0)} 🌸`
-                  : `เกสรดวงดาว: ${fmtInt(state.transcendence?.astralPetals || 0)} 🌸`}
+                  ? `Petals: ${fmtInt(state.transcendence?.astralPetals || 0)} 🌸`
+                  : `เกสร: ${fmtInt(state.transcendence?.astralPetals || 0)} 🌸`}
               </span>
             )}
             <span style={{ color: 'var(--root-cream-dim)' }}>
-              {isEn
-                ? `Total Lifetime: ${fmt(totalLifetimeEssences)}`
-                : `สะสมตลอดกาล: ${fmt(totalLifetimeEssences)}`}
+              {isEn ? `Lifetime: ${fmt(totalLifetimeEssences)}` : `สะสมตลอดกาล: ${fmt(totalLifetimeEssences)}`}
             </span>
           </div>
 
-          <div
-            className="custom-scrollbar"
-            style={{
-              flex: 1,
-              overflowY: 'auto',
-              paddingRight: '4px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              textAlign: 'left',
-            }}
-          >
-            {/* Grand Reset Card */}
+          {/* Grand Reset Card */}
+          <div style={{ marginBottom: '14px' }}>
             <GrandResetBanner
               state={state}
               lang={lang}
               pendingEssences={pendingEssences}
               onTranscend={onTranscend}
             />
+          </div>
 
-            {/* Gaia Perks List (Iterating over GAIA_PERK_DEFS schema) */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {GAIA_PERK_DEFS.map(def => {
-                const lvl = def.getLevel ? def.getLevel(state) : undefined;
-                const cost = typeof def.cost === 'function' ? def.cost(lvl || 0) : def.cost;
-                const effectText = def.getEffectText ? def.getEffectText(state, isEn) : undefined;
-                const isUnlocked = def.isUnlocked ? def.isUnlocked(state) : undefined;
-                const name = (tr as Record<string, string>)[def.nameKey] || def.nameKey;
-                const desc = (tr as Record<string, string>)[def.descKey] || def.descKey;
-
-                const isMaxed = lvl !== undefined && def.maxLevel !== undefined ? lvl >= def.maxLevel : false;
-
-                let customAction: React.ReactNode = undefined;
-                if (def.id === 'blessing' && !isMaxed) {
-                  const maxInfo = calcMaxGaiaBlessing(lvl || 0, essences);
-                  const canAffordOne = cost !== undefined && essences >= cost;
-                  customAction = (
-                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
-                      <button
-                        type="button"
-                        className="btn-passive-bulk"
-                        disabled={!canAffordOne}
-                        onClick={() => onBuyGaiaBlessing?.(1)}
-                        title={isEn ? `Buy 1 Level (${fmtInt(cost || 0)} 🌍)` : `ซื้อ 1 เลเวล (${fmtInt(cost || 0)} 🌍)`}
-                        style={{
-                          padding: '6px 10px',
-                          fontSize: '12px',
-                          borderRadius: '8px',
-                          background: canAffordOne ? 'var(--gaia-green-bg)' : undefined,
-                          color: canAffordOne ? '#4ade80' : undefined,
-                          borderColor: canAffordOne ? 'rgba(74, 222, 128, 0.35)' : undefined,
-                        }}
-                      >
-                        {isEn ? `+1 (${fmtInt(cost || 0)} 🌍)` : `ซื้อ 1 (${fmtInt(cost || 0)} 🌍)`}
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-passive-bulk btn-passive-max"
-                        disabled={maxInfo.count <= 0}
-                        onClick={() => onBuyGaiaBlessing?.('max')}
-                        title={
-                          isEn
-                            ? `Buy all affordable levels (+${fmtInt(maxInfo.count)} for ${fmt(maxInfo.totalCost)} 🌍)`
-                            : `ซื้อทั้งหมดเท่าที่ทำได้ (+${fmtInt(maxInfo.count)} ใช้ ${fmt(maxInfo.totalCost)} 🌍)`
-                        }
-                        style={{
-                          padding: '6px 12px',
-                          fontSize: '12px',
-                          borderRadius: '8px',
-                        }}
-                      >
-                        {isEn
-                          ? (maxInfo.count > 0 ? `Buy All (+${maxInfo.count})` : 'Buy All')
-                          : (maxInfo.count > 0 ? `ซื้อทั้งหมด (+${maxInfo.count})` : 'ซื้อทั้งหมด')}
-                      </button>
-                    </div>
-                  );
-                }
-
-                return (
-                  <GaiaPerkRow
-                    key={def.id}
-                    icon={def.icon}
-                    name={name}
-                    desc={desc}
-                    level={lvl}
-                    maxLevel={def.maxLevel}
-                    cost={cost}
-                    effectText={effectText}
-                    essences={essences}
-                    maxTag={isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓'}
-                    isUnlocked={isUnlocked}
-                    onBuy={handlers[def.id]}
-                    customAction={customAction}
-                    activeTagText={isEn ? 'UNLOCKED' : 'ปลดล็อกแล้ว'}
-                  />
-                );
-              })}
+          {/* What Resets vs What Stays Card */}
+          <div
+            style={{
+              background: 'rgba(20, 14, 10, 0.55)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '10px',
+              padding: '10px 14px',
+              marginBottom: '16px',
+              textAlign: 'left',
+              fontSize: '11.5px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+            }}
+          >
+            <div>
+              <span style={{ color: '#f87171', fontWeight: 700, marginRight: '4px' }}>
+                ⚠️ {tr.whatResetsLabel}
+              </span>
+              <span style={{ color: 'var(--root-cream-dim)' }}>{tr.whatResetsTranscend}</span>
+            </div>
+            <div>
+              <span style={{ color: '#4ade80', fontWeight: 700, marginRight: '4px' }}>
+                🛡️ {tr.whatPersistsLabel}
+              </span>
+              <span style={{ color: 'var(--root-cream-dim)' }}>{tr.whatPersistsTranscend}</span>
             </div>
           </div>
+
+          {/* Shortcut to Gaia Perks in Sanctuary Shop */}
+          {onOpenSanctuaryShop && (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onOpenSanctuaryShop();
+              }}
+              style={{
+                width: '100%',
+                background: 'rgba(16, 185, 129, 0.12)',
+                border: '1px solid rgba(52, 211, 153, 0.4)',
+                color: '#34d399',
+                borderRadius: '8px',
+                padding: '9px 14px',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              {tr.goToShopGaia}
+            </button>
+          )}
         </div>
       </div>
     </div>

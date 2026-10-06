@@ -16,6 +16,7 @@ import { t } from '@/lib/i18n';
 interface TopActionsProps {
   state: GameState;
   onOpenPrestige: () => void;
+  onOpenSanctuary?: () => void;
   onOpenOptions: () => void;
   onOpenAchievements?: () => void;
   onOpenStats?: () => void;
@@ -30,6 +31,7 @@ interface TopActionsProps {
 export const TopActions: React.FC<TopActionsProps> = React.memo(({
   state,
   onOpenPrestige,
+  onOpenSanctuary,
   onOpenOptions,
   onOpenAchievements,
   onOpenStats,
@@ -123,6 +125,21 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
             <span style={{ color: '#34d399', fontWeight: 600, marginLeft: '5px', fontSize: '10.5px' }}>
               ({yggOwned}/{TRANSCENDENCE_REQUIRE_YGGDRASIL} 🌳)
             </span>
+          </button>
+        )}
+
+        {isPrestigeEverUnlocked && onOpenSanctuary && (
+          <button
+            className="prestige-mini-btn"
+            onClick={onOpenSanctuary}
+            title={tr.sanctuaryTitle}
+            style={{
+              borderColor: 'rgba(245, 158, 11, 0.45)',
+              background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(168, 85, 247, 0.14))',
+              color: '#ffd76a',
+            }}
+          >
+            🏛️ <span className="action-btn-text">{tr.sanctuaryBtn}</span>
           </button>
         )}
       </div>

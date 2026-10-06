@@ -10,5 +10,6 @@ export * from './TranscendenceModal';
 export * from './TrialsModal';
 export * from './ConfirmModal';
 export * from './AutoResetConfigModal';
+export * from './SanctuaryModal';
 export * from './GameModals';
 
