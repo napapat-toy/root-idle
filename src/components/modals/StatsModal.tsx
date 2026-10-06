@@ -213,12 +213,14 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 {
                   show: hasMagma,
                   label: isEn ? 'Cycle Resonance Stack' : 'สะสมพลังการเวียนว่าย',
+                  tooltip: tr.tooltipMagmaCycle,
                   value: `+${cycleStack}%`,
                   valueClass: 'highlight',
                   valueStyle: { color: '#f97316' },
                 },
                 {
-                  label: isEn ? 'Heart of Gaia' : 'จิตวิญญาณแห่งไกอา',
+                  label: isEn ? 'Heart of Gaia' : 'หัวใจแห่งไกอา',
+                  tooltip: tr.tooltipHeartOfGaia,
                   value: isMasterRelic ? (isEn ? 'Awakened (2×) 👑' : 'ตื่นรู้แล้ว (×2) 👑') : (isEn ? 'Dormant' : 'หลับใหลอยู่'),
                   valueStyle: { color: isMasterRelic ? '#facc15' : 'var(--root-cream-dim)' },
                 },
@@ -237,8 +239,18 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
               items={[
                 { label: tr.statTotalRoots, value: `${state.totalOwned.toLocaleString()} ${isEn ? 'roots' : 'ต้น'}` },
                 { label: tr.statAchievementsCount, value: `${unlockedAchievements} / ${totalAchievements} (${achPercent}%)`, valueClass: 'green' },
-                { label: isEn ? 'Synergy Networks' : 'เครือข่ายรากผสาน', value: `${synCount} ${isEn ? 'pairs' : 'ชนิด'}`, valueStyle: { color: '#38bdf8' } },
-                { label: isEn ? 'Root Echoes Stored' : 'สะท้อนรากสะสม', value: `${echoCount} ${isEn ? 'echoes' : 'อัน'}`, valueClass: 'green' },
+                {
+                  label: isEn ? 'Synergy Networks' : 'เครือข่ายรากผสาน',
+                  tooltip: tr.tooltipSynergyNetworks,
+                  value: `${synCount} ${isEn ? 'pairs' : 'ชนิด'}`,
+                  valueStyle: { color: '#38bdf8' },
+                },
+                {
+                  label: isEn ? 'Root Echoes Stored' : 'สะท้อนรากสะสม',
+                  tooltip: tr.tooltipRootEchoesStored,
+                  value: `${echoCount} ${isEn ? 'echoes' : 'อัน'}`,
+                  valueClass: 'green',
+                },
               ]}
             />
 
@@ -251,6 +263,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 { label: tr.statLuckyCount, value: `${stats.luckyJackpotCount} ${isEn ? 'times' : 'ครั้ง'}`, valueClass: 'golden' },
                 {
                   label: isEn ? 'Super Jackpot' : 'แจ็กพอตซ้อนแจ็กพอต',
+                  tooltip: tr.tooltipSuperJackpot,
                   value: (stats.superJackpotCount || (stats.superJackpotClaimed ? 1 : 0)) > 0
                     ? `${(stats.superJackpotCount || (stats.superJackpotClaimed ? 1 : 0)).toLocaleString()} ${isEn ? 'times' : 'ครั้ง'} ✨`
                     : (isEn ? 'Not Yet' : 'ยังไม่เคยได้'),
@@ -258,6 +271,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 },
                 {
                   label: isEn ? 'Challenge Status' : 'สถานะการทดสอบ',
+                  tooltip: tr.tooltipTrialStatus,
                   value: activeTrial ? (
                     <span style={{ background: 'rgba(245, 158, 11, 0.2)', border: '1px solid rgba(245, 158, 11, 0.5)', padding: '1px 5px', borderRadius: '4px', fontSize: '10.5px', fontWeight: 600 }}>
                       ⚔️ {isEn ? activeTrial.enName : activeTrial.name}
@@ -269,6 +283,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 },
                 {
                   label: isEn ? 'Active Pacts' : 'พันธสัญญาที่เปิด',
+                  tooltip: tr.tooltipActivePacts,
                   value: `${PACT_DEFS.filter(p => !!state.pacts?.[p.id]).length} / ${PACT_DEFS.length}`,
                   valueStyle: { color: PACT_DEFS.some(p => !!state.pacts?.[p.id]) ? '#ffd76a' : 'var(--root-cream-dim)' },
                 },

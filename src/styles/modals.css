@@ -739,6 +739,18 @@ body.modal-open {
   max-width: 58%;
 }
 
+.stats-label-hint {
+  text-decoration: underline dotted rgba(255, 255, 255, 0.35);
+  text-underline-offset: 3px;
+  cursor: help;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.stats-label-hint:hover {
+  color: var(--root-cream);
+  text-decoration-color: var(--accent-amber);
+}
+
 .stats-value {
   @apply font-semibold text-root-cream text-[11.5px] sm:text-[12.5px] text-right;
   min-width: 0;

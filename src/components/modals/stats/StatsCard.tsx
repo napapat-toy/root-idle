@@ -8,6 +8,7 @@ export interface StatItem {
   valueClass?: string;
   valueStyle?: React.CSSProperties;
   show?: boolean;
+  tooltip?: string;
 }
 
 export interface StatsCardProps {
@@ -34,7 +35,12 @@ export const StatsCard: React.FC<StatsCardProps> = React.memo(({
       <div className="stats-card-rows">
         {visibleItems.map((item, idx) => (
           <div className="stats-row" key={idx}>
-            <span className="stats-label">{item.label}:</span>
+            <span
+              className={`stats-label ${item.tooltip ? 'stats-label-hint' : ''}`}
+              title={item.tooltip}
+            >
+              {item.label}:
+            </span>
             <span className={`stats-value ${item.valueClass || ''}`.trim()} style={item.valueStyle}>
               {item.value}
             </span>

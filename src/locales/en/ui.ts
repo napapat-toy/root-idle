@@ -123,6 +123,25 @@ export const enUI = {
     statAchievementsCount: 'Achievements Unlocked',
     statEventsClaimed: 'Total Events Claimed',
     statLuckyCount: 'Lucky Jackpots (🍀 ×777)',
+
+    // Stats Tooltips
+    tooltipPrestigePassive: 'Permanent passive production rate from Prestige shop (+0.1%/level)',
+    tooltipAchievementBonus: 'Cumulative production bonus from all unlocked achievements',
+    tooltipSynergyBonus: 'Mycorrhizal network synergy bonus (+0.25% or +0.08% per root pair)',
+    tooltipRootEcho: 'Combined multiplier from all unlocked Root Species Echoes',
+    tooltipPrimordialVigor: 'Gaia Tree Perk 1 (Primordial Vigor): Permanent global production multiplier',
+    tooltipAmberRelic: 'Primal Amber (Relic #1): +50% global production (doubled to +100% by Heart of Gaia)',
+    tooltipDeepMeditation: 'Gaia Tree Perk 8 (🧘 Deep Meditation): Gradually ramps up multiplier the longer you stay in current run',
+    tooltipTrialDrought: 'Subterranean Trial 1 reward: Permanent +35% global production rate',
+    tooltipTrialActive: 'Current handicap penalty or challenge modifier from active Subterranean Trial',
+    tooltipSanctumBiome: 'Sanctum of Gaia (Biome #6): Active background biome grants +50% global production rate',
+    tooltipMagmaCycle: 'Magma Core Relic: Accumulates bonus on Prestige (+1%) & Transcendence (+3%), up to +100%',
+    tooltipHeartOfGaia: 'Mythic Relic 👑: Awakens and permanently doubles (×2) all relic master powers',
+    tooltipSynergyNetworks: 'Active root synergy species pairs boosting global nutrients',
+    tooltipRootEchoesStored: 'Total root echo ranks purchased across all species',
+    tooltipSuperJackpot: 'Ultra-rare double jackpot during floating event triggers',
+    tooltipTrialStatus: 'Active Subterranean Trial challenge or normal unrestricted garden mode',
+    tooltipActivePacts: 'Active Dark Pacts increasing difficulty in exchange for extra seeds & essences',
     
     // Options Modal
     optionsTitle: 'Options & Settings',

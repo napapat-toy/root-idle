@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Language } from '@/types/game';
+import { t } from '@/lib/i18n';
 
 export interface StatsMultipliersCardProps {
   lang: Language;
@@ -47,6 +48,7 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
   isInTrial,
 }) => {
   const isEn = lang === 'en';
+  const tr = t(lang);
 
   return (
     <div className="stats-card stats-multipliers-card">
@@ -94,19 +96,34 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
           </div>
           <div className="stats-card-rows" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div className="stats-row">
-              <span className="stats-label">{isEn ? 'Prestige Passive Bonus' : 'โบนัสพลังรากนิรันดร์'}:</span>
+              <span
+                className="stats-label stats-label-hint"
+                title={tr.tooltipPrestigePassive}
+              >
+                {isEn ? 'Prestige Passive Bonus' : 'โบนัสพลังรากนิรันดร์'}:
+              </span>
               <span className="stats-value purple">
                 +{prestigePct}% {isInTrial && <span style={{ color: '#f87171', fontSize: '10px' }}>({isEn ? 'Suppressed' : 'ถูกระงับ'})</span>}
               </span>
             </div>
             <div className="stats-row">
-              <span className="stats-label">{isEn ? 'Achievement Bonus' : 'โบนัสเหรียญความสำเร็จ'}:</span>
+              <span
+                className="stats-label stats-label-hint"
+                title={tr.tooltipAchievementBonus}
+              >
+                {isEn ? 'Achievement Bonus' : 'โบนัสเหรียญความสำเร็จ'}:
+              </span>
               <span className="stats-value golden">
                 +{achPct}% {isInTrial && <span style={{ color: '#f87171', fontSize: '10px' }}>({isEn ? 'Suppressed' : 'ถูกระงับ'})</span>}
               </span>
             </div>
             <div className="stats-row">
-              <span className="stats-label">{isEn ? 'Root Networks Bonus' : 'โบนัสเครือข่ายราก'}:</span>
+              <span
+                className="stats-label stats-label-hint"
+                title={tr.tooltipSynergyBonus}
+              >
+                {isEn ? 'Root Networks Bonus' : 'โบนัสเครือข่ายราก'}:
+              </span>
               <span className="stats-value" style={{ color: '#38bdf8' }}>+{synPct}%</span>
             </div>
           </div>
@@ -128,14 +145,24 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
           </div>
           <div className="stats-card-rows" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div className="stats-row">
-              <span className="stats-label">{isEn ? 'Root Echo Bonus' : 'โบนัสสะท้อนราก'}:</span>
+              <span
+                className="stats-label stats-label-hint"
+                title={tr.tooltipRootEcho}
+              >
+                {isEn ? 'Root Echo Bonus' : 'โบนัสสะท้อนราก'}:
+              </span>
               <span className="stats-value green" style={{ fontWeight: 700 }}>
                 ×{echoMult.toFixed(2)} <span style={{ opacity: 0.7, fontSize: '10.5px', fontWeight: 500 }}>(+{echoPct}%)</span>
               </span>
             </div>
             {vigorLevel > 0 && (
               <div className="stats-row">
-                <span className="stats-label">{isEn ? 'Gaia Primordial Vigor' : 'แกนพลังปฐมกาล (ไกอา)'}:</span>
+                <span
+                  className="stats-label stats-label-hint"
+                  title={tr.tooltipPrimordialVigor}
+                >
+                  {isEn ? 'Gaia Primordial Vigor' : 'แกนพลังปฐมกาล (ไกอา)'}:
+                </span>
                 <span className="stats-value" style={{ color: '#34d399', fontWeight: 700 }}>
                   ×{vigorMult.toFixed(2)} <span style={{ opacity: 0.7, fontSize: '10.5px', fontWeight: 500 }}>(Lv. {vigorLevel})</span>
                 </span>
@@ -143,7 +170,12 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
             )}
             {relicRateMult > 1 && (
               <div className="stats-row">
-                <span className="stats-label">{isEn ? 'Relics Multiplier' : 'ตัวคูณจากโบราณวัตถุ'}:</span>
+                <span
+                  className="stats-label stats-label-hint"
+                  title={tr.tooltipAmberRelic}
+                >
+                  {isEn ? 'Primal Amber Relic' : 'อำพันดึกดำบรรพ์'}:
+                </span>
                 <span className="stats-value highlight" style={{ color: 'var(--accent-glow)', fontWeight: 700 }}>
                   ×{relicRateMult.toFixed(2)}
                 </span>
@@ -151,7 +183,12 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
             )}
             {meditationMult > 1 && (
               <div className="stats-row">
-                <span className="stats-label">{isEn ? 'Deep Meditation' : 'สมาธิลึกแห่งไกอา'}:</span>
+                <span
+                  className="stats-label stats-label-hint"
+                  title={tr.tooltipDeepMeditation}
+                >
+                  {isEn ? 'Deep Meditation (Gaia)' : 'ภวังค์แห่งการหยั่งราก'}:
+                </span>
                 <span className="stats-value" style={{ color: '#a78bfa', fontWeight: 700 }}>
                   ×{meditationMult.toFixed(2)}
                 </span>
@@ -159,7 +196,12 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
             )}
             {trialBonusMult > 1 && (
               <div className="stats-row">
-                <span className="stats-label">{isEn ? 'Trials Master Bonus' : 'โบนัสพิชิตบททดสอบ'}:</span>
+                <span
+                  className="stats-label stats-label-hint"
+                  title={tr.tooltipTrialDrought}
+                >
+                  {isEn ? 'Trial Arid Drought Reward' : 'พิชิตด่านภัยแล้ง'}:
+                </span>
                 <span className="stats-value" style={{ color: '#facc15', fontWeight: 700 }}>
                   ×{trialBonusMult.toFixed(2)}
                 </span>
@@ -167,7 +209,12 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
             )}
             {trialRateMult !== 1 && (
               <div className="stats-row">
-                <span className="stats-label">{isEn ? 'Active Trial Effect' : 'ผลจากบททดสอบที่ทำอยู่'}:</span>
+                <span
+                  className="stats-label stats-label-hint"
+                  title={tr.tooltipTrialActive}
+                >
+                  {isEn ? 'Active Trial Effect' : 'ผลจากบททดสอบที่ทำอยู่'}:
+                </span>
                 <span className="stats-value" style={{ color: trialRateMult < 1 ? '#f87171' : '#4ade80', fontWeight: 700 }}>
                   ×{trialRateMult.toFixed(2)}
                 </span>
@@ -175,7 +222,12 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
             )}
             {biomeRateMult > 1 && (
               <div className="stats-row">
-                <span className="stats-label">{isEn ? 'Sanctum of Gaia Biome' : 'วิหารแห่งไกอา (ไบโอม)'}:</span>
+                <span
+                  className="stats-label stats-label-hint"
+                  title={tr.tooltipSanctumBiome}
+                >
+                  {isEn ? 'Sanctum of Gaia Biome' : 'วิหารแห่งไกอา (ไบโอม)'}:
+                </span>
                 <span className="stats-value" style={{ color: '#facc15', fontWeight: 700 }}>
                   ×{biomeRateMult.toFixed(2)} <span style={{ opacity: 0.7, fontSize: '10.5px', fontWeight: 500 }}>(+{Math.round((biomeRateMult - 1) * 100)}%)</span>
                 </span>
