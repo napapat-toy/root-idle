@@ -94,6 +94,7 @@ export function createFreshState(): GameState {
       hyperdriveEnabled: false,
       auroraBloomUnlocked: false,
       astralPetals: 0,
+      astralResonanceLevel: 0,
     },
     pacts: {},
     nextPacts: {},

@@ -15,6 +15,7 @@ import {
   unownedRelicList,
   pactEventIntervalMultiplier,
   pactRelicDropMultiplier,
+  baseTotalRate,
 } from '@/constants/gameData';
 import { fmt, fmtInt } from '@/lib/formatters';
 
@@ -91,10 +92,16 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     setActiveEvents(prev => prev.filter(e => e.id !== ev.id));
 
     if (ev.type === 'bump') {
-      const isLuckyActive = (activeLuckyBuffRef.current && Date.now() < activeLuckyBuffRef.current.expiresAt) || !!ev.isSuperJackpot;
-      const seconds = (30 + Math.random() * 60) * durationMult;
+      const isSuper = !!ev.isSuperJackpot;
+      const isLuckyActive = !!(activeLuckyBuffRef.current && Date.now() < activeLuckyBuffRef.current.expiresAt);
+      const baseSeconds = isSuper ? (300 + Math.random() * 300) : (30 + Math.random() * 60);
+      const seconds = baseSeconds * durationMult;
       const geodeMult = relicEventNutrientBonus(cur);
-      const amount = rate * seconds * bonusMult * geodeMult;
+      
+      // If Super Jackpot box, guarantee lucky magnitude multiplier even if buff just expired
+      const luckyFallbackMult = Math.min(77000, 777 * luckyMagnitudeExtra(cur) * gaiaTouchBonusMult(cur));
+      const effectiveRate = isSuper && !isLuckyActive ? baseTotalRate(cur) * luckyFallbackMult : rate;
+      const amount = effectiveRate * seconds * bonusMult * geodeMult;
       const isEn = cur.lang === 'en';
 
       setState(prev => ({
@@ -104,17 +111,24 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
         stats: {
           ...prev.stats,
           totalEventsClaimed: (prev.stats?.totalEventsClaimed || 0) + 1,
-          superJackpotClaimed: isLuckyActive ? true : (prev.stats?.superJackpotClaimed || false),
-          superJackpotCount: (prev.stats?.superJackpotCount || (prev.stats?.superJackpotClaimed ? 1 : 0)) + (isLuckyActive ? 1 : 0),
+          superJackpotClaimed: isSuper ? true : (prev.stats?.superJackpotClaimed || false),
+          superJackpotCount: (prev.stats?.superJackpotCount || (prev.stats?.superJackpotClaimed ? 1 : 0)) + (isSuper ? 1 : 0),
         },
       }));
 
-      if (isLuckyActive) {
+      if (isSuper) {
         showFloatingText(
           ev.left + 26,
           ev.top + 20,
           isEn ? `💥 SUPER JACKPOT! +${fmt(amount)}` : `💥 แจ็กพอตซ้อนแจ็กพอต! +${fmt(amount)}`,
           '#ffd700'
+        );
+      } else if (isLuckyActive) {
+        showFloatingText(
+          ev.left + 26,
+          ev.top + 20,
+          isEn ? `🍀 Lucky Harvest! +${fmt(amount)}` : `🍀 เก็บเกี่ยวโชคดี! +${fmt(amount)}`,
+          '#ffd76a'
         );
       } else {
         showFloatingText(ev.left + 26, ev.top + 20, `+${fmt(amount)}`, 'var(--accent-amber)');
@@ -143,33 +157,35 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
         '#ffd76a'
       );
 
-      // 🎁 Spawn Super Jackpot Golden Box companion right beside the clover!
-      const bumpId = Date.now() + 1;
-      const companionBump: GameEventItem = {
-        id: bumpId,
-        type: 'bump',
-        isSuperJackpot: true,
-        left: Math.max(30, Math.min(380, ev.left + (Math.random() < 0.5 ? -50 : 50))),
-        top: Math.max(60, Math.min(260, ev.top + (Math.random() < 0.5 ? -40 : 40))),
-      };
-      setActiveEvents(prev => [...prev.filter(e => e.id !== ev.id), companionBump]);
+      // 🎁 5% Chance on Lucky Jackpot to spawn Super Jackpot Golden Box companion!
+      if (Math.random() < 0.05) {
+        const bumpId = Date.now() + 1;
+        const companionBump: GameEventItem = {
+          id: bumpId,
+          type: 'bump',
+          isSuperJackpot: true,
+          left: Math.max(30, Math.min(380, ev.left + (Math.random() < 0.5 ? -50 : 50))),
+          top: Math.max(60, Math.min(260, ev.top + (Math.random() < 0.5 ? -40 : 40))),
+        };
+        setActiveEvents(prev => [...prev.filter(e => e.id !== ev.id), companionBump]);
 
-      // Auto-expire the companion box when the lucky buff expires
-      if (superJackpotExpireTimerRef.current) {
-        clearTimeout(superJackpotExpireTimerRef.current);
-      }
-      superJackpotExpireTimerRef.current = setTimeout(() => {
-        setActiveEvents(prev => prev.filter(e => e.id !== bumpId));
-        claimedEventIdsRef.current.delete(bumpId);
-      }, seconds * 1000);
+        // Auto-expire the companion box when the lucky buff expires
+        if (superJackpotExpireTimerRef.current) {
+          clearTimeout(superJackpotExpireTimerRef.current);
+        }
+        superJackpotExpireTimerRef.current = setTimeout(() => {
+          setActiveEvents(prev => prev.filter(e => e.id !== bumpId));
+          claimedEventIdsRef.current.delete(bumpId);
+        }, seconds * 1000);
 
-      // Auto-event perk triggers for the companion gift box as well
-      if (cur.prestige.autoEvent && cur.prestige.autoEventEnabled && cur.transcendence?.activeTrial !== 'void_anomaly') {
-        setTimeout(() => {
-          if (!claimedEventIdsRef.current.has(bumpId)) {
-            claimEventRef.current(companionBump);
-          }
-        }, 1200 + Math.random() * 1000);
+        // Auto-event perk triggers for the companion gift box as well
+        if (cur.prestige.autoEvent && cur.prestige.autoEventEnabled && cur.transcendence?.activeTrial !== 'void_anomaly') {
+          setTimeout(() => {
+            if (!claimedEventIdsRef.current.has(bumpId)) {
+              claimEventRef.current(companionBump);
+            }
+          }, 1200 + Math.random() * 1000);
+        }
       }
 
       // 20% Chance on Lucky Jackpot to unearth an un-maxed relic fragment! (boosted by pact_unstable_aether)
@@ -213,7 +229,33 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       const baseMult = 2 + Math.random() * 2;
       const mult = Math.min(77000, 1 + (baseMult - 1) * bonusMult);
       const seconds = (20 + Math.random() * 40) * durationMult;
-      setActiveBuff({ multiplier: mult, expiresAt: Date.now() + seconds * 1000 });
+      const now = Date.now();
+      const currentBuff = activeBuffRef.current;
+      const isBuffActive = !!(currentBuff && now < currentBuff.expiresAt);
+
+      let finalMultiplier: number;
+      let finalExpiresAt: number;
+      let floatingLabel: string;
+
+      if (isBuffActive) {
+        if (mult >= currentBuff.multiplier) {
+          // New multiplier is higher or equal: replace multiplier, take longer duration
+          finalMultiplier = mult;
+          finalExpiresAt = Math.max(currentBuff.expiresAt, now + seconds * 1000);
+          floatingLabel = isEn ? `×${mult.toFixed(1)} Surge Upgraded!` : `×${mult.toFixed(1)} เรทอัปเกรด!`;
+        } else {
+          // New multiplier is lower: keep existing higher multiplier, grant flat +20s
+          finalMultiplier = currentBuff.multiplier;
+          finalExpiresAt = currentBuff.expiresAt + 20 * 1000;
+          floatingLabel = isEn ? `+20s Extended! (×${finalMultiplier.toFixed(1)})` : `+20วิ ต่อเวลา! (×${finalMultiplier.toFixed(1)})`;
+        }
+      } else {
+        finalMultiplier = mult;
+        finalExpiresAt = now + seconds * 1000;
+        floatingLabel = isEn ? `×${mult.toFixed(1)} Surge!` : `×${mult.toFixed(1)} เรท!`;
+      }
+
+      setActiveBuff({ multiplier: finalMultiplier, expiresAt: finalExpiresAt });
       setState(prev => ({
         ...prev,
         stats: {
@@ -224,7 +266,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       showFloatingText(
         ev.left + 26,
         ev.top + 20,
-        isEn ? `×${mult.toFixed(1)} Surge!` : `×${mult.toFixed(1)} เรท!`,
+        floatingLabel,
         '#b7e08a'
       );
     }

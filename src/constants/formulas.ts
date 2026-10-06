@@ -24,12 +24,13 @@ import {
   pactRateMultiplier,
   pactCostMultiplier,
   pactResonanceMultiplier,
+  astralResonanceMultiplierBonus,
 } from './transcendence';
 
 export * from './initialState';
 export * from './depthLayers';
 
-export const GAME_VERSION = '1.35.19';
+export const GAME_VERSION = '1.35.20';
 export const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -204,7 +205,8 @@ export function specialMultiplierBonus(state: GameState): number {
   const relicBonus = Math.max(0, relicRateBonusMultiplier(state) - 1);
   const meditationBonus = Math.max(0, deepMeditationMultiplier(state) - 1);
   const trialCompletionBonus = Math.max(0, trialCompletionBonusMultiplier(state) - 1);
-  return echoBonus + vigorBonus + relicBonus + meditationBonus + trialCompletionBonus;
+  const astralBonus = astralResonanceMultiplierBonus(state);
+  return echoBonus + vigorBonus + relicBonus + meditationBonus + trialCompletionBonus + astralBonus;
 }
 
 export function specialRateMultiplier(state: GameState): number {

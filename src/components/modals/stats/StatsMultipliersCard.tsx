@@ -20,6 +20,8 @@ export interface StatsMultipliersCardProps {
   meditationMult: number;
   trialBonusMult: number;
   trialRateMult: number;
+  astralResonanceLevel?: number;
+  astralResonanceBonus?: number;
   specialMult: number;
   globalMultFormatted: string;
   totalPctFormatted: string;
@@ -42,6 +44,8 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
   meditationMult,
   trialBonusMult,
   trialRateMult,
+  astralResonanceLevel = 0,
+  astralResonanceBonus = 0,
   specialMult,
   globalMultFormatted,
   totalPctFormatted,
@@ -230,6 +234,19 @@ export const StatsMultipliersCard: React.FC<StatsMultipliersCardProps> = React.m
                 </span>
                 <span className="stats-value" style={{ color: '#facc15', fontWeight: 700 }}>
                   ×{biomeRateMult.toFixed(2)} <span style={{ opacity: 0.7, fontSize: '10.5px', fontWeight: 500 }}>(+{Math.round((biomeRateMult - 1) * 100)}%)</span>
+                </span>
+              </div>
+            )}
+            {astralResonanceLevel > 0 && (
+              <div className="stats-row">
+                <span
+                  className="stats-label stats-label-hint"
+                  title={tr.tooltipAstralResonance}
+                >
+                  {isEn ? 'Astral Resonance' : 'เรโซแนนซ์เกสรดวงดาว'}:
+                </span>
+                <span className="stats-value" style={{ color: '#f472b6', fontWeight: 700 }}>
+                  +{astralResonanceBonus.toFixed(2)}× <span style={{ opacity: 0.7, fontSize: '10.5px', fontWeight: 500 }}>(Lv. {astralResonanceLevel})</span>
                 </span>
               </div>
             )}

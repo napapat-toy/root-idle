@@ -260,6 +260,7 @@ export function payloadToState(payload: SavePayload): GameState {
         hyperdriveEnabled: false,
         auroraBloomUnlocked: false,
         astralPetals: 0,
+        astralResonanceLevel: 0,
       },
       payload.ts || {}
     ),

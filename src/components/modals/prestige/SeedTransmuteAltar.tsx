@@ -1,26 +1,42 @@
 'use client';
 
 import React from 'react';
-import { ESSENCE_TRANSMUTE_COST, SEED_TRANSMUTE_COST } from '@/constants/gameData';
+import {
+  ESSENCE_TRANSMUTE_COST,
+  SEED_TRANSMUTE_COST,
+  ASTRAL_RESONANCE_COST,
+  ASTRAL_RESONANCE_MAX_LEVEL,
+  ASTRAL_RESONANCE_MULT_PER_LEVEL,
+  calcMaxAstralResonance,
+} from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 
 interface SeedTransmuteAltarProps {
   eternalSeeds: number;
   gaiaEssences?: number;
   astralPetals: number;
+  astralResonanceLevel?: number;
   isEn: boolean;
   onTransmuteSeedsToPetals?: (amount: number) => void;
   onTransmuteEssencesToPetals?: (amount: number) => void;
+  onBuyAstralResonance?: (qty?: number | 'max') => void;
 }
 
 export const SeedTransmuteAltar: React.FC<SeedTransmuteAltarProps> = React.memo(({
   eternalSeeds,
   gaiaEssences = 0,
   astralPetals,
+  astralResonanceLevel = 0,
   isEn,
   onTransmuteSeedsToPetals,
   onTransmuteEssencesToPetals,
+  onBuyAstralResonance,
 }) => {
+  // Astral Resonance calculations
+  const isResonanceMaxed = astralResonanceLevel >= ASTRAL_RESONANCE_MAX_LEVEL;
+  const maxResonanceInfo = calcMaxAstralResonance(astralResonanceLevel, astralPetals);
+  const canBuyResonance1 = astralPetals >= ASTRAL_RESONANCE_COST && !isResonanceMaxed;
+
   // Seeds transmute calculations
   const canTransmuteSeed1 = eternalSeeds >= SEED_TRANSMUTE_COST;
   const canTransmuteSeed5 = eternalSeeds >= SEED_TRANSMUTE_COST * 5;
@@ -54,8 +70,99 @@ export const SeedTransmuteAltar: React.FC<SeedTransmuteAltarProps> = React.memo(
       </div>
       <div className="p-desc" style={{ fontSize: '11px', color: 'var(--root-cream-dim)', margin: '4px 0 10px' }}>
         {isEn
-          ? `Condense 10,000 Gaia Essences (10k 🌍) or 50 Billion Seeds (50B 🌰) into rare Astral Petals for boutique skins.`
-          : `หลอมรวม 10,000 ละอองชีวิต (10k 🌍) หรือ 50,000,000,000 เมล็ด (50B 🌰) เป็นเกสรดวงดาว 1 ดอก เพื่อแลกสกินชั้นเลิศในเมนูสกิน & รูปลักษณ์`}
+          ? `Condense Gaia Essences (10k 🌍) or Seeds (50B 🌰) into Astral Petals, and channel Petals into permanent Special Multiplier power.`
+          : `หลอมรวมละอองชีวิต (10k 🌍) หรือเมล็ด (50B 🌰) เป็นเกสรดวงดาว และหลอมเกสรเข้าสู่ตัวคูณพิเศษสะสมของฟาร์มถาวร`}
+      </div>
+
+      {/* Astral Resonance Upgrade Section */}
+      <div
+        style={{
+          marginBottom: '12px',
+          background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.1))',
+          borderRadius: '10px',
+          padding: '10px 12px',
+          border: '1px solid rgba(244, 114, 182, 0.35)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '15px' }}>🌸</span>
+            <span style={{ fontWeight: 700, fontSize: '12.5px', color: '#f472b6' }}>
+              {isEn ? 'Astral Resonance (Special Multiplier)' : 'เรโซแนนซ์เกสรดวงดาว (ตัวคูณพิเศษ)'}
+            </span>
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                color: isResonanceMaxed ? '#4ade80' : '#f472b6',
+                background: isResonanceMaxed ? 'rgba(74, 222, 128, 0.16)' : 'rgba(244, 114, 182, 0.16)',
+                border: isResonanceMaxed ? '1px solid rgba(74, 222, 128, 0.4)' : '1px solid rgba(244, 114, 182, 0.4)',
+                padding: '1px 7px',
+                borderRadius: '999px',
+              }}
+            >
+              {isResonanceMaxed ? (isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓') : `Lv. ${astralResonanceLevel}/${ASTRAL_RESONANCE_MAX_LEVEL}`}
+            </span>
+          </div>
+          <span style={{ fontSize: '12px', fontWeight: 700, color: '#ffd76a', fontFamily: 'monospace' }}>
+            +{ (astralResonanceLevel * ASTRAL_RESONANCE_MULT_PER_LEVEL).toFixed(2) }×
+          </span>
+        </div>
+
+        <div style={{ fontSize: '11px', color: 'var(--root-cream-dim)', marginBottom: '8px' }}>
+          {isEn
+            ? `Permanent +0.25x Special Multiplier per level across all resets. Flat cost: ${ASTRAL_RESONANCE_COST} 🌸/Lv.`
+            : `เพิ่มตัวคูณพิเศษสะสม (ก้อนที่ 2) +0.25× ต่อเลเวล ถาวรข้ามทุกรอบรีเซ็ต ราคาคงที่ ${ASTRAL_RESONANCE_COST} 🌸/เวล`}
+        </div>
+
+        {!isResonanceMaxed && (
+          <div style={{ display: 'flex', gap: '6px' }}>
+            <button
+              type="button"
+              disabled={!canBuyResonance1}
+              onClick={() => onBuyAstralResonance?.(1)}
+              style={{
+                flex: 1,
+                padding: '6px 10px',
+                borderRadius: '6px',
+                border: 'none',
+                background: canBuyResonance1 ? 'linear-gradient(135deg, #db2777, #9333ea)' : 'rgba(255,255,255,0.08)',
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: '11.5px',
+                cursor: canBuyResonance1 ? 'pointer' : 'not-allowed',
+                opacity: canBuyResonance1 ? 1 : 0.5,
+              }}
+            >
+              {isEn ? `Buy 1 (${ASTRAL_RESONANCE_COST} 🌸)` : `ซื้อ 1 (${ASTRAL_RESONANCE_COST} 🌸)`}
+            </button>
+            <button
+              type="button"
+              disabled={maxResonanceInfo.count <= 0}
+              onClick={() => onBuyAstralResonance?.('max')}
+              title={
+                isEn
+                  ? `Buy all affordable levels (+${maxResonanceInfo.count} for ${maxResonanceInfo.totalCost} 🌸)`
+                  : `ซื้อทั้งหมดเท่าที่ทำได้ (+${maxResonanceInfo.count} ใช้ ${maxResonanceInfo.totalCost} 🌸)`
+              }
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 215, 106, 0.4)',
+                background: maxResonanceInfo.count > 0 ? 'rgba(255, 215, 106, 0.18)' : 'rgba(255,255,255,0.05)',
+                color: maxResonanceInfo.count > 0 ? '#ffd76a' : 'var(--root-cream-dim)',
+                fontWeight: 700,
+                fontSize: '11.5px',
+                cursor: maxResonanceInfo.count > 0 ? 'pointer' : 'not-allowed',
+                opacity: maxResonanceInfo.count > 0 ? 1 : 0.4,
+              }}
+            >
+              {isEn
+                ? (maxResonanceInfo.count > 0 ? `Buy All (+${maxResonanceInfo.count})` : 'Buy All')
+                : (maxResonanceInfo.count > 0 ? `ซื้อทั้งหมด (+${maxResonanceInfo.count})` : 'ซื้อทั้งหมด')}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Option 1: Transmute with Gaia Essences (10,000 🌍) */}

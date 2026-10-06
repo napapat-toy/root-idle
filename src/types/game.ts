@@ -231,6 +231,7 @@ export interface TranscendenceState {
   hyperdriveEnabled?: boolean;       // ⚡ 2x Game Speed active toggle
   auroraBloomUnlocked?: boolean;     // ✨ Aurora Bloom unlocked (10k essences)
   astralPetals?: number;             // 🌸 Astral Petals currency
+  astralResonanceLevel?: number;     // 🌸 +0.25x Special Multiplier per level (cap 100)
 }
 
 export type Language = 'th' | 'en';

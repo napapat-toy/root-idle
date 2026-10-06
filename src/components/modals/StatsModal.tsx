@@ -30,6 +30,7 @@ import {
   trialCompletionBonusMultiplier,
   deepMeditationMultiplier,
   specialRateMultiplier,
+  astralResonanceMultiplierBonus,
 } from '@/constants/gameData';
 import { fmt, formatDuration } from '@/lib/formatters';
 import { ACHIEVEMENTS } from '@/constants/achievementsData';
@@ -307,6 +308,8 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
               meditationMult={meditationMult}
               trialBonusMult={trialBonusMult}
               trialRateMult={trialRateMult}
+              astralResonanceLevel={state.transcendence?.astralResonanceLevel || 0}
+              astralResonanceBonus={astralResonanceMultiplierBonus(state)}
               specialMult={specialMult}
               globalMultFormatted={globalMultFormatted}
               totalPctFormatted={totalPctFormatted}

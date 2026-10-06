@@ -23,6 +23,9 @@ import {
   AURORA_BLOOM_COST,
   SEED_TRANSMUTE_COST,
   ESSENCE_TRANSMUTE_COST,
+  ASTRAL_RESONANCE_COST,
+  ASTRAL_RESONANCE_MAX_LEVEL,
+  ASTRAL_RESONANCE_MULT_PER_LEVEL,
   TRIAL_DEFS,
   MODULE_DEFS,
 } from '@/constants/gameData';
@@ -192,6 +195,40 @@ export function useTranscendenceEngine({
       250,
       180,
       isEn ? `🌸 +${count} Astral Petal${count > 1 ? 's' : ''}!` : `🌸 +${count} เกสรดวงดาว!`,
+      '#f472b6'
+    );
+  }, [stateRef, setState, showFloatingText]);
+
+  const buyAstralResonance = useCallback((qty: number | 'max' = 1) => {
+    const cur = stateRef.current;
+    const lvl = cur.transcendence?.astralResonanceLevel || 0;
+    if (lvl >= ASTRAL_RESONANCE_MAX_LEVEL) return;
+    const petals = cur.transcendence?.astralPetals || 0;
+    if (petals < ASTRAL_RESONANCE_COST) return;
+
+    const remaining = ASTRAL_RESONANCE_MAX_LEVEL - lvl;
+    const affordable = Math.floor(petals / ASTRAL_RESONANCE_COST);
+    const targetCount = qty === 'max' ? Math.min(remaining, affordable) : Math.min(remaining, Math.min(affordable, Math.max(1, qty)));
+    if (targetCount <= 0) return;
+
+    const totalCost = targetCount * ASTRAL_RESONANCE_COST;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        astralPetals: (prev.transcendence?.astralPetals || 0) - totalCost,
+        astralResonanceLevel: lvl + targetCount,
+      },
+    }));
+
+    const isEn = cur.lang === 'en';
+    showFloatingText(
+      250,
+      180,
+      isEn
+        ? `🌸 Astral Resonance Lv.${lvl + targetCount}! (+${((lvl + targetCount) * ASTRAL_RESONANCE_MULT_PER_LEVEL).toFixed(2)}×)`
+        : `🌸 เรโซแนนซ์เกสร Lv.${lvl + targetCount}! (+${((lvl + targetCount) * ASTRAL_RESONANCE_MULT_PER_LEVEL).toFixed(2)}×)`,
       '#f472b6'
     );
   }, [stateRef, setState, showFloatingText]);
@@ -409,6 +446,7 @@ export function useTranscendenceEngine({
     buyAuroraBloom,
     transmuteSeedsToPetals,
     transmuteEssencesToPetals,
+    buyAstralResonance,
     startTrial,
     abandonTrial,
     togglePact,

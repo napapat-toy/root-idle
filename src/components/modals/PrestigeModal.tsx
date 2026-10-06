@@ -56,6 +56,7 @@ interface PrestigeModalProps {
   onBuyOfflineCapUpgrade: () => void;
   onTransmuteSeedsToPetals?: (qty?: number) => void;
   onTransmuteEssencesToPetals?: (qty?: number) => void;
+  onBuyAstralResonance?: (qty?: number | 'max') => void;
 }
 
 export const PrestigeModal: React.FC<PrestigeModalProps> = ({
@@ -76,6 +77,7 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
   onBuyOfflineCapUpgrade,
   onTransmuteSeedsToPetals,
   onTransmuteEssencesToPetals,
+  onBuyAstralResonance,
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -207,9 +209,11 @@ export const PrestigeModal: React.FC<PrestigeModalProps> = ({
                     eternalSeeds={state.eternalSeeds}
                     gaiaEssences={state.transcendence?.gaiaEssences || 0}
                     astralPetals={state.transcendence?.astralPetals || 0}
+                    astralResonanceLevel={state.transcendence?.astralResonanceLevel || 0}
                     isEn={isEn}
                     onTransmuteSeedsToPetals={onTransmuteSeedsToPetals}
                     onTransmuteEssencesToPetals={onTransmuteEssencesToPetals}
+                    onBuyAstralResonance={onBuyAstralResonance}
                   />
                 </>
               )}

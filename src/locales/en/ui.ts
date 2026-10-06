@@ -135,6 +135,7 @@ export const enUI = {
     tooltipTrialDrought: 'Subterranean Trial 1 reward: Permanent +35% global production rate',
     tooltipTrialActive: 'Current handicap penalty or challenge modifier from active Subterranean Trial',
     tooltipSanctumBiome: 'Sanctum of Gaia (Biome #6): Active background biome grants +50% global production rate',
+    tooltipAstralResonance: 'Special production multiplier from Astral Petals (+0.25x per level, max Lv.100)',
     tooltipMagmaCycle: 'Magma Core Relic: Accumulates bonus on Prestige (+1%) & Transcendence (+3%), up to +100%',
     tooltipHeartOfGaia: 'Mythic Relic 👑: Awakens and permanently doubles (×2) all relic master powers',
     tooltipSynergyNetworks: 'Active root synergy species pairs boosting global nutrients',

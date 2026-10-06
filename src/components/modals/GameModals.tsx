@@ -98,6 +98,7 @@ export const GameModals: React.FC<GameModalsProps> = React.memo(({
         onBuyOfflineCapUpgrade={prestige.buyOfflineCapUpgrade}
         onTransmuteSeedsToPetals={transcendence.transmuteSeedsToPetals}
         onTransmuteEssencesToPetals={transcendence.transmuteEssencesToPetals}
+        onBuyAstralResonance={transcendence.buyAstralResonance}
       />
 
       {/* Achievements modal */}
