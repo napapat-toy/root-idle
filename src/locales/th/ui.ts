@@ -174,7 +174,7 @@ export const thUI = {
     transcendPerk2Name: 'ความทรงจำของผืนดิน (Soil Memory)',
     transcendPerk2Desc: 'คงพลังสะท้อนราก (Echoes) ไว้ 10%/Lv ทันทีเมื่อหว่านใหม่ (สูงสุด 100%)',
     transcendPerk3Name: 'พรแห่งไกอา (Gaia\'s Blessing)',
-    transcendPerk3Desc: 'เพิ่มละอองชีวิต (🌍 Gaia Essences) ที่ได้รับจากการตื่นรู้ +5%/Lv (สูงสุด Lv.500)',
+    transcendPerk3Desc: 'เพิ่มละอองชีวิต (🌍 Gaia Essences) ที่ได้รับจากการตื่นรู้ +10%/Lv (สูงสุด Lv.150)',
     transcendPerk4Name: 'สัมผัสแห่งไกอา (Gaia\'s Touch)',
     transcendPerk4Desc: 'เพิ่มขนาดและผลคูณของแจ็กพอตโชคดี +30%/Lv',
     transcendPerk5Name: 'ทะลุขีดจำกัดเสียงสะท้อน (Echo Resonance)',

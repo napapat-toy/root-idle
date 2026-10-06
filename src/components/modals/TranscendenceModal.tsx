@@ -4,6 +4,7 @@ import React from 'react';
 import { GameState, Language } from '@/types/game';
 import {
   calcTranscendenceEssences,
+  calcMaxGaiaBlessing,
   GAIA_PERK_DEFS,
   GaiaPerkId,
 } from '@/constants/transcendence';
@@ -19,7 +20,7 @@ interface TranscendenceModalProps {
   onBuyPrimordialVigor: () => void;
   onBuySoilMemory: () => void;
   onBuyAutoManager?: () => void;
-  onBuyGaiaBlessing?: () => void;
+  onBuyGaiaBlessing?: (qty?: number | 'max') => void;
   onBuyGaiaTouch: () => void;
   onBuyEchoResonance: () => void;
   onBuyGaiaClairvoyance: () => void;
@@ -154,6 +155,55 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                 const name = (tr as Record<string, string>)[def.nameKey] || def.nameKey;
                 const desc = (tr as Record<string, string>)[def.descKey] || def.descKey;
 
+                const isMaxed = lvl !== undefined && def.maxLevel !== undefined ? lvl >= def.maxLevel : false;
+
+                let customAction: React.ReactNode = undefined;
+                if (def.id === 'blessing' && !isMaxed) {
+                  const maxInfo = calcMaxGaiaBlessing(lvl || 0, essences);
+                  const canAffordOne = cost !== undefined && essences >= cost;
+                  customAction = (
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
+                      <button
+                        type="button"
+                        className="btn-passive-bulk"
+                        disabled={!canAffordOne}
+                        onClick={() => onBuyGaiaBlessing?.(1)}
+                        title={isEn ? `Buy 1 Level (${fmtInt(cost || 0)} 🌍)` : `ซื้อ 1 เลเวล (${fmtInt(cost || 0)} 🌍)`}
+                        style={{
+                          padding: '6px 10px',
+                          fontSize: '12px',
+                          borderRadius: '8px',
+                          background: canAffordOne ? 'var(--gaia-green-bg)' : undefined,
+                          color: canAffordOne ? '#4ade80' : undefined,
+                          borderColor: canAffordOne ? 'rgba(74, 222, 128, 0.35)' : undefined,
+                        }}
+                      >
+                        {isEn ? `+1 (${fmtInt(cost || 0)} 🌍)` : `ซื้อ 1 (${fmtInt(cost || 0)} 🌍)`}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-passive-bulk btn-passive-max"
+                        disabled={maxInfo.count <= 0}
+                        onClick={() => onBuyGaiaBlessing?.('max')}
+                        title={
+                          isEn
+                            ? `Buy all affordable levels (+${fmtInt(maxInfo.count)} for ${fmt(maxInfo.totalCost)} 🌍)`
+                            : `ซื้อทั้งหมดเท่าที่ทำได้ (+${fmtInt(maxInfo.count)} ใช้ ${fmt(maxInfo.totalCost)} 🌍)`
+                        }
+                        style={{
+                          padding: '6px 12px',
+                          fontSize: '12px',
+                          borderRadius: '8px',
+                        }}
+                      >
+                        {isEn
+                          ? (maxInfo.count > 0 ? `Buy All (+${maxInfo.count})` : 'Buy All')
+                          : (maxInfo.count > 0 ? `ซื้อทั้งหมด (+${maxInfo.count})` : 'ซื้อทั้งหมด')}
+                      </button>
+                    </div>
+                  );
+                }
+
                 return (
                   <GaiaPerkRow
                     key={def.id}
@@ -168,6 +218,7 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
                     maxTag={isEn ? 'MAXED ✓' : 'เต็มแล้ว ✓'}
                     isUnlocked={isUnlocked}
                     onBuy={handlers[def.id]}
+                    customAction={customAction}
                     activeTagText={isEn ? 'UNLOCKED' : 'ปลดล็อกแล้ว'}
                   />
                 );

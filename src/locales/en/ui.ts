@@ -174,7 +174,7 @@ export const enUI = {
     transcendPerk2Name: 'Soil Memory',
     transcendPerk2Desc: 'Retains 10%/Lv of your Root Echoes immediately upon Re-sow (max 100%)',
     transcendPerk3Name: 'Gaia\'s Blessing',
-    transcendPerk3Desc: 'Increases Gaia Essences (🌍) gained from Transcendence by +5%/Lv (Max Lv.500)',
+    transcendPerk3Desc: 'Increases Gaia Essences (🌍) gained from Transcendence by +10%/Lv (Max Lv.150)',
     transcendPerk4Name: 'Gaia\'s Touch',
     transcendPerk4Desc: 'Increases magnitude and yield of Lucky Events by +30%/Lv',
     transcendPerk5Name: 'Echo Resonance',

@@ -10,7 +10,7 @@ export const ECHO_RESONANCE_MAX_LEVEL = 5;
 export const GAIA_CLAIRVOYANCE_MAX_LEVEL = 10;
 export const PRIMORDIAL_SEEDLING_MAX_LEVEL = 5;
 export const DEEP_MEDITATION_MAX_LEVEL = 5;
-export const GAIA_BLESSING_MAX_LEVEL = 500;
+export const GAIA_BLESSING_MAX_LEVEL = 150;
 export const HYPERDRIVE_COST = 100000;
 export const AURORA_BLOOM_COST = 100000;
 
@@ -20,7 +20,21 @@ export function gaiaBlessingCost(level: number): number {
 
 export function gaiaBlessingEssenceMultiplier(state: GameState): number {
   const lvl = state.transcendence?.gaiaBlessingLevel || 0;
-  return 1 + Math.min(GAIA_BLESSING_MAX_LEVEL, lvl) * 0.05; // +5% per level, max +2,500%
+  return 1 + Math.min(GAIA_BLESSING_MAX_LEVEL, lvl) * 0.10; // +10% per level, max +1,500%
+}
+
+export function calcMaxGaiaBlessing(currentLevel: number, availableEssences: number): { count: number; totalCost: number } {
+  let count = 0;
+  let totalCost = 0;
+  let lvl = currentLevel;
+  while (lvl < GAIA_BLESSING_MAX_LEVEL) {
+    const cost = gaiaBlessingCost(lvl);
+    if (availableEssences < totalCost + cost) break;
+    totalCost += cost;
+    count++;
+    lvl++;
+  }
+  return { count, totalCost };
 }
 
 export function gaiaBlessingMaxed(state: GameState): boolean {
@@ -168,8 +182,8 @@ export const GAIA_PERK_DEFS: GaiaPerkDef[] = [
     cost: gaiaBlessingCost,
     getLevel: s => s.transcendence?.gaiaBlessingLevel || 0,
     getEffectText: (s, isEn) => {
-      const lvl = s.transcendence?.gaiaBlessingLevel || 0;
-      const bonusPct = lvl * 5;
+      const lvl = Math.min(GAIA_BLESSING_MAX_LEVEL, s.transcendence?.gaiaBlessingLevel || 0);
+      const bonusPct = lvl * 10;
       return isEn ? `+${bonusPct}% Gaia Essences earned` : `+${bonusPct}% ละอองชีวิตที่ได้รับ`;
     },
   },

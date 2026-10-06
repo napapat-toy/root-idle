@@ -74,19 +74,33 @@ export function useTranscendenceEngine({
     }));
   }, [stateRef, setState]);
 
-  const buyGaiaBlessing = useCallback(() => {
+  const buyGaiaBlessing = useCallback((qty: number | 'max' = 1) => {
     const cur = stateRef.current;
     const lvl = cur.transcendence?.gaiaBlessingLevel || 0;
     if (lvl >= GAIA_BLESSING_MAX_LEVEL) return;
-    const cost = gaiaBlessingCost(lvl);
-    if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
+    const availableEssences = cur.transcendence?.gaiaEssences || 0;
+
+    let count = 0;
+    let totalCost = 0;
+    const targetCount = qty === 'max' ? (GAIA_BLESSING_MAX_LEVEL - lvl) : Math.max(1, qty);
+
+    let curLvl = lvl;
+    while (count < targetCount && curLvl < GAIA_BLESSING_MAX_LEVEL) {
+      const c = gaiaBlessingCost(curLvl);
+      if (availableEssences < totalCost + c) break;
+      totalCost += c;
+      count++;
+      curLvl++;
+    }
+
+    if (count <= 0) return;
 
     setState(prev => ({
       ...prev,
       transcendence: {
         ...prev.transcendence,
-        gaiaEssences: prev.transcendence.gaiaEssences - cost,
-        gaiaBlessingLevel: lvl + 1,
+        gaiaEssences: (prev.transcendence?.gaiaEssences || 0) - totalCost,
+        gaiaBlessingLevel: lvl + count,
       },
     }));
   }, [stateRef, setState]);
