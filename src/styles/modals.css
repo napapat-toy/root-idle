@@ -304,76 +304,8 @@ body.modal-open {
 }
 
 /* ==========================================================================
-   AUTO RESET CONFIG MODAL STYLES
+   8. PRESTIGE & AUTOMATION CONTROLS
    ========================================================================== */
-
-.auto-reset-config-modal {
-  @apply max-w-105 p-5 text-center flex flex-col gap-2;
-}
-
-.modal-icon-badge {
-  @apply text-3xl mb-1 select-none leading-none;
-}
-
-.modal-desc {
-  @apply text-xs text-root-cream-dim leading-relaxed;
-}
-
-.auto-reset-presets {
-  @apply flex flex-wrap justify-center gap-1.5 my-2;
-}
-
-.preset-chip {
-  @apply bg-soil-panel border border-soil-line text-root-cream text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full cursor-pointer transition-all duration-150;
-}
-
-.preset-chip:hover {
-  @apply border-prestige-accent text-prestige-accent;
-}
-
-.preset-chip.active {
-  @apply bg-prestige-accent-dim border-prestige-accent-dim text-prestige-bg font-bold shadow-[0_0_10px_rgba(183,140,240,0.4)];
-}
-
-.auto-reset-form {
-  @apply flex flex-col gap-3 mt-1;
-}
-
-.auto-reset-input-box {
-  @apply flex flex-col gap-1 text-left;
-}
-
-.input-label {
-  @apply text-[11px] font-semibold text-root-cream-dim uppercase tracking-[0.5px];
-}
-
-.auto-reset-input {
-  @apply w-full bg-[#1a120c] border border-soil-line text-root-cream rounded-lg px-3 py-2.5 font-mono text-base font-bold transition-all duration-150 outline-none text-center;
-}
-
-.auto-reset-input:focus {
-  @apply border-prestige-accent shadow-[0_0_12px_rgba(183,140,240,0.25)];
-}
-
-.auto-reset-preview-box {
-  @apply bg-[#1a120c] border border-soil-line rounded-lg p-2.5 flex flex-col gap-0.5 text-center transition-all duration-150;
-}
-
-.preview-label {
-  @apply text-[11px] text-root-cream-dim;
-}
-
-.preview-value {
-  @apply text-xs text-prestige-accent font-mono;
-}
-
-.preview-value b {
-  @apply text-sm text-root-cream;
-}
-
-.auto-reset-error-hint {
-  @apply text-xs text-[#e08a8a] bg-[rgba(224,138,138,0.1)] border border-[rgba(224,138,138,0.3)] rounded-lg py-1.5 px-2.5 text-center font-mono;
-}
 
 .auto-cfg-actions {
   @apply flex flex-wrap gap-2 mt-2 pt-2 border-t border-[rgba(183,140,240,0.12)];
