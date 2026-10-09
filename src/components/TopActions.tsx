@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { GameState, Language } from '@/types/game';
 import {
   calcPrestigeSeeds,
@@ -44,6 +44,35 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onToggleHyperdrive,
   onOpenInfo,
 }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMenuOpen(false);
+      }
+    };
+
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isMenuOpen]);
+
   const lang: Language = state.lang || 'th';
   const isEn = lang === 'en';
   const tr = t(lang);
@@ -197,10 +226,10 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
               <span
                 style={{
                   position: 'absolute',
-                  top: '-2px',
-                  right: '-2px',
-                  width: '8px',
-                  height: '8px',
+                  top: '2px',
+                  right: '2px',
+                  width: '7px',
+                  height: '7px',
                   borderRadius: '50%',
                   background: isAutoSuppressed ? '#ef4444' : 'var(--accent-glow)',
                   boxShadow: isAutoSuppressed ? '0 0 8px #ef4444' : '0 0 6px var(--accent-glow)',
@@ -228,10 +257,10 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
               <span
                 style={{
                   position: 'absolute',
-                  top: '-2px',
-                  right: '-2px',
-                  width: '8px',
-                  height: '8px',
+                  top: '2px',
+                  right: '2px',
+                  width: '7px',
+                  height: '7px',
                   borderRadius: '50%',
                   background: '#facc15',
                   boxShadow: '0 0 6px #facc15',
@@ -252,10 +281,10 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
               <span
                 style={{
                   position: 'absolute',
-                  top: '-2px',
-                  right: '-2px',
-                  width: '8px',
-                  height: '8px',
+                  top: '2px',
+                  right: '2px',
+                  width: '7px',
+                  height: '7px',
                   borderRadius: '50%',
                   background: '#f59e0b',
                   boxShadow: '0 0 6px #f59e0b',
@@ -265,53 +294,114 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           </button>
         )}
 
-        {onOpenWardrobe && (
+        {/* System & Info Dropdown Menu (3-bar hamburger icon) */}
+        <div className="relative inline-block" ref={menuRef}>
           <button
-            className="utility-icon-btn"
-            onClick={onOpenWardrobe}
-            title={tr.wardrobeTooltip}
+            className={`utility-icon-btn ${isMenuOpen ? 'active' : ''}`}
+            onClick={() => setIsMenuOpen(prev => !prev)}
+            title={isEn ? 'System Menu (☰)' : 'เมนูระบบ (☰)'}
+            aria-label="System Menu"
+            aria-expanded={isMenuOpen}
           >
-            🎨
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="3.5" y1="6" x2="20.5" y2="6" />
+              <line x1="3.5" y1="12" x2="20.5" y2="12" />
+              <line x1="3.5" y1="18" x2="20.5" y2="18" />
+            </svg>
           </button>
-        )}
 
-        {onOpenStats && (
-          <button
-            className="utility-icon-btn"
-            onClick={onOpenStats}
-            title={tr.statsTooltip}
-          >
-            📊
-          </button>
-        )}
+          {isMenuOpen && (
+            <div className="utility-dropdown-menu" role="menu">
+              {onOpenAchievements && (
+                <button
+                  type="button"
+                  className="utility-dropdown-item"
+                  role="menuitem"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onOpenAchievements();
+                  }}
+                >
+                  <span className="utility-dropdown-icon">🏆</span>
+                  <span className="utility-dropdown-label">{tr.achievementsTooltip}</span>
+                </button>
+              )}
 
-        {onOpenAchievements && (
-          <button
-            className="utility-icon-btn"
-            onClick={onOpenAchievements}
-            title={tr.achievementsTooltip}
-          >
-            🏆
-          </button>
-        )}
+              {onOpenWardrobe && (
+                <button
+                  type="button"
+                  className="utility-dropdown-item"
+                  role="menuitem"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onOpenWardrobe();
+                  }}
+                >
+                  <span className="utility-dropdown-icon">🎨</span>
+                  <span className="utility-dropdown-label">{tr.wardrobeTooltip}</span>
+                </button>
+              )}
 
-        {onOpenInfo && (
-          <button
-            className="utility-icon-btn"
-            onClick={onOpenInfo}
-            title={isEn ? 'Game Compendium & Currency Info (📖)' : 'คู่มือข้อมูลเกมและระบบค่าเงิน (📖)'}
-          >
-            📖
-          </button>
-        )}
+              {(onOpenAchievements || onOpenWardrobe) && (
+                <div className="utility-dropdown-divider" />
+              )}
 
-        <button
-          className="utility-icon-btn"
-          onClick={onOpenOptions}
-          title={tr.optionsTooltip}
-        >
-          ⚙️
-        </button>
+              {onOpenStats && (
+                <button
+                  type="button"
+                  className="utility-dropdown-item"
+                  role="menuitem"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onOpenStats();
+                  }}
+                >
+                  <span className="utility-dropdown-icon">📊</span>
+                  <span className="utility-dropdown-label">{tr.statsTooltip}</span>
+                </button>
+              )}
+
+              {onOpenInfo && (
+                <button
+                  type="button"
+                  className="utility-dropdown-item"
+                  role="menuitem"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onOpenInfo();
+                  }}
+                >
+                  <span className="utility-dropdown-icon">📖</span>
+                  <span className="utility-dropdown-label">
+                    {isEn ? 'Game Compendium' : 'คู่มือ & ข้อมูลเกม'}
+                  </span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                className="utility-dropdown-item"
+                role="menuitem"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  onOpenOptions();
+                }}
+              >
+                <span className="utility-dropdown-icon">⚙️</span>
+                <span className="utility-dropdown-label">{tr.optionsTooltip}</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
