@@ -75,6 +75,7 @@ export default function Home() {
           onOpenOptions={() => handleOpenModal('options')}
           onOpenAchievements={() => handleOpenModal('achievements')}
           onOpenStats={() => handleOpenModal('stats')}
+          onOpenInfo={() => handleOpenModal('info')}
           onToggleHyperdrive={transcendence.toggleHyperdrive}
         />
 

@@ -15,6 +15,7 @@ import {
   TrialsModal,
   SanctuaryModal,
   SanctuaryTab,
+  InfoModal,
 } from './index';
 
 export type ModalType =
@@ -27,7 +28,8 @@ export type ModalType =
   | 'automation'
   | 'options'
   | 'achievements'
-  | 'stats';
+  | 'stats'
+  | 'info';
 
 export interface GameModalsProps {
   activeModal: ModalType | null;
@@ -183,6 +185,13 @@ export const GameModals: React.FC<GameModalsProps> = React.memo(({
         onAbandonTrial={transcendence.abandonTrial}
         onOpenTranscendence={() => onOpenModal('transcendence')}
         onTogglePact={transcendence.togglePact}
+      />
+
+      {/* Game Compendium & Info Modal */}
+      <InfoModal
+        isOpen={activeModal === 'info'}
+        lang={lang}
+        onClose={onClose}
       />
     </>
   );

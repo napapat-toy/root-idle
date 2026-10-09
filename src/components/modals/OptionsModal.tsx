@@ -332,15 +332,21 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                               {(state.transcendence?.count || 0) > 0 ? ` (${isEn ? 'Ascent' : 'ตื่นรู้'} ×${state.transcendence?.count})` : ''}
                             </span>
                           )}
+                          {Boolean((state.transcendence?.astralPetals || 0) > 0 || state.transcendence?.auroraBloomUnlocked) && (
+                            <span style={{ color: '#f472b6', fontWeight: 600 }}>
+                              {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || (state.transcendence?.count || 0) > 0) ? ' · ' : ''}
+                              🌸 {fmtInt(state.transcendence?.astralPetals || 0)} {isEn ? 'Petals' : 'เกสรดวงดาว'}
+                            </span>
+                          )}
                           {relicsCount(state) > 0 && (
                             <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
-                              {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || (state.transcendence?.count || 0) > 0) ? ' · ' : ''}
+                              {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || (state.transcendence?.count || 0) > 0 || (state.transcendence?.astralPetals || 0) > 0) ? ' · ' : ''}
                               🏺 {isEn ? `Relics ${relicsCount(state)}/${TOTAL_RELICS}` : `โบราณวัตถุ ${relicsCount(state)}/${TOTAL_RELICS}`}
                             </span>
                           )}
                           {(state.achievements?.length || 0) > 0 && (
                             <span style={{ color: 'var(--root-cream-dim)' }}>
-                              {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || relicsCount(state) > 0) ? ' · ' : ''}
+                              {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || relicsCount(state) > 0 || (state.transcendence?.astralPetals || 0) > 0) ? ' · ' : ''}
                               🏆 {state.achievements?.length}/{TOTAL_ACHIEVEMENTS}
                             </span>
                           )}
@@ -380,6 +386,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                           : null;
 
                         const hasAscent = Boolean(meta?.gaiaEssences && meta.gaiaEssences > 0) || Boolean(meta?.transcendenceCount && meta.transcendenceCount > 0);
+                        const hasPetals = Boolean(meta?.astralPetals && meta.astralPetals > 0);
                         const hasRelics = Boolean(meta?.relicsCount && meta.relicsCount > 0);
                         const hasAchievements = Boolean(meta?.achievementsCount && meta.achievementsCount > 0);
 
@@ -421,8 +428,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                                       <span style={{ color: 'var(--root-cream-dim)' }}> · Prestige ×{meta.prestigeCount}</span>
                                     )}
                                   </div>
-                                  {/* Line 3: Gaia Transcendence, Relics, Achievements & Active Trial */}
-                                  {(hasAscent || hasRelics || hasAchievements || (meta.activeTrial && meta.activeTrial !== 'none')) && (
+                                  {/* Line 3: Gaia Transcendence, Astral Petals, Relics, Achievements & Active Trial */}
+                                  {(hasAscent || hasPetals || hasRelics || hasAchievements || (meta.activeTrial && meta.activeTrial !== 'none')) && (
                                     <div style={{ marginTop: '2px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px', fontSize: '11px' }}>
                                       {hasAscent && (
                                         <span style={{ color: '#34d399', fontWeight: 600 }}>
@@ -430,15 +437,21 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                                           {meta.transcendenceCount && meta.transcendenceCount > 0 ? ` (${isEn ? 'Ascent' : 'ตื่นรู้'} ×${meta.transcendenceCount})` : ''}
                                         </span>
                                       )}
+                                      {hasPetals && (
+                                        <span style={{ color: '#f472b6', fontWeight: 600 }}>
+                                          {hasAscent ? ' · ' : ''}
+                                          🌸 {fmtInt(meta.astralPetals || 0)} {isEn ? 'Petals' : 'เกสรดวงดาว'}
+                                        </span>
+                                      )}
                                       {hasRelics && (
                                         <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
-                                          {hasAscent ? ' · ' : ''}
+                                          {(hasAscent || hasPetals) ? ' · ' : ''}
                                           🏺 {isEn ? `Relics ${meta.relicsCount}/${TOTAL_RELICS}` : `โบราณวัตถุ ${meta.relicsCount}/${TOTAL_RELICS}`}
                                         </span>
                                       )}
                                       {hasAchievements && (
                                         <span style={{ color: 'var(--root-cream-dim)' }}>
-                                          {(hasAscent || hasRelics) ? ' · ' : ''}
+                                          {(hasAscent || hasPetals || hasRelics) ? ' · ' : ''}
                                           🏆 {meta.achievementsCount}/{TOTAL_ACHIEVEMENTS}
                                         </span>
                                       )}

@@ -206,7 +206,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       }
     } else if (ev.type === 'aurora') {
       const isEn = cur.lang === 'en';
-      const petalsGain = Math.floor(1 + Math.random() * 2.5); // 1, 2, or 3 petals
+      const petalsGain = 1; // Exactly 1 petal
       setState(prev => ({
         ...prev,
         transcendence: {
@@ -221,7 +221,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       showFloatingText(
         ev.left + 26,
         ev.top + 20,
-        isEn ? `🌸 +${petalsGain} Astral Petals!` : `🌸 +${petalsGain} เกสรดวงดาว!`,
+        isEn ? `🌸 +${petalsGain} Astral Petal!` : `🌸 +${petalsGain} เกสรดวงดาว!`,
         '#f472b6'
       );
     } else {
@@ -270,6 +270,24 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
         '#b7e08a'
       );
     }
+
+    // 🌸 5% Chance on claiming ANY event (bump, buff, lucky) to drop +1 Astral Petal (once Aurora Bloom is unlocked)
+    if (ev.type !== 'aurora' && cur.transcendence?.auroraBloomUnlocked && Math.random() < 0.05) {
+      const isEn = cur.lang === 'en';
+      setState(prev => ({
+        ...prev,
+        transcendence: {
+          ...prev.transcendence,
+          astralPetals: (prev.transcendence?.astralPetals || 0) + 1,
+        },
+      }));
+      showFloatingText(
+        ev.left + 26,
+        ev.top - 18,
+        isEn ? '🌸 +1 Astral Petal!' : '🌸 +1 เกสรดวงดาว!',
+        '#f472b6'
+      );
+    }
   }, [showFloatingText, totalRate, setState, stateRef]);
 
   useEffect(() => {
@@ -307,17 +325,12 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     const delay = (105000 + Math.random() * 50000) * cdMult * trialCdMult * pactCdMult; // Scaled by Geode, Permafrost & Unstable Aether
     eventTimerRef.current = setTimeout(() => {
       const r = Math.random();
-      const hasAurora = !!cur.transcendence?.auroraBloomUnlocked;
       let type: 'bump' | 'buff' | 'lucky' | 'aurora' = 'bump';
 
-      if (hasAurora && Math.random() < 0.18) {
-        type = 'aurora';
-      } else {
-        const luckyPct = luckyChancePct(cur);
-        const nonLuckyPct = 1 - luckyPct;
-        const buffPct = nonLuckyPct * (32 / 92);
-        type = r < luckyPct ? 'lucky' : r < luckyPct + buffPct ? 'buff' : 'bump';
-      }
+      const luckyPct = luckyChancePct(cur);
+      const nonLuckyPct = 1 - luckyPct;
+      const buffPct = nonLuckyPct * (32 / 92);
+      type = r < luckyPct ? 'lucky' : r < luckyPct + buffPct ? 'buff' : 'bump';
 
       const left = 30 + Math.random() * 380;
       const top = 60 + Math.random() * 260;

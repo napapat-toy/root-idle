@@ -155,7 +155,7 @@ h1 span {
 }
 
 .prestige-mini-btn:hover {
-  @apply -translate-y-px text-white;
+  @apply text-white;
   filter: brightness(1.15);
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
 }
@@ -169,7 +169,7 @@ h1 span {
 }
 
 .utility-icon-btn:hover {
-  @apply border-prestige-accent-dim bg-[rgba(65,45,25,0.85)] text-root-cream shadow-[0_0_10px_rgba(183,140,240,0.25)] -translate-y-px;
+  @apply border-prestige-accent-dim bg-[rgba(65,45,25,0.85)] text-root-cream shadow-[0_0_10px_rgba(183,140,240,0.25)];
 }
 
 .utility-icon-btn:active {

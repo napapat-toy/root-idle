@@ -70,11 +70,17 @@ export const TranscendenceModal: React.FC<TranscendenceModalProps> = React.memo(
               flexWrap: 'wrap',
             }}
           >
-            <span>
+            <span
+              style={{ cursor: 'help' }}
+              title={isEn ? '🌍 Gaia Essences: Earned by Transcendence after reaching 100 Yggdrasil roots. Used to unlock Gaia Perks and cosmetics.' : '🌍 ละอองชีวิต: ได้รับจากการกด "ตื่นรู้แห่งไกอา (Transcendence)" เมื่อมีต้นอิกดราซิล 100 ต้นขึ้นไป ใช้ปลดล็อกพรไกอาและซื้อสกิน'}
+            >
               {isEn ? `Current Essences: ${fmt(essences)} 🌍` : `ครอบครอง: ${fmt(essences)} 🌍`}
             </span>
             {!!state.transcendence?.auroraBloomUnlocked && (
-              <span style={{ color: 'var(--cosmic-pink)', fontWeight: 700 }}>
+              <span
+                style={{ color: 'var(--cosmic-pink)', fontWeight: 700, cursor: 'help' }}
+                title={isEn ? '🌸 Astral Petals: Transmuted from Seeds/Essences at the Altar or dropped as a 5% bonus from any event (after unlocking Aurora Bloom). Used for Astral Resonance & exclusive skins.' : '🌸 เกสรดวงดาว: ได้จากการหลอมเมล็ด/ละอองที่เตาหลอมดวงดาว หรือมีโอกาส 5% ดรอปเป็นโบนัส (+1 เกสร) เมื่อกดเก็บอีเวนต์ใดๆ (หลังปลดล็อกบุปผาแสงเหนือ) ใช้ซื้อพลังเรโซแนนซ์และสกินพิเศษ'}
+              >
                 {isEn
                   ? `Petals: ${fmtInt(state.transcendence?.astralPetals || 0)} 🌸`
                   : `เกสร: ${fmtInt(state.transcendence?.astralPetals || 0)} 🌸`}

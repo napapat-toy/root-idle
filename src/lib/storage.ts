@@ -475,6 +475,7 @@ export function saveSlot(slotNum: number, state: GameState): void {
       prestigeCount: state.stats?.prestigeCount || 0,
       transcendenceCount: state.transcendence?.count || 0,
       gaiaEssences: state.transcendence?.gaiaEssences || 0,
+      astralPetals: state.transcendence?.astralPetals || 0,
       activeTrial: state.transcendence?.activeTrial || 'none',
       relicsCount: relicsCount(state),
       achievementsCount: state.achievements?.length || 0,

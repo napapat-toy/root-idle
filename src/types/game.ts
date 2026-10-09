@@ -307,6 +307,7 @@ export interface SaveSlotMeta {
   prestigeCount?: number;
   transcendenceCount?: number;
   gaiaEssences?: number;
+  astralPetals?: number;
   activeTrial?: TrialId;
   relicsCount?: number;
   achievementsCount?: number;

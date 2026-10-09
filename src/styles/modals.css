@@ -129,7 +129,7 @@ body.modal-open {
 }
 
 .offline-modal button:hover {
-  @apply brightness-110 -translate-y-px;
+  @apply brightness-110;
 }
 
 .offline-modal button:active {
@@ -149,7 +149,7 @@ body.modal-open {
 }
 
 .btn-prestige-confirm:hover {
-  @apply brightness-110 -translate-y-0.5;
+  @apply brightness-110;
   box-shadow: 0 6px 24px rgba(16, 185, 129, 0.55);
 }
 
@@ -328,7 +328,7 @@ body.modal-open {
 }
 
 .preset-chip:hover {
-  @apply border-prestige-accent text-prestige-accent -translate-y-0.5;
+  @apply border-prestige-accent text-prestige-accent;
 }
 
 .preset-chip.active {
@@ -384,7 +384,7 @@ body.modal-open {
 }
 
 .auto-cfg-btn:hover {
-  @apply bg-[rgba(183,140,240,0.25)] border-prestige-accent text-root-cream -translate-y-px;
+  @apply bg-[rgba(183,140,240,0.25)] border-prestige-accent text-root-cream;
 }
 
 .auto-cfg-btn.toggle-on {
@@ -432,7 +432,6 @@ body.modal-open {
   background: rgba(58, 38, 84, 0.85);
   border-color: #d8b8ff;
   box-shadow: 0 0 16px rgba(183, 140, 240, 0.4);
-  transform: translateY(-1px);
 }
 
 .prestige-item:not(.disabled):not(.owned):active {
@@ -486,7 +485,7 @@ body.modal-open {
 }
 
 .btn-passive-bulk:hover:not(:disabled) {
-  @apply bg-[rgba(183,140,240,0.3)] border-[#d8b8ff] text-[#ffffff] -translate-y-px shadow-[0_0_8px_rgba(183,140,240,0.3)];
+  @apply bg-[rgba(183,140,240,0.3)] border-[#d8b8ff] text-[#ffffff] shadow-[0_0_8px_rgba(183,140,240,0.3)];
 }
 
 .btn-passive-bulk:active:not(:disabled) {
@@ -872,7 +871,6 @@ body.modal-open {
 }
 
 .pact-card:not(.disabled):hover {
-  transform: translateY(-1.5px);
   filter: brightness(1.05);
 }
 

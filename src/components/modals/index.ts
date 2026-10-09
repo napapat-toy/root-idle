@@ -11,5 +11,6 @@ export * from './TrialsModal';
 export * from './ConfirmModal';
 export * from './AutoResetConfigModal';
 export * from './SanctuaryModal';
+export * from './InfoModal';
 export * from './GameModals';
 

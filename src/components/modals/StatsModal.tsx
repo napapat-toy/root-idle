@@ -32,7 +32,7 @@ import {
   specialRateMultiplier,
   astralResonanceMultiplierBonus,
 } from '@/constants/gameData';
-import { fmt, formatDuration } from '@/lib/formatters';
+import { fmt, fmtInt, formatDuration } from '@/lib/formatters';
 import { ACHIEVEMENTS } from '@/constants/achievementsData';
 import { t } from '@/lib/i18n';
 import { StatsCard, StatsMultipliersCard } from './stats';
@@ -191,6 +191,13 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                   ),
                   valueClass: 'highlight',
                   valueStyle: { color: '#38bdf8' },
+                },
+                {
+                  show: (state.transcendence?.astralPetals || 0) > 0 || !!state.transcendence?.auroraBloomUnlocked,
+                  label: isEn ? 'Astral Petals' : 'เกสรดวงดาว',
+                  value: `${fmtInt(state.transcendence?.astralPetals || 0)} 🌸`,
+                  valueClass: 'highlight',
+                  valueStyle: { color: '#f472b6' },
                 },
                 {
                   label: isEn ? 'Conquered Trials' : 'พิชิตการทดลอง',

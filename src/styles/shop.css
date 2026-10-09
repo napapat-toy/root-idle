@@ -12,12 +12,12 @@
 }
 
 #shopList {
-  @apply flex flex-col gap-2.5 overflow-x-hidden;
+  @apply flex flex-col gap-2.5 overflow-x-hidden pt-1;
 }
 
 @media (min-width: 761px) {
   #shopList {
-    @apply flex-1 min-h-0 h-full overflow-y-auto overflow-x-hidden pr-2;
+    @apply flex-1 min-h-0 h-full overflow-y-auto overflow-x-hidden pr-2 pt-1;
   }
   #shopList::-webkit-scrollbar { width: 7px; }
   #shopList::-webkit-scrollbar-track { background: transparent; }
@@ -85,7 +85,7 @@
 
 .upgrade-tile:hover:not(.disabled),
 .upgrade-tile:hover {
-  @apply bg-soil-panel-2 -translate-y-0.5 scale-108 z-40;
+  @apply bg-soil-panel-2 scale-105 z-40;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
 }
 
@@ -127,7 +127,7 @@
 }
 
 .upgrade-tile.active-hover {
-  @apply bg-soil-panel-2 -translate-y-0.5 scale-108 z-40;
+  @apply bg-soil-panel-2 scale-105 z-40;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
 }
 
@@ -173,7 +173,7 @@
 .module:hover {
   background: var(--bg-panel-2);
   border-color: var(--accent-glow-dim);
-  @apply -translate-y-px z-40;
+  @apply z-40;
 }
 
 .module:active:not(.disabled) {

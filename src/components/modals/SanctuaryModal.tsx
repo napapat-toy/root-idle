@@ -305,10 +305,14 @@ export const SanctuaryModal: React.FC<SanctuaryModalProps> = React.memo(({
           >
             {activeTab === 'seeds' && (
               <>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12.5px', color: 'var(--root-cream)' }}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12.5px', color: 'var(--root-cream)', cursor: 'help' }}
+                  title={isEn ? '🌌 Eternal Seeds: Earned by performing Prestige when having ≥10B nutrients. Used to purchase upgrades in the Sanctuary.' : '🌌 เมล็ดนิรันดร์: ได้รับจากการกด "จุติ (Prestige)" เมื่อสะสมสารอาหารเกิน 10 พันล้าน (10B) ใช้ซื้ออัปเกรดในวิหารศักดิ์สิทธิ์'}
+                >
                   <span>🌰</span>
                   <span style={{ color: 'var(--root-cream-dim)' }}>{isEn ? 'Available Seeds:' : 'เมล็ดนิรันดร์คงเหลือ:'}</span>
                   <span style={{ fontWeight: 800, color: '#ffd76a' }}>{fmtInt(seeds)}</span>
+                  <span style={{ opacity: 0.65, fontSize: '11px' }}>ℹ️</span>
                 </div>
                 {onOpenPrestige && (
                   <button
@@ -337,13 +341,17 @@ export const SanctuaryModal: React.FC<SanctuaryModalProps> = React.memo(({
 
             {activeTab === 'gaia' && (
               <>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12.5px', color: 'var(--root-cream)' }}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12.5px', color: 'var(--root-cream)', cursor: 'help' }}
+                  title={isEn ? '🌍 Gaia Essences: Earned by Transcendence after reaching 100 Yggdrasil roots. Used to unlock Gaia Perks and cosmetics.' : '🌍 ละอองชีวิต: ได้รับจากการกด "ตื่นรู้แห่งไกอา (Transcendence)" เมื่อมีต้นอิกดราซิล 100 ต้นขึ้นไป ใช้ปลดล็อกพรไกอาและซื้อสกิน'}
+                >
                   <span>🌍</span>
                   <span style={{ color: 'var(--root-cream-dim)' }}>{isEn ? 'Available Essences:' : 'ละอองชีวิตคงเหลือ:'}</span>
                   <span style={{ fontWeight: 800, color: '#34d399' }}>{fmt(essences)}</span>
                   <span style={{ fontSize: '11px', color: 'var(--root-cream-dim)', marginLeft: '4px' }}>
                     ({isEn ? 'Lifetime:' : 'ตลอดกาล:'} {fmt(totalLifetimeEssences)})
                   </span>
+                  <span style={{ opacity: 0.65, fontSize: '11px' }}>ℹ️</span>
                 </div>
                 {onOpenTranscendence && (
                   <button
@@ -371,10 +379,14 @@ export const SanctuaryModal: React.FC<SanctuaryModalProps> = React.memo(({
             )}
 
             {activeTab === 'astral' && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12.5px', color: 'var(--root-cream)' }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12.5px', color: 'var(--root-cream)', cursor: 'help' }}
+                title={isEn ? '🌸 Astral Petals: Transmuted from Seeds/Essences at the Altar or dropped as a 5% bonus from any event (after unlocking Aurora Bloom). Used for Astral Resonance & exclusive skins.' : '🌸 เกสรดวงดาว: ได้จากการหลอมเมล็ด/ละอองที่เตาหลอมดวงดาว หรือมีโอกาส 5% ดรอปเป็นโบนัส (+1 เกสร) เมื่อกดเก็บอีเวนต์ใดๆ (หลังปลดล็อกบุปผาแสงเหนือ) ใช้ซื้อพลังเรโซแนนซ์และสกินพิเศษ'}
+              >
                 <span>🌸</span>
                 <span style={{ color: 'var(--root-cream-dim)' }}>{isEn ? 'Available Petals:' : 'เกสรดวงดาวคงเหลือ:'}</span>
                 <span style={{ fontWeight: 800, color: '#f472b6' }}>{fmtInt(petals)}</span>
+                <span style={{ opacity: 0.65, fontSize: '11px' }}>ℹ️</span>
               </div>
             )}
           </div>

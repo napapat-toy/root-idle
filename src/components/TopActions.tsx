@@ -26,6 +26,7 @@ interface TopActionsProps {
   onOpenTranscendence?: () => void;
   onOpenTrials?: () => void;
   onToggleHyperdrive?: () => void;
+  onOpenInfo?: () => void;
 }
 
 export const TopActions: React.FC<TopActionsProps> = React.memo(({
@@ -41,8 +42,10 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
   onOpenTranscendence,
   onOpenTrials,
   onToggleHyperdrive,
+  onOpenInfo,
 }) => {
   const lang: Language = state.lang || 'th';
+  const isEn = lang === 'en';
   const tr = t(lang);
 
   const pendingSeeds = calcPrestigeSeeds(state);
@@ -289,6 +292,16 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
             title={tr.achievementsTooltip}
           >
             🏆
+          </button>
+        )}
+
+        {onOpenInfo && (
+          <button
+            className="utility-icon-btn"
+            onClick={onOpenInfo}
+            title={isEn ? 'Game Compendium & Currency Info (📖)' : 'คู่มือข้อมูลเกมและระบบค่าเงิน (📖)'}
+          >
+            📖
           </button>
         )}
 
