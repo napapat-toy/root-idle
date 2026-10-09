@@ -294,6 +294,16 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
           </button>
         )}
 
+        {onOpenStats && (
+          <button
+            className="utility-icon-btn"
+            onClick={onOpenStats}
+            title={tr.statsTooltip}
+          >
+            📊
+          </button>
+        )}
+
         {/* System & Info Dropdown Menu (3-bar hamburger icon) */}
         <div className="relative inline-block" ref={menuRef}>
           <button
@@ -353,21 +363,6 @@ export const TopActions: React.FC<TopActionsProps> = React.memo(({
 
               {(onOpenAchievements || onOpenWardrobe) && (
                 <div className="utility-dropdown-divider" />
-              )}
-
-              {onOpenStats && (
-                <button
-                  type="button"
-                  className="utility-dropdown-item"
-                  role="menuitem"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    onOpenStats();
-                  }}
-                >
-                  <span className="utility-dropdown-icon">📊</span>
-                  <span className="utility-dropdown-label">{tr.statsTooltip}</span>
-                </button>
               )}
 
               {onOpenInfo && (
