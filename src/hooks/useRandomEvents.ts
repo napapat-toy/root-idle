@@ -16,6 +16,8 @@ import {
   pactEventIntervalMultiplier,
   pactRelicDropMultiplier,
   baseTotalRate,
+  harmonicSurgeMinMult,
+  harmonicSurgeMinSeconds,
 } from '@/constants/gameData';
 import { fmt, fmtInt } from '@/lib/formatters';
 
@@ -94,7 +96,9 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     if (ev.type === 'bump') {
       const isSuper = !!ev.isSuperJackpot;
       const isLuckyActive = !!(activeLuckyBuffRef.current && Date.now() < activeLuckyBuffRef.current.expiresAt);
-      const baseSeconds = isSuper ? (300 + Math.random() * 300) : (30 + Math.random() * 60);
+      const minNormalSec = harmonicSurgeMinSeconds(cur);
+      const normalBaseSec = minNormalSec >= 90 ? 90 : minNormalSec + Math.random() * (90 - minNormalSec);
+      const baseSeconds = isSuper ? (300 + Math.random() * 300) : normalBaseSec;
       const seconds = baseSeconds * durationMult;
       const geodeMult = relicEventNutrientBonus(cur);
       
@@ -226,7 +230,8 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       );
     } else {
       const isEn = cur.lang === 'en';
-      const baseMult = 2 + Math.random() * 2;
+      const minBaseMult = harmonicSurgeMinMult(cur);
+      const baseMult = minBaseMult >= 4.0 ? 4.0 : minBaseMult + Math.random() * (4.0 - minBaseMult);
       const mult = Math.min(77000, 1 + (baseMult - 1) * bonusMult);
       const seconds = (20 + Math.random() * 40) * durationMult;
       const now = Date.now();

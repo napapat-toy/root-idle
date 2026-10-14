@@ -261,6 +261,7 @@ export function payloadToState(payload: SavePayload): GameState {
         auroraBloomUnlocked: false,
         astralPetals: 0,
         astralResonanceLevel: 0,
+        harmonicSurgeLevel: 0,
       },
       payload.ts || {}
     ),

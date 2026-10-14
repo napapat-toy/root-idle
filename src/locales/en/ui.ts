@@ -208,6 +208,8 @@ export const enUI = {
     transcendPerk9Desc: 'Permanently unlocks a 2x game speed toggle. Accelerates garden time, production, and timers with zero extra CPU overhead.',
     transcendPerk10Name: 'Cosmic Aurora Bloom (Altar)',
     transcendPerk10Desc: 'Awakens the celestial bloom on the Tree of Life. Permanently unlocks the Astral Petal transmute altar and unlocks special cosmic skins.',
+    transcendPerk11Name: 'Harmonic Surge',
+    transcendPerk11Desc: 'Purifies event energy. Raises the minimum roll of Lightning buffs by +0.4x/Lv (from 2.0x up to 4.0x Max guaranteed) and Nutrient Boxes by +12s/Lv (up to 90s Max guaranteed).',
     trialActiveBadge: 'In Progress',
     startTrialBtn: 'Begin Trial',
     abandonTrialBtn: 'Abandon Trial',

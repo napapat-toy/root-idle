@@ -10,9 +10,32 @@ export const ECHO_RESONANCE_MAX_LEVEL = 5;
 export const GAIA_CLAIRVOYANCE_MAX_LEVEL = 10;
 export const PRIMORDIAL_SEEDLING_MAX_LEVEL = 5;
 export const DEEP_MEDITATION_MAX_LEVEL = 5;
+export const HARMONIC_SURGE_MAX_LEVEL = 5;
 export const GAIA_BLESSING_MAX_LEVEL = 150;
 export const HYPERDRIVE_COST = 100000;
 export const AURORA_BLOOM_COST = 100000;
+
+export const HARMONIC_SURGE_COSTS = [100, 200, 400, 700, 1000];
+
+export function harmonicSurgeCost(level: number): number {
+  return HARMONIC_SURGE_COSTS[Math.min(level, HARMONIC_SURGE_COSTS.length - 1)];
+}
+
+export function harmonicSurgeMinMult(state: GameState): number {
+  if (isInTrial(state)) return 2.0;
+  const lvl = state.transcendence?.harmonicSurgeLevel || 0;
+  return Math.min(4.0, 2.0 + lvl * 0.4);
+}
+
+export function harmonicSurgeMinSeconds(state: GameState): number {
+  if (isInTrial(state)) return 30;
+  const lvl = state.transcendence?.harmonicSurgeLevel || 0;
+  return Math.min(90, 30 + lvl * 12);
+}
+
+export function harmonicSurgeMaxed(state: GameState): boolean {
+  return (state.transcendence?.harmonicSurgeLevel || 0) >= HARMONIC_SURGE_MAX_LEVEL;
+}
 
 export function gaiaBlessingCost(level: number): number {
   return Math.min(10000, Math.floor(8 * Math.pow(level + 1, 1.15)));
@@ -127,7 +150,8 @@ export type GaiaPerkId =
   | 'seedling'
   | 'meditation'
   | 'hyperdrive'
-  | 'aurora';
+  | 'aurora'
+  | 'harmonic_surge';
 
 export interface GaiaPerkDef {
   id: GaiaPerkId;
@@ -274,5 +298,33 @@ export const GAIA_PERK_DEFS: GaiaPerkDef[] = [
     type: 'unlock',
     cost: AURORA_BLOOM_COST,
     isUnlocked: s => !!s.transcendence?.auroraBloomUnlocked,
+  },
+  {
+    id: 'harmonic_surge',
+    icon: '🎯',
+    nameKey: 'transcendPerk11Name',
+    descKey: 'transcendPerk11Desc',
+    type: 'level',
+    maxLevel: HARMONIC_SURGE_MAX_LEVEL,
+    cost: harmonicSurgeCost,
+    getLevel: s => s.transcendence?.harmonicSurgeLevel || 0,
+    getEffectText: (s, isEn) => {
+      const lvl = s.transcendence?.harmonicSurgeLevel || 0;
+      if (lvl >= HARMONIC_SURGE_MAX_LEVEL) {
+        return isEn
+          ? 'Current Effect: 100% Guaranteed 4.0x Lightning & 90s Box'
+          : 'ผลปัจจุบัน: การันตีสายฟ้า 4.0x และกล่องสารอาหาร 90 วิ เสมอ (เต็ม 100%)';
+      }
+      if (lvl === 0) {
+        return isEn
+          ? 'Current Effect: Lightning 2.0x ~ 4.0x (Box 30s ~ 90s)'
+          : 'ผลปัจจุบัน: สายฟ้า 2.0x ~ 4.0x (กล่อง 30 วิ ~ 90 วิ)';
+      }
+      const minMult = (2.0 + lvl * 0.4).toFixed(1);
+      const minSec = 30 + lvl * 12;
+      return isEn
+        ? `Current Effect: Min Lightning ${minMult}x ~ 4.0x (Min Box ${minSec}s ~ 90s)`
+        : `ผลปัจจุบัน: ค่าต่ำสุดสายฟ้า ${minMult}x ~ 4.0x (กล่อง ${minSec} วิ ~ 90 วิ)`;
+    },
   },
 ];

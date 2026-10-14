@@ -232,6 +232,7 @@ export interface TranscendenceState {
   auroraBloomUnlocked?: boolean;     // ✨ Aurora Bloom unlocked (10k essences)
   astralPetals?: number;             // 🌸 Astral Petals currency
   astralResonanceLevel?: number;     // 🌸 +0.25x Special Multiplier per level (cap 100)
+  harmonicSurgeLevel?: number;       // 🎯 Narrows event multiplier floor (+0.4x/Lv up to 4.0x max)
 }
 
 export type Language = 'th' | 'en';

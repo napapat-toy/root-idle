@@ -123,6 +123,7 @@ export const GameModals: React.FC<GameModalsProps> = React.memo(({
         onBuyGaiaClairvoyance={transcendence.buyGaiaClairvoyance}
         onBuyPrimordialSeedling={transcendence.buyPrimordialSeedling}
         onBuyDeepMeditation={transcendence.buyDeepMeditation}
+        onBuyHarmonicSurge={transcendence.buyHarmonicSurge}
         onBuyHyperdrive={transcendence.buyHyperdrive}
         onBuyAuroraBloom={transcendence.buyAuroraBloom}
         onTransmuteSeedsToPetals={transcendence.transmuteSeedsToPetals}

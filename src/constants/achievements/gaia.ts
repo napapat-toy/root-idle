@@ -143,6 +143,15 @@ export const GAIA_ACHIEVEMENTS: AchievementDef[] = [
     check: (s) => (s.transcendence?.deepMeditationLevel || 0) >= 5,
   },
   {
+    id: 'harmonic_surge_max',
+    category: 'gaia',
+    title: 'คลื่นพลังงานไร้ที่ติ',
+    desc: 'อัปเกรดคลื่นพลังเสถียร (Harmonic Surge) แตะเลเวล 5 (การันตีค่าสูงสุด 100%)',
+    icon: '🎯',
+    bonusPct: 10,
+    check: (s) => (s.transcendence?.harmonicSurgeLevel || 0) >= 5,
+  },
+  {
     id: 'gaia_clairvoyance_5',
     category: 'gaia',
     title: 'เนตรแห่งไกอา',

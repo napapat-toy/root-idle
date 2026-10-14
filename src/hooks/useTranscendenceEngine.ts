@@ -17,6 +17,8 @@ import {
   primordialSeedlingCost,
   DEEP_MEDITATION_MAX_LEVEL,
   deepMeditationCost,
+  HARMONIC_SURGE_MAX_LEVEL,
+  harmonicSurgeCost,
   gaiaBlessingCost,
   GAIA_BLESSING_MAX_LEVEL,
   HYPERDRIVE_COST,
@@ -322,6 +324,23 @@ export function useTranscendenceEngine({
     }));
   }, [stateRef, setState]);
 
+  const buyHarmonicSurge = useCallback(() => {
+    const cur = stateRef.current;
+    const lvl = cur.transcendence?.harmonicSurgeLevel || 0;
+    if (lvl >= HARMONIC_SURGE_MAX_LEVEL) return;
+    const cost = harmonicSurgeCost(lvl);
+    if ((cur.transcendence?.gaiaEssences || 0) < cost) return;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        gaiaEssences: prev.transcendence.gaiaEssences - cost,
+        harmonicSurgeLevel: lvl + 1,
+      },
+    }));
+  }, [stateRef, setState]);
+
   const startTrial = useCallback((trialId: TrialId) => {
     doPrestige();
     setState(prev => {
@@ -441,6 +460,7 @@ export function useTranscendenceEngine({
     buyGaiaClairvoyance,
     buyPrimordialSeedling,
     buyDeepMeditation,
+    buyHarmonicSurge,
     buyHyperdrive,
     toggleHyperdrive,
     buyAuroraBloom,

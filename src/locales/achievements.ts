@@ -894,6 +894,10 @@ export const ACHIEVEMENT_TRANSLATIONS: Record<string, Record<Language, Localized
     th: { title: 'สมาธิลึกใต้พิภพ', desc: 'อัปเกรดสมาธิลึก (Deep Meditation) แตะเลเวล 5 (สูงสุด)' },
     en: { title: 'Subterranean Nirvana', desc: 'Upgrade Deep Meditation to max Level 5' },
   },
+  harmonic_surge_max: {
+    th: { title: 'คลื่นพลังงานไร้ที่ติ', desc: 'อัปเกรดคลื่นพลังเสถียร (Harmonic Surge) แตะเลเวล 5 (การันตีค่าสูงสุด 100%)' },
+    en: { title: 'Flawless Energy Surge', desc: 'Upgrade Harmonic Surge to max Level 5 (100% Guaranteed Max)' },
+  },
   gaia_blessing_1: {
     th: { title: 'ก้าวข้ามขีดจำกัดแห่งไกอา', desc: 'อัปเกรดพรแห่งไกอา (Gaia\'s Blessing) แตะเลเวล 1' },
     en: { title: 'First Blessing', desc: 'Upgrade Gaia\'s Blessing to Level 1' },

@@ -74,6 +74,7 @@ export interface SanctuaryModalProps {
   onBuyGaiaClairvoyance: () => void;
   onBuyPrimordialSeedling: () => void;
   onBuyDeepMeditation: () => void;
+  onBuyHarmonicSurge?: () => void;
   onBuyHyperdrive?: () => void;
   onBuyAuroraBloom?: () => void;
   // Astral Transmutations & Resonance
@@ -109,6 +110,7 @@ export const SanctuaryModal: React.FC<SanctuaryModalProps> = React.memo(({
   onBuyGaiaClairvoyance,
   onBuyPrimordialSeedling,
   onBuyDeepMeditation,
+  onBuyHarmonicSurge,
   onBuyHyperdrive,
   onBuyAuroraBloom,
   onTransmuteSeedsToPetals,
@@ -148,6 +150,7 @@ export const SanctuaryModal: React.FC<SanctuaryModalProps> = React.memo(({
     meditation: onBuyDeepMeditation,
     hyperdrive: onBuyHyperdrive,
     aurora: onBuyAuroraBloom,
+    harmonic_surge: onBuyHarmonicSurge,
   };
 
   const renderSectionHeader = (text: string) => (

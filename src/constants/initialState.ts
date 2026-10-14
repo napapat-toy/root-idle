@@ -95,6 +95,7 @@ export function createFreshState(): GameState {
       auroraBloomUnlocked: false,
       astralPetals: 0,
       astralResonanceLevel: 0,
+      harmonicSurgeLevel: 0,
     },
     pacts: {},
     nextPacts: {},
