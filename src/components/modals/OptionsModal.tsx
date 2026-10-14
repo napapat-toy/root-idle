@@ -302,56 +302,95 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                         </span>
                       </div>
                       <div className="p-desc" style={{ marginTop: '4px', lineHeight: 1.5 }}>
-                        <div>
-                          🌱 <b style={{ color: 'var(--accent-amber)' }}>{fmt(state.nutrients)}</b> {isEn ? 'nutrients' : 'สารอาหาร'}
-                          <span style={{ color: 'var(--root-cream-dim)', fontSize: '10.5px' }}>
-                            {' '}({isEn ? 'lifetime' : 'สะสม'} {fmt(state.stats?.totalNutrientsEarnedLifetime || state.runEarned || state.nutrients)})
-                          </span>
-                          {currentHighestName && (
-                            <span> · {isEn ? 'Highest Tier:' : 'ขั้นสูงสุด:'} {currentHighestName} ({isEn ? 'Total' : 'รวม'} {fmtInt(state.totalOwned)} {isEn ? 'roots' : 'ต้น'})</span>
-                          )}
-                        </div>
-                        <div style={{ color: 'var(--prestige-accent)' }}>
-                          🌌 <b>{fmtInt(state.eternalSeeds)}</b> {isEn ? 'Seeds' : 'เมล็ดนิรันดร์'}
-                          {currentPendingSeeds > 0 && (
-                            <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
-                              {' '}(+{fmtInt(currentPendingSeeds)} {isEn ? 'pending' : 'รอรับ ✨'})
+                        <div className="save-stat-rows">
+                          {/* Row 1: Nutrients */}
+                          <div className="save-stat-row">
+                            <span>🌱 <b style={{ color: 'var(--accent-amber)' }}>{fmt(state.nutrients)}</b> {isEn ? 'nutrients' : 'สารอาหาร'}</span>
+                            <span style={{ color: 'var(--root-cream-dim)', fontSize: '10.5px' }}>
+                              ({isEn ? 'lifetime' : 'สะสม'} {fmt(state.stats?.totalNutrientsEarnedLifetime || state.runEarned || state.nutrients)})
                             </span>
+                            {currentHighestName && (
+                              <span style={{ color: 'var(--root-cream-dim)' }}>
+                                · {isEn ? 'Highest Tier:' : 'ขั้นสูงสุด:'} <span style={{ color: 'var(--root-cream)' }}>{currentHighestName}</span> ({isEn ? 'Total' : 'รวม'} {fmtInt(state.totalOwned)} {isEn ? 'roots' : 'ต้น'})
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Row 2: Eternal Seeds & Prestige */}
+                          {Boolean(state.eternalSeeds > 0 || (state.stats?.totalSeedsEarnedLifetime || 0) > 0 || (state.stats?.prestigeCount || 0) > 0 || currentPendingSeeds > 0) && (
+                            <div className="save-stat-row" style={{ color: 'var(--prestige-accent)' }}>
+                              <span>🌌 <b>{fmtInt(state.eternalSeeds)}</b> {isEn ? 'Seeds' : 'เมล็ดนิรันดร์'}</span>
+                              {currentPendingSeeds > 0 && (
+                                <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
+                                  (+{fmtInt(currentPendingSeeds)} {isEn ? 'pending' : 'รอรับ ✨'})
+                                </span>
+                              )}
+                              <span style={{ color: '#ffd76a', fontSize: '10.5px' }}>
+                                · {isEn ? 'all-time' : 'ตลอดกาล'} {fmtInt(state.stats?.totalSeedsEarnedLifetime || state.eternalSeeds)}
+                              </span>
+                              {(state.stats?.prestigeCount || 0) > 0 && (
+                                <span style={{ color: 'var(--root-cream-dim)' }}>· Prestige ×{state.stats?.prestigeCount}</span>
+                              )}
+                            </div>
                           )}
-                          <span style={{ color: '#ffd76a', fontSize: '10.5px' }}>
-                            {' '}· {isEn ? 'all-time' : 'ตลอดกาล'} {fmtInt(state.stats?.totalSeedsEarnedLifetime || state.eternalSeeds)}
-                          </span>
-                          {(state.stats?.prestigeCount || 0) > 0 && (
-                            <span style={{ color: 'var(--root-cream-dim)' }}> · Prestige ×{state.stats?.prestigeCount}</span>
-                          )}
-                        </div>
-                        <div style={{ marginTop: '2px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px', fontSize: '11px' }}>
+
+                          {/* Row 3: Gaia Essences & Ascent */}
                           {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || (state.transcendence?.count || 0) > 0) && (
-                            <span style={{ color: '#34d399', fontWeight: 600 }}>
-                              🌍 {fmt(state.transcendence?.gaiaEssences || 0)} {isEn ? 'Essences' : 'ละอองชีวิต'}
-                              {(state.transcendence?.count || 0) > 0 ? ` (${isEn ? 'Ascent' : 'ตื่นรู้'} ×${state.transcendence?.count})` : ''}
-                            </span>
+                            <div className="save-stat-row" style={{ color: '#34d399' }}>
+                              <span>🌍 <b>{fmt(state.transcendence?.gaiaEssences || 0)}</b> {isEn ? 'Essences' : 'ละอองชีวิต'}</span>
+                              {(state.transcendence?.count || 0) > 0 && (
+                                <span style={{ color: '#a7f3d0', fontSize: '11px' }}>
+                                  · {isEn ? 'Ascent' : 'ตื่นรู้'} ×{state.transcendence?.count}
+                                </span>
+                              )}
+                            </div>
                           )}
+
+                          {/* Row 4: Astral Petals */}
                           {Boolean((state.transcendence?.astralPetals || 0) > 0 || state.transcendence?.auroraBloomUnlocked) && (
-                            <span style={{ color: '#f472b6', fontWeight: 600 }}>
-                              {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || (state.transcendence?.count || 0) > 0) ? ' · ' : ''}
-                              🌸 {fmtInt(state.transcendence?.astralPetals || 0)} {isEn ? 'Petals' : 'เกสรดวงดาว'}
-                            </span>
+                            <div className="save-stat-row" style={{ color: '#f472b6' }}>
+                              <span>🌸 <b>{fmtInt(state.transcendence?.astralPetals || 0)}</b> {isEn ? 'Petals' : 'เกสรดวงดาว'}</span>
+                            </div>
                           )}
+
+                          {/* Row 5: Relics */}
                           {relicsCount(state) > 0 && (
-                            <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
-                              {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || (state.transcendence?.count || 0) > 0 || (state.transcendence?.astralPetals || 0) > 0) ? ' · ' : ''}
-                              🏺 {isEn ? `Relics ${relicsCount(state)}/${TOTAL_RELICS}` : `โบราณวัตถุ ${relicsCount(state)}/${TOTAL_RELICS}`}
-                            </span>
+                            <div className="save-stat-row" style={{ color: 'var(--accent-glow)' }}>
+                              <span>🏺 <b>{relicsCount(state)}/{TOTAL_RELICS}</b> {isEn ? 'Relics' : 'โบราณวัตถุ'}</span>
+                            </div>
                           )}
+
+                          {/* Row 6: Achievements */}
                           {(state.achievements?.length || 0) > 0 && (
-                            <span style={{ color: 'var(--root-cream-dim)' }}>
-                              {Boolean((state.transcendence?.gaiaEssences || 0) > 0 || relicsCount(state) > 0 || (state.transcendence?.astralPetals || 0) > 0) ? ' · ' : ''}
-                              🏆 {state.achievements?.length}/{TOTAL_ACHIEVEMENTS}
-                            </span>
+                            <div className="save-stat-row" style={{ color: 'var(--root-cream-dim)' }}>
+                              <span>🏆 <b style={{ color: 'var(--root-cream)' }}>{state.achievements?.length}/{TOTAL_ACHIEVEMENTS}</b> {isEn ? 'Achievements' : 'ความสำเร็จ'}</span>
+                            </div>
                           )}
+
+                          {/* Row 7: Active Trial */}
+                          {state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none' && (() => {
+                            const trial = TRIAL_DEFS.find(t => t.id === state.transcendence?.activeTrial);
+                            if (!trial) return null;
+                            return (
+                              <div className="save-stat-row">
+                                <span
+                                  style={{
+                                    background: 'rgba(245, 158, 11, 0.18)',
+                                    border: '1px solid rgba(245, 158, 11, 0.45)',
+                                    color: '#facc15',
+                                    padding: '2px 8px',
+                                    borderRadius: '4px',
+                                    fontSize: '11px',
+                                    fontWeight: 700,
+                                  }}
+                                >
+                                  ⚔️ {isEn ? `Active Trial: ${trial.enName}` : `กำลังทดสอบ: ${trial.name}`}
+                                </span>
+                              </div>
+                            );
+                          })()}
                         </div>
-                        <div style={{ fontSize: '10.5px', color: 'var(--root-cream-dim)', marginTop: '6px', fontStyle: 'italic', opacity: 0.85 }}>
+                        <div style={{ fontSize: '10.5px', color: 'var(--root-cream-dim)', marginTop: '8px', fontStyle: 'italic', opacity: 0.85 }}>
                           {isEn
                             ? '💡 The game continuously auto-saves this progress to your browser. Use the slots below to store manual backup checkpoints.'
                             : '💡 ตัวเกมเซฟความคืบหน้านี้ให้อัตโนมัติตลอดเวลา หากต้องการสำรองข้อมูลไว้เป็นจุดย้อนหลัง สามารถกด "บันทึก" ลงในช่องสล็อตด้านล่างได้'}
@@ -385,6 +424,12 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                           ? fmtInt(meta.lifetimeSeeds)
                           : null;
 
+                        const hasPrestige = Boolean(
+                          (meta?.seeds !== undefined && meta.seeds > 0) ||
+                          (meta?.lifetimeSeeds !== undefined && meta.lifetimeSeeds > 0) ||
+                          (meta?.prestigeCount !== undefined && meta.prestigeCount > 0) ||
+                          (meta?.pendingSeeds !== undefined && meta.pendingSeeds > 0)
+                        );
                         const hasAscent = Boolean(meta?.gaiaEssences && meta.gaiaEssences > 0) || Boolean(meta?.transcendenceCount && meta.transcendenceCount > 0);
                         const hasPetals = Boolean(meta?.astralPetals && meta.astralPetals > 0);
                         const hasRelics = Boolean(meta?.relicsCount && meta.relicsCount > 0);
@@ -402,82 +447,96 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                             </div>
                             <div className="p-desc" style={{ marginTop: '4px', lineHeight: 1.5 }}>
                               {meta ? (
-                                <>
+                                <div className="save-stat-rows">
+                                  {/* Row 1: Nutrients */}
                                   {nutrientText && (
-                                    <div>
-                                      🌱 <b style={{ color: 'var(--accent-amber)' }}>{nutrientText}</b> {isEn ? 'nutrients' : 'สารอาหาร'}
+                                    <div className="save-stat-row">
+                                      <span>🌱 <b style={{ color: 'var(--accent-amber)' }}>{nutrientText}</b> {isEn ? 'nutrients' : 'สารอาหาร'}</span>
                                       {lifetimeNutrientsText && (
                                         <span style={{ color: 'var(--root-cream-dim)', fontSize: '10.5px' }}>
-                                          {' '}({isEn ? 'lifetime' : 'สะสม'} {lifetimeNutrientsText})
+                                          ({isEn ? 'lifetime' : 'สะสม'} {lifetimeNutrientsText})
                                         </span>
                                       )}
                                       {highestName && (
-                                        <span> · {isEn ? 'Highest Tier:' : 'ขั้นสูงสุด:'} {highestName} ({isEn ? 'Total' : 'รวม'} {fmtInt(meta.totalOwned || 0)} {isEn ? 'roots' : 'ต้น'})</span>
-                                      )}
-                                    </div>
-                                  )}
-                                  <div style={{ color: 'var(--prestige-accent)' }}>
-                                    🌌 <b>{fmtInt(meta.seeds || 0)}</b> {isEn ? 'Seeds' : 'เมล็ดนิรันดร์'}
-                                    {pendingText && <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>{pendingText}</span>}
-                                    {lifetimeSeedsText && (
-                                      <span style={{ color: '#ffd76a', fontSize: '10.5px' }}>
-                                        {' '}· {isEn ? 'all-time' : 'ตลอดกาล'} {lifetimeSeedsText}
-                                      </span>
-                                    )}
-                                    {meta.prestigeCount !== undefined && meta.prestigeCount > 0 && (
-                                      <span style={{ color: 'var(--root-cream-dim)' }}> · Prestige ×{meta.prestigeCount}</span>
-                                    )}
-                                  </div>
-                                  {/* Line 3: Gaia Transcendence, Astral Petals, Relics, Achievements & Active Trial */}
-                                  {(hasAscent || hasPetals || hasRelics || hasAchievements || (meta.activeTrial && meta.activeTrial !== 'none')) && (
-                                    <div style={{ marginTop: '2px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px', fontSize: '11px' }}>
-                                      {hasAscent && (
-                                        <span style={{ color: '#34d399', fontWeight: 600 }}>
-                                          🌍 {fmt(meta.gaiaEssences || 0)} {isEn ? 'Essences' : 'ละอองชีวิต'}
-                                          {meta.transcendenceCount && meta.transcendenceCount > 0 ? ` (${isEn ? 'Ascent' : 'ตื่นรู้'} ×${meta.transcendenceCount})` : ''}
-                                        </span>
-                                      )}
-                                      {hasPetals && (
-                                        <span style={{ color: '#f472b6', fontWeight: 600 }}>
-                                          {hasAscent ? ' · ' : ''}
-                                          🌸 {fmtInt(meta.astralPetals || 0)} {isEn ? 'Petals' : 'เกสรดวงดาว'}
-                                        </span>
-                                      )}
-                                      {hasRelics && (
-                                        <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>
-                                          {(hasAscent || hasPetals) ? ' · ' : ''}
-                                          🏺 {isEn ? `Relics ${meta.relicsCount}/${TOTAL_RELICS}` : `โบราณวัตถุ ${meta.relicsCount}/${TOTAL_RELICS}`}
-                                        </span>
-                                      )}
-                                      {hasAchievements && (
                                         <span style={{ color: 'var(--root-cream-dim)' }}>
-                                          {(hasAscent || hasPetals || hasRelics) ? ' · ' : ''}
-                                          🏆 {meta.achievementsCount}/{TOTAL_ACHIEVEMENTS}
+                                          · {isEn ? 'Highest Tier:' : 'ขั้นสูงสุด:'} <span style={{ color: 'var(--root-cream)' }}>{highestName}</span> ({isEn ? 'Total' : 'รวม'} {fmtInt(meta.totalOwned || 0)} {isEn ? 'roots' : 'ต้น'})
                                         </span>
                                       )}
-                                      {meta.activeTrial && meta.activeTrial !== 'none' && (() => {
-                                        const trial = TRIAL_DEFS.find(t => t.id === meta.activeTrial);
-                                        if (!trial) return null;
-                                        return (
-                                          <span
-                                            style={{
-                                              background: 'rgba(245, 158, 11, 0.2)',
-                                              border: '1px solid rgba(245, 158, 11, 0.5)',
-                                              color: '#facc15',
-                                              padding: '1px 6px',
-                                              borderRadius: '4px',
-                                              fontSize: '10px',
-                                              fontWeight: 700,
-                                              marginLeft: '4px',
-                                            }}
-                                          >
-                                            ⚔️ {isEn ? `Trial: ${trial.enName}` : `ทดสอบ: ${trial.name}`}
-                                          </span>
-                                        );
-                                      })()}
                                     </div>
                                   )}
-                                </>
+
+                                  {/* Row 2: Seeds & Prestige */}
+                                  {hasPrestige && (
+                                    <div className="save-stat-row" style={{ color: 'var(--prestige-accent)' }}>
+                                      <span>🌌 <b>{fmtInt(meta.seeds || 0)}</b> {isEn ? 'Seeds' : 'เมล็ดนิรันดร์'}</span>
+                                      {pendingText && <span style={{ color: 'var(--accent-glow)', fontWeight: 600 }}>{pendingText}</span>}
+                                      {lifetimeSeedsText && (
+                                        <span style={{ color: '#ffd76a', fontSize: '10.5px' }}>
+                                          · {isEn ? 'all-time' : 'ตลอดกาล'} {lifetimeSeedsText}
+                                        </span>
+                                      )}
+                                      {meta.prestigeCount !== undefined && meta.prestigeCount > 0 && (
+                                        <span style={{ color: 'var(--root-cream-dim)' }}>· Prestige ×{meta.prestigeCount}</span>
+                                      )}
+                                    </div>
+                                  )}
+
+                                  {/* Row 3: Gaia Essences & Ascent */}
+                                  {hasAscent && (
+                                    <div className="save-stat-row" style={{ color: '#34d399' }}>
+                                      <span>🌍 <b>{fmt(meta.gaiaEssences || 0)}</b> {isEn ? 'Essences' : 'ละอองชีวิต'}</span>
+                                      {meta.transcendenceCount && meta.transcendenceCount > 0 && (
+                                        <span style={{ color: '#a7f3d0', fontSize: '11px' }}>
+                                          · {isEn ? 'Ascent' : 'ตื่นรู้'} ×{meta.transcendenceCount}
+                                        </span>
+                                      )}
+                                    </div>
+                                  )}
+
+                                  {/* Row 4: Astral Petals */}
+                                  {hasPetals && (
+                                    <div className="save-stat-row" style={{ color: '#f472b6' }}>
+                                      <span>🌸 <b>{fmtInt(meta.astralPetals || 0)}</b> {isEn ? 'Petals' : 'เกสรดวงดาว'}</span>
+                                    </div>
+                                  )}
+
+                                  {/* Row 5: Relics */}
+                                  {hasRelics && (
+                                    <div className="save-stat-row" style={{ color: 'var(--accent-glow)' }}>
+                                      <span>🏺 <b>{meta.relicsCount}/{TOTAL_RELICS}</b> {isEn ? 'Relics' : 'โบราณวัตถุ'}</span>
+                                    </div>
+                                  )}
+
+                                  {/* Row 6: Achievements */}
+                                  {hasAchievements && (
+                                    <div className="save-stat-row" style={{ color: 'var(--root-cream-dim)' }}>
+                                      <span>🏆 <b style={{ color: 'var(--root-cream)' }}>{meta.achievementsCount}/{TOTAL_ACHIEVEMENTS}</b> {isEn ? 'Achievements' : 'ความสำเร็จ'}</span>
+                                    </div>
+                                  )}
+
+                                  {/* Row 7: Active Trial */}
+                                  {meta.activeTrial && meta.activeTrial !== 'none' && (() => {
+                                    const trial = TRIAL_DEFS.find(t => t.id === meta.activeTrial);
+                                    if (!trial) return null;
+                                    return (
+                                      <div className="save-stat-row">
+                                        <span
+                                          style={{
+                                            background: 'rgba(245, 158, 11, 0.18)',
+                                            border: '1px solid rgba(245, 158, 11, 0.45)',
+                                            color: '#facc15',
+                                            padding: '2px 8px',
+                                            borderRadius: '4px',
+                                            fontSize: '11px',
+                                            fontWeight: 700,
+                                          }}
+                                        >
+                                          ⚔️ {isEn ? `Active Trial: ${trial.enName}` : `กำลังทดสอบ: ${trial.name}`}
+                                        </span>
+                                      </div>
+                                    );
+                                  })()}
+                                </div>
                               ) : (
                                 <span style={{ opacity: 0.6 }}>{tr.emptySlot}</span>
                               )}
