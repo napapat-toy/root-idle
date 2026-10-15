@@ -358,7 +358,6 @@ export function useGameEngine() {
       rootUpgrades: {},
       echoes: retainedEchoes,
       rootSynergies: {},
-      eternalSeeds: 0,
       buyQty: 1,
       pacts: { ...nextPactsToApply },
       nextPacts: { ...nextPactsToApply },

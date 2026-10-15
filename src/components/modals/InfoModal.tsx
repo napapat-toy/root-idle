@@ -260,10 +260,10 @@ export const InfoModal: React.FC<InfoModalProps> = React.memo(({
                       🔓 <b>{isEn ? 'Unlock condition:' : 'เงื่อนไขปลดล็อก:'}</b> {isEn ? 'Purchase 100 Yggdrasil World Tree roots.' : 'ซื้อรากไม้อิกดราซิลครบ 100 ต้น'}
                     </div>
                     <div>
-                      🔄 <b>{isEn ? 'What is reset:' : 'สิ่งที่ถูกรีเซต:'}</b> {isEn ? 'Roots, nutrients, and unspent seeds.' : 'รากไม้, สารอาหาร และเมล็ดนิรันดร์ที่ยังไม่ได้ใช้'}
+                      🔄 <b>{isEn ? 'What is reset:' : 'สิ่งที่ถูกรีเซต:'}</b> {isEn ? 'Roots and nutrients (no seeds earned from prestige).' : 'รากไม้ และสารอาหาร (จะไม่ได้รับเมล็ดจากการหว่านใหม่)'}
                     </div>
                     <div>
-                      🛡️ <b>{isEn ? 'What is preserved:' : 'สิ่งที่คงอยู่:'}</b> {isEn ? 'Gaia Essences, Gaia Perks, Relics, Wardrobe cosmetics, Trials progress, and Astral Petals.' : 'ละอองชีวิต, พรไกอา, โบราณวัตถุ, สกินรากไม้, การผ่านการทดสอบ และเกสรดวงดาว'}
+                      🛡️ <b>{isEn ? 'What is preserved:' : 'สิ่งที่คงอยู่:'}</b> {isEn ? 'Current Eternal Seeds, Gaia Essences, Gaia Perks, Relics, Wardrobe cosmetics, Trials progress, and Astral Petals.' : 'เมล็ดนิรันดร์ที่มีอยู่, ละอองชีวิต, พรไกอา, โบราณวัตถุ, สกินรากไม้, การผ่านการทดสอบ และเกสรดวงดาว'}
                     </div>
                   </div>
                 </div>

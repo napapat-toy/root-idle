@@ -106,10 +106,10 @@ export const thUI = {
     goToTranscendence: '🌍 ไปที่หน้าการตื่นรู้ (Transcendence)',
     whatResetsLabel: 'สิ่งที่จะถูกรีเซ็ต:',
     whatResetsPrestige: 'สารอาหารที่สะสม และรากไม้ทุกสายพันธุ์ในฟาร์ม',
-    whatResetsTranscend: 'สารอาหาร, รากไม้ และเมล็ดนิรันดร์ (ยกเว้นส่วนที่รักษาไว้โดยความทรงจำผืนดิน)',
+    whatResetsTranscend: 'สารอาหาร, รากไม้ (จะไม่ได้รับเมล็ดจากการหว่านใหม่)',
     whatPersistsLabel: 'สิ่งที่จะคงอยู่ถาวร:',
     whatPersistsPrestige: 'เมล็ดนิรันดร์, โบราณวัตถุ, ความสำเร็จ และอัปเกรดทั้งหมดในวิหาร',
-    whatPersistsTranscend: 'พรแห่งไกอา, โบราณวัตถุ, เกสรดวงดาว และอัปเกรดทั้งหมดในวิหาร',
+    whatPersistsTranscend: 'เมล็ดนิรันดร์ที่มีอยู่, พรแห่งไกอา, โบราณวัตถุ, เกสรดวงดาว และอัปเกรดทั้งหมดในวิหาร',
     
     // Achievements Modal
     achievementsTitle: 'เหรียญความสำเร็จ (Achievements)',

@@ -106,10 +106,10 @@ export const enUI = {
     goToTranscendence: '🌍 Go to Transcendence',
     whatResetsLabel: 'What will be reset:',
     whatResetsPrestige: 'Accumulated nutrients and all current root modules in the garden',
-    whatResetsTranscend: 'Nutrients, root modules, and seeds (except those protected by Soil Memory)',
+    whatResetsTranscend: 'Nutrients and root modules (no prestige seeds will be granted)',
     whatPersistsLabel: 'What persists permanently:',
     whatPersistsPrestige: 'Eternal Seeds, Relics, Achievements, and all Sanctuary upgrades',
-    whatPersistsTranscend: 'Gaia Perks, Relics, Astral Petals, and all Sanctuary upgrades',
+    whatPersistsTranscend: 'Current Eternal Seeds, Gaia Perks, Relics, Astral Petals, and Sanctuary upgrades',
     
     // Achievements Modal
     achievementsTitle: 'Achievements',
