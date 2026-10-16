@@ -3,8 +3,7 @@ import { relicCycleResonanceStack } from './relics';
 import { pactSeedsBonusMultiplier } from './transcendence/pacts';
 
 export const PRESTIGE_UNLOCK_ECHOES = 5;
-export const SEED_DIVIDER = 10000000000; // 10 Billion (1e10)
-export const SEED = 918273;
+const SEED_DIVIDER = 10000000000; // 10 Billion (1e10)
 export const OFFLINE_CAP_HOURS = [24, 48, 72];
 
 export const EVENT_DURATION_MAX_LEVEL = 4;
@@ -12,20 +11,14 @@ export const EVENT_BONUS_MAX_LEVEL = 10000; // Cap at Lv. 10,000 (+1,000%)
 export const LUCKY_DURATION_BASE = 5;
 export const LUCKY_DURATION_MAX = 20;
 export const LUCKY_DURATION_MAX_LEVEL = LUCKY_DURATION_MAX - LUCKY_DURATION_BASE; // 15 levels
-export const LUCKY_CHANCE_BASE = 0.002;
+const LUCKY_CHANCE_BASE = 0.002;
 export const LUCKY_CHANCE_STEP = 0.001;
 export const LUCKY_CHANCE_MAX_LEVEL = 8;
 export const LUCKY_CHANCE_MAX = 0.010;
 export const LUCKY_MAGNITUDE_MAX_LEVEL = 9; // Lv.9 = x10 max lucky multiplier cap
 
-export const PASSIVE_RATE_COST = 100;
-export const UNIVERSAL_AUTO_COST = 10000;
 export const AUTO_ROOT_COST = 10000;
-export const AUTO_ROOT_SMART_COST = 10000;
-export const AUTO_ROOT_ALL_COST = 10000;
 export const AUTO_RESET_COST = 10000;
-export const AUTO_RESET_MIN_SEEDS = 3;
-export const AUTO_EVENT_COST = 10000;
 
 export const STARTER_CULTURE_MAX_LEVEL = 50; // Max 500 starter roots upon Prestige
 export const GOLDEN_SEED_MAX_LEVEL = 100000; // Max 100,000 levels (+10,000% seeds)
@@ -39,10 +32,6 @@ export function prestigeBonusPct(state: GameState): number {
   return Math.round(base * (1 + cycleBonus * 0.01) * 100) / 100;
 }
 
-export function prestigeRateMultiplier(state: GameState): number {
-  return 1 + prestigeBonusPct(state) * 0.01;
-}
-
 export function starterCultureCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.starterLevel || 0);
   return Math.min(3000, 50 * (lvl + 1));
@@ -53,17 +42,9 @@ export function goldenSeedCost(stateOrLevel: GameState | number): number {
   return Math.floor(5 * Math.pow(lvl + 1, 1.14));
 }
 
-export function goldenSeedMaxed(state: GameState): boolean {
-  return (state.prestige.goldenLevel || 0) >= GOLDEN_SEED_MAX_LEVEL;
-}
-
 export function passiveRateCost(stateOrLevel: GameState | number): number {
   const lvl = typeof stateOrLevel === 'number' ? stateOrLevel : (stateOrLevel.prestige.passiveRateLevel || 0);
   return Math.floor(3.5 * Math.pow(lvl + 1, 1.12));
-}
-
-export function passiveRateMaxed(state: GameState): boolean {
-  return (state.prestige.passiveRateLevel || 0) >= PASSIVE_RATE_MAX_LEVEL;
 }
 
 export function offlineCapMaxed(state: GameState): boolean {
@@ -125,10 +106,6 @@ export function luckyDurationMaxed(state: GameState): boolean {
 
 export function luckyDurationSeconds(state: GameState): number {
   return Math.min(LUCKY_DURATION_MAX, LUCKY_DURATION_BASE + (state.prestige.luckyDurationLevel || 0));
-}
-
-export function luckyDurationExtra(state: GameState): number {
-  return luckyDurationSeconds(state);
 }
 
 export function luckyChanceMaxed(state: GameState): boolean {

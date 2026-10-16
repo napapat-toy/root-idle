@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export interface StatItem {
+interface StatItem {
   label: React.ReactNode;
   value: React.ReactNode;
   valueClass?: string;

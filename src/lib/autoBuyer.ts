@@ -1,4 +1,4 @@
-import { AutoRootMode, GameState } from '@/types/game';
+import { GameState } from '@/types/game';
 import {
   baseTotalRate,
   bulkCostFor,
@@ -21,7 +21,7 @@ import {
   pactDisableAuto,
 } from '@/constants/gameData';
 
-export interface AutoBuyCandidate {
+interface AutoBuyCandidate {
   type: 'module' | 'upgrade' | 'echo' | 'synergy';
   id: string;
   cost: number;
@@ -32,35 +32,6 @@ export interface AutoBuyCandidate {
   isGatekeeper?: boolean; // whether this is needed (< 10) to unlock the next tier
   isMilestoneTarget?: boolean; // whether this is < 100 roots and costs <= 10% of current nutrients
   apply: () => void;
-}
-
-// Extended Lookahead Window: Up to 1 Hour (3,600 seconds)
-export const AUTO_BUY_MAX_LOOKAHEAD_SECONDS = 3600;
-
-/**
- * Returns the list of auto root modes unlocked by the player in Prestige.
- */
-export function getAvailableAutoRootModes(state: GameState): AutoRootMode[] {
-  if (!state.prestige.autoRoot) return [];
-  const modes: AutoRootMode[] = ['basic'];
-  if (state.prestige.autoRootSmart) modes.push('smart');
-  if (state.prestige.autoRootAll) modes.push('all');
-  return modes;
-}
-
-/**
- * Returns the current active mode for Auto Root.
- */
-export function getActiveAutoRootMode(state: GameState): AutoRootMode {
-  const available = getAvailableAutoRootModes(state);
-  if (available.length === 0) return 'basic';
-
-  const preferred = state.prestige.autoRootMode;
-  if (preferred && available.includes(preferred)) {
-    return preferred;
-  }
-  // Default to highest unlocked tier
-  return available[available.length - 1];
 }
 
 /**

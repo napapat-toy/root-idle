@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export type ModalButtonVariant =
+type ModalButtonVariant =
   | 'primary'
   | 'danger'
   | 'secondary'
@@ -10,7 +10,7 @@ export type ModalButtonVariant =
   | 'cyan'
   | 'locked';
 
-export type ModalButtonSize = 'sm' | 'md' | 'lg';
+type ModalButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ModalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ModalButtonVariant;

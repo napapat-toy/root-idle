@@ -94,7 +94,6 @@ export default function Home() {
           lang={lang}
           onClaimEvent={events.claimEvent}
           onClaimUnearthedRelic={game.claimUnearthedRelic}
-          onWaterCanvas={game.onWaterCanvas}
         />
       </div>
 

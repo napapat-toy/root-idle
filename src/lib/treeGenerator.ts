@@ -26,7 +26,7 @@ export function deriveLog(owned: Record<string, number>): string[] {
   return log;
 }
 
-export function angleOf(b: Branch): number {
+function angleOf(b: Branch): number {
   return Math.atan2(b.y2 - b.y1, b.x2 - b.x1);
 }
 
@@ -183,11 +183,8 @@ export function buildBranchesFromLog(log: string[]): { branches: Branch[]; maxY:
   return { branches, maxY };
 }
 
-/**
- * Traces the lineage of a branch back to its major fork (depth 2)
- * so that each distinct sub-root system receives its own unique color family.
- */
-export function findLineageRoot(branches: Branch[], i: number, targetDepth: number = 2): number {
+// Traces the lineage of a branch back to its major fork (depth 2) for sameorigin skin
+function findLineageRoot(branches: Branch[], i: number, targetDepth: number = 2): number {
   let idx = i;
   while (branches[idx] && branches[idx].depth > targetDepth && branches[idx].parentIndex != null) {
     idx = branches[idx].parentIndex!;

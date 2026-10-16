@@ -22,7 +22,6 @@ interface StageCanvasProps {
   lang?: Language;
   onClaimEvent: (event: GameEventItem) => void;
   onClaimUnearthedRelic?: (relicId: string) => void;
-  onWaterCanvas?: (x: number, y: number) => void;
 }
 
 interface RootTreeSvgProps {
@@ -239,7 +238,6 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
   lang = 'th',
   onClaimEvent,
   onClaimUnearthedRelic,
-  onWaterCanvas,
 }) => {
   const targetH = Math.max(480, maxY + 50);
   const isEn = lang === 'en';
@@ -312,21 +310,10 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
     }, 80);
   };
 
-  const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isDraggingRef.current) return;
-    if (onWaterCanvas) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      onWaterCanvas(x, y);
-    }
-  };
-
   return (
     <div
       className="stage"
       id="stageBox"
-      onClick={handleCanvasClick}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

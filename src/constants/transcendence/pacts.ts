@@ -1,4 +1,4 @@
-import { GameState, PactDef, PactId } from '@/types/game';
+import { GameState, PactDef } from '@/types/game';
 import { isInTrial } from './trials';
 
 export const PACT_DEFS: PactDef[] = [
@@ -70,11 +70,6 @@ export const PACT_DEFS: PactDef[] = [
     seedsBonusPct: 15,
   },
 ];
-
-export function isPactActive(state: GameState, pactId: PactId): boolean {
-  if (isInTrial(state)) return false;
-  return !!state.pacts?.[pactId];
-}
 
 export function pactRateMultiplier(state: GameState): number {
   if (isInTrial(state)) return 1.0;

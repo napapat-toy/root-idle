@@ -24,7 +24,7 @@ export function getHighestOwnedRootIndex(stateOrOwned: GameState | Record<string
   return 0;
 }
 
-export function subterraneanDepthMeters(totalOwned: number, highestIndex: number = 0): number {
+function subterraneanDepthMeters(totalOwned: number, highestIndex: number = 0): number {
   const TIER_DEPTH_BASE = [
     15,     // 0: fine (15m)
     40,     // 1: nodule (40m)

@@ -4,8 +4,6 @@ import { isInTrial } from './trials';
 export const PRIMORDIAL_VIGOR_MAX_LEVEL = 20;
 export const SOIL_MEMORY_MAX_LEVEL = 10;
 export const GAIA_TOUCH_MAX_LEVEL = 10;
-export const AUTO_MANAGER_COST = 25;
-
 export const ECHO_RESONANCE_MAX_LEVEL = 5;
 export const GAIA_CLAIRVOYANCE_MAX_LEVEL = 10;
 export const PRIMORDIAL_SEEDLING_MAX_LEVEL = 5;
@@ -15,7 +13,7 @@ export const GAIA_BLESSING_MAX_LEVEL = 150;
 export const HYPERDRIVE_COST = 100000;
 export const AURORA_BLOOM_COST = 100000;
 
-export const HARMONIC_SURGE_COSTS = [100, 200, 400, 700, 1000];
+const HARMONIC_SURGE_COSTS = [100, 200, 400, 700, 1000];
 
 export function harmonicSurgeCost(level: number): number {
   return HARMONIC_SURGE_COSTS[Math.min(level, HARMONIC_SURGE_COSTS.length - 1)];
@@ -31,10 +29,6 @@ export function harmonicSurgeMinSeconds(state: GameState): number {
   if (isInTrial(state)) return 30;
   const lvl = state.transcendence?.harmonicSurgeLevel || 0;
   return Math.min(90, 30 + lvl * 12);
-}
-
-export function harmonicSurgeMaxed(state: GameState): boolean {
-  return (state.transcendence?.harmonicSurgeLevel || 0) >= HARMONIC_SURGE_MAX_LEVEL;
 }
 
 export function gaiaBlessingCost(level: number): number {
@@ -58,10 +52,6 @@ export function calcMaxGaiaBlessing(currentLevel: number, availableEssences: num
     lvl++;
   }
   return { count, totalCost };
-}
-
-export function gaiaBlessingMaxed(state: GameState): boolean {
-  return (state.transcendence?.gaiaBlessingLevel || 0) >= GAIA_BLESSING_MAX_LEVEL;
 }
 
 export function primordialVigorCost(level: number): number {
@@ -102,12 +92,6 @@ export function gaiaClairvoyanceCost(level: number): number {
   return 15 * (level + 1);
 }
 
-export function gaiaClairvoyanceBonus(state: GameState): number {
-  if (isInTrial(state)) return 0;
-  const lvl = state.transcendence?.gaiaClairvoyanceLevel || 0;
-  return lvl * 0.001; // +0.1% per level (up to +1.0%)
-}
-
 export function primordialSeedlingCost(level: number): number {
   return 10 * (level + 1);
 }
@@ -122,7 +106,7 @@ export function deepMeditationCost(level: number): number {
   return 15 * (level + 1);
 }
 
-export function deepMeditationIntervalSeconds(level: number): number {
+function deepMeditationIntervalSeconds(level: number): number {
   // Lv.1: 600s (10m), Lv.2: 525s (8.75m), Lv.3: 450s (7.5m), Lv.4: 375s (6.25m), Lv.5: 300s (5m)
   const clamped = Math.max(1, Math.min(DEEP_MEDITATION_MAX_LEVEL, level));
   return 600 - (clamped - 1) * 75;

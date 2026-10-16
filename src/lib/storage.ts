@@ -9,7 +9,7 @@ import {
   TRANSCENDENCE_REQUIRE_YGGDRASIL,
 } from '@/constants/gameData';
 
-export const STORAGE_KEY = 'root-idle-state-v1';
+const STORAGE_KEY = 'root-idle-state-v1';
 
 export function encodeSave(state: GameState): string {
   const payload: SavePayload = {
@@ -124,7 +124,7 @@ export function decodeSave(rawCode: string): SavePayload {
   return payload;
 }
 
-export function backfillUnlockGaps(state: GameState): number {
+function backfillUnlockGaps(state: GameState): number {
   if (state.lockGapBackfilled) return 0;
   let maxOwnedIndex = -1;
   MODULE_DEFS.forEach((d, i) => {

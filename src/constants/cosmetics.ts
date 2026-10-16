@@ -1,6 +1,5 @@
 import { PrestigeState, SkinId, UIThemeId } from '@/types/game';
 
-export const AURA_ROOTS_COST = 500; // Starter skin (500 seeds)
 
 export const SKIN_COSTS: Record<SkinId, number> = {
   none: 0,

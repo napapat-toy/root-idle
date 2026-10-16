@@ -30,24 +30,19 @@ import {
 export * from './initialState';
 export * from './depthLayers';
 
-export const GAME_VERSION = '1.35.28';
-export const BASE_RATE = 0.15;
+export const GAME_VERSION = '1.35.29';
+const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
 
-export const ROOT_UPGRADE_MILESTONE_MULT = 2.5;
-export const ROOT_UPGRADE_NORMAL_MULT = 1.75;
-export const ROOT_UPGRADE_DISCOUNT = 0.40;
+const ROOT_UPGRADE_MILESTONE_MULT = 2.5;
+const ROOT_UPGRADE_NORMAL_MULT = 1.75;
 
-export const ECHO_REQUIRE_OWNED = 20;
-export const ECHO_BASE_SECONDS = 45;
-export const ECHO_COST_MULT = 2.0;
-export const ECHO_REQUIRE_UPGRADE_LEVEL = 3;
-export const ECHO_MAX_LEVEL = 5;
-export const ECHO_BONUS_PER_LEVEL = 0.05;
+const ECHO_REQUIRE_OWNED = 20;
+const ECHO_REQUIRE_UPGRADE_LEVEL = 3;
+const ECHO_MAX_LEVEL = 5;
 
-export const ROOT_SYNERGY_REQUIRE_OWNED = 50;
-export const ROOT_SYNERGY_PCT_PER_UNIT = 0.08; // +0.08% per owned unit
+const ROOT_SYNERGY_REQUIRE_OWNED = 50;
 
 // Cost calculations
 export function costFor(def: ModuleDef, ownedCount: number, state?: GameState): number {
@@ -74,10 +69,6 @@ export function rootUpgradeIsMilestone(level: number): boolean {
 
 export function rootUpgradeLevelMult(level: number): number {
   return rootUpgradeIsMilestone(level) ? ROOT_UPGRADE_MILESTONE_MULT : ROOT_UPGRADE_NORMAL_MULT;
-}
-
-export function rootUpgradeEquivUnits(_level: number): number {
-  return 2;
 }
 
 export function rootUpgradeCost(def: ModuleDef, level: number): number {
@@ -143,10 +134,6 @@ export function achievementBonusPct(state: GameState): number {
   return state.achievements.reduce((sum, id) => sum + (ACHIEVEMENT_BONUS_MAP[id] || 1), 0);
 }
 
-export function achievementMultiplier(state: GameState): number {
-  return 1 + achievementBonusPct(state) * 0.01;
-}
-
 // Synergies
 export function rootSynergyUnlocked(state: GameState, moduleId: string): boolean {
   const req = relicSynergyUnlockRequiredCount(state);
@@ -179,14 +166,6 @@ export function totalSynergyBonusPct(state: GameState): number {
   return totalPct * trialMult * pactRes * biomeMult;
 }
 
-export function totalSynergyMultiplier(state: GameState): number {
-  return 1 + totalSynergyBonusPct(state) * 0.01;
-}
-
-export function baseTotalRate(state: GameState): number {
-  return calculateTotalRate(state);
-}
-
 export function totalSynergiesCount(state: GameState): number {
   if (!state.rootSynergies) return 0;
   return Object.values(state.rootSynergies).filter(Boolean).length;
@@ -199,7 +178,7 @@ export function totalGlobalBonusPercent(state: GameState): number {
   return achPct + synPct + prestigePct;
 }
 
-export function specialMultiplierBonus(state: GameState): number {
+function specialMultiplierBonus(state: GameState): number {
   const echoBonus = Math.max(0, globalEchoMultiplier(state) - 1);
   const vigorBonus = Math.max(0, primordialVigorMult(state) - 1);
   const relicBonus = Math.max(0, relicRateBonusMultiplier(state) - 1);
@@ -235,7 +214,7 @@ export function effectiveRate(state: GameState, def: ModuleDef): number {
   return baseRate * milestoneMult * upgMult * deepMult * trialDeepMult * globalMult;
 }
 
-export function calculateTotalRate(state: GameState): number {
+export function baseTotalRate(state: GameState): number {
   let r = BASE_RATE;
   MODULE_DEFS.forEach(m => {
     r += (state.owned[m.id] || 0) * effectiveRate(state, m);

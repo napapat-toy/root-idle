@@ -8,13 +8,6 @@ export const RELIC_RARITY_INFO: Record<RelicRarity, { name: string; enName: stri
   mythic: { name: 'สิ่งศักดิ์สิทธิ์', enName: 'Mythic', color: '#f43f5e', badgeBg: 'rgba(244, 63, 94, 0.2)', icon: '👑' },
 };
 
-export const RELIC_MAX_PIECES: Record<RelicRarity, number> = {
-  common: 1,
-  rare: 1,
-  epic: 1,
-  legendary: 1,
-  mythic: 1,
-};
 
 export const RELIC_DEFS: RelicDef[] = [
   // 🟢 COMMON (Weight: 50, Max: 1)

@@ -15,10 +15,6 @@ export function relicMaxed(state: GameState, relicId: string): boolean {
   return hasRelic(state, relicId);
 }
 
-export function totalRelicFragmentsCount(state: GameState): number {
-  return relicsCount(state);
-}
-
 export function relicsCount(state: GameState): number {
   if (!state.relics) return 0;
   return RELIC_DEFS.filter(r => hasRelic(state, r.id)).length;
@@ -102,19 +98,7 @@ export function relicEventCooldownMultiplier(state: GameState): number {
   return m === 2 ? 0.50 : 0.65;
 }
 
-/**
- * Chronolith: +12h offline cap & Time Warp ×2.0 (with Gaia: +24h & ×3.0).
- */
-export function relicOfflineBonus(state: GameState): { extraHours: number; effMultiplier: number; warpMultiplier: number } {
-  if (isStateInTrial(state)) return { extraHours: 0, effMultiplier: 1, warpMultiplier: 1 };
-  const m = relicMult(state, 'chronolith');
-  if (m === 0) return { extraHours: 0, effMultiplier: 1, warpMultiplier: 1 };
-  return {
-    extraHours: 12 * m,
-    effMultiplier: 1 + 0.5 * m,
-    warpMultiplier: m === 2 ? 3.0 : 2.0,
-  };
-}
+
 
 /**
  * Mycocore: Root Synergy yields +0.25%/unit (×3 power!) scaled by Cycle Resonance.

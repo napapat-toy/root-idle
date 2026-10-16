@@ -481,9 +481,6 @@ export function useGameEngine() {
     }));
   }, []);
 
-  const onWaterCanvas = useCallback((_x: number, _y: number) => {
-    // Water ripple / visual interaction without clicker nutrient burst
-  }, []);
 
   // INITIAL LOAD OFFLINE PROGRESS
   useEffect(() => {
@@ -699,7 +696,6 @@ export function useGameEngine() {
     setBuyQty,
     claimUnearthedRelic,
     setActiveBiome,
-    onWaterCanvas,
 
     // Domain Namespaces (Grouped)
     events: randomEvents,

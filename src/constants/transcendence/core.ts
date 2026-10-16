@@ -6,7 +6,6 @@ import { pactEssenceBonusMultiplier } from './pacts';
 
 export const TRANSCENDENCE_REQUIRE_YGGDRASIL = 100;
 export const TRANSCENDENCE_REQUIRE_PRESTIGES = 3;
-export const ESSENCE_DIVIDER = 1e28; // 10 Octillion (1e28)
 
 export const SEED_TRANSMUTE_COST = 50000000000; // 50 Billion seeds per 1 Astral Petal
 export const ESSENCE_TRANSMUTE_COST = 10000; // 10,000 Gaia Essences per 1 Astral Petal
@@ -19,10 +18,6 @@ export function astralResonanceMultiplierBonus(state: GameState): number {
   if (state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none') return 0;
   const lvl = Math.min(ASTRAL_RESONANCE_MAX_LEVEL, state.transcendence?.astralResonanceLevel || 0);
   return lvl * ASTRAL_RESONANCE_MULT_PER_LEVEL;
-}
-
-export function astralResonanceMaxed(state: GameState): boolean {
-  return (state.transcendence?.astralResonanceLevel || 0) >= ASTRAL_RESONANCE_MAX_LEVEL;
 }
 
 export function calcMaxAstralResonance(currentLevel: number, availablePetals: number): { count: number; totalCost: number } {
@@ -65,13 +60,6 @@ export function canTranscend(state: GameState): boolean {
   return yggOwned >= TRANSCENDENCE_REQUIRE_YGGDRASIL;
 }
 
-export function hyperdriveUnlocked(state: GameState): boolean {
-  return !!state.transcendence?.hyperdriveUnlocked;
-}
-
-export function auroraBloomUnlocked(state: GameState): boolean {
-  return !!state.transcendence?.auroraBloomUnlocked;
-}
 
 export function calcTranscendenceEssences(state: GameState): number {
   const yggOwned = state.owned['yggdrasil'] || 0;
