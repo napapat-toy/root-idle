@@ -230,7 +230,7 @@ export function useGameEngine() {
     const cur = stateRef.current;
     const def = MODULE_DEFS.find(m => m.id === moduleId);
     if (!def || !echoUnlockedFor(cur, moduleId) || echoMaxed(cur, moduleId)) return;
-    const cost = echoCost(cur, def, totalRate());
+    const cost = echoCost(cur, def);
     if (cur.nutrients < cost) return;
 
     setState(prev => ({
@@ -238,7 +238,7 @@ export function useGameEngine() {
       nutrients: prev.nutrients - cost,
       echoes: { ...prev.echoes, [moduleId]: (prev.echoes[moduleId] || 0) + 1 },
     }));
-  }, [totalRate]);
+  }, []);
 
   // Buy Root Synergy
   const buyRootSynergy = useCallback((moduleId: string) => {

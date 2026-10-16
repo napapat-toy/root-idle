@@ -30,7 +30,7 @@ import {
 export * from './initialState';
 export * from './depthLayers';
 
-export const GAME_VERSION = '1.35.29';
+export const GAME_VERSION = '1.36.0';
 const BASE_RATE = 0.15;
 export const BUY_QTY_OPTIONS = [1, 5, 25];
 export const SAVE_SLOT_COUNT = 5;
@@ -79,9 +79,11 @@ export function rootUpgradeCost(def: ModuleDef, level: number): number {
 
 export function rootUpgradeMultiplier(state: GameState, moduleId: string): number {
   const level = state.rootUpgrades[moduleId] || 0;
-  let mult = 1;
-  for (let i = 1; i <= level; i++) mult *= rootUpgradeLevelMult(i);
-  if (level > 0 && !isInTrial(state) && state.activeBiome === 'magma_mantle') {
+  if (level <= 0) return 1;
+  const milestones = Math.floor(level / 5);
+  const normals = level - milestones;
+  let mult = Math.pow(ROOT_UPGRADE_MILESTONE_MULT, milestones) * Math.pow(ROOT_UPGRADE_NORMAL_MULT, normals);
+  if (!isInTrial(state) && state.activeBiome === 'magma_mantle') {
     mult *= 1.20;
   }
   return mult;
@@ -90,7 +92,9 @@ export function rootUpgradeMultiplier(state: GameState, moduleId: string): numbe
 // Echoes
 export function totalEchoCount(state: GameState): number {
   let s = 0;
-  MODULE_DEFS.forEach(d => { s += (state.echoes[d.id] || 0); });
+  for (let i = 0; i < MODULE_DEFS.length; i++) {
+    s += (state.echoes[MODULE_DEFS[i].id] || 0);
+  }
   return s;
 }
 
@@ -119,7 +123,7 @@ export function echoMaxed(state: GameState, moduleId: string): boolean {
   return (state.echoes[moduleId] || 0) >= maxEchoLevel(state);
 }
 
-export function echoCost(state: GameState, def: ModuleDef, _currentTotalRate?: number): number {
+export function echoCost(state: GameState, def: ModuleDef): number {
   if (echoMaxed(state, def.id)) return Infinity;
   const n = state.echoes[def.id] || 0;
   // Fixed cost: Starts at cost equivalent to root #25, scaling +5 roots per level
@@ -130,8 +134,13 @@ export function echoCost(state: GameState, def: ModuleDef, _currentTotalRate?: n
 
 export function achievementBonusPct(state: GameState): number {
   if (isInTrial(state)) return 0;
-  if (!state.achievements || state.achievements.length === 0) return 0;
-  return state.achievements.reduce((sum, id) => sum + (ACHIEVEMENT_BONUS_MAP[id] || 1), 0);
+  const achs = state.achievements;
+  if (!achs || achs.length === 0) return 0;
+  let sum = 0;
+  for (let i = 0; i < achs.length; i++) {
+    sum += ACHIEVEMENT_BONUS_MAP[achs[i]] || 1;
+  }
+  return sum;
 }
 
 // Synergies
@@ -154,10 +163,9 @@ export function totalSynergyBonusPct(state: GameState): number {
   if (!state.rootSynergies || state.transcendence?.activeTrial === 'null_cycle') return 0;
   let totalPct = 0;
   const bonusPerUnit = relicSynergyBonusPerUnit(state);
-  for (const [id, active] of Object.entries(state.rootSynergies)) {
-    if (active) {
-      const count = state.owned[id] || 0;
-      totalPct += count * bonusPerUnit;
+  for (const id in state.rootSynergies) {
+    if (state.rootSynergies[id]) {
+      totalPct += (state.owned[id] || 0) * bonusPerUnit;
     }
   }
   const trialMult = trialSynergyBonusMultiplier(state);
@@ -202,23 +210,28 @@ export function globalRateMultiplier(state: GameState): number {
 }
 
 // Effective Rates
-export function effectiveRate(state: GameState, def: ModuleDef): number {
+export function effectiveRate(state: GameState, def: ModuleDef, cachedGlobalMult?: number): number {
   const count = state.owned[def.id] || 0;
   const milestoneMult = moduleMilestoneMultiplier(count);
   const upgMult = rootUpgradeMultiplier(state, def.id);
   const deepMult = relicDeepRootsBonus(state, def.id);
   const trialDeepMult = trialDeepRootsBonusMultiplier(state, def.id);
-  const globalMult = globalRateMultiplier(state);
+  const globalMult = cachedGlobalMult ?? globalRateMultiplier(state);
 
   const baseRate = (def.id === 'fine') ? fineRootBaseRate(state) : def.rate;
   return baseRate * milestoneMult * upgMult * deepMult * trialDeepMult * globalMult;
 }
 
 export function baseTotalRate(state: GameState): number {
+  const globalMult = globalRateMultiplier(state);
   let r = BASE_RATE;
-  MODULE_DEFS.forEach(m => {
-    r += (state.owned[m.id] || 0) * effectiveRate(state, m);
-  });
+  for (let i = 0; i < MODULE_DEFS.length; i++) {
+    const m = MODULE_DEFS[i];
+    const count = state.owned[m.id] || 0;
+    if (count > 0) {
+      r += count * effectiveRate(state, m, globalMult);
+    }
+  }
   return r;
 }
 

@@ -20,7 +20,7 @@ import { MODULE_TRANSLATIONS, t } from '@/lib/i18n';
 
 export interface QuickUpgradesBarProps {
   state: GameState;
-  totalRate: number;
+  totalRate?: number;
   lang: Language;
   unlockedUpgradeIds: string[];
   unlockedEchoIds: string[];
@@ -34,7 +34,6 @@ export interface QuickUpgradesBarProps {
 
 export const QuickUpgradesBar: React.FC<QuickUpgradesBarProps> = React.memo(({
   state,
-  totalRate,
   lang,
   unlockedUpgradeIds,
   unlockedEchoIds,
@@ -108,7 +107,7 @@ export const QuickUpgradesBar: React.FC<QuickUpgradesBarProps> = React.memo(({
     if (hoveredTile.type === 'echo') {
       const echoes = state.echoes[def.id] || 0;
       const isMaxed = echoMaxed(state, def.id);
-      const cost = echoCost(state, def, totalRate);
+      const cost = echoCost(state, def);
       const affordable = !isMaxed && state.nutrients >= cost;
       const rawEchoBonus = relicEchoBonusPerEcho(state) * 100;
       const echoBonusPct = rawEchoBonus % 1 === 0 ? rawEchoBonus : Number(rawEchoBonus.toFixed(1));
@@ -154,7 +153,7 @@ export const QuickUpgradesBar: React.FC<QuickUpgradesBarProps> = React.memo(({
     }
 
     return null;
-  }, [hoveredTile, state, lang, isEn, totalRate]);
+  }, [hoveredTile, state, lang, isEn]);
 
   if (quickTotalCount === 0 && totalAvailableUpgrades === 0) {
     return null;
@@ -225,7 +224,7 @@ export const QuickUpgradesBar: React.FC<QuickUpgradesBarProps> = React.memo(({
           const def = MODULE_DEFS.find(m => m.id === id)!;
           const echoes = state.echoes[id] || 0;
           const isMaxed = echoMaxed(state, id);
-          const cost = echoCost(state, def, totalRate);
+          const cost = echoCost(state, def);
           const affordable = !isMaxed && state.nutrients >= cost;
           const isHovered = hoveredTile?.type === 'echo' && hoveredTile?.id === id;
 

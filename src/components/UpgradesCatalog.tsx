@@ -22,7 +22,7 @@ import { MODULE_TRANSLATIONS, t } from '@/lib/i18n';
 
 interface UpgradesCatalogProps {
   state: GameState;
-  totalRate: number;
+  totalRate?: number;
   unlockedUpgradeIds: string[];
   unlockedEchoIds: string[];
   unlockedSynergyIds: string[];
@@ -35,7 +35,6 @@ interface UpgradesCatalogProps {
 
 export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
   state,
-  totalRate,
   unlockedUpgradeIds,
   unlockedEchoIds,
   unlockedSynergyIds,
@@ -74,7 +73,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
     unlockedEchoIds.forEach(id => {
       const def = MODULE_DEFS.find(m => m.id === id);
       if (!def || echoMaxed(state, id)) return;
-      const cost = echoCost(state, def, totalRate);
+      const cost = echoCost(state, def);
       if (currentNutrients >= cost) {
         onBuyEcho(id);
         currentNutrients -= cost;
@@ -325,7 +324,7 @@ export const UpgradesCatalog: React.FC<UpgradesCatalogProps> = React.memo(({
               const def = MODULE_DEFS.find(m => m.id === id)!;
               const echoes = state.echoes[id] || 0;
               const isMaxed = echoMaxed(state, id);
-              const cost = echoCost(state, def, totalRate);
+              const cost = echoCost(state, def);
               const affordable = !isMaxed && state.nutrients >= cost;
               const localizedName = MODULE_TRANSLATIONS[def.id]?.[lang]?.name || def.name;
               const rawEchoBonus = relicEchoBonusPerEcho(state) * 100;

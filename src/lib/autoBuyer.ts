@@ -169,7 +169,7 @@ export function evaluateAutoBuy(
 
       MODULE_DEFS.forEach(def => {
         if (echoUnlockedFor(state, def.id) && !echoMaxed(state, def.id)) {
-          const cost = echoCost(state, def, totalRate);
+          const cost = echoCost(state, def);
           const bonus = relicEchoBonusPerEcho(state);
           const gain = totalRate * bonus;
           candidates.push({
