@@ -428,6 +428,15 @@ export function useTranscendenceEngine({
                 '#4ade80'
               );
             }, 700);
+          } else if (!alreadyCompleted && (def.skinReward || def.themeReward)) {
+            setTimeout(() => {
+              showFloatingText(
+                250,
+                180,
+                isEn ? '🎨 Cosmetics Reward Unlocked in Wardrobe!' : '🎨 ปลดล็อกรางวัลสกิน & ธีมใหม่ในห้องแต่งตัว!',
+                '#f472b6'
+              );
+            }, 700);
           }
         }
       }

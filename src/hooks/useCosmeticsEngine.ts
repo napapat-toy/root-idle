@@ -5,7 +5,11 @@ import { GameState, SkinId, UIThemeId } from '@/types/game';
 import {
   isSkinUnlocked,
   isUIThemeUnlocked,
+  SKIN_COSTS,
   SKIN_CYCLE_ORDER,
+  SKIN_ESSENCE_COSTS,
+  SKIN_PETAL_COSTS,
+  SKIN_PRESTIGE_KEYS,
   UI_THEME_COSTS,
   UI_THEME_ORDER,
   UI_THEME_PETAL_COSTS,
@@ -54,6 +58,72 @@ export function useCosmeticsEngine({ state, stateRef, setState }: UseCosmeticsEn
       prestige: { ...prev.prestige, activeSkin: id },
     }));
   }, [setState]);
+
+  const buySkin = useCallback((id: SkinId, autoEquip = false) => {
+    const cur = stateRef.current;
+    const petalCost = SKIN_PETAL_COSTS[id];
+    const essenceCost = SKIN_ESSENCE_COSTS[id];
+    const cost = SKIN_COSTS[id] || 0;
+    const prestigeKey = SKIN_PRESTIGE_KEYS[id];
+    if (!prestigeKey) return;
+    if (cur.prestige[prestigeKey as keyof typeof cur.prestige]) return;
+
+    if (petalCost && petalCost > 0) {
+      const petals = cur.transcendence?.astralPetals || 0;
+      if (petals < petalCost) return;
+      setState(prev => ({
+        ...prev,
+        transcendence: {
+          ...prev.transcendence,
+          astralPetals: (prev.transcendence?.astralPetals || 0) - petalCost,
+        },
+        prestige: {
+          ...prev.prestige,
+          [prestigeKey]: true,
+          ...(autoEquip ? { activeSkin: id } : {}),
+        },
+      }));
+      if (autoEquip) {
+        setPreviewSkin(null);
+      }
+      return;
+    }
+
+    if (essenceCost && essenceCost > 0) {
+      const essences = cur.transcendence?.gaiaEssences || 0;
+      if (essences < essenceCost) return;
+      setState(prev => ({
+        ...prev,
+        transcendence: {
+          ...prev.transcendence,
+          gaiaEssences: (prev.transcendence?.gaiaEssences || 0) - essenceCost,
+        },
+        prestige: {
+          ...prev.prestige,
+          [prestigeKey]: true,
+          ...(autoEquip ? { activeSkin: id } : {}),
+        },
+      }));
+      if (autoEquip) {
+        setPreviewSkin(null);
+      }
+      return;
+    }
+
+    if (cost <= 0 || cur.eternalSeeds < cost) return;
+    setState(prev => ({
+      ...prev,
+      eternalSeeds: prev.eternalSeeds - cost,
+      prestige: {
+        ...prev.prestige,
+        [prestigeKey]: true,
+        ...(autoEquip ? { activeSkin: id } : {}),
+      },
+    }));
+    if (autoEquip) {
+      setPreviewSkin(null);
+    }
+  }, [stateRef, setState]);
 
   // UI Theme actions
   const ownedUIThemeList = useCallback(() => {
@@ -150,6 +220,7 @@ export function useCosmeticsEngine({ state, stateRef, setState }: UseCosmeticsEn
     ownedSkinList,
     toggleSkin,
     setSkin,
+    buySkin,
     ownedUIThemeList,
     toggleUITheme,
     setUITheme,

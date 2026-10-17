@@ -1,4 +1,5 @@
 import { AchievementDef } from '@/types/achievements';
+import { conqueredTrialsCount, TRIAL_DEFS } from '../transcendence/trials';
 
 export const GAIA_ACHIEVEMENTS: AchievementDef[] = [
 // ===== 🌍 หมวด 6: การตื่นรู้ & การทดลอง (Transcendence & Trials) =====
@@ -214,7 +215,7 @@ export const GAIA_ACHIEVEMENTS: AchievementDef[] = [
     desc: 'พิชิตการทดลองแห่งผืนพิภพสำเร็จเป็นครั้งแรก (ปลูกต้นไม้โลกครบ 25 ต้นภายใต้ข้อจำกัด)',
     icon: '⚔️',
     bonusPct: 6,
-    check: (s) => Object.keys(s.transcendence?.completedTrials || {}).length >= 1,
+    check: (s) => conqueredTrialsCount(s) >= 1,
   },
   {
     id: 'trial_arid_drought',
@@ -277,13 +278,7 @@ export const GAIA_ACHIEVEMENTS: AchievementDef[] = [
     desc: 'พิชิตบททดสอบแห่งผืนพิภพครบทั้ง 6 ด่านสมบูรณ์แบบ',
     icon: '👑',
     bonusPct: 30,
-    check: (s) =>
-      !!s.transcendence?.completedTrials?.arid_drought &&
-      !!s.transcendence?.completedTrials?.basalt_strata &&
-      !!s.transcendence?.completedTrials?.void_anomaly &&
-      !!s.transcendence?.completedTrials?.null_cycle &&
-      !!s.transcendence?.completedTrials?.permafrost &&
-      !!s.transcendence?.completedTrials?.geomagnetic_storm,
+    check: (s) => conqueredTrialsCount(s) >= TRIAL_DEFS.length,
   },
 
   // --- พันธสัญญามาร (Pacts) ---

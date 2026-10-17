@@ -3,19 +3,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GameState, Language, SkinId, UIThemeId } from '@/types/game';
 import {
+  canAffordCosmetic,
+  getSkinCostInfo,
+  getUIThemeCostInfo,
+  isSkinUnlocked,
+  isUIThemeUnlocked,
   SKIN_COSTS,
   SKIN_DEFS,
   SKIN_DESCRIPTIONS,
-  SKIN_ESSENCE_COSTS,
-  SKIN_PETAL_COSTS,
-  SKIN_PRESTIGE_KEYS,
   SKIN_SWATCHES,
   THEME_SWATCHES,
   UI_THEME_COSTS,
   UI_THEME_DEFS,
   UI_THEME_DESCRIPTIONS,
-  UI_THEME_PETAL_COSTS,
-  UI_THEME_PRESTIGE_KEYS,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { SKIN_NAMES, UI_THEME_NAMES, t } from '@/lib/i18n';
@@ -80,18 +80,11 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
   }, [isOpen, state.prestige.activeSkin, state.prestige.activeUITheme]);
 
   const isSkinOwned = useCallback((id: SkinId) => {
-    if (id === 'none') return true;
-    if (id === 'drought') return !!state.transcendence?.completedTrials?.arid_drought;
-    if (id === 'obsidian') return !!state.transcendence?.completedTrials?.basalt_strata;
-    const key = SKIN_PRESTIGE_KEYS[id];
-    return key ? !!state.prestige[key as keyof typeof state.prestige] : false;
+    return isSkinUnlocked(state, id);
   }, [state]);
 
   const isUIThemeOwned = useCallback((id: UIThemeId) => {
-    if (id === 'classic') return true;
-    if (id === 'void_sovereign') return !!state.transcendence?.completedTrials?.void_anomaly;
-    const key = UI_THEME_PRESTIGE_KEYS[id];
-    return key ? !!state.prestige[key as keyof typeof state.prestige] : false;
+    return isUIThemeUnlocked(state, id);
   }, [state]);
 
   // Live preview current item as index shifts
@@ -195,20 +188,17 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
   const curCost = isCurrentTabSkins ? currentSkinCost : currentThemeCost;
   const curIndex = isCurrentTabSkins ? skinIndex : themeIndex;
   const totalCount = isCurrentTabSkins ? SKIN_DEFS.length : UI_THEME_DEFS.length;
-  const isTrialTier = isCurrentTabSkins ? currentSkinDef.tier === 'trial' : currentThemeDef.tier === 'trial';
-  const isAstralTier = isCurrentTabSkins ? currentSkinDef.tier === 'astral' : currentThemeDef.tier === 'astral';
-  const isEssenceTier = isCurrentTabSkins && currentSkinDef.tier === 'essence';
-  const currentPetalCost = isCurrentTabSkins
-    ? (SKIN_PETAL_COSTS[currentSkinId] || 0)
-    : (UI_THEME_PETAL_COSTS[currentThemeId] || 0);
-  const currentEssenceCost = isCurrentTabSkins ? (SKIN_ESSENCE_COSTS[currentSkinId] || 0) : 0;
+  const costInfo = isCurrentTabSkins
+    ? getSkinCostInfo(currentSkinId)
+    : getUIThemeCostInfo(currentThemeId);
+  const isTrialTier = costInfo.isTrial;
+  const isAstralTier = costInfo.currency === 'petals';
+  const isEssenceTier = costInfo.currency === 'essence';
+  const currentPetalCost = isAstralTier ? costInfo.amount : 0;
+  const currentEssenceCost = isEssenceTier ? costInfo.amount : 0;
   const myPetals = state.transcendence?.astralPetals || 0;
   const myEssences = state.transcendence?.gaiaEssences || 0;
-  const canAfford = isAstralTier
-    ? myPetals >= currentPetalCost
-    : isEssenceTier
-    ? myEssences >= currentEssenceCost
-    : (!isTrialTier && state.eternalSeeds >= curCost);
+  const canAfford = canAffordCosmetic(state, costInfo);
 
   return (
     <div

@@ -14,6 +14,8 @@ import {
   hasRelic,
   totalSynergiesCount,
   BIOME_DEFS,
+  conqueredTrialsCount,
+  isAstralUnlocked,
   TRIAL_DEFS,
   PACT_DEFS,
   echoBonusPct,
@@ -81,7 +83,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
   const gaiaCount = state.transcendence?.count || 0;
   const curEssences = state.transcendence?.gaiaEssences || 0;
   const lifetimeEssences = state.transcendence?.totalGaiaEssencesLifetime || 0;
-  const conqueredTrials = Object.keys(state.transcendence?.completedTrials || {}).length;
+  const conqueredTrials = conqueredTrialsCount(state);
   const activeTrialId = state.transcendence?.activeTrial;
   const activeTrial = TRIAL_DEFS.find(t => t.id === activeTrialId && activeTrialId !== 'none');
 
@@ -193,7 +195,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                   valueStyle: { color: '#38bdf8' },
                 },
                 {
-                  show: (state.transcendence?.astralPetals || 0) > 0 || !!state.transcendence?.auroraBloomUnlocked,
+                  show: isAstralUnlocked(state),
                   label: isEn ? 'Astral Petals' : 'เกสรดวงดาว',
                   value: `${fmtInt(state.transcendence?.astralPetals || 0)} 🌸`,
                   valueClass: 'highlight',

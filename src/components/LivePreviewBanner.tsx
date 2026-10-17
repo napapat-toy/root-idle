@@ -3,10 +3,9 @@
 import React from 'react';
 import { GameState, Language, SkinId, UIThemeId } from '@/types/game';
 import {
-  SKIN_COSTS,
-  SKIN_PETAL_COSTS,
-  UI_THEME_COSTS,
-  UI_THEME_PETAL_COSTS,
+  canAffordCosmetic,
+  getSkinCostInfo,
+  getUIThemeCostInfo,
 } from '@/constants/gameData';
 import { fmtInt } from '@/lib/formatters';
 import { SKIN_NAMES, UI_THEME_NAMES, t } from '@/lib/i18n';
@@ -40,20 +39,17 @@ export const LivePreviewBanner: React.FC<LivePreviewBannerProps> = React.memo(({
 
   const tr = t(lang);
 
-  const previewPetalCost = previewSkin
-    ? SKIN_PETAL_COSTS[previewSkin] || 0
+  const costInfo = previewSkin
+    ? getSkinCostInfo(previewSkin)
     : previewUITheme
-    ? UI_THEME_PETAL_COSTS[previewUITheme] || 0
-    : 0;
-  const isPetalItem = previewPetalCost > 0;
-  const previewCost = previewSkin
-    ? SKIN_COSTS[previewSkin] || 0
-    : previewUITheme
-    ? UI_THEME_COSTS[previewUITheme] || 0
-    : 0;
-  const canAfford = isPetalItem
-    ? (state.transcendence?.astralPetals || 0) >= previewPetalCost
-    : state.eternalSeeds >= previewCost;
+    ? getUIThemeCostInfo(previewUITheme)
+    : null;
+
+  const isPetalItem = costInfo?.currency === 'petals';
+  const isEssenceItem = costInfo?.currency === 'essence';
+  const isTrialItem = costInfo?.isTrial;
+  const previewCost = costInfo?.amount || 0;
+  const canAfford = costInfo ? canAffordCosmetic(state, costInfo) : false;
 
   return (
     <div className="live-preview-banner">
@@ -83,7 +79,21 @@ export const LivePreviewBanner: React.FC<LivePreviewBannerProps> = React.memo(({
           {tr.previewExitBtn}
         </button>
 
-        {canAfford ? (
+        {isTrialItem ? (
+          <div
+            style={{
+              padding: '5px 14px',
+              borderRadius: '999px',
+              background: 'rgba(234, 179, 8, 0.15)',
+              color: '#facc15',
+              border: '1px solid rgba(234, 179, 8, 0.35)',
+              fontSize: '12px',
+              fontWeight: 700,
+            }}
+          >
+            ⚔️ {lang === 'en' ? 'Trial Reward' : 'รางวัลบททดสอบ'}
+          </div>
+        ) : canAfford ? (
           <button
             onClick={() => {
               if (previewSkin) {
@@ -98,7 +108,9 @@ export const LivePreviewBanner: React.FC<LivePreviewBannerProps> = React.memo(({
               borderRadius: '999px',
               background: isPetalItem
                 ? 'linear-gradient(135deg, #ec4899, #8b5cf6)'
-                : 'linear-gradient(135deg, #10b981, #059669)',
+                : isEssenceItem
+                ? 'linear-gradient(135deg, #10b981, #059669)'
+                : 'linear-gradient(135deg, #3b82f6, #2563eb)',
               color: '#ffffff',
               border: 'none',
               cursor: 'pointer',
@@ -106,10 +118,12 @@ export const LivePreviewBanner: React.FC<LivePreviewBannerProps> = React.memo(({
               fontWeight: 700,
               boxShadow: isPetalItem
                 ? '0 0 12px rgba(236, 72, 153, 0.5)'
-                : '0 0 10px rgba(16, 185, 129, 0.5)',
+                : isEssenceItem
+                ? '0 0 10px rgba(16, 185, 129, 0.5)'
+                : '0 0 10px rgba(59, 130, 246, 0.5)',
             }}
           >
-            🛒 {isPetalItem ? `${previewPetalCost} 🌸` : `${fmtInt(previewCost)} 🌌`}{' '}
+            🛒 {isPetalItem ? `${previewCost} 🌸` : isEssenceItem ? `${previewCost} 🌍` : `${fmtInt(previewCost)} 🌌`}{' '}
             {tr.previewBuyKeep}
           </button>
         ) : isPetalItem ? (
@@ -124,7 +138,21 @@ export const LivePreviewBanner: React.FC<LivePreviewBannerProps> = React.memo(({
               fontWeight: 700,
             }}
           >
-            🔒 {previewPetalCost} 🌸 {tr.previewNeedPetals}
+            🔒 {previewCost} 🌸 {tr.previewNeedPetals}
+          </div>
+        ) : isEssenceItem ? (
+          <div
+            style={{
+              padding: '5px 14px',
+              borderRadius: '999px',
+              background: 'rgba(52, 211, 153, 0.15)',
+              color: '#34d399',
+              border: '1px solid rgba(52, 211, 153, 0.35)',
+              fontSize: '12px',
+              fontWeight: 700,
+            }}
+          >
+            🔒 {previewCost} 🌍 {lang === 'en' ? 'Need Gaia Essences' : 'ต้องการละอองชีวิต'}
           </div>
         ) : (
           <button

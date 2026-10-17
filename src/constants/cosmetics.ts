@@ -1,4 +1,4 @@
-import { PrestigeState, SkinId, UIThemeId } from '@/types/game';
+import { PrestigeState, SkinId, TrialId, UIThemeId } from '@/types/game';
 
 
 export const SKIN_COSTS: Record<SkinId, number> = {
@@ -217,25 +217,83 @@ export const UI_THEME_ORDER: UIThemeId[] = [
   'subterranean_borealis',
 ];
 
-export function isSkinUnlocked(state: { prestige: PrestigeState; transcendence?: { completedTrials?: Record<string, boolean> } }, id: SkinId): boolean {
+export const SKIN_TRIAL_REQUIREMENTS: Partial<Record<SkinId, TrialId>> = {
+  drought: 'arid_drought',
+  obsidian: 'basalt_strata',
+  eclipse: 'null_cycle',
+  permafrost: 'permafrost',
+  fulminant: 'geomagnetic_storm',
+};
+
+export const UI_THEME_TRIAL_REQUIREMENTS: Partial<Record<UIThemeId, TrialId>> = {
+  void_sovereign: 'void_anomaly',
+  abyssal_eclipse: 'null_cycle',
+  boreal_tundra: 'permafrost',
+  electromagnetic: 'geomagnetic_storm',
+};
+
+export function isSkinUnlocked(
+  state: { prestige: PrestigeState; transcendence?: { completedTrials?: Record<string, boolean> } },
+  id: SkinId
+): boolean {
   if (id === 'none') return true;
-  if (id === 'drought') return !!state.transcendence?.completedTrials?.arid_drought;
-  if (id === 'obsidian') return !!state.transcendence?.completedTrials?.basalt_strata;
-  if (id === 'eclipse') return !!state.transcendence?.completedTrials?.null_cycle;
-  if (id === 'permafrost') return !!state.transcendence?.completedTrials?.permafrost;
-  if (id === 'fulminant') return !!state.transcendence?.completedTrials?.geomagnetic_storm;
+  const reqTrial = SKIN_TRIAL_REQUIREMENTS[id];
+  if (reqTrial) return !!state.transcendence?.completedTrials?.[reqTrial];
   const key = SKIN_PRESTIGE_KEYS[id];
   return key ? !!state.prestige[key] : false;
 }
 
-export function isUIThemeUnlocked(state: { prestige: PrestigeState; transcendence?: { completedTrials?: Record<string, boolean> } }, id: UIThemeId): boolean {
+export function isUIThemeUnlocked(
+  state: { prestige: PrestigeState; transcendence?: { completedTrials?: Record<string, boolean> } },
+  id: UIThemeId
+): boolean {
   if (id === 'classic') return true;
-  if (id === 'void_sovereign') return !!state.transcendence?.completedTrials?.void_anomaly;
-  if (id === 'abyssal_eclipse') return !!state.transcendence?.completedTrials?.null_cycle;
-  if (id === 'boreal_tundra') return !!state.transcendence?.completedTrials?.permafrost;
-  if (id === 'electromagnetic') return !!state.transcendence?.completedTrials?.geomagnetic_storm;
+  const reqTrial = UI_THEME_TRIAL_REQUIREMENTS[id];
+  if (reqTrial) return !!state.transcendence?.completedTrials?.[reqTrial];
   const key = UI_THEME_PRESTIGE_KEYS[id];
   return key ? !!state.prestige[key] : false;
+}
+
+export type CosmeticCurrency = 'seeds' | 'essence' | 'petals' | 'trial' | 'free';
+
+export interface CosmeticCostInfo {
+  currency: CosmeticCurrency;
+  amount: number;
+  isTrial: boolean;
+}
+
+export function getSkinCostInfo(id: SkinId): CosmeticCostInfo {
+  if (id === 'none') return { currency: 'free', amount: 0, isTrial: false };
+  if (SKIN_TRIAL_REQUIREMENTS[id]) return { currency: 'trial', amount: 0, isTrial: true };
+  const petalCost = SKIN_PETAL_COSTS[id];
+  if (petalCost && petalCost > 0) return { currency: 'petals', amount: petalCost, isTrial: false };
+  const essenceCost = SKIN_ESSENCE_COSTS[id];
+  if (essenceCost && essenceCost > 0) return { currency: 'essence', amount: essenceCost, isTrial: false };
+  const seedCost = SKIN_COSTS[id] || 0;
+  return { currency: 'seeds', amount: seedCost, isTrial: false };
+}
+
+export function getUIThemeCostInfo(id: UIThemeId): CosmeticCostInfo {
+  if (id === 'classic') return { currency: 'free', amount: 0, isTrial: false };
+  if (UI_THEME_TRIAL_REQUIREMENTS[id]) return { currency: 'trial', amount: 0, isTrial: true };
+  const petalCost = UI_THEME_PETAL_COSTS[id];
+  if (petalCost && petalCost > 0) return { currency: 'petals', amount: petalCost, isTrial: false };
+  const seedCost = UI_THEME_COSTS[id] || 0;
+  return { currency: 'seeds', amount: seedCost, isTrial: false };
+}
+
+export function canAffordCosmetic(
+  state: { eternalSeeds: number; transcendence?: { astralPetals?: number; gaiaEssences?: number } },
+  costInfo: CosmeticCostInfo
+): boolean {
+  if (costInfo.currency === 'free' || costInfo.currency === 'trial') return false;
+  if (costInfo.currency === 'petals') {
+    return (state.transcendence?.astralPetals || 0) >= costInfo.amount;
+  }
+  if (costInfo.currency === 'essence') {
+    return (state.transcendence?.gaiaEssences || 0) >= costInfo.amount;
+  }
+  return state.eternalSeeds >= costInfo.amount;
 }
 
 export const SKIN_DESCRIPTIONS: Record<SkinId, { th: string; en: string }> = {

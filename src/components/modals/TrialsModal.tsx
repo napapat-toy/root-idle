@@ -6,6 +6,7 @@ import {
   TRIAL_DEFS,
   PACT_DEFS,
   isTrialCompleted,
+  conqueredTrialsCount,
   canTranscend,
   calcTranscendenceEssences,
   calcPrestigeSeeds,
@@ -48,7 +49,7 @@ export const TrialsModal: React.FC<TrialsModalProps> = React.memo(({
 
   const inTrial = isInTrial(state);
   const activeTrial = state.transcendence?.activeTrial || 'none';
-  const conqueredTrials = Object.keys(state.transcendence?.completedTrials || {}).length;
+  const conqueredTrials = conqueredTrialsCount(state);
 
   const targetPacts = state.nextPacts || state.pacts || {};
   const activePactsCount = PACT_DEFS.filter(p => !!targetPacts[p.id]).length;

@@ -113,7 +113,6 @@ export function useGameEngine() {
   const prestigeShop = usePrestigeShop({
     stateRef,
     setState,
-    setPreviewSkin: cosmetics.setPreviewSkin,
   });
 
   // Procedural tree derived branches
@@ -699,10 +698,7 @@ export function useGameEngine() {
 
     // Domain Namespaces (Grouped)
     events: randomEvents,
-    cosmetics: {
-      ...cosmetics,
-      buySkin: prestigeShop.buySkin,
-    },
+    cosmetics,
     prestige,
     transcendence,
     achievements: achievementsEngine,

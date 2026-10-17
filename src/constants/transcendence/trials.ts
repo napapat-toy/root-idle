@@ -4,6 +4,10 @@ export function isInTrial(state: GameState): boolean {
   return !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
 }
 
+export function conqueredTrialsCount(state: { transcendence?: { completedTrials?: Record<string, boolean> } }): number {
+  return Object.keys(state.transcendence?.completedTrials || {}).length;
+}
+
 export const TRIAL_DEFS: TrialDef[] = [
   {
     id: 'void_anomaly',

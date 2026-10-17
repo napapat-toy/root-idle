@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { GameState, Language } from '@/types/game';
 import {
   isTranscendenceUnlocked,
+  isAstralUnlocked,
   goldenSeedCost,
   GOLDEN_SEED_MAX_LEVEL,
   eventBonusCost,
@@ -136,8 +137,8 @@ export const SanctuaryModal: React.FC<SanctuaryModalProps> = React.memo(({
   const totalLifetimeEssences = state.transcendence?.totalGaiaEssencesLifetime || 0;
   const petals = state.transcendence?.astralPetals || 0;
 
-  const isTranscendUnlocked = isTranscendenceUnlocked(state) || essences > 0;
-  const isAstralUnlocked = !!state.transcendence?.auroraBloomUnlocked || petals > 0;
+  const isTranscendUnlocked = isTranscendenceUnlocked(state);
+  const astralUnlocked = isAstralUnlocked(state);
 
   const gaiaHandlers: Record<GaiaPerkId, (() => void) | undefined> = {
     vigor: onBuyPrimordialVigor,
@@ -259,7 +260,7 @@ export const SanctuaryModal: React.FC<SanctuaryModalProps> = React.memo(({
             )}
 
             {/* Astral Tab */}
-            {isAstralUnlocked && (
+            {astralUnlocked && (
               <button
                 type="button"
                 onClick={() => setActiveTab('astral')}

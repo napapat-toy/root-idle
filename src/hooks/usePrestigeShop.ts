@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { AutoRootMode, GameState, SkinId } from '@/types/game';
+import { AutoRootMode, GameState } from '@/types/game';
 import {
   AUTO_RESET_COST,
   AUTO_ROOT_COST,
@@ -23,10 +23,6 @@ import {
   offlineCapMaxed,
   passiveRateCost,
   PASSIVE_RATE_MAX_LEVEL,
-  SKIN_COSTS,
-  SKIN_ESSENCE_COSTS,
-  SKIN_PETAL_COSTS,
-  SKIN_PRESTIGE_KEYS,
   STARTER_CULTURE_MAX_LEVEL,
   starterCultureCost,
 } from '@/constants/gameData';
@@ -34,10 +30,9 @@ import {
 interface UsePrestigeShopProps {
   stateRef: React.MutableRefObject<GameState>;
   setState: React.Dispatch<React.SetStateAction<GameState>>;
-  setPreviewSkin?: (id: SkinId | null) => void;
 }
 
-export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrestigeShopProps) {
+export function usePrestigeShop({ stateRef, setState }: UsePrestigeShopProps) {
   const buyStarterCulture = useCallback((amount?: number | 'max') => {
     const cur = stateRef.current;
     const { count, totalCost } = calcBulkPrestigeUpgrade(
@@ -282,72 +277,6 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
     }));
   }, [stateRef, setState]);
 
-  const buySkin = useCallback((id: SkinId, autoEquip = false) => {
-    const cur = stateRef.current;
-    const petalCost = SKIN_PETAL_COSTS[id];
-    const essenceCost = SKIN_ESSENCE_COSTS[id];
-    const cost = SKIN_COSTS[id] || 0;
-    const prestigeKey = SKIN_PRESTIGE_KEYS[id];
-    if (!prestigeKey) return;
-    if (cur.prestige[prestigeKey as keyof typeof cur.prestige]) return;
-
-    if (petalCost && petalCost > 0) {
-      const petals = cur.transcendence?.astralPetals || 0;
-      if (petals < petalCost) return;
-      setState(prev => ({
-        ...prev,
-        transcendence: {
-          ...prev.transcendence,
-          astralPetals: (prev.transcendence?.astralPetals || 0) - petalCost,
-        },
-        prestige: {
-          ...prev.prestige,
-          [prestigeKey]: true,
-          ...(autoEquip ? { activeSkin: id } : {}),
-        },
-      }));
-      if (autoEquip && setPreviewSkin) {
-        setPreviewSkin(null);
-      }
-      return;
-    }
-
-    if (essenceCost && essenceCost > 0) {
-      const essences = cur.transcendence?.gaiaEssences || 0;
-      if (essences < essenceCost) return;
-      setState(prev => ({
-        ...prev,
-        transcendence: {
-          ...prev.transcendence,
-          gaiaEssences: (prev.transcendence?.gaiaEssences || 0) - essenceCost,
-        },
-        prestige: {
-          ...prev.prestige,
-          [prestigeKey]: true,
-          ...(autoEquip ? { activeSkin: id } : {}),
-        },
-      }));
-      if (autoEquip && setPreviewSkin) {
-        setPreviewSkin(null);
-      }
-      return;
-    }
-
-    if (cost <= 0 || cur.eternalSeeds < cost) return;
-    setState(prev => ({
-      ...prev,
-      eternalSeeds: prev.eternalSeeds - cost,
-      prestige: {
-        ...prev.prestige,
-        [prestigeKey]: true,
-        ...(autoEquip ? { activeSkin: id } : {}),
-      },
-    }));
-    if (autoEquip && setPreviewSkin) {
-      setPreviewSkin(null);
-    }
-  }, [stateRef, setState, setPreviewSkin]);
-
   return {
     buyStarterCulture,
     buyGoldenSeed,
@@ -369,6 +298,5 @@ export function usePrestigeShop({ stateRef, setState, setPreviewSkin }: UsePrest
     buyLuckyMagnitude,
     buyLuckyDuration,
     buyOfflineCapUpgrade,
-    buySkin,
   };
 }

@@ -1,7 +1,7 @@
 import { GameState } from '@/types/game';
 import { relicTranscendenceEssenceBonus } from '../relics';
 import { gaiaBlessingEssenceMultiplier } from './perks';
-import { isTrialCompleted } from './trials';
+import { conqueredTrialsCount, isTrialCompleted } from './trials';
 import { pactEssenceBonusMultiplier } from './pacts';
 
 export const TRANSCENDENCE_REQUIRE_YGGDRASIL = 100;
@@ -27,6 +27,10 @@ export function calcMaxAstralResonance(currentLevel: number, availablePetals: nu
   return { count, totalCost: count * ASTRAL_RESONANCE_COST };
 }
 
+export function isAstralUnlocked(state: { transcendence?: { auroraBloomUnlocked?: boolean; astralPetals?: number } }): boolean {
+  return !!state.transcendence?.auroraBloomUnlocked || (state.transcendence?.astralPetals || 0) > 0;
+}
+
 export function isTranscendenceUnlocked(state: GameState): boolean {
   const yggOwned = state.owned['yggdrasil'] || 0;
   const prestiges = state.stats?.prestigeCount || 0;
@@ -42,7 +46,7 @@ export function isTranscendenceUnlocked(state: GameState): boolean {
     (state.transcendence?.gaiaBlessingLevel || 0) > 0 ||
     !!state.transcendence?.autoManagerUnlocked;
   const inTrial = !!state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none';
-  const hasCompletedTrials = Object.keys(state.transcendence?.completedTrials || {}).length > 0;
+  const hasCompletedTrials = conqueredTrialsCount(state) > 0;
 
   return (
     hasEverUnlocked ||
