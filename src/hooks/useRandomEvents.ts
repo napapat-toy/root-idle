@@ -18,6 +18,8 @@ import {
   baseTotalRate,
   harmonicSurgeMinMult,
   harmonicSurgeMinSeconds,
+  harmonicSurgeMinBuffSeconds,
+  isHyperdriveActive,
 } from '@/constants/gameData';
 import { fmt, fmtInt } from '@/lib/formatters';
 
@@ -85,6 +87,13 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       autoEventClaimRef.current = null;
     }
 
+    if (activeEventExpireRef.current && !ev.isSuperJackpot) {
+      clearTimeout(activeEventExpireRef.current);
+      activeEventExpireRef.current = null;
+      claimedEventIdsRef.current.delete(ev.id);
+      scheduleNextEventRef.current();
+    }
+
     const cur = stateRef.current;
     const bonusMult = eventBonusMult(cur);
     const trialDurationMult = cur.transcendence?.activeTrial === 'permafrost' ? 0.5 : 1.0;
@@ -145,7 +154,9 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       const rawMult = baseLucky * luckyMagnitudeExtra(cur) * gaiaTouchBonusMult(cur) * biomeLuckyMult;
       const mult = Math.min(77000, rawMult);
       const seconds = luckyDurationSeconds(cur) * trialDurationMult;
-      setActiveLuckyBuff({ multiplier: mult, expiresAt: Date.now() + seconds * 1000 });
+      const newLucky = { multiplier: mult, expiresAt: Date.now() + seconds * 1000 };
+      activeLuckyBuffRef.current = newLucky;
+      setActiveLuckyBuff(newLucky);
       setState(prev => ({
         ...prev,
         stats: {
@@ -184,11 +195,12 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
 
         // Auto-event perk triggers for the companion gift box as well
         if (cur.prestige.autoEvent && cur.prestige.autoEventEnabled && cur.transcendence?.activeTrial !== 'void_anomaly') {
+          const companionAutoClaimDelay = (1200 + Math.random() * 1000) * (isHyperdriveActive(cur) ? 0.5 : 1.0);
           setTimeout(() => {
             if (!claimedEventIdsRef.current.has(bumpId)) {
               claimEventRef.current(companionBump);
             }
-          }, 1200 + Math.random() * 1000);
+          }, companionAutoClaimDelay);
         }
       }
 
@@ -233,7 +245,9 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       const minBaseMult = harmonicSurgeMinMult(cur);
       const baseMult = minBaseMult >= 4.0 ? 4.0 : minBaseMult + Math.random() * (4.0 - minBaseMult);
       const mult = Math.min(77000, 1 + (baseMult - 1) * bonusMult);
-      const seconds = (20 + Math.random() * 40) * durationMult;
+      const minBuffSec = harmonicSurgeMinBuffSeconds(cur);
+      const baseSeconds = minBuffSec >= 60 ? 60 : minBuffSec + Math.random() * (60 - minBuffSec);
+      const seconds = baseSeconds * durationMult;
       const now = Date.now();
       const currentBuff = activeBuffRef.current;
       const isBuffActive = !!(currentBuff && now < currentBuff.expiresAt);
@@ -260,7 +274,9 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
         floatingLabel = isEn ? `×${mult.toFixed(1)} Surge!` : `×${mult.toFixed(1)} เรท!`;
       }
 
-      setActiveBuff({ multiplier: finalMultiplier, expiresAt: finalExpiresAt });
+      const newBuff = { multiplier: finalMultiplier, expiresAt: finalExpiresAt };
+      activeBuffRef.current = newBuff;
+      setActiveBuff(newBuff);
       setState(prev => ({
         ...prev,
         stats: {
@@ -327,7 +343,9 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     const cdMult = relicEventCooldownMultiplier(cur);
     const trialCdMult = cur.transcendence?.activeTrial === 'permafrost' ? 1.6 : 1.0;
     const pactCdMult = pactEventIntervalMultiplier(cur);
-    const delay = (105000 + Math.random() * 50000) * cdMult * trialCdMult * pactCdMult; // Scaled by Geode, Permafrost & Unstable Aether
+    const isHyper = isHyperdriveActive(cur);
+    const hyperMult = isHyper ? 0.5 : 1.0;
+    const delay = (105000 + Math.random() * 50000) * cdMult * trialCdMult * pactCdMult * hyperMult; // Scaled by Geode, Permafrost, Unstable Aether & Hyperdrive (2x speed)
     eventTimerRef.current = setTimeout(() => {
       const r = Math.random();
       let type: 'bump' | 'buff' | 'lucky' | 'aurora' = 'bump';
@@ -346,11 +364,12 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
 
       // Auto-event perk
       if (cur.prestige.autoEvent && cur.prestige.autoEventEnabled && cur.transcendence?.activeTrial !== 'void_anomaly') {
+        const autoClaimDelay = (1200 + Math.random() * 1500) * (isHyperdriveActive(cur) ? 0.5 : 1.0);
         autoEventClaimRef.current = setTimeout(() => {
           if (!claimedEventIdsRef.current.has(id)) {
             claimEvent(newEv);
           }
-        }, 1200 + Math.random() * 1500);
+        }, autoClaimDelay);
       }
 
       // Expire after 12s if not clicked

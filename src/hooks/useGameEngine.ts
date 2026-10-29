@@ -33,6 +33,7 @@ import {
   TRANSCENDENCE_REQUIRE_PRESTIGES,
   TRANSCENDENCE_REQUIRE_YGGDRASIL,
   pactRelicDropMultiplier,
+  isHyperdriveActive,
 } from '@/constants/gameData';
 import { buildBranchesFromLog, deriveLog } from '@/lib/treeGenerator';
 import { evaluateAutoBuy } from '@/lib/autoBuyer';
@@ -543,7 +544,7 @@ export function useGameEngine() {
     const maxOfflineCap = currentOfflineCapSeconds(cur);
     const dt = Math.min(rawDt, maxOfflineCap);
 
-    const speedMult = (cur.transcendence?.hyperdriveUnlocked && cur.transcendence?.hyperdriveEnabled) ? 2.0 : 1.0;
+    const speedMult = isHyperdriveActive(cur) ? 2.0 : 1.0;
     const effectiveDt = dt * speedMult;
     const rate = totalRate();
     const gain = rate * effectiveDt;
@@ -612,14 +613,16 @@ export function useGameEngine() {
     };
   }, []);
 
-  // Auto-root perk (fast responsive loop every 500ms)
+  // Auto-root perk (fast responsive loop every 500ms, or 250ms when Hyperdrive 2x is active)
   useEffect(() => {
+    const isHyper = isHyperdriveActive(stateRef.current);
+    const intervalMs = isHyper ? 250 : 500;
     const interval = setInterval(() => {
       evaluateAutoBuy(stateRef.current, totalRate(), setState);
-    }, 500);
+    }, intervalMs);
 
     return () => clearInterval(interval);
-  }, [totalRate]);
+  }, [totalRate, state.transcendence?.hyperdriveEnabled, state.transcendence?.hyperdriveUnlocked]);
 
 
 
@@ -636,9 +639,11 @@ export function useGameEngine() {
       if (!cur.unclaimedRelicId) {
         const unowned = unownedRelicList(cur);
         if (unowned.length > 0) {
-          relicPityMinutesRef.current += 1;
-          // 2.0% chance per minute, or 100% guaranteed when pity timer reaches 50 minutes! (boosted by pact_unstable_aether)
-          if (Math.random() < 0.020 * pactRelicDropMultiplier(cur) || relicPityMinutesRef.current >= 50) {
+          const isHyper = isHyperdriveActive(cur);
+          relicPityMinutesRef.current += isHyper ? 2 : 1;
+          // 2.0% chance per minute (4.0% with Hyperdrive), or 100% guaranteed when pity timer reaches 50 minutes! (boosted by pact_unstable_aether)
+          const baseChance = (isHyper ? 0.040 : 0.020) * pactRelicDropMultiplier(cur);
+          if (Math.random() < baseChance || relicPityMinutesRef.current >= 50) {
             relicPityMinutesRef.current = 0;
             const picked = pickWeightedUnownedRelic(unowned);
             if (picked) {

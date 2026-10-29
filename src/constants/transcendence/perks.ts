@@ -31,6 +31,12 @@ export function harmonicSurgeMinSeconds(state: GameState): number {
   return Math.min(90, 30 + lvl * 12);
 }
 
+export function harmonicSurgeMinBuffSeconds(state: GameState): number {
+  if (isInTrial(state)) return 20;
+  const lvl = state.transcendence?.harmonicSurgeLevel || 0;
+  return Math.min(60, 20 + lvl * 8);
+}
+
 export function gaiaBlessingCost(level: number): number {
   return Math.min(10000, Math.floor(8 * Math.pow(level + 1, 1.15)));
 }
@@ -296,19 +302,20 @@ export const GAIA_PERK_DEFS: GaiaPerkDef[] = [
       const lvl = s.transcendence?.harmonicSurgeLevel || 0;
       if (lvl >= HARMONIC_SURGE_MAX_LEVEL) {
         return isEn
-          ? 'Current Effect: 100% Guaranteed 4.0x Lightning & 90s Box'
-          : 'ผลปัจจุบัน: การันตีสายฟ้า 4.0x และกล่องสารอาหาร 90 วิ เสมอ (เต็ม 100%)';
+          ? 'Current Effect: 100% Guaranteed 4.0x Lightning (60s) & 90s Box'
+          : 'ผลปัจจุบัน: การันตีสายฟ้า 4.0x (60 วิ) และกล่องสารอาหาร 90 วิ เสมอ (เต็ม 100%)';
       }
       if (lvl === 0) {
         return isEn
-          ? 'Current Effect: Lightning 2.0x ~ 4.0x (Box 30s ~ 90s)'
-          : 'ผลปัจจุบัน: สายฟ้า 2.0x ~ 4.0x (กล่อง 30 วิ ~ 90 วิ)';
+          ? 'Current Effect: Lightning 2.0x ~ 4.0x (20s ~ 60s) | Box 30s ~ 90s'
+          : 'ผลปัจจุบัน: สายฟ้า 2.0x ~ 4.0x (20 วิ ~ 60 วิ) | กล่อง 30 วิ ~ 90 วิ';
       }
       const minMult = (2.0 + lvl * 0.4).toFixed(1);
+      const minBuffSec = 20 + lvl * 8;
       const minSec = 30 + lvl * 12;
       return isEn
-        ? `Current Effect: Min Lightning ${minMult}x ~ 4.0x (Min Box ${minSec}s ~ 90s)`
-        : `ผลปัจจุบัน: ค่าต่ำสุดสายฟ้า ${minMult}x ~ 4.0x (กล่อง ${minSec} วิ ~ 90 วิ)`;
+        ? `Current Effect: Min Lightning ${minMult}x (${minBuffSec}s) | Min Box ${minSec}s`
+        : `ผลปัจจุบัน: ค่าต่ำสุดสายฟ้า ${minMult}x (${minBuffSec} วิ) | กล่อง ${minSec} วิ ~ 90 วิ`;
     },
   },
 ];

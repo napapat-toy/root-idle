@@ -31,6 +31,10 @@ export function isAstralUnlocked(state: { transcendence?: { auroraBloomUnlocked?
   return !!state.transcendence?.auroraBloomUnlocked || (state.transcendence?.astralPetals || 0) > 0;
 }
 
+export function isHyperdriveActive(state: GameState): boolean {
+  return !!(state.transcendence?.hyperdriveUnlocked && state.transcendence?.hyperdriveEnabled);
+}
+
 export function isTranscendenceUnlocked(state: GameState): boolean {
   const yggOwned = state.owned['yggdrasil'] || 0;
   const prestiges = state.stats?.prestigeCount || 0;

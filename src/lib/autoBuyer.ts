@@ -19,6 +19,7 @@ import {
   rootUpgradeLevelMult,
   rootUpgradeRequireOwned,
   pactDisableAuto,
+  isHyperdriveActive,
 } from '@/constants/gameData';
 
 interface AutoBuyCandidate {
@@ -58,8 +59,9 @@ export function evaluateAutoBuy(
   let executedAny = false;
   let lastTarget: string | null = null;
 
-  // Perform up to 5 consecutive instant purchases in one tick if nutrients allow
-  for (let step = 0; step < 5; step++) {
+  // Perform up to 5 consecutive instant purchases (10 under Hyperdrive 2x) in one tick if nutrients allow
+  const maxSteps = isHyperdriveActive(state) ? 10 : 5;
+  for (let step = 0; step < maxSteps; step++) {
     const candidates: AutoBuyCandidate[] = [];
     const currentBaseRate = baseTotalRate(state);
     const effectiveTotalRate = Math.max(1, totalRate);

@@ -209,7 +209,7 @@ export const enUI = {
     transcendPerk10Name: 'Cosmic Aurora Bloom (Altar)',
     transcendPerk10Desc: 'Awakens the celestial bloom on the Tree of Life. Permanently unlocks the Astral Petal transmute altar and unlocks special cosmic skins.',
     transcendPerk11Name: 'Harmonic Surge',
-    transcendPerk11Desc: 'Purifies event energy. Raises the minimum roll of Lightning buffs by +0.4x/Lv (from 2.0x up to 4.0x Max guaranteed) and Nutrient Boxes by +12s/Lv (up to 90s Max guaranteed).',
+    transcendPerk11Desc: 'Purifies event energy. Raises the minimum Lightning buff by +0.4x/Lv & +8s/Lv (up to 4.0x and 60s Max guaranteed) and Nutrient Boxes by +12s/Lv (up to 90s Max guaranteed).',
     trialActiveBadge: 'In Progress',
     startTrialBtn: 'Begin Trial',
     abandonTrialBtn: 'Abandon Trial',
