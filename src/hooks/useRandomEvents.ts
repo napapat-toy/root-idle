@@ -58,11 +58,10 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
   // Multiplier calculation from active buffs
   const currentBuffMultiplier = useCallback(() => {
     let mult = 1;
-    const now = Date.now();
-    if (activeBuffRef.current && now < activeBuffRef.current.expiresAt) {
+    if (activeBuffRef.current && activeBuffRef.current.remainingSeconds > 0) {
       mult += activeBuffRef.current.multiplier - 1;
     }
-    if (activeLuckyBuffRef.current && now < activeLuckyBuffRef.current.expiresAt) {
+    if (activeLuckyBuffRef.current && activeLuckyBuffRef.current.remainingSeconds > 0) {
       mult += activeLuckyBuffRef.current.multiplier - 1;
     }
     return mult;
@@ -104,7 +103,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
 
     if (ev.type === 'bump') {
       const isSuper = !!ev.isSuperJackpot;
-      const isLuckyActive = !!(activeLuckyBuffRef.current && Date.now() < activeLuckyBuffRef.current.expiresAt);
+      const isLuckyActive = !!(activeLuckyBuffRef.current && activeLuckyBuffRef.current.remainingSeconds > 0);
       const minNormalSec = harmonicSurgeMinSeconds(cur);
       const normalBaseSec = minNormalSec >= 90 ? 90 : minNormalSec + Math.random() * (90 - minNormalSec);
       const baseSeconds = isSuper ? (300 + Math.random() * 300) : normalBaseSec;
@@ -154,7 +153,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       const rawMult = baseLucky * luckyMagnitudeExtra(cur) * gaiaTouchBonusMult(cur) * biomeLuckyMult;
       const mult = Math.min(77000, rawMult);
       const seconds = luckyDurationSeconds(cur) * trialDurationMult;
-      const newLucky = { multiplier: mult, expiresAt: Date.now() + seconds * 1000 };
+      const newLucky: ActiveBuff = { multiplier: mult, remainingSeconds: seconds, expiresAt: Date.now() + seconds * 1000 };
       activeLuckyBuffRef.current = newLucky;
       setActiveLuckyBuff(newLucky);
       setState(prev => ({
@@ -250,31 +249,35 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
       const seconds = baseSeconds * durationMult;
       const now = Date.now();
       const currentBuff = activeBuffRef.current;
-      const isBuffActive = !!(currentBuff && now < currentBuff.expiresAt);
+      const isBuffActive = !!(currentBuff && currentBuff.remainingSeconds > 0);
 
       let finalMultiplier: number;
-      let finalExpiresAt: number;
+      let finalRemainingSeconds: number;
       let floatingLabel: string;
 
       if (isBuffActive) {
         if (mult >= currentBuff.multiplier) {
           // New multiplier is higher or equal: replace multiplier, take longer duration
           finalMultiplier = mult;
-          finalExpiresAt = Math.max(currentBuff.expiresAt, now + seconds * 1000);
+          finalRemainingSeconds = Math.max(currentBuff.remainingSeconds, seconds);
           floatingLabel = isEn ? `×${mult.toFixed(1)} Surge Upgraded!` : `×${mult.toFixed(1)} เรทอัปเกรด!`;
         } else {
-          // New multiplier is lower: keep existing higher multiplier, grant flat +20s
+          // New multiplier is lower: keep existing higher multiplier, extend duration by full seconds
           finalMultiplier = currentBuff.multiplier;
-          finalExpiresAt = currentBuff.expiresAt + 20 * 1000;
-          floatingLabel = isEn ? `+20s Extended! (×${finalMultiplier.toFixed(1)})` : `+20วิ ต่อเวลา! (×${finalMultiplier.toFixed(1)})`;
+          finalRemainingSeconds = currentBuff.remainingSeconds + seconds;
+          floatingLabel = isEn ? `+${Math.round(seconds)}s Extended! (×${finalMultiplier.toFixed(1)})` : `+${Math.round(seconds)}วิ ต่อเวลา! (×${finalMultiplier.toFixed(1)})`;
         }
       } else {
         finalMultiplier = mult;
-        finalExpiresAt = now + seconds * 1000;
+        finalRemainingSeconds = seconds;
         floatingLabel = isEn ? `×${mult.toFixed(1)} Surge!` : `×${mult.toFixed(1)} เรท!`;
       }
 
-      const newBuff = { multiplier: finalMultiplier, expiresAt: finalExpiresAt };
+      const newBuff: ActiveBuff = {
+        multiplier: finalMultiplier,
+        remainingSeconds: finalRemainingSeconds,
+        expiresAt: now + finalRemainingSeconds * 1000,
+      };
       activeBuffRef.current = newBuff;
       setActiveBuff(newBuff);
       setState(prev => ({
@@ -293,7 +296,7 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     }
 
     // 🌸 5% Chance on claiming ANY event (bump, buff, lucky) to drop +1 Astral Petal (once Aurora Bloom is unlocked)
-    if (ev.type !== 'aurora' && cur.transcendence?.auroraBloomUnlocked && Math.random() < 0.05) {
+    if (ev.type !== 'aurora' && cur.transcendence?.auroraBloomUnlocked && Math.random() < 0.07) {
       const isEn = cur.lang === 'en';
       setState(prev => ({
         ...prev,
@@ -345,15 +348,26 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     const pactCdMult = pactEventIntervalMultiplier(cur);
     const isHyper = isHyperdriveActive(cur);
     const hyperMult = isHyper ? 0.5 : 1.0;
-    const delay = (105000 + Math.random() * 50000) * cdMult * trialCdMult * pactCdMult * hyperMult; // Scaled by Geode, Permafrost, Unstable Aether & Hyperdrive (2x speed)
+    // Base 120s (2 minutes), with ±10s variation (110s ~ 130s), scaled by Geode, Permafrost, Unstable Aether & Hyperdrive
+    const delay = (110000 + Math.random() * 20000) * cdMult * trialCdMult * pactCdMult * hyperMult;
     eventTimerRef.current = setTimeout(() => {
       const r = Math.random();
       let type: 'bump' | 'buff' | 'lucky' | 'aurora' = 'bump';
 
-      const luckyPct = luckyChancePct(cur);
-      const nonLuckyPct = 1 - luckyPct;
-      const buffPct = nonLuckyPct * (32 / 92);
-      type = r < luckyPct ? 'lucky' : r < luckyPct + buffPct ? 'buff' : 'bump';
+      // Plan B: If any buff is currently active, do NOT roll buff or lucky to prevent collisions!
+      const isAnyBuffActive = Boolean(
+        (activeBuffRef.current && activeBuffRef.current.remainingSeconds > 0) ||
+        (activeLuckyBuffRef.current && activeLuckyBuffRef.current.remainingSeconds > 0)
+      );
+
+      if (isAnyBuffActive) {
+        type = 'bump';
+      } else {
+        const luckyPct = luckyChancePct(cur);
+        const nonLuckyPct = 1 - luckyPct;
+        const buffPct = nonLuckyPct * (32 / 92);
+        type = r < luckyPct ? 'lucky' : r < luckyPct + buffPct ? 'buff' : 'bump';
+      }
 
       const left = 30 + Math.random() * 380;
       const top = 60 + Math.random() * 260;
@@ -395,14 +409,46 @@ export function useRandomEvents({ stateRef, setState, totalRate }: UseRandomEven
     };
   }, [scheduleNextEvent]);
 
-  // Buff expiration check hook called by the tick loop
-  const checkBuffExpirations = useCallback(() => {
-    const curTime = Date.now();
-    if (activeBuffRef.current && curTime >= activeBuffRef.current.expiresAt) {
-      setActiveBuff(null);
+  // Buff expiration and tick countdown hook called by the game loop with effectiveDt
+  const checkBuffExpirations = useCallback((effectiveDt: number = 0) => {
+    // 1. Lightning Buff countdown
+    if (activeBuffRef.current) {
+      const nextSec = activeBuffRef.current.remainingSeconds - effectiveDt;
+      if (nextSec <= 0) {
+        activeBuffRef.current = null;
+        setActiveBuff(null);
+      } else {
+        const prevCeil = Math.ceil(activeBuffRef.current.remainingSeconds);
+        const nextCeil = Math.ceil(nextSec);
+        activeBuffRef.current = {
+          ...activeBuffRef.current,
+          remainingSeconds: nextSec,
+          expiresAt: Date.now() + nextSec * 1000,
+        };
+        if (prevCeil !== nextCeil) {
+          setActiveBuff(activeBuffRef.current);
+        }
+      }
     }
-    if (activeLuckyBuffRef.current && curTime >= activeLuckyBuffRef.current.expiresAt) {
-      setActiveLuckyBuff(null);
+
+    // 2. Lucky Buff countdown
+    if (activeLuckyBuffRef.current) {
+      const nextSec = activeLuckyBuffRef.current.remainingSeconds - effectiveDt;
+      if (nextSec <= 0) {
+        activeLuckyBuffRef.current = null;
+        setActiveLuckyBuff(null);
+      } else {
+        const prevCeil = Math.ceil(activeLuckyBuffRef.current.remainingSeconds);
+        const nextCeil = Math.ceil(nextSec);
+        activeLuckyBuffRef.current = {
+          ...activeLuckyBuffRef.current,
+          remainingSeconds: nextSec,
+          expiresAt: Date.now() + nextSec * 1000,
+        };
+        if (prevCeil !== nextCeil) {
+          setActiveLuckyBuff(activeLuckyBuffRef.current);
+        }
+      }
     }
   }, []);
 

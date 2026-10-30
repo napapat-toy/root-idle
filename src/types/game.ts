@@ -279,6 +279,7 @@ export interface Branch {
 export interface ActiveBuff {
   multiplier: number;
   expiresAt: number;
+  remainingSeconds: number;
 }
 
 export interface GameEventItem {

@@ -11,7 +11,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Project Guidelines
 
 ## 📌 Version Update Rule (การอัปเดตเวอร์ชันเกม)
-ทุกครั้งที่มีการอัปเดตเลขเวอร์ชัน (Version Bump) จะต้องแก้ไขให้ตรงกันทั้ง **3 ไฟล์นี้เสมอ**:
+ทุกครั้งที่มีการอัปเดตเลขเวอร์ชัน (Version Bump) หรือ commit ที่มีการตัดสินใจแล้วว่าจะต้องปรับเลข version จะต้องแก้ไขให้ตรงกันทั้ง **3 ไฟล์นี้เสมอ**:
 1. `package.json` — ฟิลด์ `"version": "x.y.z"`
 2. `src/constants/formulas.ts` — ตัวแปร `export const GAME_VERSION = 'x.y.z';`
 3. `README.md` — แบดจ์ `![Version](https://img.shields.io/badge/version-x.y.z-orange?style=for-the-badge)`

@@ -266,20 +266,13 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
     return RELIC_DEFS.find(r => r.id === unclaimedRelicId) || null;
   }, [unclaimedRelicId]);
 
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    if (!activeBuff && !activeLuckyBuff) return;
-    const interval = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(interval);
-  }, [activeBuff, activeLuckyBuff]);
-
   const buffBadges: string[] = [];
-  if (activeBuff && now < activeBuff.expiresAt) {
-    const remain = Math.ceil((activeBuff.expiresAt - now) / 1000);
+  if (activeBuff && activeBuff.remainingSeconds > 0) {
+    const remain = Math.ceil(activeBuff.remainingSeconds);
     buffBadges.push(`⚡ ×${activeBuff.multiplier.toFixed(2)} (${remain}${isEn ? 's' : 'วิ'})`);
   }
-  if (activeLuckyBuff && now < activeLuckyBuff.expiresAt) {
-    const remain = Math.ceil((activeLuckyBuff.expiresAt - now) / 1000);
+  if (activeLuckyBuff && activeLuckyBuff.remainingSeconds > 0) {
+    const remain = Math.ceil(activeLuckyBuff.remainingSeconds);
     buffBadges.push(`🍀 ×${fmtMultiplier(activeLuckyBuff.multiplier)} (${remain}${isEn ? 's' : 'วิ'})`);
   }
 

@@ -561,7 +561,7 @@ export function useGameEngine() {
       },
     }));
 
-    randomEventsRef.current.checkBuffExpirations();
+    randomEventsRef.current.checkBuffExpirations(effectiveDt);
   }, [totalRate]);
 
   // GAME LOOP (requestAnimationFrame + 1s Background Fallback Interval + Catch-up)
