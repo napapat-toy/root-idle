@@ -223,7 +223,7 @@ export const StatsModal: React.FC<StatsModalProps> = React.memo(({
                 {
                   show: hasMagma,
                   label: isEn ? 'Cycle Resonance Stack' : 'สะสมพลังการเวียนว่าย',
-                  tooltip: tr.tooltipMagmaCycle,
+                  tooltip: `${tr.tooltipMagmaCycle} (${isEn ? 'Max' : 'สูงสุด'} ${isMasterRelic ? '+200%' : '+100%'})`,
                   value: `+${cycleStack}%`,
                   valueClass: 'highlight',
                   valueStyle: { color: '#f97316' },

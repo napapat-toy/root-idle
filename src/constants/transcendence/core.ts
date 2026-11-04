@@ -27,6 +27,23 @@ export function calcMaxAstralResonance(currentLevel: number, availablePetals: nu
   return { count, totalCost: count * ASTRAL_RESONANCE_COST };
 }
 
+export const ASTRAL_SEED_COST = 2; // 2 Astral Petals flat cost per level
+export const ASTRAL_SEED_MAX_LEVEL = 100; // Cap at Lv. 100 (+100% / x2.00)
+export const ASTRAL_SEED_MULT_PER_LEVEL = 0.01; // +1% (0.01x) Special Multiplier per level
+
+export function astralSeedMultiplierBonus(state: GameState): number {
+  if (state.transcendence?.activeTrial && state.transcendence.activeTrial !== 'none') return 1.0;
+  const lvl = Math.min(ASTRAL_SEED_MAX_LEVEL, state.transcendence?.astralSeedLevel || 0);
+  return 1 + lvl * ASTRAL_SEED_MULT_PER_LEVEL;
+}
+
+export function calcMaxAstralSeed(currentLevel: number, availablePetals: number): { count: number; totalCost: number } {
+  const remainingLevels = Math.max(0, ASTRAL_SEED_MAX_LEVEL - currentLevel);
+  const affordableCount = Math.floor(availablePetals / ASTRAL_SEED_COST);
+  const count = Math.min(remainingLevels, affordableCount);
+  return { count, totalCost: count * ASTRAL_SEED_COST };
+}
+
 export function isAstralUnlocked(state: { transcendence?: { auroraBloomUnlocked?: boolean; astralPetals?: number } }): boolean {
   return !!state.transcendence?.auroraBloomUnlocked || (state.transcendence?.astralPetals || 0) > 0;
 }

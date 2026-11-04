@@ -28,6 +28,9 @@ import {
   ASTRAL_RESONANCE_COST,
   ASTRAL_RESONANCE_MAX_LEVEL,
   ASTRAL_RESONANCE_MULT_PER_LEVEL,
+  ASTRAL_SEED_COST,
+  ASTRAL_SEED_MAX_LEVEL,
+  ASTRAL_SEED_MULT_PER_LEVEL,
   TRIAL_DEFS,
   MODULE_DEFS,
 } from '@/constants/gameData';
@@ -232,6 +235,40 @@ export function useTranscendenceEngine({
         ? `🌸 Astral Resonance Lv.${lvl + targetCount}! (+${((lvl + targetCount) * ASTRAL_RESONANCE_MULT_PER_LEVEL).toFixed(2)}×)`
         : `🌸 เรโซแนนซ์เกสร Lv.${lvl + targetCount}! (+${((lvl + targetCount) * ASTRAL_RESONANCE_MULT_PER_LEVEL).toFixed(2)}×)`,
       '#f472b6'
+    );
+  }, [stateRef, setState, showFloatingText]);
+
+  const buyAstralSeed = useCallback((qty: number | 'max' = 1) => {
+    const cur = stateRef.current;
+    const lvl = cur.transcendence?.astralSeedLevel || 0;
+    if (lvl >= ASTRAL_SEED_MAX_LEVEL) return;
+    const petals = cur.transcendence?.astralPetals || 0;
+    if (petals < ASTRAL_SEED_COST) return;
+
+    const remaining = ASTRAL_SEED_MAX_LEVEL - lvl;
+    const affordable = Math.floor(petals / ASTRAL_SEED_COST);
+    const targetCount = qty === 'max' ? Math.min(remaining, affordable) : Math.min(remaining, Math.min(affordable, Math.max(1, qty)));
+    if (targetCount <= 0) return;
+
+    const totalCost = targetCount * ASTRAL_SEED_COST;
+
+    setState(prev => ({
+      ...prev,
+      transcendence: {
+        ...prev.transcendence,
+        astralPetals: (prev.transcendence?.astralPetals || 0) - totalCost,
+        astralSeedLevel: lvl + targetCount,
+      },
+    }));
+
+    const isEn = cur.lang === 'en';
+    showFloatingText(
+      250,
+      180,
+      isEn
+        ? `🌌 Astral Seed Lv.${lvl + targetCount}! (+${lvl + targetCount}% Seeds)`
+        : `🌌 พรเมล็ดดวงดาว Lv.${lvl + targetCount}! (+${lvl + targetCount}% เมล็ด)`,
+      '#c084fc'
     );
   }, [stateRef, setState, showFloatingText]);
 
@@ -476,6 +513,7 @@ export function useTranscendenceEngine({
     transmuteSeedsToPetals,
     transmuteEssencesToPetals,
     buyAstralResonance,
+    buyAstralSeed,
     startTrial,
     abandonTrial,
     togglePact,

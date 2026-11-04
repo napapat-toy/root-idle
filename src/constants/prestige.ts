@@ -1,6 +1,7 @@
 import { GameState } from '@/types/game';
 import { relicCycleResonanceStack } from './relics';
 import { pactSeedsBonusMultiplier } from './transcendence/pacts';
+import { astralSeedMultiplierBonus } from './transcendence/core';
 
 export const PRESTIGE_UNLOCK_ECHOES = 5;
 const SEED_DIVIDER = 10000000000; // 10 Billion (1e10)
@@ -138,11 +139,14 @@ export function calcPrestigeSeeds(state: GameState): number {
   const ratio = state.runEarned / SEED_DIVIDER;
   const base = Math.floor(Math.pow(ratio, 0.20) * 10);
   const goldenLvl = Math.min(GOLDEN_SEED_MAX_LEVEL, state.prestige.goldenLevel || 0);
-  const bonus = 1 + goldenLvl * 0.001;
+  const cycleBonus = relicCycleResonanceStack(state);
+  // Additive with Golden Seed perk pool (+0.1%/golden level + 1.0%/cycle stack)
+  const bonus = 1 + goldenLvl * 0.001 + cycleBonus * 0.01;
   const biomeBonus = (!state.transcendence?.activeTrial || state.transcendence.activeTrial === 'none') && state.activeBiome === 'sunken_ruins' ? 1.20 : 1.0;
   const trialBonus = state.transcendence?.completedTrials?.['null_cycle'] ? 1.50 : 1.0;
   const pactBonus = pactSeedsBonusMultiplier(state);
-  const result = Math.floor(base * bonus * biomeBonus * trialBonus * pactBonus);
+  const astralSeedMult = astralSeedMultiplierBonus(state);
+  const result = Math.floor(base * bonus * biomeBonus * trialBonus * pactBonus * astralSeedMult);
   return Number.isFinite(result) ? Math.max(0, result) : 1e12;
 }
 

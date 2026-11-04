@@ -82,6 +82,7 @@ export interface SanctuaryModalProps {
   onTransmuteSeedsToPetals?: (qty?: number) => void;
   onTransmuteEssencesToPetals?: (qty?: number) => void;
   onBuyAstralResonance?: (qty?: number | 'max') => void;
+  onBuyAstralSeed?: (qty?: number | 'max') => void;
 }
 
 export const SanctuaryModal: React.FC<SanctuaryModalProps> = React.memo(({
@@ -117,6 +118,7 @@ export const SanctuaryModal: React.FC<SanctuaryModalProps> = React.memo(({
   onTransmuteSeedsToPetals,
   onTransmuteEssencesToPetals,
   onBuyAstralResonance,
+  onBuyAstralSeed,
 }) => {
   const [activeTab, setActiveTab] = useState<SanctuaryTab>(initialTab);
 
@@ -705,10 +707,12 @@ export const SanctuaryModal: React.FC<SanctuaryModalProps> = React.memo(({
                   gaiaEssences={state.transcendence?.gaiaEssences || 0}
                   astralPetals={state.transcendence?.astralPetals || 0}
                   astralResonanceLevel={state.transcendence?.astralResonanceLevel || 0}
+                  astralSeedLevel={state.transcendence?.astralSeedLevel || 0}
                   isEn={isEn}
                   onTransmuteSeedsToPetals={onTransmuteSeedsToPetals}
                   onTransmuteEssencesToPetals={onTransmuteEssencesToPetals}
                   onBuyAstralResonance={onBuyAstralResonance}
+                  onBuyAstralSeed={onBuyAstralSeed}
                 />
               </div>
             )}

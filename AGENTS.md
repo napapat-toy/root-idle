@@ -15,3 +15,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 1. `package.json` — ฟิลด์ `"version": "x.y.z"`
 2. `src/constants/formulas.ts` — ตัวแปร `export const GAME_VERSION = 'x.y.z';`
 3. `README.md` — แบดจ์ `![Version](https://img.shields.io/badge/version-x.y.z-orange?style=for-the-badge)`
+
+## สิ่งที่ต้องตรวจสอบก่อนจะ commit
+1. จะต้องตรวจสอบสิ่งที่เพิ่มเข้ามาว่ามันมีการเข้ากันกับ responsive ไหม ทั้ง PC และ Mobile
+2. รายงานผลทุกอย่าง แล้วจะให้รอคำสั่งว่าต้อง commit ไหม
+
+## สำคัญ
+1. ห้าม push เอง
